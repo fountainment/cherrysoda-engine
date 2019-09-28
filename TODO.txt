@@ -1,0 +1,6 @@
+1. glfw3.3 integration
+2. glad ogl 4.6 core profile
+3. first triangle
+4. glm integration
+5. window and camera class (with UML and doc)
+
