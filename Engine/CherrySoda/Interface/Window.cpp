@@ -36,17 +36,17 @@ void Window::InitWindow()
 
 	glfwMakeContextCurrent(m_glfwWindow);
 
+#ifdef CHERRYSODA_OPENGL46
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-	gladLoadGL();
+#endif
+#ifdef CHERRYSODA_GLES2
+	gladLoadGLESLoader((GLADloadproc)glfwGetProcAddress);
+#endif
 	glfwSwapInterval(1);
 
-	std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-	if (GL_VERSION_2_0) {
-		std::printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-	}
-	else {
-		std::printf("Shader unsupported!\n");
-	}
+	std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION)); 
+	std::printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
 	glViewport(0, 0, windowWidth, windowHeight);
 }
 
