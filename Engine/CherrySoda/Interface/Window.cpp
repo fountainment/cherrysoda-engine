@@ -24,6 +24,7 @@ void Window::InitWindow()
 #endif
 #ifdef CHERRYSODA_GLES2
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
@@ -40,7 +41,7 @@ void Window::InitWindow()
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 #endif
 #ifdef CHERRYSODA_GLES2
-	gladLoadGLESLoader((GLADloadproc)glfwGetProcAddress);
+	gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
 #endif
 	glfwSwapInterval(1);
 
