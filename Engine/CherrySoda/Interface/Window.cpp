@@ -16,6 +16,19 @@ void Window::InitWindow()
 {
 	glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
+#ifdef CHERRYSODA_OPENGL46
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
+#ifdef CHERRYSODA_GLES2
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+#endif
+
 	int windowWidth = Engine::GetInstance()->GetWindowWidth();
 	int windowHeight = Engine::GetInstance()->GetWindowHeight();
 	String title = Engine::GetInstance()->GetTitle();
@@ -26,6 +39,15 @@ void Window::InitWindow()
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	gladLoadGL();
 	glfwSwapInterval(1);
+
+	std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+	if (GL_VERSION_2_0) {
+		std::printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	}
+	else {
+		std::printf("Shader unsupported!\n");
+	}
+	glViewport(0, 0, windowWidth, windowHeight);
 }
 
 void Window::SetSize(int width, int height)
@@ -48,6 +70,12 @@ bool Window::ShouldClose()
 void Window::SwapBuffers()
 {
 	glfwSwapBuffers(m_glfwWindow);
+}
+
+void Window::Clear()
+{
+	glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Window::PollEvents()

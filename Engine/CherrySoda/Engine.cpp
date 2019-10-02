@@ -2,8 +2,6 @@
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Utility/String.h>
 
-#include <GLFW/glfw3.h>
-
 namespace cherrysoda {
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
@@ -37,6 +35,7 @@ void Engine::Run()
 
 	while (!m_window->ShouldClose())
 	{
+		m_window->Clear();
 		// TODO: Engine Loop
 
 		m_window->SwapBuffers();

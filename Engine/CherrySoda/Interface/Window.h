@@ -22,6 +22,8 @@ private:
 	bool ShouldClose();
 	void SwapBuffers();
 
+	void Clear();
+
 	static void PollEvents();
 
 	static bool Init();

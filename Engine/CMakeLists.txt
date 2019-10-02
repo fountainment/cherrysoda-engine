@@ -9,8 +9,6 @@ set(ENGINE_SRC
 )
 
 add_library(CherrySoda STATIC ${ENGINE_SRC})
-find_package(OpenGL REQUIRED)
-set(CHERRYSODA_INCLUDE_DIRS .)
-target_include_directories(CherrySoda PUBLIC ${CHERRYSODA_INCLUDE_DIRS})
-target_link_libraries(CherrySoda PUBLIC glfw glad ${OPENGL_LIBRARIES})
+target_include_directories(CherrySoda PUBLIC .)
+target_link_libraries(CherrySoda PUBLIC glfw glad)
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
