@@ -3,4 +3,6 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
 else()
   add_subdirectory(glad_gles2)
 endif()
-add_subdirectory(glfw)
+
+add_subdirectory(glfw-3.3)
+add_subdirectory(glm-0.9.9.6)
