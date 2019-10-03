@@ -1,5 +1,10 @@
-1. glfw3.3 integration <done>
-2. glad ogl 4.6 core profile
-3. first triangle
-4. glm integration
-5. window and camera class (with UML and doc)
+ 1. glfw3.3 integration and Window class <done>
+ 2. glad ogl 4.6 core profile and gles2 <done>
+ 3. Color utility
+ 4. Log utility
+ 5. Entity and Component class
+ 6. Graphic class
+ 7. first triangle
+ 8. glm integration
+ 9.	Camera class
+10. UML and doc
