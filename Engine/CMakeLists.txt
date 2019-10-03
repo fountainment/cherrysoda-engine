@@ -10,5 +10,5 @@ set(ENGINE_SRC
 
 add_library(CherrySoda STATIC ${ENGINE_SRC})
 target_include_directories(CherrySoda PUBLIC .)
-target_link_libraries(CherrySoda PUBLIC glfw glad glm_static)
+target_link_libraries(CherrySoda PUBLIC glfw glad glm)
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
