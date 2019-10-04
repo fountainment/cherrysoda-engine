@@ -26,8 +26,8 @@ private:
 
 class ColorValue {
 public:
-	static constexpr Color Black = Color(0.0f);
-	static constexpr Color White = Color(1.0f);
+	static constexpr Color const& Black = Color(0.0f);
+	static constexpr Color const& White = Color(1.0f);
 };
 
 } // namespace cherrysoda
