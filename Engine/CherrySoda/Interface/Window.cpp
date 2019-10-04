@@ -41,9 +41,9 @@ void Window::InitWindow()
 	m_glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 
 	MakeContextCurrent();
-	Graphic::LoadGL();
 	SetVsyncEnabled(true);
 
+	Graphic::LoadGraphicAPI();
 	Graphic::SetViewport(0, 0, windowWidth, windowHeight);
 }
 

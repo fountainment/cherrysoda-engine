@@ -8,7 +8,7 @@ namespace cherrysoda {
 class Graphic
 {
 public:
-	static void LoadGL();
+	static void LoadGraphicAPI();
 	static void SetClearColor(const Color& color);
 	static void SetViewport(int x, int y, int w, int h);
 	static void ClearColorAndDepth();

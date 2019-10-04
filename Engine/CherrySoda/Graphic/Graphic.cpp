@@ -9,7 +9,7 @@ using cherrysoda::Graphic;
 
 using cherrysoda::Color;
 
-void Graphic::LoadGL()
+void Graphic::LoadGraphicAPI()
 {
 #ifdef CHERRYSODA_OPENGL46
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
