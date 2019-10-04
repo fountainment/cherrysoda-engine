@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_ENGINE_H_
 #define _CHERRYSODA_ENGINE_H_
 
+#include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
 
 #ifdef _MSC_VER
@@ -28,8 +29,10 @@ public:
 	int GetHeight() { return m_height; }
 	int GetWindowWidth() { return m_windowWidth; }
 	int GetWindowHeight() { return m_windowHeight; }
-    std::string GetTitle() { return m_title; }
+    String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
+	const Color GetClearColor() { return m_clearColor; }
+	void SetClearColor(const Color& color);
 
 	void Run();
 
@@ -41,6 +44,7 @@ private:
 	int m_windowWidth;
 	int m_windowHeight;
     String m_title;
+	Color m_clearColor;
 	bool m_fullscreen;
     Window* m_window = nullptr;
 

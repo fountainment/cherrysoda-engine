@@ -1,6 +1,6 @@
  1. glfw3.3 integration and Window class <done>
  2. glad ogl 4.6 core profile and gles2 <done>
- 3. Color utility
+ 3. Color utility <done>
  4. Log utility
  5. Entity and Component class
  6. Graphic class

@@ -1,8 +1,12 @@
 #include <CherrySoda/Engine.h>
+
 #include <CherrySoda/Interface/Window.h>
+#include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
 
-namespace cherrysoda {
+using cherrysoda::Engine;
+using cherrysoda::Color;
+using cherrysoda::String;
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
                const String& title, bool fullscreen)
@@ -24,6 +28,14 @@ void Engine::SetTitle(const String& title)
 	}
 }
 
+void Engine::SetClearColor(const Color& color)
+{
+	m_clearColor = color;
+	if (m_window) {
+		m_window->SetClearColor(color);
+	}
+}
+
 void Engine::Run()
 {
 	if (!Window::Init()) {
@@ -33,9 +45,10 @@ void Engine::Run()
 	m_window = new Window();
 	m_window->InitWindow();
 
+	m_window->SetClearColor(m_clearColor);
+
 	while (!m_window->ShouldClose())
 	{
-		m_window->Clear();
 		// TODO: Engine Loop
 
 		m_window->SwapBuffers();
@@ -46,5 +59,3 @@ void Engine::Run()
 }
 
 Engine* Engine::ms_instance = nullptr;
-
-} // namespace cherrysoda

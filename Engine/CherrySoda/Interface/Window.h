@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_INTERFACE_WINDOW_H_
 #define _CHERRYSODA_INTERFACE_WINDOW_H_
 
+#include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
 
 class GLFWwindow;
@@ -22,7 +23,9 @@ private:
 	bool ShouldClose();
 	void SwapBuffers();
 
-	void Clear();
+	void MakeContextCurrent();
+	void SetClearColor(const Color& color);
+	void SetVsyncEnabled(bool enabled);
 
 	static void PollEvents();
 

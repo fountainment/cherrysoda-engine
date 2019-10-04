@@ -2,7 +2,7 @@
 
 #include <cstdarg>
 
-namespace cherrysoda {
+using cherrysoda::String;
 
 const String FormatString(const char* format, ...)
 {
@@ -13,5 +13,3 @@ const String FormatString(const char* format, ...)
 	va_end(args);
 	return String(buffer);
 }
-
-} // namespace cherrysoda

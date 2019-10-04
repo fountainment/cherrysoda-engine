@@ -1,12 +1,16 @@
 #include <CherrySoda/Interface/Window.h>
+
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Graphic/Graphic.h>
+#include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/NumTypes.h>
 
-#include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-namespace cherrysoda {
+using cherrysoda::Window;
+using cherrysoda::String;
+using cherrysoda::Color;
 
 Window::Window()
 {
@@ -35,20 +39,11 @@ void Window::InitWindow()
 	String title = Engine::GetInstance()->GetTitle();
 	m_glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 
-	glfwMakeContextCurrent(m_glfwWindow);
+	MakeContextCurrent();
+	Graphic::LoadGL();
+	SetVsyncEnabled(true);
 
-#ifdef CHERRYSODA_OPENGL46
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-#endif
-#ifdef CHERRYSODA_GLES2
-	gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
-#endif
-	glfwSwapInterval(1);
-
-	std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION)); 
-	std::printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-	glViewport(0, 0, windowWidth, windowHeight);
+	Graphic::SetViewport(0, 0, windowWidth, windowHeight);
 }
 
 void Window::SetSize(int width, int height)
@@ -73,10 +68,19 @@ void Window::SwapBuffers()
 	glfwSwapBuffers(m_glfwWindow);
 }
 
-void Window::Clear()
+void Window::MakeContextCurrent()
 {
-	glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glfwMakeContextCurrent(m_glfwWindow);
+}
+
+void Window::SetClearColor(const Color& color)
+{
+	Graphic::SetClearColor(color);
+}
+
+void Window::SetVsyncEnabled(bool enabled)
+{
+	glfwSwapInterval(enabled ? 1 : 0);
 }
 
 void Window::PollEvents()
@@ -102,5 +106,3 @@ void Window::Terminate()
 {
 	glfwTerminate();
 }
-
-} // namespace cherrysoda
