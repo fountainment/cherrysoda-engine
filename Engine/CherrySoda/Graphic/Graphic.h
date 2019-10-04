@@ -11,6 +11,7 @@ public:
 	static void LoadGL();
 	static void SetClearColor(const Color& color);
 	static void SetViewport(int x, int y, int w, int h);
+	static void ClearColorAndDepth();
 };
 
 } // namespace cherrysoda

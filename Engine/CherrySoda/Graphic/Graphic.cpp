@@ -6,6 +6,7 @@
 #include <cstdio>
 
 using cherrysoda::Graphic;
+
 using cherrysoda::Color;
 
 void Graphic::LoadGL()
@@ -29,4 +30,9 @@ void Graphic::SetClearColor(const Color& color)
 void Graphic::SetViewport(int x, int y, int w, int h)
 {
 	glViewport(x, y, w, h);
+}
+
+void Graphic::ClearColorAndDepth()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

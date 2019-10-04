@@ -1,11 +1,14 @@
 #include <CherrySoda/Engine.h>
 
+#include <CherrySoda/Graphic/Graphic.h>
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
 
 using cherrysoda::Engine;
+
 using cherrysoda::Color;
+using cherrysoda::Graphic;
 using cherrysoda::String;
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
@@ -49,6 +52,8 @@ void Engine::Run()
 
 	while (!m_window->ShouldClose())
 	{
+		Graphic::ClearColorAndDepth();
+
 		// TODO: Engine Loop
 
 		m_window->SwapBuffers();

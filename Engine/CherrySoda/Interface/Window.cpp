@@ -9,8 +9,9 @@
 #include <GLFW/glfw3.h>
 
 using cherrysoda::Window;
-using cherrysoda::String;
+
 using cherrysoda::Color;
+using cherrysoda::String;
 
 Window::Window()
 {
