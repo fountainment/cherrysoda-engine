@@ -24,7 +24,7 @@ void Graphic::LoadGraphicAPI()
 
 void Graphic::SetClearColor(const Color& color)
 {
-	glClearColor(color.r(), color.g(), color.b(), color.a());
+	glClearColor(color.R(), color.G(), color.B(), color.A());
 }
 
 void Graphic::SetViewport(int x, int y, int w, int h)
