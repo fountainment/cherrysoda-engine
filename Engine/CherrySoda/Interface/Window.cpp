@@ -95,11 +95,7 @@ bool Window::Init()
 	{
 		return false;
 	}
-	else
-	{
-		glfwDefaultWindowHints();
-	}
-
+	glfwDefaultWindowHints();
 	return true;
 }
 
