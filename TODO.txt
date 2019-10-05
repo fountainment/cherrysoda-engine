@@ -7,5 +7,6 @@
  7. Graphic class
  8. first triangle
  9. glm integration
-10. Camera class
-11. UML and doc
+10. GraphicComponent
+11. Camera class
+12. UML and doc
