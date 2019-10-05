@@ -46,7 +46,7 @@ void Engine::Run()
 	}
 
 	m_window = new Window();
-	m_window->InitWindow();
+	m_window->CreateWindow();
 
 	m_window->SetClearColor(m_clearColor);
 
@@ -60,6 +60,7 @@ void Engine::Run()
 		Window::PollEvents();
 	}
 
+	m_window->DestroyWindow();
 	Window::Terminate();
 }
 

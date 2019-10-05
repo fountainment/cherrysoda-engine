@@ -19,7 +19,8 @@ private:
 	void SetTitle(const String& string);
 	void SetFullscreen(bool fullscreen);
 
-	void InitWindow();
+	void CreateWindow();
+	void DestroyWindow();
 	bool ShouldClose();
 	void SwapBuffers();
 

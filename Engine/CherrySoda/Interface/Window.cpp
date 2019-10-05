@@ -17,7 +17,7 @@ Window::Window()
 {
 }
 
-void Window::InitWindow()
+void Window::CreateWindow()
 {
 	glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
@@ -45,6 +45,12 @@ void Window::InitWindow()
 
 	Graphic::LoadGraphicAPI();
 	Graphic::SetViewport(0, 0, windowWidth, windowHeight);
+}
+
+void Window::DestroyWindow()
+{
+	glfwDestroyWindow(m_glfwWindow);
+	m_glfwWindow = nullptr;
 }
 
 void Window::SetSize(int width, int height)
