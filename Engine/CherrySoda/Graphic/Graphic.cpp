@@ -1,5 +1,8 @@
 #include <CherrySoda/Graphic/Graphic.h>
 
+#include <CherrySoda/Utility/Log.h>
+#include <CherrySoda/Utility/String.h>
+
 #include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -8,6 +11,8 @@
 using cherrysoda::Graphic;
 
 using cherrysoda::Color;
+using cherrysoda::String;
+using cherrysoda::StringUtil;
 
 void Graphic::LoadGraphicAPI()
 {
@@ -18,8 +23,8 @@ void Graphic::LoadGraphicAPI()
 	gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
 #endif
 
-	std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION)); 
-	std::printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	CherrySodaDebug(StringUtil::FormatString("OpenGL Version: %s\n", glGetString(GL_VERSION)));
+	CherrySodaDebug(StringUtil::FormatString("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
 void Graphic::SetClearColor(const Color& color)

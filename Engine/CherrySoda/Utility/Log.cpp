@@ -2,10 +2,10 @@
 
 #include <CherrySoda/Utility/String.h>
 
+#include <cstdio>
+
 #ifdef _WIN32
 	#include <Windows.h>
-#else
-	#include <cstdio>
 #endif
 
 using cherrysoda::Log;
@@ -14,7 +14,11 @@ using cherrysoda::String;
 
 void Log::DebugOutput(const String& output)
 {
+#if defined(_WIN32) && defined(_MSC_VER)
+	OutputDebugString(output.c_str());
+#else
 	std::printf(output.c_str());
+#endif
 }
 
 void Log::LogOutput(const String& output)

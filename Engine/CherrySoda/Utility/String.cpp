@@ -3,8 +3,9 @@
 #include <cstdarg>
 
 using cherrysoda::String;
+using cherrysoda::StringUtil;
 
-const String FormatString(const char* format, ...)
+const String StringUtil::FormatString(const char* format, ...)
 {
 	char buffer[256];
 	va_list args;
