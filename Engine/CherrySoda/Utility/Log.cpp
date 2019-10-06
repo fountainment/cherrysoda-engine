@@ -12,7 +12,7 @@ using cherrysoda::Log;
 
 using cherrysoda::String;
 
-void Log::DebugOutput(const String& output)
+void Log::DebugOutput(const String& output, int channel)
 {
 #if defined(_WIN32) && defined(_MSC_VER)
 	OutputDebugString(output.c_str());
@@ -21,7 +21,7 @@ void Log::DebugOutput(const String& output)
 #endif
 }
 
-void Log::LogOutput(const String& output)
+void Log::LogOutput(const String& output, int channel)
 {
 	std::printf(output.c_str());
 }

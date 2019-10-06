@@ -64,4 +64,8 @@ void Engine::Run()
 	Window::Terminate();
 }
 
+void Engine::Update()
+{
+}
+
 Engine* Engine::ms_instance = nullptr;

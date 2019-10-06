@@ -41,3 +41,15 @@ void Graphic::ClearColorAndDepth()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
+#ifdef CHERRYSODA_GLES2
+void Graphic::TriangleGLES2()
+{
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	GLfloat vertex[] = {-0.5f, -0.5f, 0.5f, 0.-5f, 0.0f, 0.5f};
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertex);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+	glDisableVertexAttribArray(0);
+}
+#endif

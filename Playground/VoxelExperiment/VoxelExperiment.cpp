@@ -10,3 +10,12 @@ VoxelExperiment::VoxelExperiment()
 {
 	SetClearColor(ColorValue::White);
 }
+
+void VoxelExperiment::Update()
+{
+	base::Update();
+
+#ifdef CHERRYSODA_GLES2
+	Graphic::TriangleGLES2();
+#endif
+}

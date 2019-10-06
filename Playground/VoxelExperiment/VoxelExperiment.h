@@ -8,6 +8,8 @@ public:
 	typedef cherrysoda::Engine base;
 
 	VoxelExperiment();
+
+	virtual void Update() override;
 };
 
 }

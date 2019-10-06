@@ -12,6 +12,10 @@ public:
 	static void SetClearColor(const Color& color);
 	static void SetViewport(int x, int y, int w, int h);
 	static void ClearColorAndDepth();
+
+#ifdef CHERRYSODA_GLES2
+	static void TriangleGLES2();
+#endif
 };
 
 } // namespace cherrysoda

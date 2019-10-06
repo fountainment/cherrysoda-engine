@@ -19,8 +19,8 @@ namespace cherrysoda {
 class Log
 {
 public:
-	static void DebugOutput(const String& output);
-	static void LogOutput(const String& output);
+	static void DebugOutput(const String& output, int channel = 0);
+	static void LogOutput(const String& output, int channel = 0);
 };
 
 } // namespace cherrysoda

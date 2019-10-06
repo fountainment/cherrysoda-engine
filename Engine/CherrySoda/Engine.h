@@ -35,6 +35,7 @@ public:
 	void SetClearColor(const Color& color);
 
 	void Run();
+	virtual void Update();
 
     static Engine* GetInstance() { return ms_instance; }
 
