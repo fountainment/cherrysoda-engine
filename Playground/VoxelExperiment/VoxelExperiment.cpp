@@ -1,14 +1,17 @@
 #include "VoxelExperiment.h"
 
+#include <CherrySoda/Graphic/Graphic.h>
 #include <CherrySoda/Utility/Color.h>
 
 using voxelexperiment::VoxelExperiment;
+
 using cherrysoda::ColorValue;
+using cherrysoda::Graphic;
 
 VoxelExperiment::VoxelExperiment()
 	: base()
 {
-	SetClearColor(ColorValue::White);
+	SetClearColor(ColorValue::Red);
 }
 
 void VoxelExperiment::Update()

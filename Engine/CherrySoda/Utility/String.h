@@ -10,7 +10,7 @@ typedef std::string String;
 class StringUtil
 {
 public:
-	static const String FormatString(const char* format, ...);
+	static const String Format(const char* format, ...);
 };
 
 } // namespace cherrysoda

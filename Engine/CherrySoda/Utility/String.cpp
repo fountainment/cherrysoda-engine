@@ -5,7 +5,7 @@
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
-const String StringUtil::FormatString(const char* format, ...)
+const String StringUtil::Format(const char* format, ...)
 {
 	char buffer[256];
 	va_list args;

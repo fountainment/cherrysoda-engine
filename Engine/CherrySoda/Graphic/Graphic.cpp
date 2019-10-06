@@ -17,14 +17,14 @@ using cherrysoda::StringUtil;
 void Graphic::LoadGraphicAPI()
 {
 #ifdef CHERRYSODA_OPENGL46
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 #endif
 #ifdef CHERRYSODA_GLES2
-	gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
+	gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 #endif
 
-	CherrySodaDebug(StringUtil::FormatString("OpenGL Version: %s\n", glGetString(GL_VERSION)));
-	CherrySodaDebug(StringUtil::FormatString("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
+	CherrySodaDebug(StringUtil::Format("OpenGL Version: %s\n", glGetString(GL_VERSION)));
+	CherrySodaDebug(StringUtil::Format("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
 void Graphic::SetClearColor(const Color& color)
@@ -45,8 +45,8 @@ void Graphic::ClearColorAndDepth()
 #ifdef CHERRYSODA_GLES2
 void Graphic::TriangleGLES2()
 {
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	GLfloat vertex[] = {-0.5f, -0.5f, 0.5f, 0.-5f, 0.0f, 0.5f};
+	CherrySodaDebug("TriangleGLES2\n");
+	GLfloat vertex[] = {-0.5f, -0.5f, 0.5f, -0.5f, 0.0f, 0.5f};
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertex);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);

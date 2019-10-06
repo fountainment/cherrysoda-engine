@@ -54,7 +54,7 @@ void Engine::Run()
 	{
 		Graphic::ClearColorAndDepth();
 
-		// TODO: Engine Loop
+		Update();
 
 		m_window->SwapBuffers();
 		Window::PollEvents();
