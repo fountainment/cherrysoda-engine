@@ -1,11 +1,11 @@
-#ifndef _CHERRYSODA_GRAPHIC_H_
-#define _CHERRYSODA_GRAPHIC_H_
+#ifndef _CHERRYSODA_GRAPHICS_H_
+#define _CHERRYSODA_GRAPHICS_H_
 
 #include <CherrySoda/Utility/Color.h>
 
 namespace cherrysoda {
 
-class Graphic
+class Graphics
 {
 public:
 	static void LoadGraphicAPI();
@@ -20,4 +20,4 @@ public:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_GRAPHIC_H_
+#endif // _CHERRYSODA_GRAPHICS_H_

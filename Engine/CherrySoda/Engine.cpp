@@ -1,6 +1,6 @@
 #include <CherrySoda/Engine.h>
 
-#include <CherrySoda/Graphic/Graphic.h>
+#include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
@@ -8,7 +8,7 @@
 using cherrysoda::Engine;
 
 using cherrysoda::Color;
-using cherrysoda::Graphic;
+using cherrysoda::Graphics;
 using cherrysoda::String;
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
@@ -52,7 +52,7 @@ void Engine::Run()
 
 	while (!m_window->ShouldClose())
 	{
-		Graphic::ClearColorAndDepth();
+		Graphics::ClearColorAndDepth();
 
 		Update();
 

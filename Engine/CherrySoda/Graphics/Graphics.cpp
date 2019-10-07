@@ -1,4 +1,4 @@
-#include <CherrySoda/Graphic/Graphic.h>
+#include <CherrySoda/Graphics/Graphics.h>
 
 #include <CherrySoda/Utility/Log.h>
 #include <CherrySoda/Utility/String.h>
@@ -8,13 +8,13 @@
 #include <GLFW/glfw3.h>
 #include <cstdio>
 
-using cherrysoda::Graphic;
+using cherrysoda::Graphics;
 
 using cherrysoda::Color;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
-void Graphic::LoadGraphicAPI()
+void Graphics::LoadGraphicAPI()
 {
 #ifdef CHERRYSODA_OPENGL46
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
@@ -27,23 +27,23 @@ void Graphic::LoadGraphicAPI()
 	CherrySodaDebug(StringUtil::Format("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
-void Graphic::SetClearColor(const Color& color)
+void Graphics::SetClearColor(const Color& color)
 {
 	glClearColor(color.R(), color.G(), color.B(), color.A());
 }
 
-void Graphic::SetViewport(int x, int y, int w, int h)
+void Graphics::SetViewport(int x, int y, int w, int h)
 {
 	glViewport(x, y, w, h);
 }
 
-void Graphic::ClearColorAndDepth()
+void Graphics::ClearColorAndDepth()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 #ifdef CHERRYSODA_GLES2
-void Graphic::TriangleGLES2()
+void Graphics::TriangleGLES2()
 {
 	CherrySodaDebug("TriangleGLES2\n");
 	GLfloat vertex[] = {-0.5f, -0.5f, 0.5f, -0.5f, 0.0f, 0.5f};
@@ -52,4 +52,4 @@ void Graphic::TriangleGLES2()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
 	glDisableVertexAttribArray(0);
 }
-#endif
+#endif // CHERRYSODA_GLES2

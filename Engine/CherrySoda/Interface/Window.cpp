@@ -1,7 +1,7 @@
 #include <CherrySoda/Interface/Window.h>
 
 #include <CherrySoda/Engine.h>
-#include <CherrySoda/Graphic/Graphic.h>
+#include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/NumTypes.h>
 
@@ -43,8 +43,8 @@ void Window::CreateWindow()
 	MakeContextCurrent();
 	SetVsyncEnabled(true);
 
-	Graphic::LoadGraphicAPI();
-	Graphic::SetViewport(0, 0, windowWidth, windowHeight);
+	Graphics::LoadGraphicAPI();
+	Graphics::SetViewport(0, 0, windowWidth, windowHeight);
 }
 
 void Window::DestroyWindow()
@@ -82,7 +82,7 @@ void Window::MakeContextCurrent()
 
 void Window::SetClearColor(const Color& color)
 {
-	Graphic::SetClearColor(color);
+	Graphics::SetClearColor(color);
 }
 
 void Window::SetVsyncEnabled(bool enabled)

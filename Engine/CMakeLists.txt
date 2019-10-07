@@ -1,8 +1,8 @@
 set(ENGINE_SRC
   CherrySoda/Engine.cpp
   CherrySoda/Engine.h
-  CherrySoda/Graphic/Graphic.cpp
-  CherrySoda/Graphic/Graphic.h
+  CherrySoda/Graphics/Graphics.cpp
+  CherrySoda/Graphics/Graphics.h
   CherrySoda/Interface/Window.cpp
   CherrySoda/Interface/Window.h
   CherrySoda/Utility/Color.cpp
