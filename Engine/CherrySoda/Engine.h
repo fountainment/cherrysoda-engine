@@ -29,27 +29,30 @@ public:
 	int GetHeight() { return m_height; }
 	int GetWindowWidth() { return m_windowWidth; }
 	int GetWindowHeight() { return m_windowHeight; }
-    String GetTitle() { return m_title; }
+	String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
 	const Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
 
 	void Run();
+	void Exit();
+
 	virtual void Update();
 
-    static Engine* GetInstance() { return ms_instance; }
+	static Engine* GetInstance() { return ms_instance; }
 
 private:
 	int m_width;
 	int m_height;
 	int m_windowWidth;
 	int m_windowHeight;
-    String m_title;
+	String m_title;
 	Color m_clearColor = ColorValue::Black;
 	bool m_fullscreen;
-    Window* m_window = nullptr;
+	Window* m_window = nullptr;
+	bool m_shouldExit = false;
 
-    static Engine* ms_instance;
+	static Engine* ms_instance;
 };
 
 } // namespace cherrysoda

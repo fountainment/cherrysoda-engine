@@ -43,7 +43,7 @@ void Window::CreateWindow()
 	MakeContextCurrent();
 	SetVsyncEnabled(true);
 
-	Graphics::LoadGraphicAPI();
+	Graphics::LoadGraphicsAPI();
 	Graphics::SetViewport(0, 0, windowWidth, windowHeight);
 }
 
@@ -97,8 +97,7 @@ void Window::PollEvents()
 
 bool Window::Init()
 {
-	if (GLFW_FALSE == glfwInit())
-	{
+	if (GLFW_FALSE == glfwInit()) {
 		return false;
 	}
 	glfwDefaultWindowHints();

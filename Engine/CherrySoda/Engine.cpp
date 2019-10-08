@@ -50,8 +50,7 @@ void Engine::Run()
 
 	m_window->SetClearColor(m_clearColor);
 
-	while (!m_window->ShouldClose())
-	{
+	while (!m_shouldExit && !m_window->ShouldClose()) {
 		Graphics::ClearColorAndDepth();
 
 		Update();
@@ -66,6 +65,11 @@ void Engine::Run()
 
 void Engine::Update()
 {
+}
+
+void Engine::Exit()
+{
+	m_shouldExit = true;
 }
 
 Engine* Engine::ms_instance = nullptr;
