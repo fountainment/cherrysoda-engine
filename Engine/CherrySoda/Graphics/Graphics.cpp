@@ -3,10 +3,9 @@
 #include <CherrySoda/Utility/Log.h>
 #include <CherrySoda/Utility/String.h>
 
-#include <glad/glad.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 #include <cstdio>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 using cherrysoda::Graphics;
 
@@ -14,7 +13,7 @@ using cherrysoda::Color;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
-void Graphics::LoadGraphicAPI()
+void Graphics::LoadGraphicsAPI()
 {
 #ifdef CHERRYSODA_OPENGL46
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
