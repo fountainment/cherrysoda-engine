@@ -5,7 +5,7 @@
 
 #ifdef NDEBUG
 #define CHERRYSODA_DEBUG(output)
-#define CHERRYSODA_DEBUG(output,channel)
+#define CHERRYSODA_DEBUG_CHANNEL(output,channel)
 #else
 #define CHERRYSODA_DEBUG(output)                 cherrysoda::Log::DebugOutput(output)
 #define CHERRYSODA_DEBUG_CHANNEL(output,channel) cherrysoda::Log::DebugOutput(output,channel)
