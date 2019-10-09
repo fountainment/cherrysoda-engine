@@ -4,7 +4,7 @@
 #include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace cherrysoda {
 

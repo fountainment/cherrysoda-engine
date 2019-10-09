@@ -22,8 +22,8 @@ void Graphics::LoadGraphicsAPI()
 	gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 #endif
 
-	CherrySodaDebug(StringUtil::Format("OpenGL Version: %s\n", glGetString(GL_VERSION)));
-	CherrySodaDebug(StringUtil::Format("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
+	CHERRYSODA_DEBUG(StringUtil::Format("OpenGL Version: %s\n", glGetString(GL_VERSION)));
+	CHERRYSODA_DEBUG(StringUtil::Format("GLSL Version:   %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
 void Graphics::SetClearColor(const Color& color)
