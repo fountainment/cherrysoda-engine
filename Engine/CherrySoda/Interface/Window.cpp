@@ -37,12 +37,6 @@ void Window::CreateWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	int windowWidth = Engine::GetInstance()->GetWindowWidth();
@@ -95,8 +89,7 @@ void Window::SetClearColor(const Color& color)
 
 void Window::SetVsyncEnabled(bool enabled)
 {
-	//TODO: SDL Vsync
-	//glfwSwapInterval(enabled ? 1 : 0);
+	SDL_GL_SetSwapInterval(enabled ? 1 : 0);
 }
 
 void Window::PollEvents()

@@ -21,7 +21,7 @@ class Window;
 class Engine
 {
 public:
-	Engine() : Engine(320, 240, 320, 240, "CherrySoda", false) {}
+	Engine() : Engine(480, 272, 480, 272, "CherrySoda", false) {}
 	Engine(int width, int height, int windowWidth, int windowHeight,
 	       const String& title, bool fullscreen);
 
