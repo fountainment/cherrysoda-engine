@@ -50,13 +50,13 @@ void Engine::Run()
 
 	m_window->SetClearColor(m_clearColor);
 
-	while (!m_shouldExit && !m_window->ShouldClose()) {
+	while (!m_shouldExit) {
+		Window::PollEvents();
 		Graphics::ClearColorAndDepth();
 
 		Update();
 
 		m_window->SwapBuffers();
-		Window::PollEvents();
 	}
 
 	m_window->DestroyWindow();

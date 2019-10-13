@@ -5,7 +5,7 @@
 
 #include <cstdio>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 
 using cherrysoda::Graphics;
 
@@ -16,10 +16,10 @@ using cherrysoda::StringUtil;
 void Graphics::LoadGraphicsAPI()
 {
 #ifdef CHERRYSODA_OPENGL46
-	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress));
 #endif
 #ifdef CHERRYSODA_GLES2
-	gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+	gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress));
 #endif
 
 	CHERRYSODA_DEBUG(StringUtil::Format("OpenGL Version: %s\n", glGetString(GL_VERSION)));

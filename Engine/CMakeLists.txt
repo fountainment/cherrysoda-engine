@@ -17,7 +17,8 @@ set(ENGINE_SRC
 )
 
 add_library(CherrySoda STATIC ${ENGINE_SRC})
-target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.6)
-target_link_libraries(CherrySoda PUBLIC glfw glad glm_static)
+find_package(SDL2 REQUIRED)
+target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.6 ${SDL2_INCLUDE_DIRS})
+target_link_libraries(CherrySoda PUBLIC glad glm_static ${SDL2_LIBRARIES})
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
-target_compile_definitions(CherrySoda PUBLIC GLFW_INCLUDE_NONE _CRT_SECURE_NO_WARNINGS)
+target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)

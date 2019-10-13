@@ -4,7 +4,8 @@
 #include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/String.h>
 
-struct GLFWwindow;
+#define CHERRYSODA_WINDOW SDL_Window
+struct CHERRYSODA_WINDOW;
 
 namespace cherrysoda {
 
@@ -21,7 +22,6 @@ private:
 
 	void CreateWindow();
 	void DestroyWindow();
-	bool ShouldClose();
 	void SwapBuffers();
 
 	void MakeContextCurrent();
@@ -33,7 +33,8 @@ private:
 	static bool Init();
 	static void Terminate();
 
-	GLFWwindow* m_glfwWindow = nullptr;
+	CHERRYSODA_WINDOW* m_mainWindow = nullptr;
+	void* m_glContext = nullptr;
 };
 
 } // namespace cherrysoda
