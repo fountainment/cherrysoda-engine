@@ -44,7 +44,7 @@ void Graphics::ClearColorAndDepth()
 #ifdef CHERRYSODA_GLES2
 void Graphics::TriangleGLES2()
 {
-	CherrySodaDebug("TriangleGLES2\n");
+	CHERRYSODA_DEBUG("TriangleGLES2\n");
 	GLfloat vertex[] = {-0.5f, -0.5f, 0.5f, -0.5f, 0.0f, 0.5f};
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertex);
