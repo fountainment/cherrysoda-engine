@@ -2,9 +2,9 @@
  2. glad ogl 4.6 core profile and gles2 <done>
  3. Color utility <done>
  4. Log utility <done>
- 5. Window deletion and ESC quit
+ 5. Window deletion and ESC quit <done>
  6. Entity and Component class
- 7. Graphic class
+ 7. GraphicsComponent class
  8. first triangle
  9. glm integration
 10. GraphicComponent

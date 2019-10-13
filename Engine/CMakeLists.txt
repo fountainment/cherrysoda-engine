@@ -17,7 +17,6 @@ set(ENGINE_SRC
 )
 
 add_library(CherrySoda STATIC ${ENGINE_SRC})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(SDL2 REQUIRED)
 target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.6 ${SDL2_INCLUDE_DIRS})
 target_link_libraries(CherrySoda PUBLIC glad glm_static ${SDL2_LIBRARIES})
