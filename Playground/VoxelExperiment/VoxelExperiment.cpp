@@ -5,13 +5,13 @@
 
 using voxelexperiment::VoxelExperiment;
 
-using cherrysoda::ColorValue;
+using cherrysoda::Color;
 using cherrysoda::Graphics;
 
 VoxelExperiment::VoxelExperiment()
 	: base()
 {
-	SetClearColor(ColorValue::Red);
+	SetClearColor(Color::Red);
 }
 
 void VoxelExperiment::Update()

@@ -23,6 +23,15 @@ public:
 	inline void SetB(float v) { m_b = v; }
 	inline void SetA(float v) { m_a = v; }
 
+	static const Color Black;
+	static const Color White;
+	static const Color Red;
+	static const Color Green;
+	static const Color Blue;
+	static const Color Yellow;
+	static const Color Orange;
+	static const Color Gray; 
+
 private:
 	float m_r;
 	float m_g;
@@ -32,14 +41,7 @@ private:
 
 class ColorValue {
 public:
-	static constexpr Color const& Black  = Color(0.0f);
-	static constexpr Color const& White  = Color(1.0f);
-	static constexpr Color const& Red    = Color(1.0f, 0.0f, 0.0f);
-	static constexpr Color const& Green  = Color(0.0f, 1.0f, 0.0f);
-	static constexpr Color const& Blue   = Color(0.0f, 0.0f, 1.0f);
-	static constexpr Color const& Yellow = Color(1.0f, 1.0f, 0.0f);
-	static constexpr Color const& Orange = Color(1.0f, 0.5f, 0.0f);
-	static constexpr Color const& Gray   = Color(0.5f);
+
 };
 
 } // namespace cherrysoda

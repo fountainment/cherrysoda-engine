@@ -5,7 +5,7 @@
 #include <CherrySoda/Utility/Color.h>
 #include <CherrySoda/Utility/NumTypes.h>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 using cherrysoda::Window;
 
@@ -18,7 +18,6 @@ Window::Window()
 
 void Window::CreateWindow()
 {
-
 	int context_flags = SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
 #ifndef NDEBUG
 	context_flags |= SDL_GL_CONTEXT_DEBUG_FLAG;
