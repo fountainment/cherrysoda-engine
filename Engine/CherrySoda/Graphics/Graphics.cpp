@@ -15,7 +15,7 @@ using cherrysoda::StringUtil;
 
 void Graphics::LoadGraphicsAPI()
 {
-#ifdef CHERRYSODA_OPENGL46
+#ifdef CHERRYSODA_OPENGL
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress));
 #endif
 #ifdef CHERRYSODA_GLES2
