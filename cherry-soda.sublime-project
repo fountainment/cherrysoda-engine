@@ -1,0 +1,52 @@
+{
+	"build_systems":
+	[
+		{
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"name": "cherry-soda (Linux)",
+			"shell_cmd": "make -j8",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "clean",
+					"shell_cmd": "make -j8 clean"
+				},
+				{
+					"name": "rebuild_cache",
+					"shell_cmd": "make -j8 rebuild_cache"
+				},
+				{
+					"name": "glad",
+					"shell_cmd": "make -j8 glad"
+				},
+				{
+					"name": "glm_static",
+					"shell_cmd": "make -j8 glm_static"
+				},
+				{
+					"name": "CherrySoda",
+					"shell_cmd": "make -j8 CherrySoda"
+				},
+				{
+					"name": "VoxelExperiment",
+					"shell_cmd": "make -j8 VoxelExperiment"
+				}
+			],
+			"working_dir": "${project_path}/build"
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"cmake":
+		{
+			"build_folder": "${project_path}/build"
+		}
+	}
+}

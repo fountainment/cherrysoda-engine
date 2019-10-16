@@ -3,6 +3,8 @@ set(ENGINE_SRC
   CherrySoda/Engine.h
   CherrySoda/Entity.cpp
   CherrySoda/Entity.h
+  CherrySoda/Components/Component.cpp
+  CherrySoda/Components/Component.h
   CherrySoda/Graphics/Graphics.cpp
   CherrySoda/Graphics/Graphics.h
   CherrySoda/Interface/Window.cpp

@@ -1,5 +1,5 @@
-#ifndef _CHERRYSODA_GRAPHICS_H_
-#define _CHERRYSODA_GRAPHICS_H_
+#ifndef _CHERRYSODA_GRAPHICS_GRAPHICS_H_
+#define _CHERRYSODA_GRAPHICS_GRAPHICS_H_
 
 #include <CherrySoda/Utility/Color.h>
 
@@ -28,4 +28,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_GRAPHICS_H_
+#endif // _CHERRYSODA_GRAPHICS_GRAPHICS_H_
