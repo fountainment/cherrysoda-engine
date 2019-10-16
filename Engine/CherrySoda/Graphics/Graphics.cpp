@@ -1,5 +1,6 @@
 #include <CherrySoda/Graphics/Graphics.h>
 
+#include <CherrySoda/Engine.h>
 #include <CherrySoda/Utility/Log.h>
 #include <CherrySoda/Utility/String.h>
 
@@ -10,8 +11,21 @@
 using cherrysoda::Graphics;
 
 using cherrysoda::Color;
+using cherrysoda::Engine;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
+
+Graphics::Graphics()
+{
+}
+
+void Graphics::Init()
+{
+	Graphics::LoadGraphicsAPI();
+	Graphics::SetViewport(0, 0, Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight());
+
+	ms_instance = new Graphics();
+}
 
 void Graphics::LoadGraphicsAPI()
 {
@@ -52,3 +66,5 @@ void Graphics::TriangleGLES2()
 	glDisableVertexAttribArray(0);
 }
 #endif // CHERRYSODA_GLES2
+
+Graphics* Graphics::ms_instance = nullptr;

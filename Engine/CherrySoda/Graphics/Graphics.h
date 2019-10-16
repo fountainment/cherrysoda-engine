@@ -8,6 +8,7 @@ namespace cherrysoda {
 class Graphics
 {
 public:
+	static void Init();
 	static void LoadGraphicsAPI();
 	static void SetClearColor(const Color& color);
 	static void SetViewport(int x, int y, int w, int h);
@@ -16,6 +17,13 @@ public:
 #ifdef CHERRYSODA_GLES2
 	static void TriangleGLES2();
 #endif
+
+	static Graphics* GetInstance() { return ms_instance; };
+
+private:
+	Graphics();
+
+	static Graphics* ms_instance;
 };
 
 } // namespace cherrysoda

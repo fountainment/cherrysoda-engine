@@ -48,12 +48,6 @@ void Window::CreateWindow()
 	String title = Engine::GetInstance()->GetTitle();
 	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_OPENGL);
 	m_glContext = SDL_GL_CreateContext(m_mainWindow);
-
-	MakeContextCurrent();
-	SetVsyncEnabled(true);
-
-	Graphics::LoadGraphicsAPI();
-	Graphics::SetViewport(0, 0, windowWidth, windowHeight);
 }
 
 void Window::DestroyWindow()

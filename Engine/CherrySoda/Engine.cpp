@@ -47,6 +47,10 @@ void Engine::Run()
 
 	m_window = new Window();
 	m_window->CreateWindow();
+	m_window->MakeContextCurrent();
+	m_window->SetVsyncEnabled(true);
+
+	Graphics::Init();
 
 	m_window->SetClearColor(m_clearColor);
 
