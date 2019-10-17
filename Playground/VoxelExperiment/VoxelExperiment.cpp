@@ -17,8 +17,4 @@ VoxelExperiment::VoxelExperiment()
 void VoxelExperiment::Update()
 {
 	base::Update();
-
-#ifdef CHERRYSODA_GLES2
-	Graphics::TriangleGLES2();
-#endif
 }
