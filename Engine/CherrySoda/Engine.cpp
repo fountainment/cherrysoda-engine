@@ -51,6 +51,8 @@ void Engine::Run()
 	m_window->SetVsyncEnabled(true);
 
 	Graphics::Init();
+	Graphics::RenderFrame();
+	m_window->Show();
 
 	m_window->SetClearColor(m_clearColor);
 

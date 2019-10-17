@@ -27,6 +27,7 @@ private:
 	void MakeContextCurrent();
 	void SetClearColor(const Color& color);
 	void SetVsyncEnabled(bool enabled);
+	void Show();
 
 	static void PollEvents();
 

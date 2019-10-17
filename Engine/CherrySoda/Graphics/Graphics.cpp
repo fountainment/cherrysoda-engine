@@ -29,7 +29,6 @@ void Graphics::Init()
 	bgfx::init();
 	bgfx::reset(Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight(), BGFX_RESET_VSYNC);
 	bgfx::setDebug(BGFX_DEBUG_TEXT);
-	Graphics::SetViewport(0, 0, Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight());
 
 	ms_instance = new Graphics();
 }

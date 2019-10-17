@@ -97,8 +97,7 @@ void Window::CherrySodaCreateWindow()
 	int windowWidth = Engine::GetInstance()->GetWindowWidth();
 	int windowHeight = Engine::GetInstance()->GetWindowHeight();
 	String title = Engine::GetInstance()->GetTitle();
-	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	
+	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
 	sdlSetWindow(m_mainWindow);
 }
 
@@ -138,6 +137,11 @@ void Window::SetClearColor(const Color& color)
 void Window::SetVsyncEnabled(bool enabled)
 {
 	//SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+}
+
+void Window::Show()
+{
+	SDL_ShowWindow(m_mainWindow);
 }
 
 void Window::PollEvents()
