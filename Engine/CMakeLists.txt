@@ -18,6 +18,10 @@ set(ENGINE_SRC
   CherrySoda/Utility/String.h
 )
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  include_directories(../External/bgfx/bx/include/compat/msvc)
+endif()
+
 add_library(CherrySoda STATIC ${ENGINE_SRC})
 if(NOT DEFINED ENV{SDL2_DIR})
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
