@@ -15,8 +15,6 @@ BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG("-Wextern-c-compat")
 #include <SDL2/SDL_syswm.h>
 BX_PRAGMA_DIAGNOSTIC_POP()
 
-using cherrysoda::Window;
-
 using cherrysoda::Color;
 using cherrysoda::String;
 
@@ -88,11 +86,11 @@ inline bool sdlSetWindow(SDL_Window* _window)
 	return true;
 }
 
-Window::Window()
+cherrysoda::Window::Window()
 {
 }
 
-void Window::CherrySodaCreateWindow()
+void cherrysoda::Window::CherrySodaCreateWindow()
 {
 	int windowWidth = Engine::GetInstance()->GetWindowWidth();
 	int windowHeight = Engine::GetInstance()->GetWindowHeight();
@@ -101,50 +99,50 @@ void Window::CherrySodaCreateWindow()
 	sdlSetWindow(m_mainWindow);
 }
 
-void Window::DestroyWindow()
+void cherrysoda::Window::DestroyWindow()
 {
 	SDL_DestroyWindow(m_mainWindow);
 	m_mainWindow = nullptr;
 }
 
-void Window::SetSize(int width, int height)
+void cherrysoda::Window::SetSize(int width, int height)
 {
 }
 
-void Window::SetTitle(const String& title)
+void cherrysoda::Window::SetTitle(const String& title)
 {
 }
 
-void Window::SetFullscreen(bool fullscreen)
+void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
 }
 
-void Window::SwapBuffers()
+void cherrysoda::Window::SwapBuffers()
 {
 	//SDL_GL_SwapWindow(m_mainWindow);
 }
 
-void Window::MakeContextCurrent()
+void cherrysoda::Window::MakeContextCurrent()
 {
 	//SDL_GL_MakeCurrent(m_mainWindow, m_glContext);
 }
 
-void Window::SetClearColor(const Color& color)
+void cherrysoda::Window::SetClearColor(const Color& color)
 {
 	Graphics::SetClearColor(color);
 }
 
-void Window::SetVsyncEnabled(bool enabled)
+void cherrysoda::Window::SetVsyncEnabled(bool enabled)
 {
 	//SDL_GL_SetSwapInterval(enabled ? 1 : 0);
 }
 
-void Window::Show()
+void cherrysoda::Window::Show()
 {
 	SDL_ShowWindow(m_mainWindow);
 }
 
-void Window::PollEvents()
+void cherrysoda::Window::PollEvents()
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -163,7 +161,7 @@ void Window::PollEvents()
 	}
 }
 
-bool Window::Init()
+bool cherrysoda::Window::Init()
 {
 	if (SDL_Init(0 | SDL_INIT_GAMECONTROLLER) != 0) {
 		return false;
@@ -171,7 +169,7 @@ bool Window::Init()
 	return true;
 }
 
-void Window::Terminate()
+void cherrysoda::Window::Terminate()
 {
 	SDL_Quit();
 }
