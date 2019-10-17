@@ -9,7 +9,8 @@ class Graphics
 {
 public:
 	static void Init();
-	static void LoadGraphicsAPI();
+	static void Terminate();
+	static void RenderFrame();
 	static void SetClearColor(const Color& color);
 	static void SetViewport(int x, int y, int w, int h);
 	static void ClearColorAndDepth();

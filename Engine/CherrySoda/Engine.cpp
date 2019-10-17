@@ -46,7 +46,7 @@ void Engine::Run()
 	}
 
 	m_window = new Window();
-	m_window->CreateWindow();
+	m_window->CherrySodaCreateWindow();
 	m_window->MakeContextCurrent();
 	m_window->SetVsyncEnabled(true);
 
@@ -59,6 +59,7 @@ void Engine::Run()
 		Graphics::ClearColorAndDepth();
 
 		Update();
+		Graphics::RenderFrame();
 
 		m_window->SwapBuffers();
 	}

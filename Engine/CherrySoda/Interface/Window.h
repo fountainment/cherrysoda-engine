@@ -20,7 +20,7 @@ private:
 	void SetTitle(const String& string);
 	void SetFullscreen(bool fullscreen);
 
-	void CreateWindow();
+	void CherrySodaCreateWindow();
 	void DestroyWindow();
 	void SwapBuffers();
 
@@ -34,7 +34,6 @@ private:
 	static void Terminate();
 
 	CHERRYSODA_WINDOW* m_mainWindow = nullptr;
-	void* m_glContext = nullptr;
 };
 
 } // namespace cherrysoda
