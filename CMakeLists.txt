@@ -10,8 +10,6 @@ project(CherrySoda VERSION 0.01
                    DESCRIPTION "A Toy Game Engine"
                    LANGUAGES CXX)
 
-option(USE_OPENGL46 "option for using less supported OpenGL 4.6" OFF)
-
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 

@@ -5,7 +5,6 @@
 #include <CherrySoda/Utility/String.h>
 
 #include <cstdio>
-#include <glad/glad.h>
 #include <SDL2/SDL.h>
 
 using cherrysoda::Graphics;
@@ -36,23 +35,23 @@ void Graphics::LoadGraphicsAPI()
 	gladLoadGLES2Loader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress));
 #endif
 
-	CHERRYSODA_DEBUG(StringUtil::Format("OpenGL Version: %s\n", glGetString(GL_VERSION)));
-	CHERRYSODA_DEBUG(StringUtil::Format("GLSL Version:   %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
+	//CHERRYSODA_DEBUG(StringUtil::Format("OpenGL Version: %s\n", glGetString(GL_VERSION)));
+	//CHERRYSODA_DEBUG(StringUtil::Format("GLSL Version:   %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION)));
 }
 
 void Graphics::SetClearColor(const Color& color)
 {
-	glClearColor(color.R(), color.G(), color.B(), color.A());
+	//glClearColor(color.R(), color.G(), color.B(), color.A());
 }
 
 void Graphics::SetViewport(int x, int y, int w, int h)
 {
-	glViewport(x, y, w, h);
+	//glViewport(x, y, w, h);
 }
 
 void Graphics::ClearColorAndDepth()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 #ifdef CHERRYSODA_GLES2
