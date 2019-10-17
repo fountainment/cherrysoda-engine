@@ -15,10 +15,6 @@ public:
 	static void SetViewport(int x, int y, int w, int h);
 	static void ClearColorAndDepth();
 
-#ifdef CHERRYSODA_GLES2
-	static void TriangleGLES2();
-#endif
-
 	static Graphics* GetInstance() { return ms_instance; };
 
 private:
