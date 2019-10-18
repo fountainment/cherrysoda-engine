@@ -43,6 +43,7 @@ void Graphics::RenderFrame()
 	bgfx::touch(0);
 	bgfx::dbgTextClear();
 	bgfx::dbgTextPrintf(0, 1, 0x0f, "Hello, world!");
+	bgfx::dbgTextPrintf(0, 2, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
 	bgfx::frame();
 }
 
