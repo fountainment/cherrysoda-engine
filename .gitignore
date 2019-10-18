@@ -34,5 +34,8 @@
 # Build
 build
 
+# Local
+*.sublime-workspace
+
 # Temp
 .*.swp
