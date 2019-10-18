@@ -49,7 +49,7 @@ void Engine::Run()
 	m_window->CherrySodaCreateWindow();
 
 	Graphics::Init();
-	Graphics::Reset();
+	Graphics::Reset(false);
 	Graphics::SetClearColor(m_clearColor);
 	Graphics::RenderFrame();
 

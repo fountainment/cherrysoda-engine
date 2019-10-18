@@ -39,11 +39,14 @@ void Graphics::Terminate()
 
 void Graphics::RenderFrame()
 {
+	static int s_frameCount = 0;
+
 	Graphics::SetViewport(0, 0, Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight());
 	bgfx::touch(0);
 	bgfx::dbgTextClear();
 	bgfx::dbgTextPrintf(0, 1, 0x0f, "Hello, world!");
 	bgfx::dbgTextPrintf(0, 2, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
+	bgfx::dbgTextPrintf(0, 3, 0x0f, StringUtil::Format("Frame: %d", s_frameCount++).c_str());
 	bgfx::frame();
 }
 
