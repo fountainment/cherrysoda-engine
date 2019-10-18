@@ -34,6 +34,60 @@
 				}
 			],
 			"working_dir": "${project_path}/build"
+		},
+		{
+			"file_regex": "^  (.+)\\((\\d+)\\)(): ((?:fatal )?(?:error|warning) \\w+\\d\\d\\d\\d: .*) \\[.*$",
+			"name": "cherry-soda (Windows)",
+			"shell_cmd": "cmake --build .",
+			"syntax": "Packages/CMakeBuilder/Syntax/Visual_Studio.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "ALL_BUILD",
+					"shell_cmd": "cmake --build . --target ALL_BUILD"
+				},
+				{
+					"name": "ZERO_CHECK",
+					"shell_cmd": "cmake --build . --target ZERO_CHECK"
+				},
+				{
+					"name": "Engine/CherrySoda",
+					"shell_cmd": "cmake --build . --target Engine/CherrySoda"
+				},
+				{
+					"name": "External/bgfx/bgfx",
+					"shell_cmd": "cmake --build . --target External/bgfx/bgfx"
+				},
+				{
+					"name": "External/bgfx/bimg",
+					"shell_cmd": "cmake --build . --target External/bgfx/bimg"
+				},
+				{
+					"name": "External/bgfx/bx",
+					"shell_cmd": "cmake --build . --target External/bgfx/bx"
+				},
+				{
+					"name": "External/glad-gl4.6/ALL_BUILD",
+					"shell_cmd": "cmake --build . --target External/glad-gl4.6/ALL_BUILD"
+				},
+				{
+					"name": "External/glad-gl4.6/glad",
+					"shell_cmd": "cmake --build . --target External/glad-gl4.6/glad"
+				},
+				{
+					"name": "External/glm-0.9.9.6/ALL_BUILD",
+					"shell_cmd": "cmake --build . --target External/glm-0.9.9.6/ALL_BUILD"
+				},
+				{
+					"name": "External/glm-0.9.9.6/glm/glm_static",
+					"shell_cmd": "cmake --build . --target External/glm-0.9.9.6/glm/glm_static"
+				},
+				{
+					"name": "Playground/VoxelExperiment/VoxelExperiment",
+					"shell_cmd": "cmake --build . --target Playground/VoxelExperiment/VoxelExperiment"
+				}
+			],
+			"working_dir": "${project_path}/build"
 		}
 	],
 	"folders":

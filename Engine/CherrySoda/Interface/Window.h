@@ -21,12 +21,7 @@ private:
 	void SetFullscreen(bool fullscreen);
 
 	void CherrySodaCreateWindow();
-	void DestroyWindow();
-	void SwapBuffers();
 
-	void MakeContextCurrent();
-	void SetClearColor(const Color& color);
-	void SetVsyncEnabled(bool enabled);
 	void Show();
 
 	static void PollEvents();

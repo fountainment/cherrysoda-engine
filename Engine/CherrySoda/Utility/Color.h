@@ -1,6 +1,8 @@
 #ifndef _CHERRYSODA_COLOR_H_
 #define _CHERRYSODA_COLOR_H_
 
+#include <CherrySoda/Utility/NumType.h>
+
 namespace cherrysoda {
 
 class Color
@@ -17,6 +19,9 @@ public:
 	constexpr float G() const { return m_g; }
 	constexpr float B() const { return m_b; }
 	constexpr float A() const { return m_a; }
+
+	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>(f * 255.0f + 0.5f); };
+	constexpr type::UInt32 U32() const { return F2U32(R()) << 24 | F2U32(G()) << 16 | F2U32(B()) << 8 | F2U32(A()); };
 
 	inline void SetR(float v) { m_r = v; }
 	inline void SetG(float v) { m_g = v; }
@@ -37,11 +42,6 @@ private:
 	float m_g;
 	float m_b;
 	float m_a;
-};
-
-class ColorValue {
-public:
-
 };
 
 } // namespace cherrysoda

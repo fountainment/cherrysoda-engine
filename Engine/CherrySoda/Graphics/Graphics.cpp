@@ -27,7 +27,6 @@ void Graphics::Init()
 {
 	bgfx::renderFrame();
 	bgfx::init();
-	bgfx::reset(Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight(), BGFX_RESET_VSYNC);
 	bgfx::setDebug(BGFX_DEBUG_TEXT);
 
 	ms_instance = new Graphics();
@@ -47,11 +46,16 @@ void Graphics::RenderFrame()
 	bgfx::frame();
 }
 
+void Graphics::Reset(bool vsyncEnabled)
+{
+	bgfx::reset(Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight(), vsyncEnabled ? BGFX_RESET_VSYNC : BGFX_RESET_NONE);
+}
+
 void Graphics::SetClearColor(const Color& color)
 {
 	bgfx::setViewClear(0
 		, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
-		, 0x303030ff
+		, color.U32()
 		, 1.0f
 		, 0
 	);
@@ -60,11 +64,6 @@ void Graphics::SetClearColor(const Color& color)
 void Graphics::SetViewport(int x, int y, int w, int h)
 {
 	bgfx::setViewRect(0, x, y, w, h);
-}
-
-void Graphics::ClearColorAndDepth()
-{
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 Graphics* Graphics::ms_instance = nullptr;

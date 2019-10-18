@@ -3,7 +3,7 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Utility/Color.h>
-#include <CherrySoda/Utility/NumTypes.h>
+#include <CherrySoda/Utility/NumType.h>
 
 #include <bx/os.h>
 #include <bgfx/platform.h>
@@ -99,12 +99,6 @@ void cherrysoda::Window::CherrySodaCreateWindow()
 	sdlSetWindow(m_mainWindow);
 }
 
-void cherrysoda::Window::DestroyWindow()
-{
-	SDL_DestroyWindow(m_mainWindow);
-	m_mainWindow = nullptr;
-}
-
 void cherrysoda::Window::SetSize(int width, int height)
 {
 }
@@ -115,26 +109,6 @@ void cherrysoda::Window::SetTitle(const String& title)
 
 void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
-}
-
-void cherrysoda::Window::SwapBuffers()
-{
-	//SDL_GL_SwapWindow(m_mainWindow);
-}
-
-void cherrysoda::Window::MakeContextCurrent()
-{
-	//SDL_GL_MakeCurrent(m_mainWindow, m_glContext);
-}
-
-void cherrysoda::Window::SetClearColor(const Color& color)
-{
-	Graphics::SetClearColor(color);
-}
-
-void cherrysoda::Window::SetVsyncEnabled(bool enabled)
-{
-	//SDL_GL_SetSwapInterval(enabled ? 1 : 0);
 }
 
 void cherrysoda::Window::Show()

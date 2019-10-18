@@ -34,8 +34,8 @@ void Engine::SetTitle(const String& title)
 void Engine::SetClearColor(const Color& color)
 {
 	m_clearColor = color;
-	if (m_window) {
-		m_window->SetClearColor(color);
+	if (Graphics::GetInstance() != nullptr) {
+		Graphics::SetClearColor(color);
 	}
 }
 
@@ -47,26 +47,22 @@ void Engine::Run()
 
 	m_window = new Window();
 	m_window->CherrySodaCreateWindow();
-	m_window->MakeContextCurrent();
-	m_window->SetVsyncEnabled(true);
 
 	Graphics::Init();
+	Graphics::Reset();
+	Graphics::SetClearColor(m_clearColor);
 	Graphics::RenderFrame();
-	m_window->Show();
 
-	m_window->SetClearColor(m_clearColor);
+	m_window->Show();
 
 	while (!m_shouldExit) {
 		Window::PollEvents();
-		Graphics::ClearColorAndDepth();
 
 		Update();
 		Graphics::RenderFrame();
-
-		m_window->SwapBuffers();
 	}
 
-	m_window->DestroyWindow();
+	Graphics::Terminate();
 	Window::Terminate();
 }
 

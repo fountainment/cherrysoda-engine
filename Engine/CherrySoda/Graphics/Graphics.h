@@ -11,9 +11,9 @@ public:
 	static void Init();
 	static void Terminate();
 	static void RenderFrame();
+	static void Reset(bool vsyncEnabled = true);
 	static void SetClearColor(const Color& color);
 	static void SetViewport(int x, int y, int w, int h);
-	static void ClearColorAndDepth();
 
 	static Graphics* GetInstance() { return ms_instance; };
 
