@@ -27,20 +27,20 @@ public:
 	virtual void DebugRender(/*const Camera& camera*/) {}
 
 private:
-	bool m_active;
-	bool m_visible;
-	bool m_collidable;
-	glm::vec2 m_position;
+	bool m_active = true;
+	bool m_visible = true;
+	bool m_collidable = false;
+	glm::vec2 m_position = glm::vec2(0.f);
 
 	// std::weak_ptr<Scene> m_scene = nullptr;
 	// std::shared_ptr<ComponentList> m_components = nullptr;
 
-	int m_tag;
+	int m_tag = 0;
 
 	// Collider* collider;
 
-	int m_depth;
-	double m_actualDepth;
+	int m_depth = 0;
+	double m_actualDepth = 0.f;
 };
 
 } // namespace cherrysoda

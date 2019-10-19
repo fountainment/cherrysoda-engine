@@ -42,6 +42,11 @@ public:
 	static Engine* GetInstance() { return ms_instance; }
 
 private:
+	friend class Window;
+
+	inline void SetWindowSize(int width, int height) { m_windowWidth = width; m_windowHeight = height; }
+	inline void SetViewSize(int width, int height) { m_width = width; m_height = height; }
+
 	int m_width;
 	int m_height;
 	int m_windowWidth;

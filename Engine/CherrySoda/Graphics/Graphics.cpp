@@ -50,9 +50,9 @@ void Graphics::RenderFrame()
 	bgfx::frame();
 }
 
-void Graphics::Reset(bool vsyncEnabled)
+void Graphics::UpdateView()
 {
-	bgfx::reset(Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight(), vsyncEnabled ? BGFX_RESET_VSYNC : BGFX_RESET_NONE);
+	bgfx::reset(Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight(), m_vsyncEnabled ? BGFX_RESET_VSYNC : BGFX_RESET_NONE);
 }
 
 void Graphics::SetClearColor(const Color& color)

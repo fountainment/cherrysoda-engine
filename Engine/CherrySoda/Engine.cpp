@@ -34,8 +34,8 @@ void Engine::SetTitle(const String& title)
 void Engine::SetClearColor(const Color& color)
 {
 	m_clearColor = color;
-	if (Graphics::GetInstance() != nullptr) {
-		Graphics::SetClearColor(color);
+	if (auto gfxInstance = Graphics::GetInstance()) {
+		gfxInstance->SetClearColor(color);
 	}
 }
 
@@ -49,9 +49,9 @@ void Engine::Run()
 	m_window->CherrySodaCreateWindow();
 
 	Graphics::Init();
-	Graphics::Reset(false);
-	Graphics::SetClearColor(m_clearColor);
-	Graphics::RenderFrame();
+	Graphics::GetInstance()->UpdateView();
+	Graphics::GetInstance()->SetClearColor(m_clearColor);
+	Graphics::GetInstance()->RenderFrame();
 
 	m_window->Show();
 
@@ -59,7 +59,7 @@ void Engine::Run()
 		Window::PollEvents();
 
 		Update();
-		Graphics::RenderFrame();
+		Graphics::GetInstance()->RenderFrame();
 	}
 
 	Graphics::Terminate();

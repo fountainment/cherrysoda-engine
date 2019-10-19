@@ -131,6 +131,21 @@ void cherrysoda::Window::PollEvents()
 				break;
 			}
 			break;
+		case SDL_WINDOWEVENT:
+		{
+			const SDL_WindowEvent& wev = event.window;
+			switch (wev.event)
+			{
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+			{
+				Engine::GetInstance()->SetWindowSize(wev.data1, wev.data2);
+				Engine::GetInstance()->SetViewSize(wev.data1, wev.data2);
+				Graphics::GetInstance()->UpdateView();
+			}
+			break;
+			}
+		}
+		break;
 		}
 	}
 }

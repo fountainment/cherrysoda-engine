@@ -10,15 +10,20 @@ class Graphics
 public:
 	static void Init();
 	static void Terminate();
-	static void RenderFrame();
-	static void Reset(bool vsyncEnabled = true);
-	static void SetClearColor(const Color& color);
-	static void SetViewport(int x, int y, int w, int h);
+
+	void RenderFrame();
+	void UpdateView();
+	void SetClearColor(const Color& color);
+	void SetViewport(int x, int y, int w, int h);
 
 	static Graphics* GetInstance() { return ms_instance; };
 
 private:
+	friend class Engine;
+
 	Graphics();
+
+	bool m_vsyncEnabled = true;
 
 	static Graphics* ms_instance;
 };

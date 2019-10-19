@@ -11,9 +11,9 @@ namespace cherrysoda {
 
 class Window
 {
+private:
 	friend class Engine;
 
-private:
 	Window();
 
 	void SetSize(int width, int height);
