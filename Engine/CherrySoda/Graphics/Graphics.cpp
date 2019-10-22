@@ -67,9 +67,9 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 
 static PosColorVertex s_triVertices[] =
 {
-	{  0.0f,  0.5f, 0.0f, 0xff0000ff },
-	{ -0.5f, -0.5f, 0.0f, 0xff00ff00 },
-	{  0.5f, -0.5f, 0.0f, 0xffff0000 }
+	{  0.0f,    0.67f, 0.0f, 0xff0000ff },
+	{ -0.577f, -0.33f, 0.0f, 0xff00ff00 },
+	{  0.577f, -0.33f, 0.0f, 0xffff0000 }
 };
 
 static const uint16_t s_triTriList[] =
@@ -125,7 +125,7 @@ void Graphics::RenderFrame()
 	bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
 	bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Frame Count: %d", s_frameCount++).c_str());
 
-	const bx::Vec3 at =  { 0.0f, 0.0f,   0.0f };
+	const bx::Vec3 at =  { 0.0f, 0.0f,  0.0f };
 	const bx::Vec3 eye = { 0.0f, 0.0f, -2.0f };
 
 	float m_width = Engine::GetInstance()->GetWidth();
@@ -144,10 +144,10 @@ void Graphics::RenderFrame()
 	bgfx::setVertexBuffer(0, m_vbh);
 	bgfx::setIndexBuffer(m_ibh);
 
-	float xx = 0.0f, yy = 0.0f;
+	static float zAngle = 0.f;
 	float mtx[16];
-	bx::mtxRotateXY(mtx, 0.f, 0.f);
-	mtx[14] = 0.0f;
+	bx::mtxRotateXYZ(mtx, 0.f, 0.f, zAngle);
+	zAngle += 0.01f;
 
 	bgfx::setTransform(mtx);
 	bgfx::setVertexBuffer(0, m_vbh);
