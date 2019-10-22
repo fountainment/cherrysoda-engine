@@ -11,7 +11,7 @@ using cherrysoda::Graphics;
 VoxelExperiment::VoxelExperiment()
 	: base()
 {
-	SetClearColor(Color::Red);
+	SetClearColor(Color::Black);
 }
 
 void VoxelExperiment::Update()
