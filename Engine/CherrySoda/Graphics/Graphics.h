@@ -14,6 +14,7 @@ public:
 	void RenderFrame();
 	void UpdateView();
 	void SetClearColor(const Color& color);
+	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
 
 	static Graphics* GetInstance() { return ms_instance; };

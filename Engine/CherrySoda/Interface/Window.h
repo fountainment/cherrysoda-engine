@@ -20,7 +20,8 @@ private:
 	void SetTitle(const String& string);
 	void SetFullscreen(bool fullscreen);
 
-	void CherrySodaCreateWindow();
+	void CreateWindow();
+	void DestroyWindow();
 
 	void Show();
 

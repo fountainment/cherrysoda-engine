@@ -46,7 +46,7 @@ void Engine::Run()
 	}
 
 	m_window = new Window();
-	m_window->CherrySodaCreateWindow();
+	m_window->CreateWindow();
 
 	Graphics::Init();
 	Graphics::GetInstance()->UpdateView();
@@ -63,6 +63,8 @@ void Engine::Run()
 	}
 
 	Graphics::Terminate();
+
+	m_window->DestroyWindow();
 	Window::Terminate();
 }
 

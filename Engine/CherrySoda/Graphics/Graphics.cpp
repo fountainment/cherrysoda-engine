@@ -8,7 +8,6 @@
 #include <bx/math.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
-#include <SDL2/SDL.h>
 
 #include <cstdio>
 #include <string>
@@ -46,7 +45,7 @@ bgfx::VertexLayout PosColorVertex::ms_layout;
 
 
 bgfx::ShaderHandle loadShader(const char* _name) {
-	char* data = new char[2048];
+	char data[2048];
 	std::ifstream file;
 	size_t fileSize = 0;
 	file.open(_name, std::ios::binary);
@@ -67,9 +66,9 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 
 static PosColorVertex s_triVertices[] =
 {
-	{  0.0f,    0.67f, 0.0f, 0xff0000ff },
-	{ -0.577f, -0.33f, 0.0f, 0xff00ff00 },
-	{  0.577f, -0.33f, 0.0f, 0xffff0000 }
+	{  0.0f,   0.67f, 0.0f, 0xff0000ff },
+	{ -0.58f, -0.33f, 0.0f, 0xff00ff00 },
+	{  0.58f, -0.33f, 0.0f, 0xffff0000 }
 };
 
 static const uint16_t s_triTriList[] =
@@ -89,7 +88,7 @@ void Graphics::Init()
 {
 	bgfx::renderFrame();
 	bgfx::init();
-	bgfx::setDebug(BGFX_DEBUG_TEXT);
+	bgfx::setDebug(BGFX_DEBUG_NONE);
 
 	PosColorVertex::init();
 
@@ -147,7 +146,7 @@ void Graphics::RenderFrame()
 	static float zAngle = 0.f;
 	float mtx[16];
 	bx::mtxRotateXYZ(mtx, 0.f, 0.f, zAngle);
-	zAngle += 0.01f;
+	zAngle += 0.02f;
 
 	bgfx::setTransform(mtx);
 	bgfx::setVertexBuffer(0, m_vbh);
@@ -171,6 +170,11 @@ void Graphics::SetClearColor(const Color& color)
 		, 1.0f
 		, 0
 	);
+}
+
+void Graphics::SetVsyncEnabled(bool vsyncEnabled)
+{
+	m_vsyncEnabled = vsyncEnabled;
 }
 
 void Graphics::SetViewport(int x, int y, int w, int h)
