@@ -4,9 +4,11 @@
  4. Log utility <done>
  5. Window deletion and ESC quit <done>
  6. ComponentList, Entity and Component class
- 7. GraphicsComponent class
+ 7. GraphicsComponent class and Effect class
  8. first triangle
  9. glm integration
 10. GraphicComponent
 11. Camera class
 12. UML and doc
+13. HiRes timer with SDL
+14. HiDPI support with SDL
