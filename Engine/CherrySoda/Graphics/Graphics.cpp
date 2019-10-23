@@ -140,9 +140,6 @@ void Graphics::RenderFrame()
 		bgfx::setViewRect(0, 0, 0, uint16_t(m_width), uint16_t(m_height));
 	}
 
-	bgfx::setVertexBuffer(0, m_vbh);
-	bgfx::setIndexBuffer(m_ibh);
-
 	static float zAngle = 0.f;
 	float mtx[16];
 	bx::mtxRotateXYZ(mtx, 0.f, 0.f, zAngle);
