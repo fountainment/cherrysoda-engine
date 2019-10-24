@@ -1,5 +1,5 @@
-#ifndef _CHERRYSODA_UTILITY_NUMTYPE_H_
-#define _CHERRYSODA_UTILITY_NUMTYPE_H_
+#ifndef _CHERRYSODA_UTIL_NUMTYPE_H_
+#define _CHERRYSODA_UTIL_NUMTYPE_H_
 
 #include <cstdint>
 
@@ -13,4 +13,4 @@ namespace type {
 
 } // cherrysoda
 
-#endif // _CHERRYSODA_UTILITY_NUMTYPE_H_
+#endif // _CHERRYSODA_UTIL_NUMTYPE_H_

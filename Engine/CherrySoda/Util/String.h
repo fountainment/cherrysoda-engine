@@ -1,5 +1,5 @@
-#ifndef _CHERRYSODA_UTILITY_STRING_H_
-#define _CHERRYSODA_UTILITY_STRING_H_
+#ifndef _CHERRYSODA_UTIL_STRING_H_
+#define _CHERRYSODA_UTIL_STRING_H_
 
 #include <string>
 

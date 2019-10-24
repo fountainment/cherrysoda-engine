@@ -9,13 +9,15 @@ set(ENGINE_SRC
   CherrySoda/Graphics/Graphics.h
   CherrySoda/Interface/Window.cpp
   CherrySoda/Interface/Window.h
-  CherrySoda/Utility/Color.cpp
-  CherrySoda/Utility/Color.h
-  CherrySoda/Utility/Log.cpp
-  CherrySoda/Utility/Log.h
-  CherrySoda/Utility/NumType.h
-  CherrySoda/Utility/String.cpp
-  CherrySoda/Utility/String.h
+  CherrySoda/InternalUtilities/ComponentList.cpp
+  CherrySoda/InternalUtilities/ComponentList.h
+  CherrySoda/Util/Color.cpp
+  CherrySoda/Util/Color.h
+  CherrySoda/Util/Log.cpp
+  CherrySoda/Util/Log.h
+  CherrySoda/Util/NumType.h
+  CherrySoda/Util/String.cpp
+  CherrySoda/Util/String.h
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")

@@ -1,4 +1,4 @@
-#include <CherrySoda/Utility/Color.h>
+#include <CherrySoda/Util/Color.h>
 
 using cherrysoda::Color;
 

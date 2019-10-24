@@ -1,8 +1,8 @@
 #ifndef _CHERRYSODA_INTERFACE_WINDOW_H_
 #define _CHERRYSODA_INTERFACE_WINDOW_H_
 
-#include <CherrySoda/Utility/Color.h>
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/String.h>
 
 #define CHERRYSODA_WINDOW SDL_Window
 struct CHERRYSODA_WINDOW;

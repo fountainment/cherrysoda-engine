@@ -2,8 +2,8 @@
 
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Interface/Window.h>
-#include <CherrySoda/Utility/Color.h>
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/String.h>
 
 using cherrysoda::Engine;
 

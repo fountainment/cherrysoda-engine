@@ -1,6 +1,6 @@
-#include <CherrySoda/Utility/Log.h>
+#include <CherrySoda/Util/Log.h>
 
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/String.h>
 
 #include <cstdio>
 

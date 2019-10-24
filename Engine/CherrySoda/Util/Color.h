@@ -1,7 +1,7 @@
-#ifndef _CHERRYSODA_COLOR_H_
-#define _CHERRYSODA_COLOR_H_
+#ifndef _CHERRYSODA_UTIL_COLOR_H_
+#define _CHERRYSODA_UTIL_COLOR_H_
 
-#include <CherrySoda/Utility/NumType.h>
+#include <CherrySoda/Util/NumType.h>
 
 namespace cherrysoda {
 
@@ -46,4 +46,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRRYSODA_COLOR_H_
+#endif // _CHERRRYSODA_UTIL_COLOR_H_

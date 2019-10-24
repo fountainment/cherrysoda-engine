@@ -1,0 +1,13 @@
+#ifndef _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_
+#define _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_
+
+namespace cherrysoda {
+
+class ComponentList
+{
+
+};
+
+} // namespace cherrysoda
+
+#endif // _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_ 

@@ -2,8 +2,8 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
-#include <CherrySoda/Utility/Color.h>
-#include <CherrySoda/Utility/NumType.h>
+#include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/NumType.h>
 
 
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD

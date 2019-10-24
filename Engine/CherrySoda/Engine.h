@@ -1,8 +1,8 @@
 #ifndef _CHERRYSODA_ENGINE_H_
 #define _CHERRYSODA_ENGINE_H_
 
-#include <CherrySoda/Utility/Color.h>
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/String.h>
 
 #ifdef _MSC_VER
 	#pragma comment(linker, "/NODEFAULTLIB:LIBCMT.lib")

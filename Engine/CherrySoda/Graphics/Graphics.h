@@ -1,7 +1,7 @@
 #ifndef _CHERRYSODA_GRAPHICS_GRAPHICS_H_
 #define _CHERRYSODA_GRAPHICS_GRAPHICS_H_
 
-#include <CherrySoda/Utility/Color.h>
+#include <CherrySoda/Util/Color.h>
 
 namespace cherrysoda {
 

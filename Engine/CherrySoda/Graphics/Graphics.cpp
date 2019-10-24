@@ -1,8 +1,8 @@
 #include <CherrySoda/Graphics/Graphics.h>
 
 #include <CherrySoda/Engine.h>
-#include <CherrySoda/Utility/Log.h>
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/String.h>
 
 #include <bx/bx.h>
 #include <bx/math.h>

@@ -1,7 +1,7 @@
-#ifndef _CHERRYSODA_LOG_H_
-#define _CHERRYSODA_LOG_H_
+#ifndef _CHERRYSODA_UTIL_LOG_H_
+#define _CHERRYSODA_UTIL_LOG_H_
 
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/String.h>
 
 #ifdef NDEBUG
 #define CHERRYSODA_DEBUG(output)
@@ -25,4 +25,4 @@ public:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_LOG_H_
+#endif // _CHERRYSODA_UTIL_LOG_H_

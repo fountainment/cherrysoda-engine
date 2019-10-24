@@ -1,7 +1,7 @@
 #include "VoxelExperiment.h"
 
 #include <CherrySoda/Graphics/Graphics.h>
-#include <CherrySoda/Utility/Color.h>
+#include <CherrySoda/Util/Color.h>
 
 using voxelexperiment::VoxelExperiment;
 

@@ -1,4 +1,4 @@
-#include <CherrySoda/Utility/String.h>
+#include <CherrySoda/Util/String.h>
 
 #include <cstdarg>
 
