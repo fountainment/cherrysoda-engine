@@ -17,10 +17,6 @@
 					"shell_cmd": "make -j8 rebuild_cache"
 				},
 				{
-					"name": "glad",
-					"shell_cmd": "make -j8 glad"
-				},
-				{
 					"name": "glm_static",
 					"shell_cmd": "make -j8 glm_static"
 				},
