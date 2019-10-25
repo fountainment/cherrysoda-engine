@@ -4,12 +4,14 @@
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/String.h>
+#include <CherrySoda/Util/Time.h>
 
 using cherrysoda::Engine;
 
 using cherrysoda::Color;
 using cherrysoda::Graphics;
 using cherrysoda::String;
+using cherrysoda::Time;
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
                const String& title, bool fullscreen)
@@ -55,7 +57,12 @@ void Engine::Run()
 
 	m_window->Show();
 
+	m_lastFrameTime = Time::GetSystemTime();
 	while (!m_shouldExit) {
+		m_currentTime = Time::GetSystemTime();
+		m_deltaTime = m_currentTime - m_lastFrameTime;
+		m_lastFrameTime = m_currentTime;
+
 		Window::PollEvents();
 
 		Update();

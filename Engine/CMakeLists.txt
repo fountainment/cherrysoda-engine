@@ -18,6 +18,8 @@ set(ENGINE_SRC
   CherrySoda/Util/NumType.h
   CherrySoda/Util/String.cpp
   CherrySoda/Util/String.h
+  CherrySoda/Util/Time.cpp
+  CherrySoda/Util/Time.h
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")

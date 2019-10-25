@@ -34,6 +34,8 @@ public:
 	const Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
 
+	float GetDeltaTime() { return static_cast<float>(m_deltaTime); };
+
 	void Run();
 	void Exit();
 
@@ -56,6 +58,10 @@ private:
 	bool m_fullscreen;
 	Window* m_window = nullptr;
 	bool m_shouldExit = false;
+
+	double m_deltaTime = 0.0;
+	double m_currentTime = 0.0;
+	double m_lastFrameTime = 0.0;
 
 	static Engine* ms_instance;
 };
