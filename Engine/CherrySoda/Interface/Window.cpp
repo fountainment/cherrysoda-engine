@@ -194,7 +194,7 @@ void cherrysoda::Window::PollEvents()
 
 bool cherrysoda::Window::Init()
 {
-	if (SDL_Init(0 | SDL_INIT_GAMECONTROLLER) != 0) {
+	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
 		return false;
 	}
 	return true;
