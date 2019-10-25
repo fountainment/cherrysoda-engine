@@ -123,7 +123,7 @@ void Graphics::RenderFrame()
 	bgfx::dbgTextClear();
 	bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
 	bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Frame Count: %d", s_frameCount++).c_str());
-	bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Delta Time: %f", Engine::GetInstance()->GetDeltaTime()).c_str());
+	bgfx::dbgTextPrintf(1, 3, 0x0f, StringUtil::Format("Delta Time: %f", Engine::GetInstance()->GetDeltaTime()).c_str());
 
 	const bx::Vec3 at =  { 0.0f, 0.0f,  0.0f };
 	const bx::Vec3 eye = { 0.0f, 0.0f, -2.0f };
@@ -144,7 +144,7 @@ void Graphics::RenderFrame()
 	static float zAngle = 0.f;
 	float mtx[16];
 	bx::mtxRotateXYZ(mtx, 0.f, 0.f, zAngle);
-	zAngle += 0.02f;
+	zAngle += 1.0f * Engine::GetInstance()->GetDeltaTime();
 
 	bgfx::setTransform(mtx);
 	bgfx::setVertexBuffer(0, m_vbh);
