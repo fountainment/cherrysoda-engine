@@ -35,12 +35,14 @@ public:
 	const Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
 
-	float GetDeltaTime() { return static_cast<float>(m_deltaTime); };
+	inline float GetRawDeltaTime() { return static_cast<float>(m_deltaTime); }
+	inline float GetDeltaTime() { return static_cast<float>(m_deltaTime); }
 
 	void Run();
 	void Exit();
 
 	virtual void Update();
+	virtual void Draw();
 
 	static Engine* GetInstance() { return ms_instance; }
 
@@ -60,9 +62,13 @@ private:
 	Window* m_window = nullptr;
 	bool m_shouldExit = false;
 
+	double m_rawDeltaTime = 0.0;
 	double m_deltaTime = 0.0;
 	double m_currentTime = 0.0;
 	double m_lastFrameTime = 0.0;
+	double m_counterElapsed = 0.0;
+	int m_fpsCounter = 0;
+	int m_FPS;
 
 	static Engine* ms_instance;
 };

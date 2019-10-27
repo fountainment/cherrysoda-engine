@@ -143,14 +143,17 @@ void cherrysoda::Window::DestroyWindow()
 
 void cherrysoda::Window::SetSize(int width, int height)
 {
+	SDL_SetWindowSize(m_mainWindow, width, height);
 }
 
 void cherrysoda::Window::SetTitle(const String& title)
 {
+	SDL_SetWindowTitle(m_mainWindow, title.c_str());
 }
 
 void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
+	SDL_SetWindowFullscreen(m_mainWindow, SDL_WINDOW_FULLSCREEN);
 }
 
 void cherrysoda::Window::Show()

@@ -11,6 +11,7 @@ using cherrysoda::Engine;
 using cherrysoda::Color;
 using cherrysoda::Graphics;
 using cherrysoda::String;
+using cherrysoda::StringUtil;
 using cherrysoda::Time;
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
@@ -60,13 +61,14 @@ void Engine::Run()
 	m_lastFrameTime = Time::GetSystemTime();
 	while (!m_shouldExit) {
 		m_currentTime = Time::GetSystemTime();
-		m_deltaTime = m_currentTime - m_lastFrameTime;
+		m_rawDeltaTime = m_currentTime - m_lastFrameTime;
+		m_deltaTime = m_rawDeltaTime;
 		m_lastFrameTime = m_currentTime;
 
 		Window::PollEvents();
 
 		Update();
-		Graphics::GetInstance()->RenderFrame();
+		Draw();
 	}
 
 	Graphics::Terminate();
@@ -77,6 +79,19 @@ void Engine::Run()
 
 void Engine::Update()
 {
+}
+
+void Engine::Draw()
+{
+	Graphics::GetInstance()->RenderFrame();
+	m_fpsCounter++;
+	m_counterElapsed += m_rawDeltaTime;
+	if (m_counterElapsed > 1.f) {
+		m_window->SetTitle(m_title + " " + std::to_string(m_FPS) + " fps");
+		m_FPS = m_fpsCounter;
+		m_fpsCounter = 0.f;
+		m_counterElapsed -= 1.f;
+	}
 }
 
 void Engine::Exit()
