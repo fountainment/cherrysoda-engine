@@ -25,10 +25,11 @@ public:
 	Engine(int width, int height, int windowWidth, int windowHeight,
 	       const String& title, bool fullscreen);
 
-	int GetWidth() { return m_width; }
-	int GetHeight() { return m_height; }
-	int GetWindowWidth() { return m_windowWidth; }
-	int GetWindowHeight() { return m_windowHeight; }
+	inline int GetWidth() { return m_width; }
+	inline int GetHeight() { return m_height; }
+	inline float GetAspectRatio() { return static_cast<float>(GetWidth()) / static_cast<float>(GetHeight()); }
+	inline int GetWindowWidth() { return m_windowWidth; }
+	inline int GetWindowHeight() { return m_windowHeight; }
 	String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
 	const Color GetClearColor() { return m_clearColor; }
