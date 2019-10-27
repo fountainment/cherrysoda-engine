@@ -8,6 +8,7 @@
 #include <bx/math.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <cstdio>
 #include <string>
@@ -86,7 +87,6 @@ Graphics::Graphics()
 
 void Graphics::Init()
 {
-	bgfx::renderFrame();
 	bgfx::init();
 	bgfx::setDebug(BGFX_DEBUG_TEXT);
 
@@ -128,15 +128,20 @@ void Graphics::RenderFrame()
 	const bx::Vec3 at =  { 0.0f, 0.0f,  0.0f };
 	const bx::Vec3 eye = { 0.0f, 0.0f, -2.0f };
 
+	const glm::vec3 center = { 0.0f, 0.0f,  0.0f };
+	const glm::vec3 eyePos = { 0.0f, 0.0f, -2.0f };
+	const glm::vec3 upVec = { 0.0f, 0.1f, 0.0f };
+
 	float m_width = Engine::GetInstance()->GetWidth();
 	float m_height = Engine::GetInstance()->GetHeight();
 	{
 		float view[16];
 		bx::mtxLookAt(view, eye, at);
+		glm::mat4 viewMat = glm::lookAtLH(eyePos, center, upVec);
 
 		float proj[16];
 		bx::mtxProj(proj, 60.0f, float(m_width) / float(m_height), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-		bgfx::setViewTransform(0, view, proj);
+		bgfx::setViewTransform(0, &viewMat, proj);
 
 		bgfx::setViewRect(0, 0, 0, uint16_t(m_width), uint16_t(m_height));
 	}
