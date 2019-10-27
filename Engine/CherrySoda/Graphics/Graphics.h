@@ -24,7 +24,7 @@ private:
 
 	Graphics();
 
-	bool m_vsyncEnabled = true;
+	bool m_vsyncEnabled = false;
 
 	static Graphics* ms_instance;
 };

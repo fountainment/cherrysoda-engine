@@ -3,6 +3,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
 
@@ -87,10 +88,11 @@ void Engine::Draw()
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.f) {
-		m_window->SetTitle(m_title + " " + std::to_string(m_FPS) + " fps");
+		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 		m_FPS = m_fpsCounter;
 		m_fpsCounter = 0.f;
 		m_counterElapsed -= 1.f;
+		CHERRYSODA_LOG(StringUtil::Format("FPS: %d\n", m_FPS));
 	}
 }
 
