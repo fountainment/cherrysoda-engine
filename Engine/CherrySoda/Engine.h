@@ -30,17 +30,21 @@ public:
 	inline float GetAspectRatio() { return static_cast<float>(GetWidth()) / static_cast<float>(GetHeight()); }
 	inline int GetWindowWidth() { return m_windowWidth; }
 	inline int GetWindowHeight() { return m_windowHeight; }
-	String GetTitle() { return m_title; }
+	inline const String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
-	const Color GetClearColor() { return m_clearColor; }
+	inline const Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
 
-	inline float GetRawDeltaTime() { return static_cast<float>(m_deltaTime); }
-	inline float GetDeltaTime() { return static_cast<float>(m_deltaTime); }
+	inline float GetRawDeltaTime() const { return static_cast<float>(m_rawDeltaTime); }
+	inline float GetDeltaTime() const { return static_cast<float>(m_deltaTime); }
+	inline double GetTimeRate() const { return m_timeRate; }
+	inline void SetTimeRate(double timeRate) { m_timeRate = timeRate; }
 
 	void Run();
 	void Exit();
 
+	virtual void Initialize();
+	virtual void LoadContent();
 	virtual void Update();
 	virtual void Draw();
 
@@ -63,6 +67,7 @@ private:
 	bool m_shouldExit = false;
 
 	double m_rawDeltaTime = 0.0;
+	double m_timeRate = 1.0;
 	double m_deltaTime = 0.0;
 	double m_currentTime = 0.0;
 	double m_lastFrameTime = 0.0;

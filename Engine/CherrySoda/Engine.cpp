@@ -12,7 +12,6 @@ using cherrysoda::Engine;
 using cherrysoda::Color;
 using cherrysoda::Graphics;
 using cherrysoda::String;
-using cherrysoda::StringUtil;
 using cherrysoda::Time;
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
@@ -45,29 +44,15 @@ void Engine::SetClearColor(const Color& color)
 
 void Engine::Run()
 {
-	if (!Window::Init()) {
-		return;
-	}
+	Initialize();
+	LoadContent();
 
-	m_window = new Window();
-	m_window->CreateWindow();
-
-	Graphics::Init();
-	Graphics::GetInstance()->UpdateView();
-	Graphics::GetInstance()->SetClearColor(m_clearColor);
 	Graphics::GetInstance()->RenderFrame();
-
 	m_window->Show();
 
 	m_lastFrameTime = Time::GetSystemTime();
 	while (!m_shouldExit) {
-		m_currentTime = Time::GetSystemTime();
-		m_rawDeltaTime = m_currentTime - m_lastFrameTime;
-		m_deltaTime = m_rawDeltaTime;
-		m_lastFrameTime = m_currentTime;
-
 		Window::PollEvents();
-
 		Update();
 		Draw();
 	}
@@ -78,8 +63,30 @@ void Engine::Run()
 	Window::Terminate();
 }
 
+void Engine::Initialize()
+{
+	if (!Window::Init()) {
+		return;
+	}
+
+	m_window = new Window();
+	m_window->CreateWindow();
+
+	Graphics::Init();
+	Graphics::GetInstance()->UpdateView();
+	Graphics::GetInstance()->SetClearColor(m_clearColor);
+}
+
+void Engine::LoadContent()
+{
+}
+
 void Engine::Update()
 {
+	m_currentTime = Time::GetSystemTime();
+	m_rawDeltaTime = m_currentTime - m_lastFrameTime;
+	m_deltaTime = m_rawDeltaTime * m_timeRate;
+	m_lastFrameTime = m_currentTime;
 }
 
 void Engine::Draw()
@@ -88,11 +95,12 @@ void Engine::Draw()
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.f) {
-		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 		m_FPS = m_fpsCounter;
 		m_fpsCounter = 0.f;
 		m_counterElapsed -= 1.f;
-		CHERRYSODA_LOG(StringUtil::Format("FPS: %d\n", m_FPS));
+#ifndef NDEBUG
+		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
+#endif
 	}
 }
 
