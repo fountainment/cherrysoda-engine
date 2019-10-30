@@ -25,7 +25,7 @@ private:
 
 	void Show();
 
-	static void PollEvents();
+	void PollEvents();
 
 	static bool Init();
 	static void Terminate();

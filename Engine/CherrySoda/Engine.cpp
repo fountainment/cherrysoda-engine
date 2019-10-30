@@ -52,7 +52,7 @@ void Engine::Run()
 
 	m_lastFrameTime = Time::GetSystemTime();
 	while (!m_shouldExit) {
-		Window::PollEvents();
+		m_window->PollEvents();
 		Update();
 		Draw();
 	}
@@ -94,13 +94,13 @@ void Engine::Draw()
 	Graphics::GetInstance()->RenderFrame();
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
-	if (m_counterElapsed > 1.f) {
-		m_FPS = m_fpsCounter;
-		m_fpsCounter = 0.f;
-		m_counterElapsed -= 1.f;
+	if (m_counterElapsed > 1.0) {
 #ifndef NDEBUG
 		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 #endif
+		m_FPS = m_fpsCounter;
+		m_fpsCounter = 0;
+		m_counterElapsed -= 1.0;
 	}
 }
 
