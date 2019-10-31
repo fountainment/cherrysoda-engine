@@ -154,7 +154,7 @@ void cherrysoda::Window::SetTitle(const String& title)
 void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
 	Engine::GetInstance()->m_fullscreen = fullscreen;
-	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }
 
 void cherrysoda::Window::ToggleFullscreen()
