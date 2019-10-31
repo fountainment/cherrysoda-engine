@@ -1,30 +1,33 @@
 #ifndef _CHERRYSODA_ENTITY_H_
 #define _CHERRYSODA_ENTITY_H_
 
-#include <CherrySoda/Components/Component.h>
-
 #include <glm/vec2.hpp>
-#include <memory>
 
 namespace cherrysoda {
+
+class Camera;
+class Component;
+class ComponentList;
+class Scene;
 
 class Entity
 {
 public:
 	Entity() : Entity(glm::vec2(0.f)) {}
-	Entity(const glm::vec2& position)
-	{
-		m_position = position;
-		// m_components = new ComponentList;
-	}
+	Entity(const glm::vec2& position);
 	
-	virtual void SceneBegin(/*Scene scene*/) {};
-	virtual void SceneEnd(/*Scene scene*/) {};
+	void SceneBegin(Scene* scene) {};
+	void SceneEnd(Scene* scene) {};
 
-	virtual void Update() {}
-	virtual void Render() {}
+	void Update();
+	void Render();
 
-	virtual void DebugRender(/*const Camera& camera*/) {}
+	void DebugRender(const Camera* camera);
+
+	void RemoveSelf();
+
+	void Add(Component* component); 
+	void Remove(Component* component);
 
 private:
 	bool m_active = true;
@@ -32,9 +35,10 @@ private:
 	bool m_collidable = false;
 	glm::vec2 m_position = glm::vec2(0.f);
 
-	// std::weak_ptr<Scene> m_scene = nullptr;
-	// std::shared_ptr<ComponentList> m_components = nullptr;
+	// Scene* m_scene = nullptr;
+	ComponentList* m_components = nullptr;
 
+	int m_id = 0;
 	int m_tag = 0;
 
 	// Collider* collider;
