@@ -2,6 +2,8 @@
 
 #include <CherrySoda/Components/Component.h>
 
+#include <algorithm>
+
 using cherrysoda::ComponentList;
 
 using cherrysoda::Component;
@@ -23,4 +25,18 @@ void ComponentList::Remove(Component* component)
 	auto it = std::find(m_components.begin(), m_components.end(), component);
 	m_components.erase(it);
 	component->Removed(m_entity);
+}
+
+void ComponentList::Update()
+{
+	for (auto comp : m_components) {
+		comp->Update();
+	}
+}
+
+void ComponentList::Render()
+{
+	for (auto comp : m_components) {
+		comp->Render();
+	}
 }

@@ -15,8 +15,8 @@ public:
 	virtual void Added(Entity* entity);
 	virtual void Removed(Entity* entity);
 
-	virtual void Update();
-	virtual void Render();
+	virtual void Update() {};
+	virtual void Render() {};
 
 	inline Entity* GetEntity() { return m_entity; };
 
