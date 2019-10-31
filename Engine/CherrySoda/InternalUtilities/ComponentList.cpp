@@ -6,6 +6,7 @@
 
 using cherrysoda::ComponentList;
 
+using cherrysoda::Camera;
 using cherrysoda::Component;
 using cherrysoda::Entity;
 
@@ -39,4 +40,8 @@ void ComponentList::Render()
 	for (auto comp : m_components) {
 		comp->Render();
 	}
+}
+
+void ComponentList::DebugRender(const Camera* camera)
+{
 }

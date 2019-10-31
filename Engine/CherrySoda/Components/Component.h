@@ -21,7 +21,7 @@ public:
 	inline Entity* GetEntity() { return m_entity; };
 
 private:
-	Entity* m_entity;
+	Entity* m_entity = nullptr;
 
 	bool m_active;
 	bool m_visible;
