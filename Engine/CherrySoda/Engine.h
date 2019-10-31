@@ -62,7 +62,7 @@ private:
 	int m_windowHeight;
 	String m_title;
 	Color m_clearColor = Color::Black;
-	bool m_fullscreen;
+	bool m_fullscreen = false;
 	Window* m_window = nullptr;
 	bool m_shouldExit = false;
 

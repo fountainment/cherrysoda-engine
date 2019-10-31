@@ -153,7 +153,13 @@ void cherrysoda::Window::SetTitle(const String& title)
 
 void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
+	Engine::GetInstance()->m_fullscreen = fullscreen;
 	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+}
+
+void cherrysoda::Window::ToggleFullscreen()
+{
+	SetFullscreen(!(Engine::GetInstance()->m_fullscreen));
 }
 
 void cherrysoda::Window::Show()
@@ -175,7 +181,7 @@ void cherrysoda::Window::PollEvents()
 				Engine::GetInstance()->Exit();
 				break;
 			case SDLK_F11:
-				SetFullscreen(true);
+				ToggleFullscreen();
 				break;
 			}
 			break;

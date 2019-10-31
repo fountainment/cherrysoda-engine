@@ -24,6 +24,7 @@ void ComponentList::Add(Component* component)
 void ComponentList::Remove(Component* component)
 {
 	auto it = std::find(m_components.begin(), m_components.end(), component);
+	//CHERRYSODA_ASSERT(it != m_components.end());
 	m_components.erase(it);
 	component->Removed(m_entity);
 }

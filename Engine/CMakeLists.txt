@@ -11,6 +11,7 @@ set(ENGINE_SRC
   CherrySoda/Interface/Window.h
   CherrySoda/InternalUtilities/ComponentList.cpp
   CherrySoda/InternalUtilities/ComponentList.h
+  CherrySoda/InternalUtilities/EntityList.h
   CherrySoda/Util/Color.cpp
   CherrySoda/Util/Color.h
   CherrySoda/Util/Log.cpp

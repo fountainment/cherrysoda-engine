@@ -30,12 +30,14 @@ public:
 	void Remove(Component* component);
 
 private:
+	friend class EntityList;
+
 	bool m_active = true;
 	bool m_visible = true;
 	bool m_collidable = false;
 	glm::vec2 m_position = glm::vec2(0.f);
 
-	// Scene* m_scene = nullptr;
+	Scene* m_scene = nullptr;
 	ComponentList* m_components = nullptr;
 
 	int m_id = 0;

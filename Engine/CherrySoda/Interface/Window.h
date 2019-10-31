@@ -19,6 +19,7 @@ private:
 	void SetSize(int width, int height);
 	void SetTitle(const String& string);
 	void SetFullscreen(bool fullscreen);
+	void ToggleFullscreen();
 
 	void CreateWindow();
 	void DestroyWindow();

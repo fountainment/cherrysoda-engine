@@ -40,3 +40,10 @@ void Entity::Remove(Component* component)
 {
 	m_components->Remove(component);
 }
+
+void Entity::RemoveSelf()
+{
+	if (m_scene != nullptr) {
+		// m_scene->GetEntities()->Remove(this);
+	}
+}
