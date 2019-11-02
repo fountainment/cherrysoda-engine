@@ -1,5 +1,6 @@
 #include <CherrySoda/Entity.h>
 
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 
@@ -44,6 +45,6 @@ void Entity::Remove(Component* component)
 void Entity::RemoveSelf()
 {
 	if (m_scene != nullptr) {
-		// m_scene->GetEntities()->Remove(this);
+		m_scene->Entities()->Remove(this);
 	}
 }

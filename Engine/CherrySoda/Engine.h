@@ -16,12 +16,14 @@
 
 namespace cherrysoda {
 
+class Graphics;
+class Scene;
 class Window;
 
 class Engine
 {
 public:
-	Engine() : Engine(480, 272, 480, 272, "CherrySoda", false) {}
+	Engine() : Engine(800, 600, 800, 600, "CherrySoda", false) {}
 	Engine(int width, int height, int windowWidth, int windowHeight,
 	       const String& title, bool fullscreen);
 
@@ -43,12 +45,18 @@ public:
 	void Run();
 	void Exit();
 
+	inline bool Initialized() { return m_initialized; }
+
+	static Engine* GetInstance() { return ms_instance; }
+
+protected:
 	virtual void Initialize();
 	virtual void LoadContent();
+
 	virtual void Update();
 	virtual void Draw();
 
-	static Engine* GetInstance() { return ms_instance; }
+	virtual void RenderCore();
 
 private:
 	friend class Window;
@@ -65,6 +73,7 @@ private:
 	bool m_fullscreen = false;
 	Window* m_window = nullptr;
 	bool m_shouldExit = false;
+	bool m_initialized = false;
 
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;
@@ -74,6 +83,13 @@ private:
 	double m_counterElapsed = 0.0;
 	int m_fpsCounter = 0;
 	int m_FPS;
+
+	// graphics
+	Graphics* m_graphicsDevice = nullptr;
+
+	// scene
+	Scene* m_scene = nullptr;
+	Scene* m_nextScene = nullptr;
 
 	static Engine* ms_instance;
 };

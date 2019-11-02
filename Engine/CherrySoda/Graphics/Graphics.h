@@ -14,6 +14,7 @@ public:
 	void RenderFrame();
 	void UpdateView();
 	void SetClearColor(const Color& color);
+	void Touch();
 	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
 
@@ -24,7 +25,7 @@ private:
 
 	Graphics();
 
-	bool m_vsyncEnabled = false;
+	bool m_vsyncEnabled = true;
 
 	static Graphics* ms_instance;
 };

@@ -120,8 +120,6 @@ void Graphics::RenderFrame()
 {
 	static int s_frameCount = 0;
 
-	Graphics::SetViewport(0, 0, Engine::GetInstance()->GetWidth(), Engine::GetInstance()->GetHeight());
-	//bgfx::touch(0);
 	//bgfx::dbgTextClear();
 	//bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
 	//bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Frame Count: %d", s_frameCount++).c_str());
@@ -137,7 +135,6 @@ void Graphics::RenderFrame()
 	glm::mat4 viewMtx = glm::lookAt(eye, center, up);
 	glm::mat4 projMtx = glm::ortho(-1.f * aspect, 1.0f * aspect, -1.f, 1.0f, -100.0f, 100.0f);
 	bgfx::setViewTransform(0, &viewMtx, &projMtx);
-	bgfx::setViewRect(0, 0, 0, width, height);
 
 	static float zAngle = 0.f;
 	glm::mat4 transMtx = glm::rotate(glm::identity<glm::mat4>(), zAngle, glm::vec3(0.f, 0.f, 1.0f));
@@ -170,9 +167,17 @@ void Graphics::SetClearColor(const Color& color)
 	);
 }
 
+void Graphics::Touch()
+{
+	bgfx::touch(0);
+}
+
 void Graphics::SetVsyncEnabled(bool vsyncEnabled)
 {
 	m_vsyncEnabled = vsyncEnabled;
+	if (Engine::GetInstance()->Initialized()) {
+		UpdateView();
+	}
 }
 
 void Graphics::SetViewport(int x, int y, int w, int h)

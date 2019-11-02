@@ -9,7 +9,8 @@ public:
 
 	VoxelExperiment();
 
-	virtual void Update() override;
+	void Update() override;
+	void Initialize() override;
 };
 
 }

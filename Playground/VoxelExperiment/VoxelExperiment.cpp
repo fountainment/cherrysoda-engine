@@ -11,10 +11,16 @@ using cherrysoda::Graphics;
 VoxelExperiment::VoxelExperiment()
 	: base()
 {
+	SetTitle("VoxelExperiment");
 	SetClearColor(Color::Black);
 }
 
 void VoxelExperiment::Update()
 {
 	base::Update();
+}
+
+void VoxelExperiment::Initialize()
+{
+	base::Initialize();
 }

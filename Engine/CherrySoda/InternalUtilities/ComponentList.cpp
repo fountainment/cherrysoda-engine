@@ -32,14 +32,14 @@ void ComponentList::Remove(Component* component)
 void ComponentList::Update()
 {
 	for (auto comp : m_components) {
-		comp->Update();
+		if (comp->m_active) comp->Update();
 	}
 }
 
 void ComponentList::Render()
 {
 	for (auto comp : m_components) {
-		comp->Render();
+		if (comp->m_visible) comp->Render();
 	}
 }
 

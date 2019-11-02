@@ -1,5 +1,6 @@
 #include <CherrySoda/Engine.h>
 
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Color.h>
@@ -73,12 +74,30 @@ void Engine::Initialize()
 	m_window->CreateWindow();
 
 	Graphics::Init();
-	Graphics::GetInstance()->UpdateView();
-	Graphics::GetInstance()->SetClearColor(m_clearColor);
+	m_graphicsDevice = Graphics::GetInstance();
+	m_graphicsDevice->UpdateView();
+	m_initialized = true;
 }
 
 void Engine::LoadContent()
 {
+}
+
+void Engine::RenderCore()
+{
+	if (m_scene) {
+		m_scene->BeforeRender();
+	}
+
+	// TODO: render frame init
+	m_graphicsDevice->SetViewport(0, 0, GetWidth(), GetHeight());
+	m_graphicsDevice->SetClearColor(m_clearColor);
+	m_graphicsDevice->Touch();
+
+	if (m_scene) {
+		m_scene->Render();
+		m_scene->AfterRender();
+	}
 }
 
 void Engine::Update()
@@ -87,11 +106,19 @@ void Engine::Update()
 	m_rawDeltaTime = m_currentTime - m_lastFrameTime;
 	m_deltaTime = m_rawDeltaTime * m_timeRate;
 	m_lastFrameTime = m_currentTime;
+
+	if (m_scene != nullptr) {
+		m_scene->BeforeUpdate();
+		m_scene->Update();
+		m_scene->AfterUpdate();
+	}
 }
 
 void Engine::Draw()
 {
-	Graphics::GetInstance()->RenderFrame();
+	RenderCore();
+	m_graphicsDevice->RenderFrame();
+
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.0) {
