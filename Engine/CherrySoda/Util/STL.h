@@ -34,7 +34,7 @@ public:
 	template<class T, class U>
 	static bool Remove(T& container, const U& element)
 	{
-		T::iterator it = std::find(container.begin(), container.end(), element);
+		auto it = Find(container, element);
 		if (it == container.end()) {
 			return false;
 		}
@@ -49,9 +49,21 @@ public:
 	}
 
 	template<class T, class U>
+	static auto Find(const T& container, const U& element)
+	{
+		return std::find(std::begin(container), std::end(container), element);
+	}
+
+	template<class T>
+	static auto Find(std::unordered_set<T>& container, const T& element)
+	{
+		return container.find(element);
+	}
+
+	template<class T, class U>
 	static bool Contains(const T& container, const U& element)
 	{
-		return std::find(container.begin(), container.end(), element) != container.end();
+		return Find(container, element) != container.end();
 	}
 };
 

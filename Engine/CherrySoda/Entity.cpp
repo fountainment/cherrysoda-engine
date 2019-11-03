@@ -29,7 +29,7 @@ void Entity::Render()
 	m_components->Render();
 }
 
-void Entity::DebugRender(const Camera* camera)
+void Entity::DebugRender(Camera* camera)
 {
 	m_components->DebugRender(camera);
 }

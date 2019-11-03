@@ -17,11 +17,18 @@ class ComponentList
 public:
 	typedef std::list<Component*> IterableComponents;
 	typedef std::unordered_set<Component*> HashSetComponents;
+
+	enum class LockModes { Open, Locked, Error };
+
+	inline Entity* GetEntity() { return m_entity; }
 	
 private:
 	friend class Entity;
 
 	ComponentList(Entity* entity);
+
+	inline LockModes LockMode() { return m_lockMode; }
+	void LockMode(LockModes lockMode);
 
 	void Add(Component* component);
 	void Remove(Component* component);
@@ -31,7 +38,9 @@ private:
 	void Update();
 	void Render();
 
-	void DebugRender(const Camera* camera);
+	void DebugRender(Camera* camera);
+
+	LockModes m_lockMode;
 
 	IterableComponents m_components;
 	IterableComponents m_toAdd;

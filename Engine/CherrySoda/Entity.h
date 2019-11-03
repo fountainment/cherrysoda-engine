@@ -25,7 +25,7 @@ public:
 	void Update();
 	void Render();
 
-	void DebugRender(const Camera* camera);
+	void DebugRender(Camera* camera);
 
 	void RemoveSelf();
 
