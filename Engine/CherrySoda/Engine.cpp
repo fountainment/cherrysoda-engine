@@ -12,6 +12,7 @@ using cherrysoda::Engine;
 
 using cherrysoda::Color;
 using cherrysoda::Graphics;
+using cherrysoda::Scene;
 using cherrysoda::String;
 using cherrysoda::Time;
 
@@ -64,6 +65,11 @@ void Engine::Run()
 	Window::Terminate();
 }
 
+void Engine::SetScene(Scene* scene)
+{
+	m_nextScene = scene;
+}
+
 void Engine::Initialize()
 {
 	if (!Window::Init()) {
@@ -100,6 +106,11 @@ void Engine::RenderCore()
 	}
 }
 
+void Engine::OnSceneTransition(Scene* from, Scene* to)
+{
+	m_timeRate = 1.0;
+}
+
 void Engine::Update()
 {
 	m_currentTime = Time::GetSystemTime();
@@ -111,6 +122,20 @@ void Engine::Update()
 		m_scene->BeforeUpdate();
 		m_scene->Update();
 		m_scene->AfterUpdate();
+	}
+
+	//Changing scenes
+	if (m_scene != m_nextScene)
+	{
+		auto lastScene = m_scene;
+		if (m_scene != nullptr) {
+			m_scene->End();
+		}
+		m_scene = m_nextScene;
+		OnSceneTransition(lastScene, m_nextScene);
+		if (m_scene != nullptr) {
+			m_scene->Begin();
+		}
 	}
 }
 

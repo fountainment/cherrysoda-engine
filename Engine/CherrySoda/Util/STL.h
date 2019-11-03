@@ -26,7 +26,7 @@ public:
 	}
 
 	template<class T, class U>
-	static void AddIterable(T& container, const U& iterable)
+	static void AddRange(T& container, const U& iterable)
 	{
 		container.insert(std::end(container), std::begin(iterable), std::end(iterable));
 	}

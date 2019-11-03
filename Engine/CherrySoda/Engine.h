@@ -45,6 +45,8 @@ public:
 	void Run();
 	void Exit();
 
+	void SetScene(Scene* scene);
+
 	inline bool Initialized() { return m_initialized; }
 
 	static Engine* GetInstance() { return ms_instance; }
@@ -57,6 +59,8 @@ protected:
 	virtual void Draw();
 
 	virtual void RenderCore();
+
+	virtual void OnSceneTransition(Scene* from, Scene* to); 
 
 private:
 	friend class Window;

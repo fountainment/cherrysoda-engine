@@ -10,6 +10,7 @@
 
 namespace cherrysoda {
 
+class Camera;
 class Scene;
 
 class EntityList
@@ -24,6 +25,7 @@ public:
 	void Remove(Entity* entity);
 
 	void Render();
+	void DebugRender(Camera* camera);
 
 private:
 	friend class Scene;
@@ -31,6 +33,9 @@ private:
 	EntityList(Scene* scene);
 
 	void Update();
+
+	void HandleGraphicsReset();
+	void HandleGraphicsCreate();
 
 	IterableEntities m_entities;
 	IterableEntities m_toAdd;

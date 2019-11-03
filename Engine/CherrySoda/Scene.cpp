@@ -35,17 +35,36 @@ void Scene::Update()
 {
 	if (!m_paused) {
 		m_entities->Update();
+		// TODO: m_renderList->Update();
 	}
 }
 
 void Scene::AfterUpdate()
 {
+	if (m_onEndOfFrame.size() > 0) {
+		for (auto func : m_onEndOfFrame) {
+			func();
+		}
+		m_onEndOfFrame.clear();
+	}
+}
+
+void Scene::BeforeRender()
+{
+	// TODO: m_renderList->BeforeRender();
 }
 
 void Scene::Render()
 {
+	// TODO: m_renderList->Render();
 }
 
 void Scene::AfterRender()
 {
+	// TODO: m_renderList->AfterRender();
+}
+
+void Scene::OnEndOfFrame(std::function<void()> func)
+{
+	m_onEndOfFrame.emplace_back(func);
 }

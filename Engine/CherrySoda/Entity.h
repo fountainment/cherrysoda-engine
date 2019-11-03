@@ -19,13 +19,17 @@ public:
 	Entity() : Entity(glm::vec2(0.f)) {}
 	Entity(const glm::vec2& position);
 	
-	void SceneBegin(Scene* scene) {};
-	void SceneEnd(Scene* scene) {};
+	virtual void SceneBegin(Scene* scene);
+	virtual void SceneEnd(Scene* scene);
+	virtual void Awake(Scene* scene);
 
-	void Update();
-	void Render();
+	virtual void Update();
+	virtual void Render();
 
-	void DebugRender(Camera* camera);
+	virtual void DebugRender(Camera* camera);
+
+	virtual void HandleGraphicsReset();
+	virtual void HandleGraphicsCreate();
 
 	void RemoveSelf();
 
@@ -34,13 +38,19 @@ public:
 	void Add(ComponentList::IterableComponents& components); 
 	void Remove(ComponentList::IterableComponents& components);
 
+	template<class T>
+	T Get()
+	{
+		return m_components != nullptr ? m_components->Get<T>() : nullptr;
+	}
+
 	inline Scene* GetScene() { return m_scene; }
 
 private:
 	friend class EntityList;
 
-	void Added(Scene* scene);
-	void Removed(Scene* scene);
+	virtual void Added(Scene* scene);
+	virtual void Removed(Scene* scene);
 
 	bool m_active = true;
 	bool m_visible = true;
@@ -56,7 +66,7 @@ private:
 	// Collider* collider;
 
 	int m_depth = 0;
-	double m_actualDepth = 0.f;
+	double m_actualDepth = 0.0;
 };
 
 } // namespace cherrysoda

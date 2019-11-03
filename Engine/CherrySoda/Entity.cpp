@@ -19,6 +19,24 @@ Entity::Entity(const glm::vec2& position)
 	m_components = new ComponentList(this);
 }
 
+void Entity::SceneBegin(Scene* scene)
+{
+}
+
+void Entity::SceneEnd(Scene* scene)
+{
+	for (auto component : *m_components) {
+		component->SceneEnd(scene);
+	}
+}
+
+void Entity::Awake(Scene* scene)
+{
+	for (auto component : *m_components) {
+		component->EntityAwake();
+	}
+}
+
 void Entity::Update()
 {
 	m_components->Update();
@@ -27,11 +45,6 @@ void Entity::Update()
 void Entity::Render()
 {
 	m_components->Render();
-}
-
-void Entity::DebugRender(Camera* camera)
-{
-	m_components->DebugRender(camera);
 }
 
 void Entity::Add(Component* component)
@@ -52,6 +65,22 @@ void Entity::Add(ComponentList::IterableComponents& components)
 void Entity::Remove(ComponentList::IterableComponents& components)
 {
 	m_components->Remove(components);
+}
+
+void Entity::DebugRender(Camera* camera)
+{
+	// TODO: collider debugrender
+	m_components->DebugRender(camera);
+}
+
+void Entity::HandleGraphicsReset()
+{
+	m_components->HandleGraphicsReset();
+}
+
+void Entity::HandleGraphicsCreate()
+{
+	m_components->HandleGraphicsCreate();
 }
 
 void Entity::RemoveSelf()
