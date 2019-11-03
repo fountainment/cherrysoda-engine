@@ -1,14 +1,14 @@
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 
 #include <CherrySoda/Components/Component.h>
-
-#include <algorithm>
+#include <CherrySoda/Util/STL.h>
 
 using cherrysoda::ComponentList;
 
 using cherrysoda::Camera;
 using cherrysoda::Component;
 using cherrysoda::Entity;
+using cherrysoda::STL;
 
 ComponentList::ComponentList(Entity* entity)
 {
@@ -17,29 +17,45 @@ ComponentList::ComponentList(Entity* entity)
 
 void ComponentList::Add(Component* component)
 {
-	m_components.push_back(component);
+	STL::Add(m_components, component);
 	component->Added(m_entity);
 }
 
 void ComponentList::Remove(Component* component)
 {
-	auto it = std::find(m_components.begin(), m_components.end(), component);
-	//CHERRYSODA_ASSERT(it != m_components.end());
-	m_components.erase(it);
+	STL::Remove(m_components, component);
 	component->Removed(m_entity);
+}
+
+void ComponentList::Add(ComponentList::IterableComponents& components)
+{
+	for (auto component : components) {
+		Add(component);
+	}
+}
+
+void ComponentList::Remove(ComponentList::IterableComponents& components)
+{
+	for (auto component : components) {
+		Remove(component);
+	}
 }
 
 void ComponentList::Update()
 {
-	for (auto comp : m_components) {
-		if (comp->m_active) comp->Update();
+	for (auto component : m_components) {
+		if (component->m_active) {
+			component->Update();
+		}
 	}
 }
 
 void ComponentList::Render()
 {
-	for (auto comp : m_components) {
-		if (comp->m_visible) comp->Render();
+	for (auto component : m_components) {
+		if (component->m_visible) {
+			component->Render();
+		}
 	}
 }
 

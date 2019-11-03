@@ -8,6 +8,8 @@ namespace cherrysoda {
 class Scene
 {
 public:
+	Scene();
+
 	virtual void Begin();
 	virtual void End(); 
 
@@ -19,12 +21,13 @@ public:
 	virtual void Render();
 	virtual void AfterRender();
 
-	EntityList* Entities() { return &m_entities; }
+	EntityList* Entities() { return m_entities; }
 
 private:
-	EntityList m_entities;
+	EntityList* m_entities = nullptr;
 
 	bool m_focused = false;
+	bool m_paused = false;
 };
 
 } // namespace cherrysoda

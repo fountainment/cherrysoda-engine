@@ -3,7 +3,9 @@
 
 namespace cherrysoda {
 
+class Camera;
 class Entity;
+class Scene;
 
 class Component
 {
@@ -15,10 +17,30 @@ public:
 	virtual void Added(Entity* entity);
 	virtual void Removed(Entity* entity);
 
-	virtual void Update() {};
-	virtual void Render() {};
+	virtual void EntityAdded(Scene* scene);
+	virtual void EntityRemoved(Scene* scene);
+
+	virtual void SceneEnd(Scene* scene);
+	virtual void EntityAwake();
+
+	virtual void Update();
+	virtual void Render();
+
+	virtual void DebugRender(Camera* camera); 
+
+	virtual void HandleGraphicsReset();
+	virtual void HandleGraphicsCreate();
+
+	void RemoveSelf();	
+
+	template <class T>
+	T SceneAs() { return dynamic_cast<T>(GetScene()); }
+
+	template <class T>
+	T EntityAs() { return dynamic_cast<T>(GetEntity()); }
 
 	inline Entity* GetEntity() { return m_entity; };
+	Scene* GetScene();
 
 private:
 	Entity* m_entity = nullptr;

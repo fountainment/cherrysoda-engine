@@ -1,7 +1,10 @@
 #ifndef _CHERRYSODA_ENTITY_H_
 #define _CHERRYSODA_ENTITY_H_
 
+#include <CherrySoda/InternalUtilities/ComponentList.h>
+
 #include <glm/vec2.hpp>
+#include <vector>
 
 namespace cherrysoda {
 
@@ -28,9 +31,16 @@ public:
 
 	void Add(Component* component); 
 	void Remove(Component* component);
+	void Add(ComponentList::IterableComponents& components); 
+	void Remove(ComponentList::IterableComponents& components);
+
+	inline Scene* GetScene() { return m_scene; }
 
 private:
 	friend class EntityList;
+
+	void Added(Scene* scene);
+	void Removed(Scene* scene);
 
 	bool m_active = true;
 	bool m_visible = true;

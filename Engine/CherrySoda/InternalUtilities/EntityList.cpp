@@ -1,13 +1,13 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 
 #include <CherrySoda/Entity.h>
-
-#include <algorithm>
+#include <CherrySoda/Util/STL.h>
 
 using cherrysoda::EntityList;
 
 using cherrysoda::Entity;
 using cherrysoda::Scene;
+using cherrysoda::STL;
 
 EntityList::EntityList(Scene* scene)
 {
@@ -16,30 +16,47 @@ EntityList::EntityList(Scene* scene)
 
 void EntityList::UpdateLists()
 {
-	// TODO: implement UpdateLists
-	if (m_toAdd.size() > 0) {
+	if (STL::Count(m_toAdd) > 0) {
+		for (auto entity : m_toAdd) {
+			if (!STL::Contains(m_current, entity)) {
+				STL::Add(m_current, entity);
+				STL::Add(m_entities, entity);
+			}	
+
+			if (m_scene != nullptr) {
+				// TODO: Add Taglists and Tracker
+				// m_scene->Taglists()->EntityAdded(entity);	
+				// m_scene->Tracker()->EntityAdded(entity);	
+				entity->Added(m_scene);	
+			}
+		}
+
+		m_unsorted = true;
+	}
+
+	if (STL::Count(m_toRemove) > 0) {
 
 	}
 
-	if (m_toRemove.size() > 0) {
-
-	}
-
-	if (m_toAdd.size() > 0) {
+	if (STL::Count(m_toAdd) > 0) {
 
 	}
 }
 
 void EntityList::Add(Entity* entity)
 {
-	m_entities.push_back(entity);
+	if (!STL::Contains(m_adding, entity) && !STL::Contains(m_current, entity)) {
+		STL::Add(m_adding, entity);
+		STL::Add(m_toAdd, entity);
+	}
 }
 
 void EntityList::Remove(Entity* entity)
 {
-	auto it = std::find(m_entities.begin(), m_entities.end(), entity);
-	//CHERRYSODA_ASSERT(it != m_entities.end());
-	m_entities.erase(it);
+	if (!STL::Contains(m_removing, entity) && !STL::Contains(m_current, entity)) {
+		STL::Add(m_removing, entity);
+		STL::Add(m_toRemove, entity);
+	}
 }
 
 void EntityList::Update()
