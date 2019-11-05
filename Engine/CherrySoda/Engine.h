@@ -49,7 +49,7 @@ public:
 
 	inline bool Initialized() { return m_initialized; }
 
-	static Engine* GetInstance() { return ms_instance; }
+	static Engine* Instance() { return ms_instance; }
 
 protected:
 	virtual void Initialize();
@@ -86,7 +86,7 @@ private:
 	double m_lastFrameTime = 0.0;
 	double m_counterElapsed = 0.0;
 	int m_fpsCounter = 0;
-	int m_FPS;
+	int m_FPS = 0;
 
 	// graphics
 	Graphics* m_graphicsDevice = nullptr;

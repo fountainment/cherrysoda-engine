@@ -18,7 +18,7 @@ public:
 	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
 
-	static Graphics* GetInstance() { return ms_instance; };
+	static Graphics* Instance() { return ms_instance; };
 
 private:
 	friend class Engine;

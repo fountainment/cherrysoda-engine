@@ -39,7 +39,7 @@ void Engine::SetTitle(const String& title)
 void Engine::SetClearColor(const Color& color)
 {
 	m_clearColor = color;
-	if (auto gfxInstance = Graphics::GetInstance()) {
+	if (auto gfxInstance = Graphics::Instance()) {
 		gfxInstance->SetClearColor(color);
 	}
 }
@@ -49,7 +49,7 @@ void Engine::Run()
 	Initialize();
 	LoadContent();
 
-	Graphics::GetInstance()->RenderFrame();
+	Graphics::Instance()->RenderFrame();
 	m_window->Show();
 
 	m_lastFrameTime = Time::GetSystemTime();
@@ -80,7 +80,7 @@ void Engine::Initialize()
 	m_window->CreateWindow();
 
 	Graphics::Init();
-	m_graphicsDevice = Graphics::GetInstance();
+	m_graphicsDevice = Graphics::Instance();
 	m_graphicsDevice->UpdateView();
 	m_initialized = true;
 }

@@ -38,9 +38,9 @@ void Scene::End()
 void Scene::BeforeUpdate()
 {
 	if (!m_paused) {
-		m_timeActive += Engine::GetInstance()->DeltaTime();
+		m_timeActive += Engine::Instance()->DeltaTime();
 	}
-	m_rawTimeActive += Engine::GetInstance()->RawDeltaTime();
+	m_rawTimeActive += Engine::Instance()->RawDeltaTime();
 
 	m_entities->UpdateLists();
 	// TODO: m_tagLists->UpdateLists();

@@ -129,9 +129,9 @@ cherrysoda::Window::Window()
 
 void cherrysoda::Window::CreateWindow()
 {
-	int windowWidth = Engine::GetInstance()->GetWindowWidth();
-	int windowHeight = Engine::GetInstance()->GetWindowHeight();
-	String title = Engine::GetInstance()->GetTitle();
+	int windowWidth = Engine::Instance()->GetWindowWidth();
+	int windowHeight = Engine::Instance()->GetWindowHeight();
+	String title = Engine::Instance()->GetTitle();
 	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
 	entry::sdlSetWindow(m_mainWindow);
 }
@@ -153,13 +153,13 @@ void cherrysoda::Window::SetTitle(const String& title)
 
 void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
-	Engine::GetInstance()->m_fullscreen = fullscreen;
+	Engine::Instance()->m_fullscreen = fullscreen;
 	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }
 
 void cherrysoda::Window::ToggleFullscreen()
 {
-	SetFullscreen(!(Engine::GetInstance()->m_fullscreen));
+	SetFullscreen(!(Engine::Instance()->m_fullscreen));
 }
 
 void cherrysoda::Window::Show()
@@ -173,12 +173,12 @@ void cherrysoda::Window::PollEvents()
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_QUIT:
-			Engine::GetInstance()->Exit();
+			Engine::Instance()->Exit();
 			break;
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
 			case SDLK_ESCAPE:
-				Engine::GetInstance()->Exit();
+				Engine::Instance()->Exit();
 				break;
 			case SDLK_F11:
 				ToggleFullscreen();
@@ -192,9 +192,9 @@ void cherrysoda::Window::PollEvents()
 			{
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
 			{
-				Engine::GetInstance()->SetWindowSize(wev.data1, wev.data2);
-				Engine::GetInstance()->SetViewSize(wev.data1, wev.data2);
-				Graphics::GetInstance()->UpdateView();
+				Engine::Instance()->SetWindowSize(wev.data1, wev.data2);
+				Engine::Instance()->SetViewSize(wev.data1, wev.data2);
+				Graphics::Instance()->UpdateView();
 			}
 			break;
 			}

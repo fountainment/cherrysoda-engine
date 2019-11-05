@@ -23,10 +23,10 @@ public:
 	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>(f * 255.0f + 0.5f); };
 	constexpr type::UInt32 U32() const { return F2U32(R()) << 24 | F2U32(G()) << 16 | F2U32(B()) << 8 | F2U32(A()); };
 
-	inline void SetR(float v) { m_r = v; }
-	inline void SetG(float v) { m_g = v; }
-	inline void SetB(float v) { m_b = v; }
-	inline void SetA(float v) { m_a = v; }
+	inline void R(float v) { m_r = v; }
+	inline void G(float v) { m_g = v; }
+	inline void B(float v) { m_b = v; }
+	inline void A(float v) { m_a = v; }
 
 	static const Color Black;
 	static const Color White;
