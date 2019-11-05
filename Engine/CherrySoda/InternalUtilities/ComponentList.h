@@ -3,9 +3,6 @@
 
 #include <CherrySoda/Util/STL.h>
 
-#include <list>
-#include <unordered_set>
-
 namespace cherrysoda {
 
 class Camera;
@@ -15,8 +12,8 @@ class Entity;
 class ComponentList
 {
 public:
-	typedef std::list<Component*> IterableComponents;
-	typedef std::unordered_set<Component*> HashSetComponents;
+	typedef STL::List<Component*> IterableComponents;
+	typedef STL::HashSet<Component*> HashSetComponents;
 
 	enum class LockModes { Open, Locked, Error };
 

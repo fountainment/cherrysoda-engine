@@ -3,6 +3,7 @@
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
+#include <CherrySoda/InternalUtilities/EntityList.h>
 
 #include <glm/vec2.hpp>
 

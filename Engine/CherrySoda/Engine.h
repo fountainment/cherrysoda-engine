@@ -37,10 +37,10 @@ public:
 	inline const Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
 
-	inline float GetRawDeltaTime() const { return static_cast<float>(m_rawDeltaTime); }
-	inline float GetDeltaTime() const { return static_cast<float>(m_deltaTime); }
-	inline double GetTimeRate() const { return m_timeRate; }
-	inline void SetTimeRate(double timeRate) { m_timeRate = timeRate; }
+	inline float RawDeltaTime() const { return static_cast<float>(m_rawDeltaTime); }
+	inline float DeltaTime() const { return static_cast<float>(m_deltaTime); }
+	inline double TimeRate() const { return m_timeRate; }
+	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
 
 	void Run();
 	void Exit();

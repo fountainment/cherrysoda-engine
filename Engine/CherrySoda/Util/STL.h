@@ -2,7 +2,10 @@
 #define _CHERRYSODA_UTIL_STL_H_
 
 #include <algorithm>
+#include <functional>
+#include <list>
 #include <unordered_set>
+#include <vector>
 
 #define CHERRYSODA_ITERABLE(iterable) \
 	decltype(iterable)::iterator begin() { return iterable.begin(); } \
@@ -13,6 +16,17 @@ namespace cherrysoda {
 class STL
 {
 public:
+	using Action = std::function<void()>;
+
+	template <typename T>
+	using HashSet = std::unordered_set<T>;
+
+	template <typename T>
+	using List = std::list<T>;
+
+	template <typename T>
+	using Vector = std::vector<T>;
+
 	template<class T, class U>
 	static void Add(T& container, const U& element)
 	{
@@ -20,7 +34,7 @@ public:
 	}
 
 	template<class T>
-	static void Add(std::unordered_set<T>& container, const T& element)
+	static void Add(HashSet<T>& container, const T& element)
 	{
 		container.emplace(element);
 	}

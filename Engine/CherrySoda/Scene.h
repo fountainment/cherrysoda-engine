@@ -1,12 +1,12 @@
 #ifndef _CHERRYSODA_SCENE_H_
 #define _CHERRYSODA_SCENE_H_
 
-#include <CherrySoda/InternalUtilities/EntityList.h>
-
-#include <functional>
-#include <vector>
+#include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
+
+class EntityList;
+class RendererList;
 
 class Scene
 {
@@ -24,17 +24,24 @@ public:
 	virtual void Render();
 	virtual void AfterRender();
 
+	virtual void HandleGraphicsReset();
+	virtual void HandleGraphicsCreate();
+
 	EntityList* Entities() { return m_entities; }
 
-	void OnEndOfFrame(std::function<void()> func);
+	void OnEndOfFrame(STL::Action func);
 
 private:
 	EntityList* m_entities = nullptr;
+	RendererList* m_rendererList = nullptr;
+
+	float m_timeActive = 0.f;
+	float m_rawTimeActive = 0.f;
 
 	bool m_focused = false;
 	bool m_paused = false;
 
-	std::vector<std::function<void()>> m_onEndOfFrame;
+	STL::Vector<STL::Action> m_onEndOfFrame;
 };
 
 } // namespace cherrysoda

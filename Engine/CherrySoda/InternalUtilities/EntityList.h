@@ -5,9 +5,6 @@
 
 #include <CherrySoda/Util/STL.h>
 
-#include <list>
-#include <unordered_set>
-
 namespace cherrysoda {
 
 class Camera;
@@ -16,8 +13,8 @@ class Scene;
 class EntityList
 {
 public:
-	typedef std::list<Entity*> IterableEntities;
-	typedef std::unordered_set<Entity*> HashSetEntities;
+	typedef STL::List<Entity*> IterableEntities;
+	typedef STL::HashSet<Entity*> HashSetEntities;
 
 	void UpdateLists();
 

@@ -138,7 +138,7 @@ void Graphics::RenderFrame()
 
 	static float zAngle = 0.f;
 	glm::mat4 transMtx = glm::rotate(glm::identity<glm::mat4>(), zAngle, glm::vec3(0.f, 0.f, 1.0f));
-	float deltaTime = Engine::GetInstance()->GetDeltaTime();
+	float deltaTime = Engine::GetInstance()->DeltaTime();
 	float maxDeltaTime = 1.0f / 30.0f;
 	deltaTime = deltaTime > maxDeltaTime ? maxDeltaTime : deltaTime;
 	zAngle += 1.0f * deltaTime;
