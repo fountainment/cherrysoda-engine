@@ -1,3 +1,3 @@
-# cherry-soda
+# CherrySoda Engine
 
-A toy engine
+A toy engine based on bgfx and SDL2
