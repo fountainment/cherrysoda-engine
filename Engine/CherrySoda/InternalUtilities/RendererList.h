@@ -6,6 +6,7 @@
 namespace cherrysoda {
 
 class Renderer;
+class Scene;
 
 class RendererList
 {

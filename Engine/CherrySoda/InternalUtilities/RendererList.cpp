@@ -1,5 +1,6 @@
 #include <CherrySoda/InternalUtilities/RendererList.h>
 
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Util/STL.h>
 
