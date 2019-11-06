@@ -5,7 +5,9 @@
 
 namespace cherrysoda {
 
+class Entity;
 class EntityList;
+class Renderer;
 class RendererList;
 
 class Scene
@@ -26,6 +28,12 @@ public:
 
 	virtual void HandleGraphicsReset();
 	virtual void HandleGraphicsCreate();
+
+	void Add(Entity* entity);
+	void Remove(Entity* entity);
+
+	void Add(Renderer* renderer);
+	void Remove(Renderer* renderer);
 
 	EntityList* Entities() { return m_entities; }
 

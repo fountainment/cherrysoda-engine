@@ -1,14 +1,19 @@
 #include <CherrySoda/Scene.h>
 
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/RendererList.h>
+#include <CherrySoda/Renderers/Renderer.h>
+#include <CherrySoda/Renderers/EverythingRenderer.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Scene;
 
 using cherrysoda::Engine;
+using cherrysoda::Entity;
 using cherrysoda::EntityList;
+using cherrysoda::Renderer;
 using cherrysoda::RendererList;
 using cherrysoda::STL;
 
@@ -93,4 +98,24 @@ void Scene::HandleGraphicsCreate()
 void Scene::HandleGraphicsReset()
 {
 	m_entities->HandleGraphicsReset();
+}
+
+void Scene::Add(Entity* entity)
+{
+	m_entities->Add(entity);
+}
+
+void Scene::Remove(Entity* entity)
+{
+	m_entities->Remove(entity);
+}
+
+void Scene::Add(Renderer* renderer)
+{
+	m_rendererList->Add(renderer);
+}
+
+void Scene::Remove(Renderer* renderer)
+{
+	m_rendererList->Remove(renderer);
 }

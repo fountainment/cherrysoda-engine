@@ -15,9 +15,11 @@ set(ENGINE_SRC
   CherrySoda/InternalUtilities/ComponentList.h
   CherrySoda/InternalUtilities/EntityList.cpp
   CherrySoda/InternalUtilities/EntityList.h
-  CherrySoda/InternalUtilities/RendererList.h
   CherrySoda/InternalUtilities/RendererList.cpp
+  CherrySoda/InternalUtilities/RendererList.h
   CherrySoda/Renderers/Renderer.h
+  CherrySoda/Renderers/EverythingRenderer.cpp
+  CherrySoda/Renderers/EverythingRenderer.h
   CherrySoda/Util/Color.cpp
   CherrySoda/Util/Color.h
   CherrySoda/Util/Log.cpp
