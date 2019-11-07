@@ -18,10 +18,10 @@ public:
 	enum class LockModes { Open, Locked, Error };
 
 	template<class T> 
-	T Get()
+	T* Get()
 	{
 		for (auto component : m_components) {
-			if (auto t = dynamic_cast<T>(component)) {
+			if (auto t = dynamic_cast<T*>(component)) {
 				return t;
 			}
 		}

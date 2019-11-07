@@ -7,6 +7,8 @@ set(ENGINE_SRC
   CherrySoda/Scene.h
   CherrySoda/Components/Component.cpp
   CherrySoda/Components/Component.h
+  CherrySoda/Components/Graphics/GraphicsComponent.cpp
+  CherrySoda/Components/Graphics/GraphicsComponent.h
   CherrySoda/Graphics/Graphics.cpp
   CherrySoda/Graphics/Graphics.h
   CherrySoda/Interface/Window.cpp
@@ -24,6 +26,7 @@ set(ENGINE_SRC
   CherrySoda/Util/Color.h
   CherrySoda/Util/Log.cpp
   CherrySoda/Util/Log.h
+  CherrySoda/Util/Math.h
   CherrySoda/Util/NumType.h
   CherrySoda/Util/String.cpp
   CherrySoda/Util/String.h

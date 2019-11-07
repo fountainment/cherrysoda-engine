@@ -3,8 +3,7 @@
 
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 
-#include <glm/vec2.hpp>
-#include <vector>
+#include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
 
@@ -16,9 +15,13 @@ class Scene;
 class Entity
 {
 public:
-	Entity() : Entity(glm::vec2(0.f)) {}
-	Entity(const glm::vec2& position);
+	Entity() : Entity(Math::Vec3(0.f)) {}
+	Entity(const Math::Vec3& position);
 	
+	inline void Position(Math::Vec3 pos3d) { m_position = pos3d; }
+	inline void Position(Math::Vec2 pos2d) { Position(Math::Vec3(pos2d, Position()[2])); }
+	inline const Math::Vec3 Position() const { return m_position; }
+
 	virtual void SceneBegin(Scene* scene);
 	virtual void SceneEnd(Scene* scene);
 	virtual void Awake(Scene* scene);
@@ -39,10 +42,7 @@ public:
 	void Remove(ComponentList::IterableComponents& components);
 
 	template<class T>
-	T Get()
-	{
-		return m_components != nullptr ? m_components->Get<T>() : nullptr;
-	}
+	T* Get() { return m_components != nullptr ? m_components->Get<T>() : nullptr; }
 
 	inline Scene* GetScene() { return m_scene; }
 
@@ -55,7 +55,7 @@ private:
 	bool m_active = true;
 	bool m_visible = true;
 	bool m_collidable = false;
-	glm::vec2 m_position = glm::vec2(0.f);
+	Math::Vec3 m_position = Math::Vec3(0.f);
 
 	Scene* m_scene = nullptr;
 	ComponentList* m_components = nullptr;

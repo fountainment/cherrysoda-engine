@@ -40,6 +40,7 @@ public:
 	T EntityAs() { return dynamic_cast<T>(GetEntity()); }
 
 	inline Entity* GetEntity() { return m_entity; };
+	inline const Entity* GetEntity() const { return m_entity; };
 	Scene* GetScene();
 
 private:

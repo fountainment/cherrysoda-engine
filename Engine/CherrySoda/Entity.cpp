@@ -4,17 +4,17 @@
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
-
-#include <glm/vec2.hpp>
+#include <CherrySoda/Util/Math.h>
 
 using cherrysoda::Entity;
 
 using cherrysoda::Camera;
 using cherrysoda::Component;
 using cherrysoda::ComponentList;
+using cherrysoda::Math;
 using cherrysoda::Scene;
 
-Entity::Entity(const glm::vec2& position)
+Entity::Entity(const Math::Vec3& position)
 {
 	m_position = position;
 	m_components = new ComponentList(this);
