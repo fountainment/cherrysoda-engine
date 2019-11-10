@@ -22,6 +22,8 @@ set(ENGINE_SRC
   CherrySoda/Renderers/Renderer.h
   CherrySoda/Renderers/EverythingRenderer.cpp
   CherrySoda/Renderers/EverythingRenderer.h
+  CherrySoda/Util/Camera.cpp
+  CherrySoda/Util/Camera.h
   CherrySoda/Util/Color.cpp
   CherrySoda/Util/Color.h
   CherrySoda/Util/Log.cpp

@@ -159,7 +159,7 @@ void Graphics::UpdateView()
 
 void Graphics::SetClearColor(const Color& color)
 {
-	bgfx::setViewClear(0
+	bgfx::setViewClear(m_viewId
 		, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
 		, color.U32()
 		, 1.0f
@@ -169,7 +169,7 @@ void Graphics::SetClearColor(const Color& color)
 
 void Graphics::Touch()
 {
-	bgfx::touch(0);
+	bgfx::touch(m_viewId);
 }
 
 void Graphics::SetVsyncEnabled(bool vsyncEnabled)
@@ -182,7 +182,7 @@ void Graphics::SetVsyncEnabled(bool vsyncEnabled)
 
 void Graphics::SetViewport(int x, int y, int w, int h)
 {
-	bgfx::setViewRect(0, x, y, w, h);
+	bgfx::setViewRect(m_viewId, x, y, w, h);
 }
 
 Graphics* Graphics::ms_instance = nullptr;

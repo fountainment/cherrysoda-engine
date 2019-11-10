@@ -8,6 +8,7 @@ namespace cherrysoda {
 namespace type {
 
 	typedef std::uint32_t UInt32;
+	typedef std::uint16_t UInt16;
 
 } // type
 

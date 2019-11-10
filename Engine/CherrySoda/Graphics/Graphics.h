@@ -2,6 +2,7 @@
 #define _CHERRYSODA_GRAPHICS_GRAPHICS_H_
 
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/NumType.h>
 
 namespace cherrysoda {
 
@@ -12,6 +13,9 @@ public:
 	static void Terminate();
 
 	void RenderFrame();
+
+	inline void View(Type::UInt16 viewId) { m_viewId = viewId; }
+	inline Type::UInt16 View() { return m_viewId; }
 	void UpdateView();
 	void SetClearColor(const Color& color);
 	void Touch();
@@ -25,6 +29,7 @@ private:
 
 	Graphics();
 
+	Type::UInt16 m_viewId = 0;	
 	bool m_vsyncEnabled = true;
 
 	static Graphics* ms_instance;
