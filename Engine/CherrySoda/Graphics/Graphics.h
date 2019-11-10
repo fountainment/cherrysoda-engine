@@ -6,6 +6,8 @@
 
 namespace cherrysoda {
 
+class Camera;
+
 class Graphics
 {
 public:
@@ -14,13 +16,14 @@ public:
 
 	void RenderFrame();
 
-	inline void View(Type::UInt16 viewId) { m_viewId = viewId; }
-	inline Type::UInt16 View() { return m_viewId; }
+	inline void View(type::UInt16 viewId) { m_viewId = viewId; }
+	inline type::UInt16 View() { return m_viewId; }
 	void UpdateView();
 	void SetClearColor(const Color& color);
 	void Touch();
 	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
+	void SetCamera(Camera* camera);
 
 	static Graphics* Instance() { return ms_instance; };
 
@@ -29,7 +32,7 @@ private:
 
 	Graphics();
 
-	Type::UInt16 m_viewId = 0;	
+	type::UInt16 m_viewId = 0;	
 	bool m_vsyncEnabled = true;
 
 	static Graphics* ms_instance;

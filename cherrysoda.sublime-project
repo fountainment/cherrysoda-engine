@@ -2,36 +2,6 @@
 	"build_systems":
 	[
 		{
-			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
-			"name": "cherry-soda (Linux)",
-			"shell_cmd": "make -j8",
-			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
-			"variants":
-			[
-				{
-					"name": "clean",
-					"shell_cmd": "make -j8 clean"
-				},
-				{
-					"name": "rebuild_cache",
-					"shell_cmd": "make -j8 rebuild_cache"
-				},
-				{
-					"name": "glm_static",
-					"shell_cmd": "make -j8 glm_static"
-				},
-				{
-					"name": "CherrySoda",
-					"shell_cmd": "make -j8 CherrySoda"
-				},
-				{
-					"name": "VoxelExperiment",
-					"shell_cmd": "make -j8 VoxelExperiment"
-				}
-			],
-			"working_dir": "${project_path}/build"
-		},
-		{
 			"file_regex": "^  (.+)\\((\\d+)\\)(): ((?:fatal )?(?:error|warning) \\w+\\d\\d\\d\\d: .*) \\[.*$",
 			"name": "cherry-soda (Windows)",
 			"shell_cmd": "cmake --build .",
@@ -73,6 +43,48 @@
 				{
 					"name": "Playground/VoxelExperiment/VoxelExperiment",
 					"shell_cmd": "cmake --build . --target Playground/VoxelExperiment/VoxelExperiment"
+				}
+			],
+			"working_dir": "${project_path}/build"
+		},
+		{
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"name": "cherrysoda (Linux)",
+			"shell_cmd": "make -j8",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "clean",
+					"shell_cmd": "make -j8 clean"
+				},
+				{
+					"name": "rebuild_cache",
+					"shell_cmd": "make -j8 rebuild_cache"
+				},
+				{
+					"name": "bgfx",
+					"shell_cmd": "make -j8 bgfx"
+				},
+				{
+					"name": "bx",
+					"shell_cmd": "make -j8 bx"
+				},
+				{
+					"name": "bimg",
+					"shell_cmd": "make -j8 bimg"
+				},
+				{
+					"name": "glm_static",
+					"shell_cmd": "make -j8 glm_static"
+				},
+				{
+					"name": "CherrySoda",
+					"shell_cmd": "make -j8 CherrySoda"
+				},
+				{
+					"name": "VoxelExperiment",
+					"shell_cmd": "make -j8 VoxelExperiment"
 				}
 			],
 			"working_dir": "${project_path}/build"

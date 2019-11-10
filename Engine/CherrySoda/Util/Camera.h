@@ -12,6 +12,8 @@ public:
 	Camera(int width, int height);
 
 private:
+	friend class Graphics;
+
 	Math::Mat4 m_viewMatrix;
 	Math::Mat4 m_projMatrix;
 	Math::Mat4 m_inverse;

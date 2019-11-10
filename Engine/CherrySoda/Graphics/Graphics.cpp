@@ -1,6 +1,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/String.h>
 
@@ -20,6 +21,7 @@
 
 using cherrysoda::Graphics;
 
+using cherrysoda::Camera;
 using cherrysoda::Color;
 using cherrysoda::Engine;
 using cherrysoda::String;
@@ -183,6 +185,11 @@ void Graphics::SetVsyncEnabled(bool vsyncEnabled)
 void Graphics::SetViewport(int x, int y, int w, int h)
 {
 	bgfx::setViewRect(m_viewId, x, y, w, h);
+}
+
+void Graphics::SetCamera(Camera* camera)
+{
+	bgfx::setViewTransform(m_viewId, &camera->m_viewMatrix, &camera->m_projMatrix);
 }
 
 Graphics* Graphics::ms_instance = nullptr;
