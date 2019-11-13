@@ -161,7 +161,7 @@ void Graphics::UpdateView()
 
 void Graphics::SetClearColor(const Color& color)
 {
-	bgfx::setViewClear(m_viewId
+	bgfx::setViewClear(RenderPass()
 		, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
 		, color.U32()
 		, 1.0f
@@ -171,7 +171,7 @@ void Graphics::SetClearColor(const Color& color)
 
 void Graphics::Touch()
 {
-	bgfx::touch(m_viewId);
+	bgfx::touch(RenderPass());
 }
 
 void Graphics::SetVsyncEnabled(bool vsyncEnabled)
@@ -184,12 +184,12 @@ void Graphics::SetVsyncEnabled(bool vsyncEnabled)
 
 void Graphics::SetViewport(int x, int y, int w, int h)
 {
-	bgfx::setViewRect(m_viewId, x, y, w, h);
+	bgfx::setViewRect(RenderPass(), x, y, w, h);
 }
 
 void Graphics::SetCamera(Camera* camera)
 {
-	bgfx::setViewTransform(m_viewId, &camera->m_viewMatrix, &camera->m_projMatrix);
+	bgfx::setViewTransform(RenderPass(), &camera->m_viewMatrix, &camera->m_projMatrix);
 }
 
 Graphics* Graphics::ms_instance = nullptr;

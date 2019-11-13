@@ -16,8 +16,8 @@ public:
 
 	void RenderFrame();
 
-	inline void View(type::UInt16 viewId) { m_viewId = viewId; }
-	inline type::UInt16 View() { return m_viewId; }
+	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
+	inline type::UInt16 RenderPass() { return m_renderPassId; }
 	void UpdateView();
 	void SetClearColor(const Color& color);
 	void Touch();
@@ -32,7 +32,7 @@ private:
 
 	Graphics();
 
-	type::UInt16 m_viewId = 0;	
+	type::UInt16 m_renderPassId = 0;	
 	bool m_vsyncEnabled = true;
 
 	static Graphics* ms_instance;
