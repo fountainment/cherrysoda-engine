@@ -95,7 +95,9 @@ void Engine::RenderCore()
 		m_scene->BeforeRender();
 	}
 
-	// TODO: render frame init
+	m_graphicsDevice->RenderPass(0);
+	// TODO: add RenderTarget
+	// m_graphicsDevice->SetRenderTarget(nullptr);
 	m_graphicsDevice->SetViewport(0, 0, GetWidth(), GetHeight());
 	m_graphicsDevice->SetClearColor(m_clearColor);
 	m_graphicsDevice->Touch();
@@ -124,7 +126,7 @@ void Engine::Update()
 		m_scene->AfterUpdate();
 	}
 
-	//Changing scenes
+	// Changing scenes
 	if (m_scene != m_nextScene)
 	{
 		auto lastScene = m_scene;

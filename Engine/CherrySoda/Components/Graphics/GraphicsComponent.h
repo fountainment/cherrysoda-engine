@@ -11,12 +11,17 @@ namespace cherrysoda {
 class GraphicsComponent : public Component
 {
 public:
-	inline void Position(Math::Vec3 pos3d) { m_position = pos3d; }
-	inline void Position(Math::Vec2 pos2d) { Position(Math::Vec3(pos2d, Position()[2])); }
-	inline const Math::Vec3 Position() const { return m_position; }
+	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Position, m_position);
+	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Origin, m_origin);
+	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Scale, m_scale);
+
+	inline void ZRotation(float zRotation) { m_zRotation = zRotation; };
+	inline float ZRotation() const { return m_zRotation; }
 
 	inline void RenderPosition(Math::Vec3 pos3d) { Position(pos3d - EntityPos()); }
 	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
+
+	const Math::Mat4 GetTransformMatrix() const;
 
 private:
 	inline const Math::Vec3 EntityPos() const { return GetEntity() != nullptr ? GetEntity()->Position() : Math::Vec3(0.f); }

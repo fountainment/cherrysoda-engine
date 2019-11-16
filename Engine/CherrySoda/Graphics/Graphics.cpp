@@ -92,7 +92,7 @@ Graphics::Graphics()
 void Graphics::Init()
 {
 	bgfx::init();
-	//bgfx::setDebug(BGFX_DEBUG_TEXT);
+	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
 	PosColorVertex::init();
 
@@ -120,36 +120,36 @@ void Graphics::Terminate()
 
 void Graphics::RenderFrame()
 {
-	static int s_frameCount = 0;
+	// static int s_frameCount = 0;
 
-	//bgfx::dbgTextClear();
-	//bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
-	//bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Frame Count: %d", s_frameCount++).c_str());
-	//bgfx::dbgTextPrintf(1, 3, 0x0f, StringUtil::Format("Delta Time: %f", Engine::Instance()->DeltaTime()).c_str());
+	// bgfx::dbgTextClear();
+	// bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
+	// bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Frame Count: %d", s_frameCount++).c_str());
+	// bgfx::dbgTextPrintf(1, 3, 0x0f, StringUtil::Format("Delta Time: %f", Engine::Instance()->DeltaTime()).c_str());
 
-	const glm::vec3 eye    = { 0.0f, 0.0f, -2.0f };
-	const glm::vec3 center = { 0.0f, 0.0f,  0.0f };
-	const glm::vec3 up     = { 0.0f, 0.1f,  0.0f };
+	// const glm::vec3 eye    = { 0.0f, 0.0f, -2.0f };
+	// const glm::vec3 center = { 0.0f, 0.0f,  0.0f };
+	// const glm::vec3 up     = { 0.0f, 0.1f,  0.0f };
 
-	uint16_t width  = Engine::Instance()->GetWidth();
-	uint16_t height = Engine::Instance()->GetHeight();
-	float aspect = Engine::Instance()->GetAspectRatio();
-	glm::mat4 viewMtx = glm::lookAt(eye, center, up);
-	glm::mat4 projMtx = glm::ortho(-1.f * aspect, 1.0f * aspect, -1.f, 1.0f, -100.0f, 100.0f);
-	bgfx::setViewTransform(0, &viewMtx, &projMtx);
+	// uint16_t width  = Engine::Instance()->GetWidth();
+	// uint16_t height = Engine::Instance()->GetHeight();
+	// float aspect = Engine::Instance()->GetAspectRatio();
+	// glm::mat4 viewMtx = glm::lookAt(eye, center, up);
+	// glm::mat4 projMtx = glm::ortho(-1.f * aspect, 1.0f * aspect, -1.f, 1.0f, -100.0f, 100.0f);
+	// bgfx::setViewTransform(0, &viewMtx, &projMtx);
 
-	static float zAngle = 0.f;
-	glm::mat4 transMtx = glm::rotate(glm::identity<glm::mat4>(), zAngle, glm::vec3(0.f, 0.f, 1.0f));
-	float deltaTime = Engine::Instance()->DeltaTime();
-	float maxDeltaTime = 1.0f / 30.0f;
-	deltaTime = deltaTime > maxDeltaTime ? maxDeltaTime : deltaTime;
-	zAngle += 1.0f * deltaTime;
+	// static float zAngle = 0.f;
+	// glm::mat4 transMtx = glm::rotate(glm::identity<glm::mat4>(), zAngle, glm::vec3(0.f, 0.f, 1.0f));
+	// float deltaTime = Engine::Instance()->DeltaTime();
+	// float maxDeltaTime = 1.0f / 30.0f;
+	// deltaTime = deltaTime > maxDeltaTime ? maxDeltaTime : deltaTime;
+	// zAngle += 1.0f * deltaTime;
 
-	bgfx::setTransform(&transMtx);
-	bgfx::setVertexBuffer(0, m_vbh);
-	bgfx::setIndexBuffer(m_ibh);
-	bgfx::setState(BGFX_STATE_DEFAULT);
-	bgfx::submit(0, m_program);
+	// bgfx::setTransform(&transMtx);
+	// bgfx::setVertexBuffer(0, m_vbh);
+	// bgfx::setIndexBuffer(m_ibh);
+	// bgfx::setState(BGFX_STATE_DEFAULT);
+	// bgfx::submit(0, m_program);
 
 	bgfx::frame();
 }

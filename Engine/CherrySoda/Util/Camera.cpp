@@ -19,19 +19,18 @@ Camera::Camera()
 
 Camera::Camera(int width, int height)
 {
-	m_width = width;
-	m_height = height;
+	m_width = static_cast<float>(width);
+	m_height = static_cast<float>(height);
 	UpdateMatrices();
 }
 
 void Camera::UpdateMatrices()
 {
 	if (m_changed) {
-		// TODO: Make use of m_zoom and m_zAngle
-		const Math::Vec3 actualPos = m_position - m_origin ;
-		m_viewMatrix = Math::LookAt(actualPos, actualPos + m_direction, m_upVector);
+		const Math::Vec3 actualPos = m_position - m_origin;
+		m_viewMatrix = Math::ScaleMat4(Math::LookAt(actualPos, actualPos + m_direction, Math::RotateVector(m_upVector, ZRotation(), Vec3_ZUp)), m_zoom);
 		m_projMatrix = Math::Perspective(m_fov, m_width / m_height, 0.1f, 1000.f);
-		m_inverseMatrix = Math::InverseMatrix(m_projMatrix * m_viewMatrix);
+		m_inverseMatrix = Math::InverseMat4(m_projMatrix * m_viewMatrix);
 		m_changed = false;
 	}
 }
