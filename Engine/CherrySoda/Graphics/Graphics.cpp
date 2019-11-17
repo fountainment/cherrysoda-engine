@@ -3,6 +3,7 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
 #include <bx/bx.h>
@@ -24,6 +25,7 @@ using cherrysoda::Graphics;
 using cherrysoda::Camera;
 using cherrysoda::Color;
 using cherrysoda::Engine;
+using cherrysoda::Math;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
@@ -190,6 +192,16 @@ void Graphics::SetViewport(int x, int y, int w, int h)
 void Graphics::SetCamera(Camera* camera)
 {
 	bgfx::setViewTransform(RenderPass(), &camera->m_viewMatrix, &camera->m_projMatrix);
+}
+
+void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
+{
+	bgfx::setTransform(&transformMatrix);
+}
+
+void Graphics::Submit()
+{
+	bgfx::submit(RenderPass(), m_program);
 }
 
 Graphics* Graphics::ms_instance = nullptr;

@@ -27,6 +27,18 @@ public:
 	template <typename T>
 	using Vector = std::vector<T>;
 
+	template<class T>
+	static void Resize(T& container, size_t size)
+	{
+		container.resize(size);
+	}
+
+	template<class T, class U>
+	static void Fill(T& container, const U& element)
+	{
+		std::fill(container.begin(), container.end(), element);
+	}
+
 	template<class T, class U>
 	static void Add(T& container, const U& element)
 	{

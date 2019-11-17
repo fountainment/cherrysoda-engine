@@ -35,6 +35,12 @@
 
 #define Mat4_Identity Math::Mat4(1.f)
 
+#define IVec3_Zero    Math::IVec3(0)
+#define IVec3_One     Math::IVec3(1)
+#define IVec3_XUp     Math::IVec3(1,0,0)
+#define IVec3_YUp     Math::IVec3(0,1,0)
+#define IVec3_ZUp     Math::IVec3(0,0,1)
+
 namespace cherrysoda {
 
 class Math
@@ -44,6 +50,8 @@ public:
 	using Vec3 = glm::vec3;
 	using Vec4 = glm::vec4;
 	using Mat4 = glm::mat4;
+
+	using IVec3 = glm::i32vec3;
 
 	static constexpr auto LookAt = glm::lookAt<glm::f32, glm::qualifier::defaultp>;
 	static constexpr auto Perspective = glm::perspective<glm::f32>;

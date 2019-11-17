@@ -2,6 +2,7 @@
 #define _CHERRYSODA_GRAPHICS_GRAPHICS_H_
 
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 
 namespace cherrysoda {
@@ -24,6 +25,8 @@ public:
 	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
+	void SetTransformMatrix(const Math::Mat4& transformMatrix);
+	void Submit();
 
 	static Graphics* Instance() { return ms_instance; };
 

@@ -11,6 +11,10 @@ namespace cherrysoda {
 class GraphicsComponent : public Component
 {
 public:
+	typedef Component base;
+
+	GraphicsComponent(bool active) : base(active, true) {}
+
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Position, m_position);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Origin, m_origin);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Scale, m_scale);

@@ -53,7 +53,7 @@ void RendererList::Update()
 void RendererList::BeforeRender()
 {
 	for (auto renderer : m_renderers) {
-		if (renderer->Visible()) continue;
+		if (!renderer->Visible()) continue;
 		//Draw::SetRenderer(renderer);
 		renderer->BeforeRender(m_scene);
 	}
@@ -62,7 +62,7 @@ void RendererList::BeforeRender()
 void RendererList::Render()
 {
 	for (auto renderer : m_renderers) {
-		if (renderer->Visible()) continue;
+		if (!renderer->Visible()) continue;
 		//Draw::SetRenderer(renderer);
 		renderer->Render(m_scene);
 	}
@@ -71,7 +71,7 @@ void RendererList::Render()
 void RendererList::AfterRender()
 {
 	for (auto renderer : m_renderers) {
-		if (renderer->Visible()) continue;
+		if (!renderer->Visible()) continue;
 		//Draw::SetRenderer(renderer);
 		renderer->AfterRender(m_scene);
 	}

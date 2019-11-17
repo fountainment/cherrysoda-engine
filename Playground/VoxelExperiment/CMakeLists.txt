@@ -2,8 +2,14 @@ set(PROJECT_SRC
   Program.cpp
   VoxelExperiment.cpp
   VoxelExperiment.h
-  Scenes/MainScene.h
   Scenes/MainScene.cpp
+  Scenes/MainScene.h
+  Voxel/Block.cpp
+  Voxel/Block.h
+  Voxel/Chunk.cpp
+  Voxel/Chunk.h
+  Voxel/ChunkGraphicsComponent.cpp
+  Voxel/ChunkGraphicsComponent.h
 )
 
 add_executable(VoxelExperiment ${PROJECT_SRC})
