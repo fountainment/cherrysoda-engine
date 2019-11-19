@@ -31,6 +31,7 @@ set(ENGINE_SRC
   CherrySoda/Util/Log.h
   CherrySoda/Util/Math.h
   CherrySoda/Util/NumType.h
+  CherrySoda/Util/STL.h
   CherrySoda/Util/String.cpp
   CherrySoda/Util/String.h
   CherrySoda/Util/Time.cpp
