@@ -22,6 +22,7 @@ public:
 
 	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>(f * 255.0f + 0.5f); };
 	constexpr type::UInt32 U32() const { return F2U32(R()) << 24 | F2U32(G()) << 16 | F2U32(B()) << 8 | F2U32(A()); };
+	constexpr type::UInt32 U32ABGR() const { return F2U32(A()) << 24 | F2U32(B()) << 16 | F2U32(G()) << 8 | F2U32(R()); }
 
 	inline void R(float v) { m_r = v; }
 	inline void G(float v) { m_g = v; }

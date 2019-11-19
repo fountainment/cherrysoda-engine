@@ -4,6 +4,7 @@
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
@@ -12,6 +13,28 @@ class Camera;
 class Graphics
 {
 public:
+	struct PosColorVertex
+	{
+		float m_x, m_y, m_z;
+		type::UInt32 m_abgr;
+
+		static void Init();
+	};
+
+	struct PosColorNormalVertex
+	{
+		float m_x, m_y, m_z;
+		type::UInt32 m_abgr;
+		float m_nx, m_ny, m_nz;	
+
+		static void Init();
+	};
+
+	using HandleType = type::UInt16;
+	using VertexBufferHandle = HandleType;
+	using IndexBufferHandle  = HandleType;
+	static constexpr HandleType InvalidHandle = UINT16_MAX;
+
 	static void Init();
 	static void Terminate();
 
@@ -26,7 +49,13 @@ public:
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
 	void SetTransformMatrix(const Math::Mat4& transformMatrix);
+	void SetVertexBuffer(VertexBufferHandle vertexBuffer);
+	void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	void Submit();
+
+	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorVertex>& vertices);
+	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorNormalVertex>& vertices);
+	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 
 	static Graphics* Instance() { return ms_instance; };
 

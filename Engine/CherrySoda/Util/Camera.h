@@ -31,7 +31,7 @@ private:
 	Math::Vec3 m_position = Vec3_Zero;
 	Math::Vec3 m_zoom = Vec3_One;
 	Math::Vec3 m_origin = Vec3_Zero;
-	Math::Vec3 m_direction = Vec3_ZUp;
+	Math::Vec3 m_direction = -Vec3_ZUp;
 	float m_zAngle = 0.f;
 	Math::Vec3 m_upVector = Vec3_YUp;
 	float m_fov = 60.f;

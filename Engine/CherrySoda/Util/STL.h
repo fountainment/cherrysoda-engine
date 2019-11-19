@@ -74,6 +74,18 @@ public:
 		return container.size();
 	}
 
+	template<class T>
+	static auto Data(const T& container)
+	{
+		return container.data();
+	}
+
+	template<class T>
+	static size_t ByteSize(const T& container)
+	{
+		return Count(container) * sizeof T::value_type;
+	}
+
 	template<class T, class U>
 	static auto Find(const T& container, const U& element)
 	{

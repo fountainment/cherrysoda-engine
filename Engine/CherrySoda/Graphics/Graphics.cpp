@@ -4,6 +4,8 @@
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
 #include <bx/bx.h>
@@ -26,30 +28,31 @@ using cherrysoda::Camera;
 using cherrysoda::Color;
 using cherrysoda::Engine;
 using cherrysoda::Math;
+using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
-struct PosColorVertex
+static bgfx::VertexLayout s_posColorLayout;
+static bgfx::VertexLayout s_posColorNormalLayout;
+
+void Graphics::PosColorVertex::Init()
 {
-	float m_x;
-	float m_y;
-	float m_z;
-	uint32_t m_abgr;
-
-	static void init()
-	{
-		ms_layout
-			.begin()
-			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-			.end();
-	};
-
-	static bgfx::VertexLayout ms_layout;
+	s_posColorLayout
+		.begin()
+		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+		.end();
 };
 
-bgfx::VertexLayout PosColorVertex::ms_layout;
-
+void Graphics::PosColorNormalVertex::Init()
+{
+	s_posColorNormalLayout
+		.begin()
+		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+		.end();
+}
 
 bgfx::ShaderHandle loadShader(const char* _name) {
 	char data[2048];
@@ -71,7 +74,7 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 }
 
 
-static PosColorVertex s_triVertices[] =
+static Graphics::PosColorVertex s_triVertices[] =
 {
 	{  0.0f,   0.67f, 0.0f, 0xff0000ff },
 	{ -0.58f, -0.33f, 0.0f, 0xff00ff00 },
@@ -96,11 +99,12 @@ void Graphics::Init()
 	bgfx::init();
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
-	PosColorVertex::init();
+	Graphics::PosColorVertex::Init();
+	Graphics::PosColorNormalVertex::Init();
 
 	m_vbh = bgfx::createVertexBuffer(
 		bgfx::makeRef(s_triVertices, sizeof(s_triVertices))
-		, PosColorVertex::ms_layout
+		, s_posColorLayout
 	);
 
 	m_ibh = bgfx::createIndexBuffer(
@@ -191,6 +195,7 @@ void Graphics::SetViewport(int x, int y, int w, int h)
 
 void Graphics::SetCamera(Camera* camera)
 {
+	camera->UpdateMatrices();
 	bgfx::setViewTransform(RenderPass(), &camera->m_viewMatrix, &camera->m_projMatrix);
 }
 
@@ -199,9 +204,43 @@ void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 	bgfx::setTransform(&transformMatrix);
 }
 
+void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
+{
+	bgfx::setVertexBuffer(RenderPass(), bgfx::VertexBufferHandle{vertexBuffer});
+}
+
+void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
+{
+	bgfx::setIndexBuffer(bgfx::IndexBufferHandle{indexBuffer});
+}
+
 void Graphics::Submit()
 {
+	bgfx::setState(BGFX_STATE_DEFAULT);
 	bgfx::submit(RenderPass(), m_program);
+}
+
+Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorVertex>& vertices)
+{
+	return bgfx::createVertexBuffer(
+		bgfx::makeRef(STL::Data(vertices), STL::ByteSize(vertices)),
+		s_posColorLayout
+	).idx;
+}
+
+Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorNormalVertex>& vertices)
+{
+	return bgfx::createVertexBuffer(
+		bgfx::makeRef(STL::Data(vertices), STL::ByteSize(vertices)),
+		s_posColorNormalLayout
+	).idx;
+}
+
+Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
+{
+	return bgfx::createIndexBuffer(
+		bgfx::makeRef(STL::Data(indices), STL::ByteSize(indices))
+	).idx;
 }
 
 Graphics* Graphics::ms_instance = nullptr;

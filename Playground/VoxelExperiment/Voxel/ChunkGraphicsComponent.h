@@ -3,6 +3,8 @@
 
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
+#include <CherrySoda/Graphics/Mesh.h>
+#include <CherrySoda/Graphics/Graphics.h>
 
 #include "Chunk.h"
 
@@ -14,11 +16,12 @@ public:
 	ChunkGraphicsComponent() : base(true) {}
 
 	void Added(cherrysoda::Entity* entity) override;
-	void Update() override;
+	void EntityAwake() override;
 	void Render() override;
 
 private:
 	Chunk* m_chunk = nullptr;
+	cherrysoda::Mesh<cherrysoda::Graphics::PosColorNormalVertex> m_mesh;
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_CHUNKGRAPHICSCOMPONENT_H_

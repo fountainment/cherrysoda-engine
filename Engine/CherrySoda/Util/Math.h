@@ -1,7 +1,7 @@
 #ifndef _CHERRYSODA_UTIL_MATH_H_
 #define _CHERRYSODA_UTIL_MATH_H_
 
-#define GLM_FORCE_LEFT_HANDED
+//#define GLM_FORCE_LEFT_HANDED
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

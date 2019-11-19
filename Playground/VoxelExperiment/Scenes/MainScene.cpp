@@ -14,11 +14,11 @@ using cherrysoda::Renderer;
 
 void MainScene::Begin()
 {
-	Renderer* renderer = new EverythingRenderer;
-	Entity* entity = new Chunk;
-	Component* component = new Component(true, true);
+	auto renderer = new EverythingRenderer;
+	auto entity = new Chunk;
 
-	entity->Add(component);
+	*(renderer->GetCamera()) = cherrysoda::Camera(1, 1);
+	renderer->GetCamera()->Position(cherrysoda::Math::Vec3(0.f, 0.f, 10.f));
 
 	Add(renderer);
 	Add(entity);
