@@ -19,6 +19,8 @@ public:
 	void EntityAwake() override;
 	void Render() override;
 
+	void Update() override;
+
 private:
 	Chunk* m_chunk = nullptr;
 	cherrysoda::Mesh<cherrysoda::Graphics::PosColorNormalVertex> m_mesh;

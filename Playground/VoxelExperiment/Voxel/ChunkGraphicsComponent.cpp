@@ -1,5 +1,6 @@
 #include "ChunkGraphicsComponent.h"
 
+#include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Math.h>
 
@@ -32,6 +33,11 @@ void ChunkGraphicsComponent::EntityAwake()
 		}
 	}
 	m_mesh.InitBuffer();
+}
+
+void ChunkGraphicsComponent::Update()
+{
+	ZRotation(ZRotation() + cherrysoda::Engine::Instance()->DeltaTime());
 }
 
 void ChunkGraphicsComponent::Render()
