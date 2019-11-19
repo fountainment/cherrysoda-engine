@@ -83,7 +83,7 @@ public:
 	template<typename T>
 	static size_t ByteSize(const T& container)
 	{
-		return Count(container) * sizeof T::value_type;
+		return Count(container) * sizeof (typename T::value_type);
 	}
 
 	template<typename T, typename U>
