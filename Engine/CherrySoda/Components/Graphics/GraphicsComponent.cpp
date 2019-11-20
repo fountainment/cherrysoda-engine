@@ -6,12 +6,12 @@ using cherrysoda::Math;
 const Math::Mat4 GraphicsComponent::GetTransformMatrix() const
 {
 	return Math::TranslateMat4(
+		Math::ScaleMat4(
 			Math::RotateMat4(
-				Math::ScaleMat4(
-					Math::TranslateMat4(
-						Mat4_Identity, 
-					-Origin()),
-				Scale()),
+				Math::TranslateMat4(
+					Mat4_Identity,
+				RenderPosition()),
 			ZRotation(), Vec3_ZUp),
-		RenderPosition());
+		Scale()),
+	-Origin());
 }

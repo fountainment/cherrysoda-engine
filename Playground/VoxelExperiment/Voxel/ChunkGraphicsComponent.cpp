@@ -17,14 +17,20 @@ void ChunkGraphicsComponent::Added(Entity* entity)
 {
 	m_chunk = static_cast<Chunk*>(entity);
 	constexpr int chunkSize = Chunk::Size();
+	constexpr float halfChunkSize = chunkSize * 0.5f;
 	for (int i = 0; i < chunkSize; ++i) {
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
-				if ((i * i + j * j + k * k) < 16)
+				float l = i - halfChunkSize + 0.5f;
+				float m = j - halfChunkSize + 0.5f;
+				float n = k - halfChunkSize + 0.5f;
+				if ((l * l + m * m + n * n) <= halfChunkSize * halfChunkSize) {
 					m_chunk->SetBlockType(i, j, k, Block::Type::White);
+				}
 			}
 		}
 	}
+	Origin(Math::Vec3(halfChunkSize));
 }
 
 void ChunkGraphicsComponent::EntityAwake()
