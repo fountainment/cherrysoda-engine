@@ -2,16 +2,29 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
 
-using cherrysoda::Entity;
-using cherrysoda::Math;
-using cherrysoda::Graphics;
+namespace crsd = cherrysoda;
+using crsd::Engine;
+using crsd::Entity;
+using crsd::Math;
+using crsd::Color;
+using crsd::Graphics;
 
 void ChunkGraphicsComponent::Added(Entity* entity)
 {
 	m_chunk = static_cast<Chunk*>(entity);
-	m_chunk->SetBlockType(0, 0, 0, Block::Type::White);
+	constexpr int chunkSize = Chunk::Size();
+	for (int i = 0; i < chunkSize; ++i) {
+		for (int j = 0; j < chunkSize; ++j) {
+			for (int k = 0; k < chunkSize; ++k) {
+				if ((i * i + j * j + k * k) < 16)
+					m_chunk->SetBlockType(i, j, k, Block::Type::White);
+			}
+		}
+	}
 }
 
 void ChunkGraphicsComponent::EntityAwake()
@@ -23,11 +36,7 @@ void ChunkGraphicsComponent::EntityAwake()
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
 				if (m_chunk->GetBlockType(i, j, k) == Block::Type::White) {
-					m_mesh.AddTriangle(
-						{0.0f, 0.0f, 0.0f, 0xffff0000, 0.f, 0.f, 1.f},
-						{0.0f, 1.0f, 0.0f, 0xff0000ff, 0.f, 0.f, 1.f},
-						{-1.0f, 0.0f, 0.0f, 0xff00ffff, 0.f, 0.f, 1.f}
-					);	
+					AddCube(Math::Vec3(i, j, k), 1.f, Color::White);
 				}
 			}
 		}
@@ -37,7 +46,7 @@ void ChunkGraphicsComponent::EntityAwake()
 
 void ChunkGraphicsComponent::Update()
 {
-	ZRotation(ZRotation() + cherrysoda::Engine::Instance()->DeltaTime());
+	ZRotation(ZRotation() + Engine::Instance()->DeltaTime());
 }
 
 void ChunkGraphicsComponent::Render()
@@ -46,4 +55,32 @@ void ChunkGraphicsComponent::Render()
 	Graphics::Instance()->SetVertexBuffer(m_mesh.GetVertexBuffer());
 	Graphics::Instance()->SetIndexBuffer(m_mesh.GetIndexBuffer());
 	Graphics::Instance()->Submit();
+}
+
+void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Color& color, const Math::Vec3& normal)
+{
+	auto makeVertex = [](const Math::Vec3& p, crsd::type::UInt32 c, const Math::Vec3& n)
+	{
+		return Graphics::PosColorNormalVertex{ p[0], p[1], p[2], c, n[0], n[1], n[2] };
+	};
+	const auto pVec = (Vec3_One - glm::abs(normal)) * size;
+	const auto pVecH = normal[0] == 0.f ? Math::Vec3(size, 0.f, 0.f) : Math::Vec3(0.f, size, 0.f);
+	const auto pVecV = normal[2] == 0.f ? Math::Vec3(0.f, 0.f, size) : Math::Vec3(0.f, size, 0.f);
+	const auto cU32 = color.U32ABGR();
+	m_mesh.AddQuad(
+		makeVertex(pos + pVecV, cU32, normal),
+		makeVertex(pos,         cU32, normal),
+		makeVertex(pos + pVec,  cU32, normal),
+		makeVertex(pos + pVecH, cU32, normal)
+	);
+}
+
+void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Color& color)
+{
+	AddQuad(pos + Vec3_XUp * size, size, color,  Vec3_XUp);
+	AddQuad(pos                  , size, color, -Vec3_XUp);
+	AddQuad(pos + Vec3_YUp * size, size, color,  Vec3_YUp);
+	AddQuad(pos                  , size, color, -Vec3_YUp);
+	AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
+	AddQuad(pos                  , size, color, -Vec3_ZUp);
 }

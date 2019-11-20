@@ -19,7 +19,7 @@ void MainScene::Begin()
 	auto renderer = new EverythingRenderer;
 	auto entity = new Chunk;
 
-	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 3.f));
+	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 20.f));
 
 	Add(renderer);
 	Add(entity);
