@@ -52,8 +52,7 @@ void ChunkGraphicsComponent::Update()
 void ChunkGraphicsComponent::Render()
 {
 	Graphics::Instance()->SetTransformMatrix(GetTransformMatrix());
-	Graphics::Instance()->SetVertexBuffer(m_mesh.GetVertexBuffer());
-	Graphics::Instance()->SetIndexBuffer(m_mesh.GetIndexBuffer());
+	Graphics::Instance()->SetMesh(&m_mesh);
 	Graphics::Instance()->Submit();
 }
 
