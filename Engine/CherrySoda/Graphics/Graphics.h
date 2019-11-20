@@ -20,6 +20,10 @@ public:
 		type::UInt32 m_abgr;
 
 		static void Init();
+		static PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
+		{
+			return { p[0], p[1], p[2], c };
+		}
 	};
 
 	struct PosColorNormalVertex
@@ -29,6 +33,10 @@ public:
 		float m_nx, m_ny, m_nz;	
 
 		static void Init();
+		static PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
+		{
+			return { p[0], p[1], p[2], c, n[0], n[1], n[2] };
+		}
 	};
 
 	using HandleType = type::UInt16;

@@ -15,8 +15,8 @@ namespace crsd = cherrysoda;
 class ChunkGraphicsComponent : public cherrysoda::GraphicsComponent
 {
 public:
-
 	typedef crsd::GraphicsComponent base;
+	typedef crsd::Graphics::PosColorNormalVertex VertexType;
 
 	ChunkGraphicsComponent() : base(true) {}
 
@@ -30,7 +30,7 @@ public:
 
 private:
 	Chunk* m_chunk = nullptr;
-	cherrysoda::Mesh<crsd::Graphics::PosColorNormalVertex> m_mesh;
+	cherrysoda::Mesh<VertexType> m_mesh;
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_CHUNKGRAPHICSCOMPONENT_H_

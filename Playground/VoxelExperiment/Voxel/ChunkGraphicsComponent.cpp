@@ -58,19 +58,15 @@ void ChunkGraphicsComponent::Render()
 
 void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Color& color, const Math::Vec3& normal)
 {
-	auto makeVertex = [](const Math::Vec3& p, crsd::type::UInt32 c, const Math::Vec3& n)
-	{
-		return Graphics::PosColorNormalVertex{ p[0], p[1], p[2], c, n[0], n[1], n[2] };
-	};
 	const auto pVec = (Vec3_One - glm::abs(normal)) * size;
 	const auto pVecH = normal[0] == 0.f ? Math::Vec3(size, 0.f, 0.f) : Math::Vec3(0.f, size, 0.f);
 	const auto pVecV = normal[2] == 0.f ? Math::Vec3(0.f, 0.f, size) : Math::Vec3(0.f, size, 0.f);
 	const auto cU32 = color.U32ABGR();
 	m_mesh.AddQuad(
-		makeVertex(pos + pVecV, cU32, normal),
-		makeVertex(pos,         cU32, normal),
-		makeVertex(pos + pVec,  cU32, normal),
-		makeVertex(pos + pVecH, cU32, normal)
+		VertexType::MakeVertex(pos + pVecV, cU32, normal),
+		VertexType::MakeVertex(pos,         cU32, normal),
+		VertexType::MakeVertex(pos + pVec,  cU32, normal),
+		VertexType::MakeVertex(pos + pVecH, cU32, normal)
 	);
 }
 
