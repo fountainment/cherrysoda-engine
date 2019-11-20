@@ -26,18 +26,18 @@ public:
 	{
 		const type::UInt16 i = VertexAmount();
 		STL::AddRange(m_vertices, {v1, v2, v3, v4});
-		STL::AddRange(m_indices,  {i, i+1, i+2, i+1, i+3, i+2});
+		STL::AddRange(m_indices,  {i, i+1u, i+2u, i+1u, i+3u, i+2u});
 	}
 	inline void AddCube(VERTEX_T v1, VERTEX_T v2, VERTEX_T v3, VERTEX_T v4, VERTEX_T v5, VERTEX_T v6, VERTEX_T v7, VERTEX_T v8)
 	{
 		const type::UInt16 i = VertexAmount();
 		STL::AddRange(m_vertices, {v1, v2, v3, v4, v5, v6, v7, v8});
-		STL::AddRange(m_indices,  {i+0, i+1, i+2, i+1, i+3, i+2});
-		STL::AddRange(m_indices,  {i+4, i+6, i+5, i+5, i+6, i+7});
-		STL::AddRange(m_indices,  {i+0, i+2, i+4, i+4, i+2, i+6});
-		STL::AddRange(m_indices,  {i+1, i+5, i+3, i+5, i+7, i+3});
-		STL::AddRange(m_indices,  {i+0, i+4, i+1, i+4, i+5, i+1});
-		STL::AddRange(m_indices,  {i+2, i+3, i+6, i+6, i+3, i+7});
+		STL::AddRange(m_indices,  {i+0u, i+1u, i+2u, i+1u, i+3u, i+2u});
+		STL::AddRange(m_indices,  {i+4u, i+6u, i+5u, i+5u, i+6u, i+7u});
+		STL::AddRange(m_indices,  {i+0u, i+2u, i+4u, i+4u, i+2u, i+6u});
+		STL::AddRange(m_indices,  {i+1u, i+5u, i+3u, i+5u, i+7u, i+3u});
+		STL::AddRange(m_indices,  {i+0u, i+4u, i+1u, i+4u, i+5u, i+1u});
+		STL::AddRange(m_indices,  {i+2u, i+3u, i+6u, i+6u, i+3u, i+7u});
 	}
 
 	void InitBuffer()

@@ -51,6 +51,12 @@ public:
 		container.emplace(element);
 	}
 
+	template<typename T>
+	static void AddRange(T& container, const T& iterable)
+	{
+		container.insert(std::end(container), std::begin(iterable), std::end(iterable));
+	}
+
 	template<typename T, typename U>
 	static void AddRange(T& container, const U& iterable)
 	{
