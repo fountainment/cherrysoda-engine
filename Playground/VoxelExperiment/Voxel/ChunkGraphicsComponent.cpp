@@ -64,16 +64,28 @@ void ChunkGraphicsComponent::Render()
 
 void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Color& color, const Math::Vec3& normal)
 {
+	bool positive = (normal == glm::abs(normal));
+	if (normal[1] != 0) positive = !positive;
 	const auto pVec = (Vec3_One - glm::abs(normal)) * size;
 	const auto pVecH = normal[0] == 0.f ? Math::Vec3(size, 0.f, 0.f) : Math::Vec3(0.f, size, 0.f);
 	const auto pVecV = normal[2] == 0.f ? Math::Vec3(0.f, 0.f, size) : Math::Vec3(0.f, size, 0.f);
 	const auto cU32 = color.U32ABGR();
-	m_mesh.AddQuad(
-		VertexType::MakeVertex(pos + pVecV, cU32, normal),
-		VertexType::MakeVertex(pos,         cU32, normal),
-		VertexType::MakeVertex(pos + pVec,  cU32, normal),
-		VertexType::MakeVertex(pos + pVecH, cU32, normal)
-	);
+	if (positive) {
+		m_mesh.AddQuad(
+			VertexType::MakeVertex(pos + pVecV, cU32, normal),
+			VertexType::MakeVertex(pos, cU32, normal),
+			VertexType::MakeVertex(pos + pVec, cU32, normal),
+			VertexType::MakeVertex(pos + pVecH, cU32, normal)
+		);
+	}
+	else {
+		m_mesh.AddQuad(
+			VertexType::MakeVertex(pos + pVec, cU32, normal),
+			VertexType::MakeVertex(pos + pVecH, cU32, normal),
+			VertexType::MakeVertex(pos + pVecV, cU32, normal),
+			VertexType::MakeVertex(pos, cU32, normal)
+		);
+	}
 }
 
 void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Color& color)

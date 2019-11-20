@@ -11,7 +11,7 @@ const Math::Mat4 GraphicsComponent::GetTransformMatrix() const
 				Math::TranslateMat4(
 					Mat4_Identity,
 				RenderPosition()),
-			ZRotation(), Vec3_ZUp),
+			ZRotation(), Vec3_ZUp + Vec3_XUp),
 		Scale()),
 	-Origin());
 }
