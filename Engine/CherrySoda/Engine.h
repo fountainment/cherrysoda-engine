@@ -23,7 +23,7 @@ class Window;
 class Engine
 {
 public:
-	Engine() : Engine(800, 600, 800, 600, "CherrySoda", false) {}
+	Engine() : Engine(500, 500, 500, 500, "CherrySoda", false) {}
 	Engine(int width, int height, int windowWidth, int windowHeight,
 	       const String& title, bool fullscreen);
 
