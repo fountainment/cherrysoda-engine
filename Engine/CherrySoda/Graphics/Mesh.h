@@ -10,8 +10,15 @@
 
 namespace cherrysoda {
 
+class MeshInterface
+{
+public:
+	virtual Graphics::VertexBufferHandle GetVertexBuffer() const = 0;
+	virtual Graphics::IndexBufferHandle GetIndexBuffer() const = 0;
+};
+
 template <class VERTEX_T>
-class Mesh
+class Mesh : public MeshInterface
 {
 public:
 	friend class Graphics;

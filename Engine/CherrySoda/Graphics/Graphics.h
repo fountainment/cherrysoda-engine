@@ -9,6 +9,7 @@
 namespace cherrysoda {
 
 class Camera;
+class MeshInterface;
 
 class Graphics
 {
@@ -49,6 +50,7 @@ public:
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
 	void SetTransformMatrix(const Math::Mat4& transformMatrix);
+	void SetMesh(MeshInterface* mesh);
 	void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	void Submit();

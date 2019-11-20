@@ -1,5 +1,6 @@
 #include <CherrySoda/Graphics/Graphics.h>
 
+#include <CherrySoda/Graphics/Mesh.h>
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Log.h>
@@ -28,6 +29,7 @@ using cherrysoda::Camera;
 using cherrysoda::Color;
 using cherrysoda::Engine;
 using cherrysoda::Math;
+using cherrysoda::MeshInterface;
 using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
@@ -202,6 +204,12 @@ void Graphics::SetCamera(Camera* camera)
 void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 {
 	bgfx::setTransform(&transformMatrix);
+}
+
+void Graphics::SetMesh(MeshInterface* mesh)
+{
+	SetVertexBuffer(mesh->GetVertexBuffer());
+	SetIndexBuffer(mesh->GetIndexBuffer());
 }
 
 void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
