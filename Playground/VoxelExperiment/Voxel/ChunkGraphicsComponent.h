@@ -26,7 +26,7 @@ public:
 	void Update() override;
 
 	void AddQuad(const crsd::Math::Vec3& pos, float size, const crsd::Color& color, const crsd::Math::Vec3& normal);
-	void AddCube(const crsd::Math::Vec3& pos, float size, const crsd::Color& color);
+	void AddCube(const crsd::Math::Vec3& pos, float size, const crsd::Color& color, int planeMask = 0xffffffff);
 
 private:
 	Chunk* m_chunk = nullptr;

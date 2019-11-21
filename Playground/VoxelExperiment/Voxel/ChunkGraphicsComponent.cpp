@@ -42,7 +42,8 @@ void ChunkGraphicsComponent::EntityAwake()
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
 				if (m_chunk->GetBlockType(i, j, k) == Block::Type::White) {
-					AddCube(Math::Vec3(i, j, k), 1.f, Color::White);
+					int planeMask = m_chunk->GetBlockSurrounding(i, j, k);
+					AddCube(Math::Vec3(i, j, k), 1.f, Color::White, planeMask);
 				}
 			}
 		}
@@ -88,12 +89,12 @@ void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Co
 	}
 }
 
-void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Color& color)
+void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Color& color, int planeMask)
 {
-	AddQuad(pos + Vec3_XUp * size, size, color,  Vec3_XUp);
-	AddQuad(pos                  , size, color, -Vec3_XUp);
-	AddQuad(pos + Vec3_YUp * size, size, color,  Vec3_YUp);
-	AddQuad(pos                  , size, color, -Vec3_YUp);
-	AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
-	AddQuad(pos                  , size, color, -Vec3_ZUp);
+	if (planeMask & 1 << 0) AddQuad(pos + Vec3_XUp * size, size, color,  Vec3_XUp);
+	if (planeMask & 1 << 1) AddQuad(pos                  , size, color, -Vec3_XUp);
+	if (planeMask & 1 << 2) AddQuad(pos + Vec3_YUp * size, size, color,  Vec3_YUp);
+	if (planeMask & 1 << 3) AddQuad(pos                  , size, color, -Vec3_YUp);
+	if (planeMask & 1 << 4) AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
+	if (planeMask & 1 << 5) AddQuad(pos                  , size, color, -Vec3_ZUp);
 }
