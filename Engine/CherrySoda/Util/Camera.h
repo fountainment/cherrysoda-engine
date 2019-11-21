@@ -37,7 +37,9 @@ private:
 	float m_fov = 60.f;
 
 public:
-	CHERRYSODA_GETTER_SETTER(ZRotation, m_zAngle);
+	CHERRYSODA_GETTER_SETTER_EX(ZRotation, m_zAngle, CHERRYSODA_NONE_OP, m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX(Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX(Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);
 };
 
 } // namespace cherrysoda

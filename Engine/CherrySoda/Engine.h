@@ -52,6 +52,8 @@ public:
 	static Engine* Instance() { return ms_instance; }
 
 protected:
+	virtual void OnClientSizeChanged(int width, int height);
+
 	virtual void Initialize();
 	virtual void LoadContent();
 
@@ -78,6 +80,7 @@ private:
 	Window* m_window = nullptr;
 	bool m_shouldExit = false;
 	bool m_initialized = false;
+	bool m_resizing = false;
 
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;

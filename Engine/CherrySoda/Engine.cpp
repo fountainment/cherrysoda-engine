@@ -49,7 +49,6 @@ void Engine::Run()
 	Initialize();
 	LoadContent();
 
-	Graphics::Instance()->RenderFrame();
 	m_window->Show();
 
 	m_lastFrameTime = Time::GetSystemTime();
@@ -68,6 +67,19 @@ void Engine::Run()
 void Engine::SetScene(Scene* scene)
 {
 	m_nextScene = scene;
+}
+
+void Engine::OnClientSizeChanged(int width, int height)
+{
+	if (!m_resizing) {
+		m_resizing = true;
+		SetWindowSize(width, height);
+		SetViewSize(width, height);
+		if (auto gfxInstance = Graphics::Instance()) {
+			gfxInstance->UpdateView();
+		}
+		m_resizing = false;
+	}
 }
 
 void Engine::Initialize()

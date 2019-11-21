@@ -192,9 +192,7 @@ void cherrysoda::Window::PollEvents()
 			{
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
 			{
-				Engine::Instance()->SetWindowSize(wev.data1, wev.data2);
-				Engine::Instance()->SetViewSize(wev.data1, wev.data2);
-				Graphics::Instance()->UpdateView();
+				Engine::Instance()->OnClientSizeChanged(wev.data1, wev.data2);
 			}
 			break;
 			}
