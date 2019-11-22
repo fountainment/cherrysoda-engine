@@ -14,13 +14,12 @@ uniform vec4 u_material[2];
 
 // lights
 uniform vec4 u_lights[8];
-#define u_lightPositions(i) u_lights[i]
-#define u_lightColors(i)    u_lights[i+4]
-
-const float PI = 3.14159265358979323846264;
+#define u_lightPositions(i) u_lights[i*2]
+#define u_lightColors(i)    u_lights[i*2+1]
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
+    const float PI = 3.14159265358979323846264;
     float a      = roughness*roughness;
     float a2     = a*a;
     float NdotH  = max(dot(N, H), 0.0);
@@ -61,6 +60,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {       
+    const float PI = 3.14159265358979323846264;
     vec3 N = normalize(v_normal);
     vec3 V = normalize(u_camPos.xyz - v_worldPos);
 
