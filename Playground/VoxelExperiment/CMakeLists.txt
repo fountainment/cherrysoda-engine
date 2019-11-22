@@ -12,6 +12,8 @@ set(PROJECT_SRC
   Voxel/ChunkGraphicsComponent.h
 )
 
+configure_file(fs_simple.bin fs_simple.bin COPYONLY)
+configure_file(vs_simple.bin vs_simple.bin COPYONLY)
 add_executable(VoxelExperiment ${PROJECT_SRC})
 target_include_directories(VoxelExperiment PRIVATE .)
 target_link_libraries(VoxelExperiment PRIVATE CherrySoda)

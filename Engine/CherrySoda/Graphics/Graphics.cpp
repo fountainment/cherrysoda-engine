@@ -48,7 +48,7 @@ void Graphics::PosColorNormalVertex::Init()
 }
 
 bgfx::ShaderHandle loadShader(const char* _name) {
-	char data[2048];
+	char data[8192];
 	std::ifstream file;
 	size_t fileSize = 0;
 	file.open(_name, std::ios::binary);
