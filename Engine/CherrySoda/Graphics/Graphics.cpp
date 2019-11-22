@@ -66,7 +66,7 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 	return handle;
 }
 
-bgfx::ProgramHandle m_program;
+bgfx::ProgramHandle ms_program;
 
 Graphics::Graphics()
 {
@@ -83,7 +83,13 @@ void Graphics::Init()
 	bgfx::ShaderHandle vsh = loadShader("vs_simple.bin");
 	bgfx::ShaderHandle fsh = loadShader("fs_simple.bin");
 
-	m_program = bgfx::createProgram(vsh, fsh, true);
+	ms_program = bgfx::createProgram(vsh, fsh, true);
+
+	ms_uniformCamPos   = bgfx::createUniform("u_camPos", bgfx::UniformType::Vec4).idx;
+	ms_uniformMaterial = bgfx::createUniform("u_material", bgfx::UniformType::Vec4, 2).idx;
+	ms_uniformLights   = bgfx::createUniform("u_lights", bgfx::UniformType::Vec4, 8).idx;
+	ms_uniformTexCube  = bgfx::createUniform("u_texCube", bgfx::UniformType::Sampler).idx;
+	ms_uniformParams   = bgfx::createUniform("u_params", bgfx::UniformType::Vec4, 16).idx;
 
 	ms_instance = new Graphics();
 }
@@ -168,7 +174,7 @@ void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
 void Graphics::Submit()
 {
 	bgfx::setState(BGFX_STATE_DEFAULT);
-	bgfx::submit(RenderPass(), m_program);
+	bgfx::submit(RenderPass(), ms_program);
 }
 
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorVertex>& vertices)
@@ -194,4 +200,21 @@ Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::
 	).idx;
 }
 
+void Graphics::SetUniformCamPos(const Math::Vec3& camPos)
+{
+	Math::Vec4 camPosVec4 = Math::Vec4(camPos, 1.0f);
+	bgfx::setUniform({ ms_uniformCamPos }, &camPosVec4);
+}
+
+void Graphics::SetUniformMaterial(const Math::Vec3& albedo, float metallic, float roughness, float ao)
+{
+	Math::Vec4 materialVec4[] = { Math::Vec4(albedo, 0.0f), Math::Vec4(metallic, roughness, ao, 0.0f) };
+	bgfx::setUniform({ ms_uniformMaterial }, materialVec4, 2U);
+}
+
+Graphics::UniformHandle Graphics::ms_uniformCamPos   = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformLights   = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformParams   = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformTexCube  = Graphics::InvalidHandle;
 Graphics* Graphics::ms_instance = nullptr;

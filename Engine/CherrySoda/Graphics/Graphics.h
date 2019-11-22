@@ -42,6 +42,9 @@ public:
 	using HandleType = type::UInt16;
 	using VertexBufferHandle = HandleType;
 	using IndexBufferHandle  = HandleType;
+	using ShaderHandle = HandleType;
+	using UniformHandle = HandleType;
+	using TextureHandle = HandleType;
 	static constexpr HandleType InvalidHandle = UINT16_MAX;
 
 	static void Init();
@@ -67,6 +70,10 @@ public:
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorNormalVertex>& vertices);
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 
+	static void SetUniformCamPos(const Math::Vec3& camPos);
+	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
+	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor);
+
 	static Graphics* Instance() { return ms_instance; };
 
 private:
@@ -76,6 +83,12 @@ private:
 
 	type::UInt16 m_renderPassId = 0;	
 	bool m_vsyncEnabled = true;
+	
+	static UniformHandle ms_uniformCamPos;
+	static UniformHandle ms_uniformLights;
+	static UniformHandle ms_uniformMaterial;
+	static UniformHandle ms_uniformParams;
+	static UniformHandle ms_uniformTexCube;
 
 	static Graphics* ms_instance;
 };

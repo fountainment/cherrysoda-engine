@@ -1,56 +1,106 @@
-$input v_wpos, v_color0, v_normal
+$input v_worldPos, v_color0, v_normal
 
 #include <bgfx_shader.sh>
 
-vec3 PointLight(vec3 texColor, vec3 wpos, vec3 normal, vec3 lightPos, float lightRadius, vec3 lightColor, float lightIntensity)
+// camera position
+uniform vec4 u_camPos;
+
+// material parameters
+uniform vec4 u_material[2];
+#define u_albedo    u_material[0].xyz
+#define u_metallic  u_material[1].x
+#define u_roughness u_material[1].y
+#define u_ao        u_material[1].z
+
+// lights
+uniform vec4 u_lights[8];
+#define u_lightPositions(i) u_lights[i]
+#define u_lightColors(i)    u_lights[i+4]
+
+const float PI = 3.14159265358979323846264;
+
+float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-    const vec3 gold = vec3(1.0, 0.72, 0.29);
-    const vec3 silver = vec3(0.95, 0.93, 0.88);
-    const vec3 copper = vec3(0.95, 0.63, 0.54);
-    const vec3 iron = vec3(0.56, 0.57, 0.58);
-    const vec3 al = vec3(0.56, 0.57, 0.58);
-    const vec3 porcelain = vec3(0.0277, 0.0277, 0.0277);
-    const vec3 plastic = vec3(0.0505, 0.0505, 0.0505);
-    const float Pi = 3.14159265358979323846264;
-    float m = 10.0;
-    float gamma = 2.2;
-    float gammaInv = 1.0 / 2.2;
-    float specular = 1.0;
-    float metallic = 0.9;
-    vec3 RF0 = pow(silver, vec3(gamma, gamma, gamma));
-    if (lightIntensity == 0.0) {
-        return vec3(0.0, 0.0, 0.0);
-    }
-    vec3 pl = mul(u_view, vec4(lightPos, 1.0)).xyz;
-    vec3 El = lightColor * lightIntensity;
-    vec3 p = wpos;
-
-    vec3 n = normal;
-    vec3 l = pl - p;
-    float len = length(l);
-    l = l / len;
-    vec3 v = -normalize(wpos);
-    vec3 h = normalize(l + v);
-
-    float cosThetai = max(dot(normalize(n), l), 0.0);
-    float cosThetah = 0.0;
-    if (cosThetai != 0.0) {
-        cosThetah = max(dot(n, h), 0.0);
-    }
-    vec3 RF = RF0 + (vec3(1.0, 1.0, 1.0) - RF0) * pow((1.0 - max(dot(normalize(n), v), 0.0)), 5.0);
-    float attenuation = 1.0 / pow((len / lightRadius) + 1.0, 2.0);
-    vec3 L0 = (vec3(1.0, 1.0, 1.0) / Pi * texColor * (vec3(1.0, 1.0, 1.0) - RF) * (1.0 - metallic) + (metallic + specular) * vec3(0.5, 0.5, 0.5) * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
-    L0 += RF0 * 0.1;
-    return L0;
+    float a      = roughness*roughness;
+    float a2     = a*a;
+    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+    
+    float num   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+    
+    return num / denom;
 }
 
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float num   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+    
+    return num / denom;
+}
+
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2  = GeometrySchlickGGX(NdotV, roughness);
+    float ggx1  = GeometrySchlickGGX(NdotL, roughness);
+    
+    return ggx1 * ggx2;
+}
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
 
 void main()
-{
-    float gamma = 2.2;
-    float gammaInv = 1.0 / 2.2;
-    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    color.xyz += PointLight(vec3(1.0, 1.0, 1.0), v_wpos, normalize(v_normal), vec3(0.0, 0.0, 20.0), 50.0, vec3(1.0, 1.0, 1.0), 1.0);
-    color.xyz = pow(color.xyz, vec3(gammaInv, gammaInv, gammaInv));
-    gl_FragColor = color;
+{       
+    vec3 N = normalize(v_normal);
+    vec3 V = normalize(u_camPos.xyz - v_worldPos);
+
+    vec3 F0 = vec3(0.04, 0.04, 0.04); 
+    F0 = mix(F0, u_albedo, u_metallic);
+               
+    // reflectance equation
+    vec3 Lo = vec3(0.0, 0.0, 0.0);
+    for(int i = 0; i < 4; ++i) 
+    {
+        // calculate per-light radiance
+        vec3 L = normalize(u_lightPositions(i).xyz - v_worldPos);
+        vec3 H = normalize(V + L);
+        float distance    = length(u_lightPositions(i).xyz - v_worldPos);
+        float attenuation = 1.0 / (distance * distance);
+        vec3 radiance     = u_lightColors(i).xyz * attenuation;        
+        
+        // cook-torrance brdf
+        float NDF = DistributionGGX(N, H, u_roughness);        
+        float G   = GeometrySmith(N, V, L, u_roughness);      
+        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);       
+        
+        vec3 kS = F;
+        vec3 kD = vec3(1.0, 1.0, 1.0) - kS;
+        kD *= 1.0 - u_metallic;     
+        
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+        vec3 specular     = numerator / max(denominator, 0.001);  
+            
+        // add to outgoing radiance Lo
+        float NdotL = max(dot(N, L), 0.0);                
+        Lo += (kD * u_albedo / PI + specular) * radiance * NdotL; 
+    }   
+  
+    vec3 ambient = vec3(0.03, 0.03, 0.03) * u_albedo * u_ao;
+    vec3 color = ambient + Lo;
+    
+    color = color / (color + vec3(1.0, 1.0, 1.0));
+    color = pow(color, vec3(1.0/2.2, 1.0/2.2, 1.0/2.2));  
+   
+    gl_FragColor = vec4(color, 1.0);
 }
