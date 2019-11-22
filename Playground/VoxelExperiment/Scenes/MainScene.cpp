@@ -27,6 +27,7 @@ void MainScene::Begin()
 
 	m_renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
 	
+	Graphics::SetUniformCamPos(m_renderer->GetCamera()->Position());
 	Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 0.f, 0.5f, 0.1f);
 	Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));
 	Graphics::SetUniformLight(1, Math::Vec3(5.f, 5.f, 8.f), Math::Vec3(1.f));
@@ -41,8 +42,6 @@ void MainScene::BeforeRender()
 {
 	m_renderer->GetCamera()->Width(Engine::Instance()->GetWidth());
 	m_renderer->GetCamera()->Height(Engine::Instance()->GetHeight());
-
-	Graphics::SetUniformCamPos(m_renderer->GetCamera()->Position());
 
 	base::BeforeRender();
 }
