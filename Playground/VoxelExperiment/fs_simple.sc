@@ -1,25 +1,14 @@
 $input v_worldPos, v_color0, v_normal
 
 #include <bgfx_shader.sh>
+#include "uniform.sh"
 
-// camera position
-uniform vec4 u_camPos;
+// https://learnopengl.com/PBR/Lighting 
 
-// material parameters
-uniform vec4 u_material[2];
-#define u_albedo    u_material[0].xyz
-#define u_metallic  u_material[1].x
-#define u_roughness u_material[1].y
-#define u_ao        u_material[1].z
-
-// lights
-uniform vec4 u_lights[8];
-#define u_lightPositions(i) u_lights[i*2]
-#define u_lightColors(i)    u_lights[i*2+1]
+#define PI 3.14159265359
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-    const float PI = 3.14159265358979323846264;
     float a      = roughness*roughness;
     float a2     = a*a;
     float NdotH  = max(dot(N, H), 0.0);
@@ -60,7 +49,6 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {       
-    const float PI = 3.14159265358979323846264;
     vec3 N = normalize(v_normal);
     vec3 V = normalize(u_camPos.xyz - v_worldPos);
 

@@ -48,22 +48,26 @@ void Graphics::PosColorNormalVertex::Init()
 }
 
 bgfx::ShaderHandle loadShader(const char* _name) {
-	char data[8192];
+	char* data = nullptr;
 	std::ifstream file;
 	size_t fileSize = 0;
 	file.open(_name, std::ios::binary);
 	if (file.is_open()) {
 		file.seekg(0, std::ios::end);
 		fileSize = static_cast<size_t>(file.tellg());
+		data = new char[fileSize + 1];
 		file.seekg(0, std::ios::beg);
 		file.read(data, fileSize);
 		file.close();
+
+		const bgfx::Memory* mem = bgfx::copy(data, fileSize + 1);
+		delete [] data;
+		mem->data[mem->size - 1] = '\0';
+		bgfx::ShaderHandle handle = bgfx::createShader(mem);
+		bgfx::setName(handle, _name);
+		return handle;
 	}
-	const bgfx::Memory* mem = bgfx::copy(data, fileSize + 1);
-	mem->data[mem->size - 1] = '\0';
-	bgfx::ShaderHandle handle = bgfx::createShader(mem);
-	bgfx::setName(handle, _name);
-	return handle;
+	return { bgfx::kInvalidHandle };
 }
 
 bgfx::ProgramHandle ms_program;
@@ -80,15 +84,15 @@ void Graphics::Init()
 	Graphics::PosColorVertex::Init();
 	Graphics::PosColorNormalVertex::Init();
 
-	bgfx::ShaderHandle vsh = loadShader("vs_simple.bin");
-	bgfx::ShaderHandle fsh = loadShader("fs_simple.bin");
+	bgfx::ShaderHandle vsh = loadShader("vs_mypbr.bin");
+	bgfx::ShaderHandle fsh = loadShader("fs_mypbr.bin");
 
 	ms_program = bgfx::createProgram(vsh, fsh, true);
 
+	ms_samplerTexCube  = bgfx::createUniform("u_texCube", bgfx::UniformType::Sampler).idx;
 	ms_uniformCamPos   = bgfx::createUniform("u_camPos", bgfx::UniformType::Vec4).idx;
 	ms_uniformMaterial = bgfx::createUniform("u_material", bgfx::UniformType::Vec4, 2).idx;
 	ms_uniformLights   = bgfx::createUniform("u_lights", bgfx::UniformType::Vec4, 8).idx;
-	ms_uniformTexCube  = bgfx::createUniform("u_texCube", bgfx::UniformType::Sampler).idx;
 	ms_uniformParams   = bgfx::createUniform("u_params", bgfx::UniformType::Vec4, 16).idx;
 
 	ms_instance = new Graphics();
@@ -200,6 +204,11 @@ Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::
 	).idx;
 }
 
+void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, cherrysoda::type::UInt16 size)
+{
+	bgfx::setUniform({ uniform }, value, size);
+}
+
 void Graphics::SetUniformCamPos(const Math::Vec3& camPos)
 {
 	Math::Vec4 camPosVec4 = Math::Vec4(camPos, 1.0f);
@@ -220,9 +229,9 @@ void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math
 	bgfx::setUniform ({ ms_uniformLights }, lightVec4, 8U);
 }
 
+Graphics::UniformHandle Graphics::ms_samplerTexCube  = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformCamPos   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformLights   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformParams   = Graphics::InvalidHandle;
-Graphics::UniformHandle Graphics::ms_uniformTexCube  = Graphics::InvalidHandle;
 Graphics* Graphics::ms_instance = nullptr;

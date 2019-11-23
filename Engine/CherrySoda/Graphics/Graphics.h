@@ -70,6 +70,9 @@ public:
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorNormalVertex>& vertices);
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 
+	//static void SetTexture();
+
+	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor);
@@ -88,7 +91,7 @@ private:
 	static UniformHandle ms_uniformLights;
 	static UniformHandle ms_uniformMaterial;
 	static UniformHandle ms_uniformParams;
-	static UniformHandle ms_uniformTexCube;
+	static UniformHandle ms_samplerTexCube;
 
 	static Graphics* ms_instance;
 };
