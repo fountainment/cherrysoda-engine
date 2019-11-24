@@ -10,7 +10,7 @@ void main()
     const float gammaInv = 1.0 / 2.2;
     const float Pi = 3.14159265359;
 
-    const float m = 100.0;
+    const float m = 10.0;
 
     const float lightRadius = 50.0;
     const float lightIntensity = 0.5;

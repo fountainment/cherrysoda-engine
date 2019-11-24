@@ -11,7 +11,9 @@ using cherrysoda::Scene;
 
 void EverythingRenderer::Render(Scene* scene)
 {
-	// TODO: RenderState, Shader stuffs
+	// TODO: RenderState stuffs
+	Graphics::SetEffect(&m_effect);
 	Graphics::Instance()->SetCamera(GetCamera());
 	scene->Entities()->Render();
+	Graphics::SetEffect(nullptr);
 }

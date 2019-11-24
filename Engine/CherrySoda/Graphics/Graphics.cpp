@@ -1,5 +1,6 @@
 #include <CherrySoda/Graphics/Graphics.h>
 
+#include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Mesh.h>
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Camera.h>
@@ -18,6 +19,7 @@ using cherrysoda::Graphics;
 
 using cherrysoda::Camera;
 using cherrysoda::Color;
+using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Math;
 using cherrysoda::MeshInterface;
@@ -47,11 +49,11 @@ void Graphics::PosColorNormalVertex::Init()
 		.end();
 }
 
-bgfx::ShaderHandle loadShader(const char* _name) {
+bgfx::ShaderHandle loadShader(const String& name) {
 	char* data = nullptr;
 	std::ifstream file;
 	size_t fileSize = 0;
-	file.open(_name, std::ios::binary);
+	file.open(name.c_str(), std::ios::binary);
 	if (file.is_open()) {
 		file.seekg(0, std::ios::end);
 		fileSize = static_cast<size_t>(file.tellg());
@@ -64,13 +66,18 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 		delete [] data;
 		mem->data[mem->size - 1] = '\0';
 		bgfx::ShaderHandle handle = bgfx::createShader(mem);
-		bgfx::setName(handle, _name);
+		bgfx::setName(handle, name.c_str());
 		return handle;
 	}
 	return { bgfx::kInvalidHandle };
 }
 
-bgfx::ProgramHandle ms_program;
+bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
+{
+	bgfx::ShaderHandle vsh = loadShader(vs + ".bin");
+	bgfx::ShaderHandle fsh = loadShader(fs + ".bin");
+	return bgfx::createProgram(vsh, fsh, true);
+}
 
 Graphics::Graphics()
 {
@@ -84,10 +91,7 @@ void Graphics::Init()
 	Graphics::PosColorVertex::Init();
 	Graphics::PosColorNormalVertex::Init();
 
-	bgfx::ShaderHandle vsh = loadShader("vs_mypbr.bin");
-	bgfx::ShaderHandle fsh = loadShader("fs_mypbr.bin");
-
-	ms_program = bgfx::createProgram(vsh, fsh, true);
+	ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
 	ms_samplerTexCube  = bgfx::createUniform("u_texCube", bgfx::UniformType::Sampler).idx;
 	ms_uniformCamPos   = bgfx::createUniform("u_camPos", bgfx::UniformType::Vec4).idx;
@@ -178,7 +182,13 @@ void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
 void Graphics::Submit()
 {
 	bgfx::setState(BGFX_STATE_DEFAULT);
-	bgfx::submit(RenderPass(), ms_program);
+	bgfx::submit(RenderPass(), { ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader });
+}
+
+void Graphics::Submit(Effect* effect)
+{
+	bgfx::setState(BGFX_STATE_DEFAULT);
+	bgfx::submit(RenderPass(), { effect->m_program });
 }
 
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorVertex>& vertices)
@@ -204,6 +214,16 @@ Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::
 	).idx;
 }
 
+Graphics::ShaderHandle Graphics::CreateShaderProgram(const String& vs, const String& fs)
+{
+	return loadProgram(vs, fs).idx;
+}
+
+void Graphics::SetEffect(Effect* effect)
+{
+	SetShader(effect != nullptr ? effect->GetShader() : Graphics::InvalidHandle);
+} 
+
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, cherrysoda::type::UInt16 size)
 {
 	bgfx::setUniform({ uniform }, value, size);
@@ -226,12 +246,16 @@ void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math
 	static Math::Vec4 lightVec4[8];
 	lightVec4[index * 2] = Math::Vec4(lightPos, 1.0f);
 	lightVec4[index * 2 + 1] = Math::Vec4(lightColor, 1.0f);
-	bgfx::setUniform ({ ms_uniformLights }, lightVec4, 8U);
+	bgfx::setUniform({ ms_uniformLights }, lightVec4, 8U);
 }
+
+Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
+Graphics::ShaderHandle Graphics::ms_defaultShaderOverride = Graphics::InvalidHandle;
 
 Graphics::UniformHandle Graphics::ms_samplerTexCube  = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformCamPos   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformLights   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformParams   = Graphics::InvalidHandle;
+
 Graphics* Graphics::ms_instance = nullptr;

@@ -5,10 +5,12 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
 class Camera;
+class Effect;
 class MeshInterface;
 
 class Graphics
@@ -65,12 +67,18 @@ public:
 	void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	void Submit();
+	void Submit(Effect* effect);
 
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorVertex>& vertices);
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorNormalVertex>& vertices);
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 
-	//static void SetTexture();
+	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
+
+	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
+	static void SetEffect(Effect* effect);
+
+	// static void SetTexture();
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniformCamPos(const Math::Vec3& camPos);
@@ -86,6 +94,9 @@ private:
 
 	type::UInt16 m_renderPassId = 0;	
 	bool m_vsyncEnabled = true;
+
+	static ShaderHandle ms_defaultShader;
+	static ShaderHandle ms_defaultShaderOverride;
 	
 	static UniformHandle ms_uniformCamPos;
 	static UniformHandle ms_uniformLights;

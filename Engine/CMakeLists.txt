@@ -9,6 +9,7 @@ set(ENGINE_SRC
   CherrySoda/Components/Component.h
   CherrySoda/Components/Graphics/GraphicsComponent.cpp
   CherrySoda/Components/Graphics/GraphicsComponent.h
+  CherrySoda/Graphics/Effect.h
   CherrySoda/Graphics/Graphics.cpp
   CherrySoda/Graphics/Graphics.h
   CherrySoda/Graphics/Mesh.h
