@@ -22,6 +22,14 @@ target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/as
 target_compile_features(bimg PRIVATE cxx_std_14)
 
 
+# bimg_decode
+file(GLOB BIMG_DECODE_SRC bimg/include/bimg/*.h bimg/src/image_decode.cpp bimg/src/*.h)
+
+add_library(bimg_decode STATIC ${BIMG_DECODE_SRC})
+target_include_directories(bimg_decode PRIVATE bx/include bimg/include bimg/3rdparty)
+target_compile_features(bimg_decode PRIVATE cxx_std_14)
+
+
 # bgfx
 file(GLOB BGFX_SRC include/bgfx/**.h bgfx/src/*.cpp bgfx/src/*.h)
 list(REMOVE_ITEM BGFX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bgfx/src/amalgamated.cpp)

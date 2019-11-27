@@ -13,6 +13,8 @@ set(ENGINE_SRC
   CherrySoda/Graphics/Graphics.cpp
   CherrySoda/Graphics/Graphics.h
   CherrySoda/Graphics/Mesh.h
+  CherrySoda/Graphics/Texture.cpp
+  CherrySoda/Graphics/Texture.h
   CherrySoda/Interface/Window.cpp
   CherrySoda/Interface/Window.h
   CherrySoda/InternalUtilities/ComponentList.cpp
@@ -51,9 +53,9 @@ endif()
 find_package(SDL2 REQUIRED)
 target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.6 ${SDL2_INCLUDE_DIRS})
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  target_link_libraries(CherrySoda PUBLIC bgfx bimg bx gdi32 kernel32 psapi glm_static ${SDL2_LIBRARIES})
+  target_link_libraries(CherrySoda PUBLIC bgfx bimg bimg_decode bx gdi32 kernel32 psapi glm_static ${SDL2_LIBRARIES})
 else()
-  target_link_libraries(CherrySoda PUBLIC bgfx bimg bx dl GL pthread X11 glm_static ${SDL2_LIBRARIES})
+  target_link_libraries(CherrySoda PUBLIC bgfx bimg bimg_decode bx dl GL pthread X11 glm_static ${SDL2_LIBRARIES})
 endif()
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
 target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)

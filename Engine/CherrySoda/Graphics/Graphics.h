@@ -12,6 +12,7 @@ namespace cherrysoda {
 class Camera;
 class Effect;
 class MeshInterface;
+class Texture;
 
 class Graphics
 {
@@ -74,11 +75,13 @@ public:
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
+	static TextureHandle CreateTexture(const String& texture);
 
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
-	static void SetEffect(Effect* effect);
+	static void SetTexture(UniformHandle uniform, TextureHandle texture);
 
-	// static void SetTexture();
+	static void SetEffect(Effect* effect);
+	static void SetTexture(Texture* texture);
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniformCamPos(const Math::Vec3& camPos);

@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Mesh.h>
+#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Log.h>
@@ -11,6 +12,11 @@
 #include <CherrySoda/Util/String.h>
 
 #include <bgfx/bgfx.h>
+#include <bx/bx.h>
+#include <bx/file.h>
+#include <bx/allocator.h>
+#include <bimg/bimg.h>
+#include <bimg/decode.h>
 
 #include <sstream>
 #include <fstream>
@@ -23,12 +29,80 @@ using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Math;
 using cherrysoda::MeshInterface;
+using cherrysoda::Texture;
 using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
 static bgfx::VertexLayout s_posColorLayout;
 static bgfx::VertexLayout s_posColorNormalLayout;
+
+namespace entry {
+
+static bx::DefaultAllocator s_allocator;
+static bx::FileReaderI* s_fileReader;
+static bx::FileWriterI* s_fileWriter;
+
+bx::AllocatorI* g_allocator = &s_allocator;
+
+typedef bx::StringT<&g_allocator> bxString;
+
+static bxString s_currentDir;
+
+class FileReader : public bx::FileReader
+{
+	typedef bx::FileReader super;
+
+public:
+	virtual bool open(const bx::FilePath& _filePath, bx::Error* _err) override
+	{
+		bxString filePath(s_currentDir);
+		filePath.append(_filePath);
+		return super::open(filePath.getPtr(), _err);
+	}
+};
+
+class FileWriter : public bx::FileWriter
+{
+	typedef bx::FileWriter super;
+
+public:
+	virtual bool open(const bx::FilePath& _filePath, bool _append, bx::Error* _err) override
+	{
+		bxString filePath(s_currentDir);
+		filePath.append(_filePath);
+		return super::open(filePath.getPtr(), _append, _err);
+	}
+};
+
+void setCurrentDir(const char* _dir)
+{
+	s_currentDir.set(_dir);
+}
+
+
+void init()
+{
+	s_fileReader = BX_NEW(g_allocator, FileReader);
+	s_fileWriter = BX_NEW(g_allocator, FileWriter);
+}
+
+bx::FileReaderI* getFileReader()
+{
+	return s_fileReader;
+}
+
+bx::FileWriterI* getFileWriter()
+{
+	return s_fileWriter;
+}
+
+bx::AllocatorI* getAllocator()
+{
+	return g_allocator;
+}
+
+} // namespace entry
 
 void Graphics::PosColorVertex::Init()
 {
@@ -77,6 +151,137 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 	bgfx::ShaderHandle vsh = loadShader(vs + ".bin");
 	bgfx::ShaderHandle fsh = loadShader(fs + ".bin");
 	return bgfx::createProgram(vsh, fsh, true);
+}
+
+void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
+{
+	if (bx::open(_reader, _filePath))
+	{
+		uint32_t size = (uint32_t)bx::getSize(_reader);
+		void* data = BX_ALLOC(_allocator, size);
+		bx::read(_reader, data, size);
+		bx::close(_reader);
+		if (NULL != _size)
+		{
+			*_size = size;
+		}
+		return data;
+	}
+
+	if (NULL != _size)
+	{
+		*_size = 0;
+	}
+
+	return NULL;
+}
+
+void* load(const char* _filePath, uint32_t* _size)
+{
+	return load(entry::getFileReader(), entry::getAllocator(), _filePath, _size);
+}
+
+void unload(void* _ptr)
+{
+	BX_FREE(entry::getAllocator(), _ptr);
+}
+
+static void imageReleaseCb(void* _ptr, void* _userData)
+{
+	BX_UNUSED(_ptr);
+	bimg::ImageContainer* imageContainer = (bimg::ImageContainer*)_userData;
+	bimg::imageFree(imageContainer);
+}
+
+bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
+{
+	BX_UNUSED(_skip);
+	bgfx::TextureHandle handle = BGFX_INVALID_HANDLE;
+
+	uint32_t size;
+	void* data = load(_reader, entry::getAllocator(), _filePath, &size);
+	if (NULL != data)
+	{
+		bimg::ImageContainer* imageContainer = bimg::imageParse(entry::getAllocator(), data, size);
+
+		if (NULL != imageContainer)
+		{
+			if (NULL != _orientation)
+			{
+				*_orientation = imageContainer->m_orientation;
+			}
+
+			const bgfx::Memory* mem = bgfx::makeRef(
+				imageContainer->m_data
+				, imageContainer->m_size
+				, imageReleaseCb
+				, imageContainer
+			);
+			unload(data);
+
+			if (imageContainer->m_cubeMap)
+			{
+				handle = bgfx::createTextureCube(
+					uint16_t(imageContainer->m_width)
+					, 1 < imageContainer->m_numMips
+					, imageContainer->m_numLayers
+					, bgfx::TextureFormat::Enum(imageContainer->m_format)
+					, _flags
+					, mem
+				);
+			}
+			else if (1 < imageContainer->m_depth)
+			{
+				handle = bgfx::createTexture3D(
+					uint16_t(imageContainer->m_width)
+					, uint16_t(imageContainer->m_height)
+					, uint16_t(imageContainer->m_depth)
+					, 1 < imageContainer->m_numMips
+					, bgfx::TextureFormat::Enum(imageContainer->m_format)
+					, _flags
+					, mem
+				);
+			}
+			else if (bgfx::isTextureValid(0, false, imageContainer->m_numLayers, bgfx::TextureFormat::Enum(imageContainer->m_format), _flags))
+			{
+				handle = bgfx::createTexture2D(
+					uint16_t(imageContainer->m_width)
+					, uint16_t(imageContainer->m_height)
+					, 1 < imageContainer->m_numMips
+					, imageContainer->m_numLayers
+					, bgfx::TextureFormat::Enum(imageContainer->m_format)
+					, _flags
+					, mem
+				);
+			}
+
+			if (bgfx::isValid(handle))
+			{
+				bgfx::setName(handle, _filePath);
+			}
+
+			if (NULL != _info)
+			{
+				bgfx::calcTextureSize(
+					*_info
+					, uint16_t(imageContainer->m_width)
+					, uint16_t(imageContainer->m_height)
+					, uint16_t(imageContainer->m_depth)
+					, imageContainer->m_cubeMap
+					, 1 < imageContainer->m_numMips
+					, imageContainer->m_numLayers
+					, bgfx::TextureFormat::Enum(imageContainer->m_format)
+				);
+			}
+		}
+	}
+
+	return handle;
+}
+
+bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL)
+{
+	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
 }
 
 Graphics::Graphics()
@@ -219,10 +424,25 @@ Graphics::ShaderHandle Graphics::CreateShaderProgram(const String& vs, const Str
 	return loadProgram(vs, fs).idx;
 }
 
+Graphics::TextureHandle Graphics::CreateTexture(const String& texture)
+{
+	return loadTexture(texture.c_str()).idx;
+}
+
 void Graphics::SetEffect(Effect* effect)
 {
 	SetShader(effect != nullptr ? effect->GetShader() : Graphics::InvalidHandle);
 } 
+
+void Graphics::SetTexture(Graphics::UniformHandle uniform, Graphics::TextureHandle texture)
+{
+	bgfx::setTexture(0, { uniform }, { texture });
+}
+
+void Graphics::SetTexture(Texture* texture)
+{
+	SetTexture(ms_samplerTexCube, texture->m_texture);
+}
 
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, cherrysoda::type::UInt16 size)
 {
