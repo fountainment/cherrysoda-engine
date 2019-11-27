@@ -376,7 +376,7 @@ void Graphics::SetMesh(MeshInterface* mesh)
 
 void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
 {
-	bgfx::setVertexBuffer(RenderPass(), bgfx::VertexBufferHandle{vertexBuffer});
+	bgfx::setVertexBuffer(0, bgfx::VertexBufferHandle{vertexBuffer});
 }
 
 void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
