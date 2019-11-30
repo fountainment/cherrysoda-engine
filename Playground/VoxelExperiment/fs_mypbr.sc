@@ -4,13 +4,16 @@ $input v_worldPos, v_color0, v_normal
 
 #include "uniform.sh"
 
+SAMPLERCUBE(s_texCube, 0);
+SAMPLERCUBE(s_texCubeIrr, 1);
+
 void main()
 {
     const float gamma = 2.2;
     const float gammaInv = 1.0 / 2.2;
     const float Pi = 3.14159265359;
 
-    const float m = 10.0;
+    const float m = 500.0;
 
     const float lightRadius = 50.0;
     const float lightIntensity = 0.5;
@@ -20,6 +23,17 @@ void main()
     vec3 N = normalize(v_normal.xyz);
     float specular = 1.0 - u_roughness;
     vec3 RF0 = pow(u_albedo, vec3(gamma, gamma, gamma));
+    vec3 RF90 = vec3(1.0, 1.0, 1.0);
+    float CosThetaI = max(dot(V, N), 0.0);
+    vec3 RF = RF0 + (RF90 - RF0) * pow((1.0 - CosThetaI), 5.0); 
+    vec3 R = reflect(-V, N);
+    vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz, vec3(gamma, gamma, gamma)); 
+    vec3 specTex = pow(textureCube(s_texCube, R).xyz, vec3(gamma, gamma, gamma)); 
+    vec3 Cdiff = diffTex * (1.0 - u_metallic) / Pi;
+    vec3 Cspec = specTex * u_metallic;
+    float EL = 10.0;
+    color.xyz += RF * Cspec * EL;
+    color.xyz += (1.0 - RF) * Cdiff * EL;
     for (int i = 0; i < 4; ++i) {
         vec3 El = u_lightColors(i) * lightIntensity;
 

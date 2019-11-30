@@ -290,6 +290,8 @@ Graphics::Graphics()
 
 void Graphics::Init()
 {
+	entry::init();
+
 	bgfx::init();
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
@@ -298,7 +300,9 @@ void Graphics::Init()
 
 	ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
-	ms_samplerTexCube  = bgfx::createUniform("u_texCube", bgfx::UniformType::Sampler).idx;
+	ms_samplerTexCube    = bgfx::createUniform("s_texCube", bgfx::UniformType::Sampler).idx;
+	ms_samplerTexCubeIrr = bgfx::createUniform("s_texCubeIrr", bgfx::UniformType::Sampler).idx;
+
 	ms_uniformCamPos   = bgfx::createUniform("u_camPos", bgfx::UniformType::Vec4).idx;
 	ms_uniformMaterial = bgfx::createUniform("u_material", bgfx::UniformType::Vec4, 2).idx;
 	ms_uniformLights   = bgfx::createUniform("u_lights", bgfx::UniformType::Vec4, 8).idx;
@@ -439,6 +443,11 @@ void Graphics::SetTexture(Graphics::UniformHandle uniform, Graphics::TextureHand
 	bgfx::setTexture(0, { uniform }, { texture });
 }
 
+void Graphics::SetTexture(cherrysoda::type::UInt8 stage, Graphics::UniformHandle uniform, Graphics::TextureHandle texture)
+{
+	bgfx::setTexture(stage, { uniform }, { texture });
+}
+
 void Graphics::SetTexture(Texture* texture)
 {
 	SetTexture(ms_samplerTexCube, texture->m_texture);
@@ -469,10 +478,22 @@ void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math
 	bgfx::setUniform({ ms_uniformLights }, lightVec4, 8U);
 }
 
+void Graphics::SetSamplerTexCube(Texture* texture)
+{
+	SetTexture(ms_samplerTexCube, texture->m_texture);	
+}
+
+void Graphics::SetSamplerTexCubeIrr(Texture* texture)
+{
+	SetTexture(1, ms_samplerTexCubeIrr, texture->m_texture);	
+}
+
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
 Graphics::ShaderHandle Graphics::ms_defaultShaderOverride = Graphics::InvalidHandle;
 
-Graphics::UniformHandle Graphics::ms_samplerTexCube  = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_samplerTexCube    = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_samplerTexCubeIrr = Graphics::InvalidHandle;
+
 Graphics::UniformHandle Graphics::ms_uniformCamPos   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformLights   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;

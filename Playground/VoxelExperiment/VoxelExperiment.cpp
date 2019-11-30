@@ -3,12 +3,14 @@
 #include "Scenes/MainScene.h"
 
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Color.h>
 
 using voxelexperiment::VoxelExperiment;
 
 using cherrysoda::Color;
 using cherrysoda::Graphics;
+using cherrysoda::Texture;
 
 VoxelExperiment::VoxelExperiment()
 	: base()
@@ -29,3 +31,12 @@ void VoxelExperiment::Initialize()
 	auto scene = new MainScene();
 	SetScene(scene);
 }
+
+void VoxelExperiment::LoadContent()
+{
+	ms_texCube = Texture::FromFile("bolonga_lod.dds");
+	ms_texCubeIrr = Texture::FromFile("bolonga_irr.dds");
+}
+
+Texture VoxelExperiment::ms_texCube;
+Texture VoxelExperiment::ms_texCubeIrr;

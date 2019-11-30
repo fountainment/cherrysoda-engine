@@ -79,6 +79,7 @@ public:
 
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
 	static void SetTexture(UniformHandle uniform, TextureHandle texture);
+	static void SetTexture(type::UInt8 stage, UniformHandle uniform, TextureHandle texture);
 
 	static void SetEffect(Effect* effect);
 	static void SetTexture(Texture* texture);
@@ -87,6 +88,9 @@ public:
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor);
+
+	static void SetSamplerTexCube(Texture* texture);
+	static void SetSamplerTexCubeIrr(Texture* texture);
 
 	static Graphics* Instance() { return ms_instance; };
 
@@ -101,11 +105,13 @@ private:
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;
 	
+	static UniformHandle ms_samplerTexCube;
+	static UniformHandle ms_samplerTexCubeIrr;
+
 	static UniformHandle ms_uniformCamPos;
 	static UniformHandle ms_uniformLights;
 	static UniformHandle ms_uniformMaterial;
 	static UniformHandle ms_uniformParams;
-	static UniformHandle ms_samplerTexCube;
 
 	static Graphics* ms_instance;
 };
