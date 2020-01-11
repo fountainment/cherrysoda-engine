@@ -13,7 +13,6 @@ void main()
     const float gammaInv = 1.0 / 2.2;
     const float Pi = 3.14159265359;
 
-    const float m = 500.0;
 
     const float lightRadius = 50.0;
     const float lightIntensity = 0.5;
@@ -22,6 +21,7 @@ void main()
     vec3 V = normalize(u_camPos.xyz - v_worldPos.xyz); 
     vec3 N = normalize(v_normal.xyz);
     float specular = 1.0 - u_roughness;
+    float m = specular * 500.0;
     vec3 RF0 = pow(u_albedo, vec3(gamma, gamma, gamma));
     vec3 RF90 = vec3(1.0, 1.0, 1.0);
     float CosThetaI = max(dot(V, N), 0.0);
