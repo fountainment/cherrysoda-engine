@@ -26,7 +26,7 @@ public:
 	// void LoadObj(const String& objFile);
 	inline void AddVertex(const VERTEX_T& vertex) { STL::Add(m_vertices, vertex); }
 	inline void AddIndex(type::UInt16 index) { STL::Add(m_indices, index); }
-	inline type::UInt16 VertexAmount() const { return STL::Count(m_vertices); }
+	inline type::UInt16 VertexAmount() const { return static_cast<type::UInt16>(STL::Count(m_vertices)); }
 	inline type::UInt16 IndexAmount() const { return STL::Count(m_indices); }
 	inline void AddPoint(VERTEX_T v) { STL::Add(m_indices, VertexAmount()); STL::Add(m_vertices, v); }
 	inline void AddLine(VERTEX_T v1, VERTEX_T v2) { AddPoint(v1); AddPoint(v2); }

@@ -34,8 +34,8 @@ void VoxelExperiment::Initialize()
 
 void VoxelExperiment::LoadContent()
 {
-	ms_texCube = Texture::FromFile("bolonga_lod.dds");
-	ms_texCubeIrr = Texture::FromFile("bolonga_irr.dds");
+	ms_texCube = Texture::FromFile("assets/textures/bolonga_lod.dds");
+	ms_texCubeIrr = Texture::FromFile("assets/textures/bolonga_irr.dds");
 }
 
 Texture VoxelExperiment::ms_texCube;

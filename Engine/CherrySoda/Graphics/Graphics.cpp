@@ -148,8 +148,9 @@ bgfx::ShaderHandle loadShader(const String& name) {
 
 bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 {
-	bgfx::ShaderHandle vsh = loadShader(vs + ".bin");
-	bgfx::ShaderHandle fsh = loadShader(fs + ".bin");
+	String path_prefix = "assets/shaders/" CHERRYSODA_SHADER_PLATFORM "/";
+	bgfx::ShaderHandle vsh = loadShader(path_prefix + vs + ".bin");
+	bgfx::ShaderHandle fsh = loadShader(path_prefix + fs + ".bin");
 	return bgfx::createProgram(vsh, fsh, true);
 }
 

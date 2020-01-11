@@ -12,8 +12,8 @@ using cherrysoda::Math;
 
 Camera::Camera()
 {
-	m_width = Engine::Instance()->GetWidth();
-	m_height = Engine::Instance()->GetHeight();
+	m_width = static_cast<float>(Engine::Instance()->GetWidth());
+	m_height = static_cast<float>(Engine::Instance()->GetHeight());
 	UpdateMatrices();
 }
 

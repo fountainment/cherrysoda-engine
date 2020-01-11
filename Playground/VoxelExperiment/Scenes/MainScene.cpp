@@ -54,8 +54,8 @@ void MainScene::Begin()
 
 void MainScene::BeforeRender()
 {
-	m_renderer->GetCamera()->Width(Engine::Instance()->GetWidth());
-	m_renderer->GetCamera()->Height(Engine::Instance()->GetHeight());
+	m_renderer->GetCamera()->Width(static_cast<float>(Engine::Instance()->GetWidth()));
+	m_renderer->GetCamera()->Height(static_cast<float>(Engine::Instance()->GetHeight()));
 
 	base::BeforeRender();
 }
