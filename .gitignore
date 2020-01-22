@@ -39,3 +39,7 @@ build
 # Temp
 .*.swp
 __pycache__
+tmp
+
+# Download
+SDL2-2.0.10

@@ -1,4 +1,4 @@
-import libs.cherrysoda as cherry
+import lib.cherrysoda as cherry
 import sys
 
 def main():
