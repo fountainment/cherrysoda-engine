@@ -1,15 +1,15 @@
-## CherrySoda Engine
+# CherrySoda Engine
 
 A game engine based on bgfx and SDL2
 
-### Requirements
+## Requirements
 
 - Visual Studio (>=2017) **--On Windows**
 - CMake (>=3.8)
 - Python (>=3.6)
 - libsdl2-dev **--On Linux**
 
-### How To Build
+## How To Build
 
 1. git clone https://github.com/fountainment/cherrysoda-engine.git
 2. cd cherrysoda-engine
@@ -18,7 +18,7 @@ A game engine based on bgfx and SDL2
 5. mkdir build & cd build & cmake ..
 6. make **--On Linux**
 
-### Current Status
+## Current Status
 
 - Finished the integration of bgfx and SDL2
 - Replicated the the simple ECS of Monocle engine
