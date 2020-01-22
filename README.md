@@ -9,7 +9,7 @@ A game engine based on bgfx and SDL2
 - Python (>=3.6)
 - libsdl2-dev **--On Linux**
 
-### How To Build On Windows
+### How To Build
 
 1. git clone https://github.com/fountainment/cherrysoda-engine.git
 2. cd cherrysoda-engine
