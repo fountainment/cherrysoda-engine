@@ -4,6 +4,8 @@ set(PROJECT_SRC
   VoxelExperiment.h
   Scenes/MainScene.cpp
   Scenes/MainScene.h
+  Scenes/Skybox.cpp
+  Scenes/Skybox.h
   Voxel/Block.cpp
   Voxel/Block.h
   Voxel/Chunk.cpp

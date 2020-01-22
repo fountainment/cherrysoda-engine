@@ -30,7 +30,7 @@ public:
 
 private:
 	Chunk* m_chunk = nullptr;
-	cherrysoda::Mesh<VertexType> m_mesh;
+	crsd::Mesh<VertexType> m_mesh;
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_CHUNKGRAPHICSCOMPONENT_H_
