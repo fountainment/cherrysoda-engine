@@ -41,7 +41,8 @@ public:
 		Graphics::Instance()->SetClearColor(cherrysoda::Color::Red);
 
 		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
-		Graphics::SetUniform(m_uniformMtx, &Math::GetOrientationMatrix(*GetCamera()->GetViewMatrix()));
+		const Math::Mat4 orientationMatrix = Math::GetOrientationMatrix(*GetCamera()->GetViewMatrix());
+		Graphics::SetUniform(m_uniformMtx, &orientationMatrix);
 
 		cherrysoda::Camera camera(1.f, 1.f);
 		camera.Position(Math::Vec3(0.5f, 0.5f, 0.5f));
