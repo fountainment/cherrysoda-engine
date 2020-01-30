@@ -26,6 +26,10 @@ set(ENGINE_SRC
   CherrySoda/Renderers/Renderer.h
   CherrySoda/Renderers/EverythingRenderer.cpp
   CherrySoda/Renderers/EverythingRenderer.h
+  CherrySoda/Renderers/SingleTagRenderer.cpp
+  CherrySoda/Renderers/SingleTagRenderer.h
+  CherrySoda/Util/BitTag.cpp
+  CherrySoda/Util/BitTag.h
   CherrySoda/Util/Camera.cpp
   CherrySoda/Util/Camera.h
   CherrySoda/Util/Color.cpp

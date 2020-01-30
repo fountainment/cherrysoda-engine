@@ -13,6 +13,9 @@ public:
 
 	void UpdateMatrices();
 
+	Math::Mat4* GetViewMatrix() { return &m_viewMatrix; }
+	Math::Mat4* GetProjectionMatrix() { return &m_projMatrix; }
+
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Position, m_position, CHERRYSODA_NONE_OP, m_changed = true);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Scale, m_zoom, CHERRYSODA_NONE_OP, m_changed = true);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Origin, m_origin, CHERRYSODA_NONE_OP, m_changed = true);
@@ -40,6 +43,7 @@ public:
 	CHERRYSODA_GETTER_SETTER_EX(ZRotation, m_zAngle, CHERRYSODA_NONE_OP, m_changed = true);
 	CHERRYSODA_GETTER_SETTER_EX(Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
 	CHERRYSODA_GETTER_SETTER_EX(Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX(FOV, m_fov, CHERRYSODA_NONE_OP, if (m_fov == v) return; m_changed = true);
 };
 
 } // namespace cherrysoda

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <functional>
 #include <list>
+#include <map>
 #include <unordered_set>
 #include <vector>
 
@@ -23,6 +24,9 @@ public:
 
 	template <typename T>
 	using List = std::list<T>;
+
+	template <typename T, typename U>
+	using Map = std::map<T,U>;
 
 	template <typename T>
 	using Vector = std::vector<T>;
@@ -99,15 +103,27 @@ public:
 	}
 
 	template<typename T>
-	static auto Find(std::unordered_set<T>& container, const T& element)
+	static auto Find(const HashSet<T>& container, const T& element)
 	{
 		return container.find(element);
+	}
+
+	template<typename T, typename U>
+	static auto Find(const Map<T,U>& container, const T& key)
+	{
+		return container.find(key);
 	}
 
 	template<typename T, typename U>
 	static bool Contains(const T& container, const U& element)
 	{
 		return Find(container, element) != container.end();
+	}
+
+	template<typename T>
+	static void Shuffle(T& container)
+	{
+		std::random_shuffle(container.begin(), container.end());
 	}
 };
 

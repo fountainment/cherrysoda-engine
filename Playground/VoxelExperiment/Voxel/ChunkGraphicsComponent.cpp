@@ -65,9 +65,9 @@ void ChunkGraphicsComponent::Render()
 
 void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Color& color, const Math::Vec3& normal)
 {
-	bool positive = (normal == glm::abs(normal));
+	bool positive = (normal == Math_Abs(normal));
 	if (normal[1] != 0) positive = !positive;
-	const auto pVec = (Vec3_One - glm::abs(normal)) * size;
+	const auto pVec = (Vec3_One - Math_Abs(normal)) * size;
 	const auto pVecH = normal[0] == 0.f ? Math::Vec3(size, 0.f, 0.f) : Math::Vec3(0.f, size, 0.f);
 	const auto pVecV = normal[2] == 0.f ? Math::Vec3(0.f, 0.f, size) : Math::Vec3(0.f, size, 0.f);
 	const auto cU32 = color.U32ABGR();

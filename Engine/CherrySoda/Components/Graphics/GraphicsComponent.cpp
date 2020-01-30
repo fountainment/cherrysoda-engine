@@ -7,7 +7,7 @@ const Math::Mat4 GraphicsComponent::GetTransformMatrix() const
 {
 	return Math::TranslateMat4(
 		Math::ScaleMat4(
-			Math::RotateMat4(
+			Math_Rotate(
 				Math::TranslateMat4(
 					Mat4_Identity,
 				RenderPosition()),

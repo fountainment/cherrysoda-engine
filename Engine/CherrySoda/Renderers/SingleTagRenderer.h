@@ -1,17 +1,23 @@
-#ifndef _CHERRYSODA_RENDERERS_EVERYTHINGRENDERER_H_
-#define _CHERRYSODA_RENDERERS_EVERYTHINGRENDERER_H_
+#ifndef _CHERRYSODA_RENDERERS_SINGLETAGRENDERER_H_
+#define _CHERRYSODA_RENDERERS_SINGLETAGRENDERER_H_
 
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Renderers/Renderer.h>
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Camera.h>
 
 namespace cherrysoda {
 
 class Scene;
 
-class EverythingRenderer : public Renderer
+class SingleTagRenderer : public Renderer
 {
 public:
+	SingleTagRenderer(BitTag tag)
+	: m_tag(tag)
+	{
+	}
+
 	void Render(Scene* scene) override;
 
 	inline Camera* GetCamera() { return &m_camera; }
@@ -20,10 +26,11 @@ public:
 	inline void SetEffect(const Effect& effect) { *GetEffect() = effect; }
 
 private:
+	BitTag m_tag;
 	Camera m_camera;
 	Effect m_effect;
 };
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_RENDERERS_EVERYTHINGRENDERER_H_
+#endif // _CHERRYSODA_RENDERERS_SINGLETAGRENDERER_H_ 

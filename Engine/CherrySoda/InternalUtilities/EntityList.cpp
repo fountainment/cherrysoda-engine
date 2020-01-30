@@ -1,10 +1,14 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Scene.h>
+#include <CherrySoda/Util/BitTag.h>
+#include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::EntityList;
 
+using cherrysoda::BitTagValueType;
 using cherrysoda::Camera;
 using cherrysoda::Entity;
 using cherrysoda::Scene;
@@ -100,6 +104,33 @@ void EntityList::Render()
 {
 	for (auto entity : m_entities) {
 		if (entity->m_visible) entity->Render();
+	}
+}
+
+void EntityList::RenderOnly(BitTagValueType matchTags)
+{
+	for (auto entity : m_entities) {
+		if (entity->m_visible && entity->TagCheck(matchTags)) {
+			entity->Render();
+		}
+	}
+}
+
+void EntityList::RenderOnlyFullMatch(int matchTags)
+{
+	for (auto entity : m_entities) {
+		if (entity->m_visible && entity->TagFullCheck(matchTags)) {
+			entity->Render();
+		}
+	}	
+}
+
+void EntityList::RenderExcept(int excludeTags)
+{
+	for (auto entity : m_entities) {
+		if (entity->m_visible && !entity->TagCheck(excludeTags)) {
+			entity->Render();
+		}
 	}
 }
 

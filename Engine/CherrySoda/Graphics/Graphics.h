@@ -2,6 +2,7 @@
 #define _CHERRYSODA_GRAPHICS_GRAPHICS_H_
 
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Literals.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
@@ -52,6 +53,19 @@ public:
 		}
 	};
 
+	struct PosColorTexCoord0Vertex
+	{
+		float m_x, m_y, m_z;
+		type::UInt32 m_abgr;
+		float m_u, m_v;
+
+		static void Init();
+		static PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
+		{
+			return { p[0], p[1], p[2], c, uv[0], uv[1] };
+		}
+	};
+
 	using HandleType = type::UInt16;
 	using VertexBufferHandle = HandleType;
 	using IndexBufferHandle  = HandleType;
@@ -69,6 +83,7 @@ public:
 	inline type::UInt16 RenderPass() { return m_renderPassId; }
 	void UpdateView();
 	void SetClearColor(const Color& color);
+	void SetClearDiscard();
 	void Touch();
 	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
@@ -79,6 +94,9 @@ public:
 	void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	void Submit();
 	void Submit(Effect* effect);
+	void Submit(type::UInt16 renderPass, Effect* effect);
+
+	void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
 
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorVertex>& vertices);
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorNormalVertex>& vertices);
@@ -86,6 +104,10 @@ public:
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
 	static TextureHandle CreateTexture(const String& texture);
+
+	static UniformHandle CreateUniformVec4(const String& uniform, type::UInt16 num = 1U);
+	static UniformHandle CreateUniformMat4(const String& uniform);
+	static UniformHandle CreateUniformSampler(const String& sampler);
 
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
 	static void SetTexture(UniformHandle uniform, TextureHandle texture);

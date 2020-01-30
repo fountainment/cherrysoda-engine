@@ -22,6 +22,9 @@ public:
 	void Remove(Entity* entity);
 
 	void Render();
+	void RenderOnly(int matchTags);
+	void RenderOnlyFullMatch(int matchTags);
+	void RenderExcept(int excludeTags);
 	void DebugRender(Camera* camera);
 
 private:

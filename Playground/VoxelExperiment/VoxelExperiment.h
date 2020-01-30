@@ -1,6 +1,7 @@
 #include <CherrySoda/Engine.h>
 
 namespace cherrysoda {
+	class Effect;
 	class Texture;
 } // namespace cherrysoda
 
@@ -19,6 +20,9 @@ public:
 
 	static cherrysoda::Texture ms_texCube;
 	static cherrysoda::Texture ms_texCubeIrr;
+
+	static cherrysoda::Effect ms_voxelShader;
+	static cherrysoda::Effect ms_skyboxShader;
 };
 
 }

@@ -36,6 +36,7 @@ using cherrysoda::StringUtil;
 
 static bgfx::VertexLayout s_posColorLayout;
 static bgfx::VertexLayout s_posColorNormalLayout;
+static bgfx::VertexLayout s_posColorTexCoord0Layout;
 
 namespace entry {
 
@@ -120,6 +121,16 @@ void Graphics::PosColorNormalVertex::Init()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
 		.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+		.end();
+}
+
+void Graphics::PosColorTexCoord0Vertex::Init()
+{
+	s_posColorTexCoord0Layout
+		.begin()
+		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 		.end();
 }
 
@@ -298,16 +309,17 @@ void Graphics::Init()
 
 	Graphics::PosColorVertex::Init();
 	Graphics::PosColorNormalVertex::Init();
+	Graphics::PosColorTexCoord0Vertex::Init();
 
-	ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
+	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
-	ms_samplerTexCube    = bgfx::createUniform("s_texCube", bgfx::UniformType::Sampler).idx;
-	ms_samplerTexCubeIrr = bgfx::createUniform("s_texCubeIrr", bgfx::UniformType::Sampler).idx;
+	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
+	ms_samplerTexCubeIrr = CreateUniformSampler("s_texCubeIrr");
 
-	ms_uniformCamPos   = bgfx::createUniform("u_camPos", bgfx::UniformType::Vec4).idx;
-	ms_uniformMaterial = bgfx::createUniform("u_material", bgfx::UniformType::Vec4, 2).idx;
-	ms_uniformLights   = bgfx::createUniform("u_lights", bgfx::UniformType::Vec4, 8).idx;
-	ms_uniformParams   = bgfx::createUniform("u_params", bgfx::UniformType::Vec4, 16).idx;
+	ms_uniformCamPos   = CreateUniformVec4("u_camPos");
+	ms_uniformMaterial = CreateUniformVec4("u_material", 2);
+	ms_uniformLights   = CreateUniformVec4("u_lights", 8);
+	ms_uniformParams   = CreateUniformVec4("u_params", 16);
 
 	ms_instance = new Graphics();
 }
@@ -343,6 +355,18 @@ void Graphics::SetClearColor(const Color& color)
 		, 0
 	);
 }
+
+void Graphics::SetClearDiscard()
+{
+	bgfx::setViewClear(RenderPass(), BGFX_CLEAR_DISCARD_DEPTH | BGFX_CLEAR_DISCARD_STENCIL);
+}
+
+/*
+void Graphics::SetRenderPassOrder(STL::Vector<cherrysoda::type::UInt16> renderPassOrder)
+{
+	bgfx::setViewOrder(0, STL::Count(renderPassOrder), STL::Data(renderPassOrder));
+}
+*/
 
 void Graphics::Touch()
 {
@@ -397,8 +421,72 @@ void Graphics::Submit()
 
 void Graphics::Submit(Effect* effect)
 {
-	bgfx::setState(BGFX_STATE_DEFAULT);
+	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
 	bgfx::submit(RenderPass(), { effect->m_program });
+}
+
+void Graphics::Submit(cherrysoda::type::UInt16 renderPass, Effect* effect)
+{
+	bgfx::setState(BGFX_STATE_DEFAULT);
+	bgfx::submit(renderPass, { effect->m_program });
+}
+
+void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft, float _width, float _height)
+{
+	float s_texelHalf = 0.f;
+	if (3 == bgfx::getAvailTransientVertexBuffer(3, s_posColorTexCoord0Layout)) {
+		bgfx::TransientVertexBuffer vb;
+		bgfx::allocTransientVertexBuffer(&vb, 3, s_posColorTexCoord0Layout);
+		Graphics::PosColorTexCoord0Vertex* vertex = (Graphics::PosColorTexCoord0Vertex*)vb.data;
+
+		const float zz = 0.0f;
+
+		const float minx = -_width;
+		const float maxx =  _width;
+		const float miny = 0.0f;
+		const float maxy = _height*2.0f;
+
+		const float texelHalfW = s_texelHalf/_textureWidth;
+		const float texelHalfH = s_texelHalf/_textureHeight;
+		const float minu = -1.0f + texelHalfW;
+		const float maxu =  1.0f + texelHalfW;
+
+		float minv = texelHalfH;
+		float maxv = 2.0f + texelHalfH;
+
+		if (_originBottomLeft)
+		{
+			float temp = minv;
+			minv = maxv;
+			maxv = temp;
+
+			minv -= 1.0f;
+			maxv -= 1.0f;
+		}
+
+		vertex[0].m_x = minx;
+		vertex[0].m_y = miny;
+		vertex[0].m_z = zz;
+		vertex[0].m_abgr = 0xffffffff;
+		vertex[0].m_u = minu;
+		vertex[0].m_v = minv;
+
+		vertex[1].m_x = maxx;
+		vertex[1].m_y = miny;
+		vertex[1].m_z = zz;
+		vertex[1].m_abgr = 0xffffffff;
+		vertex[1].m_u = maxu;
+		vertex[1].m_v = minv;
+
+		vertex[2].m_x = maxx;
+		vertex[2].m_y = maxy;
+		vertex[2].m_z = zz;
+		vertex[2].m_abgr = 0xffffffff;
+		vertex[2].m_u = maxu;
+		vertex[2].m_v = maxv;
+
+		bgfx::setVertexBuffer(0, &vb);
+	}
 }
 
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorVertex>& vertices)
@@ -432,6 +520,21 @@ Graphics::ShaderHandle Graphics::CreateShaderProgram(const String& vs, const Str
 Graphics::TextureHandle Graphics::CreateTexture(const String& texture)
 {
 	return loadTexture(texture.c_str()).idx;
+}
+
+Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, cherrysoda::type::UInt16 num)
+{
+	return bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Vec4, num).idx;
+}
+
+Graphics::UniformHandle Graphics::CreateUniformMat4(const String& uniform)
+{
+	return bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Mat4).idx;
+}
+
+Graphics::UniformHandle Graphics::CreateUniformSampler(const String& sampler)
+{
+	return bgfx::createUniform(sampler.c_str(), bgfx::UniformType::Sampler).idx;
 }
 
 void Graphics::SetEffect(Effect* effect)

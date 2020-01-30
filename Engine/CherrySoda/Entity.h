@@ -3,6 +3,7 @@
 
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
@@ -36,6 +37,11 @@ public:
 
 	void RemoveSelf();
 
+	inline bool TagCheck(BitTagValueType tag) { return (m_tag & tag) != 0; }
+	bool TagFullCheck(BitTagValueType tag) { return (m_tag & tag) == tag; }
+	void AddTag(BitTagValueType tag) { m_tag |= tag; }
+	void RemoveTag(BitTagValueType tag) { m_tag &= tag; }
+
 	void Add(Component* component); 
 	void Remove(Component* component);
 	void Add(ComponentList::IterableComponents& components); 
@@ -61,7 +67,7 @@ private:
 	ComponentList* m_components = nullptr;
 
 	int m_id = 0;
-	int m_tag = 0;
+	BitTagValueType m_tag = 0;
 
 	// Collider* collider;
 
