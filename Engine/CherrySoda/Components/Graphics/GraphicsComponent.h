@@ -19,8 +19,7 @@ public:
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Origin, m_origin);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Scale, m_scale);
 
-	inline void ZRotation(float zRotation) { m_zRotation = zRotation; };
-	inline float ZRotation() const { return m_zRotation; }
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, ZRotation, m_zRotation);
 
 	inline void RenderPosition(Math::Vec3 pos3d) { Position(pos3d - EntityPos()); }
 	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }

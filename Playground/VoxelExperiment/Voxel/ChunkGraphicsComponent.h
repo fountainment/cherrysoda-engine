@@ -20,6 +20,8 @@ public:
 
 	ChunkGraphicsComponent() : base(true) {}
 
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, YRotation, m_yRotation);
+
 	void Added(cherrysoda::Entity* entity) override;
 	void EntityAwake() override;
 	void Render() override;
@@ -28,9 +30,12 @@ public:
 	void AddQuad(const crsd::Math::Vec3& pos, float size, const crsd::Color& color, const crsd::Math::Vec3& normal);
 	void AddCube(const crsd::Math::Vec3& pos, float size, const crsd::Color& color, int planeMask = 0xffffffff);
 
+	const crsd::Math::Mat4 GetChunkTransformMatrix() const;
+
 private:
 	Chunk* m_chunk = nullptr;
 	crsd::Mesh<VertexType> m_mesh;
+	float m_yRotation = 0.f;
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_CHUNKGRAPHICSCOMPONENT_H_

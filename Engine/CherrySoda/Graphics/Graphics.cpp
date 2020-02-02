@@ -147,7 +147,7 @@ bgfx::ShaderHandle loadShader(const String& name) {
 		file.read(data, fileSize);
 		file.close();
 
-		const bgfx::Memory* mem = bgfx::copy(data, fileSize + 1);
+		const bgfx::Memory* mem = bgfx::copy(data, static_cast<uint32_t>(fileSize) + 1);
 		delete [] data;
 		mem->data[mem->size - 1] = '\0';
 		bgfx::ShaderHandle handle = bgfx::createShader(mem);
@@ -492,7 +492,7 @@ void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorVertex>& vertices)
 {
 	return bgfx::createVertexBuffer(
-		bgfx::makeRef(STL::Data(vertices), STL::ByteSize(vertices)),
+		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))),
 		s_posColorLayout
 	).idx;
 }
@@ -500,7 +500,7 @@ Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorNormalVertex>& vertices)
 {
 	return bgfx::createVertexBuffer(
-		bgfx::makeRef(STL::Data(vertices), STL::ByteSize(vertices)),
+		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))),
 		s_posColorNormalLayout
 	).idx;
 }
@@ -508,7 +508,7 @@ Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::
 Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
 {
 	return bgfx::createIndexBuffer(
-		bgfx::makeRef(STL::Data(indices), STL::ByteSize(indices))
+		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
 	).idx;
 }
 

@@ -18,18 +18,6 @@ void ChunkGraphicsComponent::Added(Entity* entity)
 	m_chunk = static_cast<Chunk*>(entity);
 	constexpr int chunkSize = Chunk::Size();
 	constexpr float halfChunkSize = chunkSize * 0.5f;
-	for (int i = 0; i < chunkSize; ++i) {
-		for (int j = 0; j < chunkSize; ++j) {
-			for (int k = 0; k < chunkSize; ++k) {
-				float l = i - halfChunkSize + 0.5f;
-				float m = j - halfChunkSize + 0.5f;
-				float n = k - halfChunkSize + 0.5f;
-				if ((l * l + m * m + n * n) <= halfChunkSize * halfChunkSize) {
-					m_chunk->SetBlockType(i, j, k, Block::Type::White);
-				}
-			}
-		}
-	}
 	Origin(Math::Vec3(halfChunkSize));
 }
 
@@ -53,12 +41,12 @@ void ChunkGraphicsComponent::EntityAwake()
 
 void ChunkGraphicsComponent::Update()
 {
-	ZRotation(ZRotation() + Engine::Instance()->DeltaTime());
+	YRotation(YRotation() + Engine::Instance()->DeltaTime());
 }
 
 void ChunkGraphicsComponent::Render()
 {
-	Graphics::Instance()->SetTransformMatrix(GetTransformMatrix());
+	Graphics::Instance()->SetTransformMatrix(GetChunkTransformMatrix());
 	Graphics::Instance()->SetMesh(&m_mesh);
 	Graphics::Instance()->Submit();
 }
@@ -97,4 +85,17 @@ void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Co
 	if (planeMask & 1 << 3) AddQuad(pos                  , size, color, -Vec3_YUp);
 	if (planeMask & 1 << 4) AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
 	if (planeMask & 1 << 5) AddQuad(pos                  , size, color, -Vec3_ZUp);
+}
+
+const crsd::Math::Mat4 ChunkGraphicsComponent::GetChunkTransformMatrix() const
+{
+	return Math::TranslateMat4(
+		Math::ScaleMat4(
+			Math_Rotate(
+				Math::TranslateMat4(
+					Mat4_Identity,
+					RenderPosition()),
+				YRotation(), Vec3_YUp),
+			Scale()),
+		-Origin());
 }

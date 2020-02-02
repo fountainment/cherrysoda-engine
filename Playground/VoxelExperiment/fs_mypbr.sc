@@ -13,7 +13,6 @@ void main()
     const float gammaInv = 1.0 / 2.2;
     const float Pi = 3.14159265359;
 
-
     const float lightRadius = 50.0;
     const float lightIntensity = 0.5;
 
@@ -31,7 +30,7 @@ void main()
     vec3 specTex = pow(textureCube(s_texCube, R).xyz, vec3(gamma, gamma, gamma)); 
     vec3 Cdiff = diffTex * (1.0 - u_metallic) / Pi;
     vec3 Cspec = specTex * u_metallic;
-    float EL = 10.0;
+    float EL = 2.0;
     color.xyz += RF * Cspec * EL;
     color.xyz += (1.0 - RF) * Cdiff * EL;
     for (int i = 0; i < 4; ++i) {

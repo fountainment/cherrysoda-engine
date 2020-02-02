@@ -44,7 +44,7 @@ public:
 		const Math::Mat4 orientationMatrix = Math::GetOrientationMatrix(*GetCamera()->GetViewMatrix());
 		Graphics::SetUniform(m_uniformMtx, &orientationMatrix);
 
-		cherrysoda::Camera camera(1.f, 1.f);
+		cherrysoda::Camera camera(1, 1);
 		camera.Position(Math::Vec3(0.5f, 0.5f, 0.5f));
 		camera.FOV(90.f);
 		Graphics::Instance()->SetCamera(&camera);
@@ -66,7 +66,7 @@ public:
 
 	void Update(cherrysoda::Scene* scene) override
 	{
-		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), Engine::Instance()->DeltaTime() * -0.5f, Vec3_YUp));
+		// GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), Engine::Instance()->DeltaTime() * -0.5f, Vec3_YUp));
 	}
 
 private:
@@ -81,13 +81,40 @@ void MainScene::Begin()
 	m_renderer = new VoxelRenderer;
 	m_chunk = new Chunk;
 
+	constexpr int chunkSize = Chunk::Size();
+	auto onEdge = [chunkSize](int x) { return x == 0 || x == chunkSize - 1; };
+	auto onCross = [chunkSize](int x, int y) { return x == y || x == chunkSize - y; };
+	constexpr float halfChunkSize = chunkSize * 0.5f;
+	for (int i = 0; i < chunkSize; ++i) {
+		for (int j = 0; j < chunkSize; ++j) {
+			for (int k = 0; k < chunkSize; ++k) {
+				/*
+				float l = i - halfChunkSize + 0.5f;
+				float m = j - halfChunkSize + 0.5f;
+				float n = k - halfChunkSize + 0.5f;
+				if ((l * l + m * m + n * n) <= halfChunkSize * halfChunkSize) {
+					m_chunk->SetBlockType(i, j, k, Block::Type::White);
+				}
+				*/
+				bool haveBlock = false;
+				haveBlock |= onEdge(i) && onEdge(j);
+				haveBlock |= onEdge(i) && onEdge(k);
+				haveBlock |= onEdge(j) && onEdge(k);
+
+				if (haveBlock) {
+					m_chunk->SetBlockType(i, j, k, Block::Type::White);
+				}
+			}
+		}
+	}
+
 	m_renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
 	
 	Graphics::SetUniformCamPos(m_renderer->GetCamera()->Position());
 
-	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f);
-	// Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.1f, 1.f, 0.f);
-	Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.99f, 0.f);
+	Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
+	// Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.1f, 1.f, 0.f); 	
+	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.99f, 0.f); // Gold
 
 	Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));
 	Graphics::SetUniformLight(1, Math::Vec3(5.f, 5.f, 8.f), Math::Vec3(1.f));
