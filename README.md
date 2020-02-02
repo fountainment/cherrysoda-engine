@@ -1,6 +1,6 @@
 # CherrySoda Engine
 
-A game engine based on bgfx and SDL2
+A game engine based on bgfx and SDL2 (at a very early stage)
 
 ## Requirements
 
