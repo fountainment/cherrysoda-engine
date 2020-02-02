@@ -84,6 +84,7 @@ public:
 	void UpdateView();
 	void SetClearColor(const Color& color);
 	void SetClearDiscard();
+	void SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder);
 	void Touch();
 	void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);

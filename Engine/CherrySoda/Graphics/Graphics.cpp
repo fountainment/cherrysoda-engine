@@ -361,12 +361,10 @@ void Graphics::SetClearDiscard()
 	bgfx::setViewClear(RenderPass(), BGFX_CLEAR_DISCARD_DEPTH | BGFX_CLEAR_DISCARD_STENCIL);
 }
 
-/*
 void Graphics::SetRenderPassOrder(STL::Vector<cherrysoda::type::UInt16> renderPassOrder)
 {
-	bgfx::setViewOrder(0, STL::Count(renderPassOrder), STL::Data(renderPassOrder));
+	bgfx::setViewOrder(0, static_cast<uint16_t>(STL::Count(renderPassOrder)), STL::Data(renderPassOrder));
 }
-*/
 
 void Graphics::Touch()
 {
@@ -421,7 +419,11 @@ void Graphics::Submit()
 
 void Graphics::Submit(Effect* effect)
 {
+	bgfx::setState(BGFX_STATE_DEFAULT);
+
+	// TODO: Remove temporary code
 	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
+
 	bgfx::submit(RenderPass(), { effect->m_program });
 }
 
