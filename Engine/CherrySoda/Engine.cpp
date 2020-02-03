@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Log.h>
@@ -12,6 +13,7 @@ using cherrysoda::Engine;
 
 using cherrysoda::Color;
 using cherrysoda::Graphics;
+using cherrysoda::MInput;
 using cherrysoda::Scene;
 using cherrysoda::String;
 using cherrysoda::Time;
@@ -84,14 +86,15 @@ void Engine::OnClientSizeChanged(int width, int height)
 
 void Engine::Initialize()
 {
-	if (!Window::Init()) {
+	if (!Window::Initialize()) {
 		return;
 	}
 
 	m_window = new Window();
 	m_window->CreateWindow();
 
-	Graphics::Init();
+	MInput::Initialize();
+	Graphics::Initialize();
 	m_graphicsDevice = Graphics::Instance();
 	m_graphicsDevice->UpdateView();
 	m_initialized = true;

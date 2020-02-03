@@ -300,7 +300,7 @@ Graphics::Graphics()
 {
 }
 
-void Graphics::Init()
+void Graphics::Initialize()
 {
 	entry::init();
 

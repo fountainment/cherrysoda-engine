@@ -202,7 +202,7 @@ void cherrysoda::Window::PollEvents()
 	}
 }
 
-bool cherrysoda::Window::Init()
+bool cherrysoda::Window::Initialize()
 {
 	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
 		return false;

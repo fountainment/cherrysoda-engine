@@ -28,7 +28,7 @@ private:
 
 	void PollEvents();
 
-	static bool Init();
+	static bool Initialize();
 	static void Terminate();
 
 	CHERRYSODA_WINDOW* m_mainWindow = nullptr;
