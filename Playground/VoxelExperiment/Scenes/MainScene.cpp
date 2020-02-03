@@ -73,8 +73,11 @@ public:
 	{
 		float deltaTime = Engine::Instance()->DeltaTime();
 		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick();
-		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * leftStick[0], Vec3_YUp));
-		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->Direction() * leftStick[1]);
+		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick();
+		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), 1.5f * deltaTime * rightStick[0], Vec3_YUp));
+		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), 1.5f * deltaTime * rightStick[1], GetCamera()->GetLeftVector()));
+		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->GetFrontVector() * leftStick[1]);
+		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
 
 		Graphics::SetUniformCamPos(GetCamera()->Position());
 	}
