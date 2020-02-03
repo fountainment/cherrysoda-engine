@@ -3,13 +3,16 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Scene.h>
+#include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Renderers/EverythingRenderer.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/String.h>
 
 #include "VoxelExperiment.h"
 #include "Voxel/Chunk.h"
@@ -21,7 +24,9 @@ using cherrysoda::Entity;
 using cherrysoda::EverythingRenderer;
 using cherrysoda::Graphics;
 using cherrysoda::Math;
+using cherrysoda::MInput;
 using cherrysoda::Renderer;
+using cherrysoda::StringUtil;
 
 class VoxelRenderer : public EverythingRenderer
 {
@@ -66,7 +71,10 @@ public:
 
 	void Update(cherrysoda::Scene* scene) override
 	{
-		// GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), Engine::Instance()->DeltaTime() * -0.5f, Vec3_YUp));
+		float deltaTime = Engine::Instance()->DeltaTime();
+		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick();
+		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * leftStick[0], Vec3_YUp));
+		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->Direction() * leftStick[1]);
 	}
 
 private:

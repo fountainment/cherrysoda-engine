@@ -51,6 +51,7 @@
 
 #define Math_Abs      glm::abs
 #define Math_Rotate   glm::rotate
+#define Math_Dot      glm::dot
 
 namespace cherrysoda {
 

@@ -135,6 +135,10 @@ void Engine::Update()
 	m_deltaTime = m_rawDeltaTime * m_timeRate;
 	m_lastFrameTime = m_currentTime;
 
+	// Update input
+	MInput::Update();
+
+	// Update current scene
 	if (m_scene != nullptr) {
 		m_scene->BeforeUpdate();
 		m_scene->Update();
@@ -161,6 +165,7 @@ void Engine::Draw()
 	RenderCore();
 	m_graphicsDevice->RenderFrame();
 
+	// Frame counter
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.0) {
