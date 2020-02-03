@@ -75,6 +75,8 @@ public:
 		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick();
 		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * leftStick[0], Vec3_YUp));
 		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->Direction() * leftStick[1]);
+
+		Graphics::SetUniformCamPos(GetCamera()->Position());
 	}
 
 private:
