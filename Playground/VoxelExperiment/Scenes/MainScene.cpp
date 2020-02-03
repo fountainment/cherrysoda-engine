@@ -72,12 +72,16 @@ public:
 	void Update(cherrysoda::Scene* scene) override
 	{
 		float deltaTime = Engine::Instance()->DeltaTime();
-		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick();
-		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick();
-		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), 1.5f * deltaTime * rightStick[0], Vec3_YUp));
-		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), 1.5f * deltaTime * rightStick[1], GetCamera()->GetLeftVector()));
-		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->GetFrontVector() * leftStick[1]);
-		GetCamera()->Position(GetCamera()->Position() + 30.0f * deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
+		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.01f);
+		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.01f);
+		leftStick *= Math_Length(leftStick) * 40.0f;
+		rightStick *= Math_LengthSq(rightStick) * 2.0f;
+		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));
+		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[1], GetCamera()->GetLeftVector()));
+		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetFrontVector() * leftStick[1]);
+		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
+
+		// CHERRYSODA_DEBUG(StringUtil::Format("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]));
 
 		Graphics::SetUniformCamPos(GetCamera()->Position());
 	}

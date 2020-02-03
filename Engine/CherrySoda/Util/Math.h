@@ -50,9 +50,11 @@
 #define IVec3_ZUp     Math::IVec3(0,0,1)
 
 #define Math_Abs      glm::abs
-#define Math_Rotate   glm::rotate
-#define Math_Dot      glm::dot
 #define Math_Cross    glm::cross
+#define Math_Dot      glm::dot
+#define Math_Length   glm::length
+#define Math_LengthSq glm::length2
+#define Math_Rotate   glm::rotate
 
 namespace cherrysoda {
 
