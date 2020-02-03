@@ -67,7 +67,7 @@ void ComponentList::Add(Component* component)
 		break;
 
 	case LockModes::Error:
-		CHERRYSODA_LOG("Cannot add or remove Entities at this time!");
+		CHERRYSODA_LOG("Cannot add or remove Entities at this time!\n");
 	}
 }
 
@@ -90,7 +90,7 @@ void ComponentList::Remove(Component* component)
 		break;
 
 	case LockModes::Error:
-		CHERRYSODA_LOG("Cannot add or remove Entities at this time!");
+		CHERRYSODA_LOG("Cannot add or remove Entities at this time!\n");
 	}
 }
 

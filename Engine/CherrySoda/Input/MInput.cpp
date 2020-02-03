@@ -63,11 +63,11 @@ void MInput::Initialize()
 		if (SDL_IsGameController(i)) {
 			controller = SDL_GameControllerOpen(i);
 			if (controller) {
-				CHERRYSODA_DEBUG(StringUtil::Format("Successfully open gamecontroller %i", i));
+				CHERRYSODA_DEBUG(StringUtil::Format("Successfully open gamecontroller %i\n", i));
 				ms_internalDevices[0] = (void*)controller;
 				break;
 			} else {
-				CHERRYSODA_DEBUG(StringUtil::Format("Could not open gamecontroller %i: %s", i, SDL_GetError()));
+				CHERRYSODA_DEBUG(StringUtil::Format("Could not open gamecontroller %i: %s\n", i, SDL_GetError()));
 			}
 		}
 	}

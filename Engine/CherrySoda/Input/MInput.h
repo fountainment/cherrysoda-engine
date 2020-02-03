@@ -159,7 +159,7 @@ public:
 
 	static GamePadData* GamePads(int index)
 	{
-		CHERRYSODA_ASSERT(index < 4, "GamePad index out of range!");
+		CHERRYSODA_ASSERT(index < 4, "GamePad index out of range!\n");
 		return ms_gamePads[index];
 	}
 

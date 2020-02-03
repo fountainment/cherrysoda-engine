@@ -17,11 +17,11 @@ void Log::DebugOutput(const String& output, int channel)
 #if defined(_WIN32) && defined(_MSC_VER)
 	OutputDebugString(output.c_str());
 #else
-	std::printf("%s\n", output.c_str());
+	std::printf("%s", output.c_str());
 #endif
 }
 
 void Log::LogOutput(const String& output, int channel)
 {
-	std::printf("%s\n", output.c_str());
+	std::printf("%s", output.c_str());
 }
