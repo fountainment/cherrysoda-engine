@@ -1,6 +1,7 @@
 import glob
 import os
 import pathlib
+import platform
 import shutil
 import subprocess
 import sys
@@ -12,7 +13,7 @@ else:
     import urllib2
 
 def is_windows_system():
-    return True
+    return platform.system() == 'Windows'
 
 def join_path(a, b):
     return os.path.join(a, b)
@@ -40,13 +41,13 @@ def execute_command(command):
     subprocess.run(command)
 
 def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None):
-    command = ' '.join([shaderc, '-f', shader_source, '-o', output, '--platform', platform, '--type', shader_type])
+    command = [shaderc, '-f', shader_source, '-o', output, '--platform', platform, '--type', shader_type]
     if include_path:
-        command += ' -i ' + include_path
+        command += ['-i', include_path]
     if profile:
-        command += ' --profile ' + profile
+        command += ['--profile', profile]
     if opt_level:
-        command += ' -O ' + str(opt_level)
+        command += ['-O', str(opt_level)]
     make_sure_folder_exist(output)
     execute_command(command)
 

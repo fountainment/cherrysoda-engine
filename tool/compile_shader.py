@@ -12,12 +12,16 @@ def main():
 
     shader_out_dir = 'assets/shaders'
 
-    compile_info = [
-        {
-            'platform': 'windows',
-            'profile': ['vs_4_0', 'ps_4_0'],
-            'opt_level': 3
-        },
+    compile_info = []
+    if cherry.is_windows_system():
+        compile_info += [
+            {
+                'platform': 'windows',
+                'profile': ['vs_4_0', 'ps_4_0'],
+                'opt_level': 3
+            }
+        ]
+    compile_info += [
         {
             'platform': 'linux',
             'profile': ['120', '120']
