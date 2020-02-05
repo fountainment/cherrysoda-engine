@@ -6,8 +6,11 @@
 class Skybox : public cherrysoda::GraphicsComponent
 {
 public:
+	typedef cherrysoda::GraphicsComponent base;
+
+	Skybox() : base(true) {}
+
 	void Render() override;
-	void Update() override;
 };
 
 #endif // _VOXELEXPERIMENT_SKYBOX_H_

@@ -93,6 +93,8 @@ public:
 	void SetMesh(MeshInterface* mesh);
 	void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	void SetIndexBuffer(IndexBufferHandle indexBuffer);
+	static void SetStateDefault();
+	static void SetStateNoDepth();
 	void Submit();
 	void Submit(Effect* effect);
 	void Submit(type::UInt16 renderPass, Effect* effect);

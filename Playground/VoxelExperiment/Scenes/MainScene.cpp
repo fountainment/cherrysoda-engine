@@ -9,34 +9,40 @@
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Renderers/Renderer.h>
-#include <CherrySoda/Renderers/EverythingRenderer.h>
+#include <CherrySoda/Renderers/SingleTagRenderer.h>
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include "Scenes/Skybox.h"
 #include "VoxelExperiment.h"
 #include "Voxel/Chunk.h"
 
+using cherrysoda::BitTag;
 using cherrysoda::Component;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Entity;
-using cherrysoda::EverythingRenderer;
+using cherrysoda::SingleTagRenderer;
 using cherrysoda::Graphics;
 using cherrysoda::Math;
 using cherrysoda::MInput;
 using cherrysoda::Renderer;
+using cherrysoda::STL;
 using cherrysoda::StringUtil;
 
-class VoxelRenderer : public EverythingRenderer
+class SkyboxRenderer : public SingleTagRenderer
 {
 public:
-	typedef EverythingRenderer base;
+	typedef SingleTagRenderer base;
 
-	VoxelRenderer()
+	SkyboxRenderer(const BitTag& tag)
+	: base(tag)
 	{
-		m_mtx = Math::IdentityMat4();
-		m_uniformMtx = Graphics::CreateUniformMat4("u_mtx");
+		SetEffect(GameApp::ms_skyboxShader);
 	}
 
 	void Render(cherrysoda::Scene* scene) override
@@ -44,28 +50,33 @@ public:
 		Graphics::Instance()->RenderPass(1);
 		Graphics::Instance()->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 		Graphics::Instance()->SetClearColor(cherrysoda::Color::Red);
-
 		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
-		const Math::Mat4 orientationMatrix = Math::GetOrientationMatrix(*GetCamera()->GetViewMatrix());
-		Graphics::SetUniform(m_uniformMtx, &orientationMatrix);
 
-		cherrysoda::Camera camera(1, 1);
-		camera.Position(Math::Vec3(0.5f, 0.5f, 0.5f));
-		camera.FOV(90.f);
-		Graphics::Instance()->SetCamera(&camera);
-		Graphics::Instance()->ScreenSpaceQuad(1.f, 1.f);
-		Graphics::Instance()->Submit(&GameApp::ms_skyboxShader);
+		base::Render(scene);
+		Graphics::Instance()->RenderPass(0);
+	}
+};
 
+class VoxelRenderer : public SingleTagRenderer
+{
+public:
+	typedef SingleTagRenderer base;
+
+	VoxelRenderer(const BitTag& tag)
+	: base(tag)
+	{
+		SetEffect(GameApp::ms_voxelShader);
+	}
+
+	void Render(cherrysoda::Scene* scene) override
+	{
 		Graphics::Instance()->RenderPass(2);
 		Graphics::Instance()->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 		Graphics::Instance()->SetClearDiscard();
 		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
 		Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
 
-		Graphics::SetEffect(&GameApp::ms_voxelShader);
-		Graphics::Instance()->SetCamera(GetCamera());
-		scene->Entities()->Render();
-		Graphics::SetEffect(nullptr);
+		base::Render(scene);
 		Graphics::Instance()->RenderPass(0);
 	}
 
@@ -82,21 +93,28 @@ public:
 		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
 
 		// CHERRYSODA_DEBUG(StringUtil::Format("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]));
-
-		Graphics::SetUniformCamPos(GetCamera()->Position());
 	}
 
-private:
-	Math::Mat4 m_mtx;
-	Graphics::UniformHandle m_uniformMtx;
 };
 
 void MainScene::Begin()
 {
 	base::Begin();
 
-	m_renderer = new VoxelRenderer;
+	m_uniformMtx = Graphics::CreateUniformMat4("u_mtx");
+	Graphics::Instance()->SetRenderPassOrder({ 1, 2 });
+
+	ms_skyboxTag = BitTag("skybox");
+	ms_voxelTag = BitTag("voxel");
+	m_skyboxRenderer = new SkyboxRenderer(ms_skyboxTag);
+	m_voxelRenderer = new VoxelRenderer(ms_voxelTag);
+
+	m_skybox = new Entity;
+	m_skybox->Add(new Skybox);
+	m_skybox->AddTag(ms_skyboxTag);
+
 	m_chunk = new Chunk;
+	m_chunk->AddTag(ms_voxelTag);
 
 	constexpr int chunkSize = Chunk::Size();
 	auto onEdge = [chunkSize](int x) { return x == 0 || x == chunkSize - 1; };
@@ -125,9 +143,11 @@ void MainScene::Begin()
 		}
 	}
 
-	m_renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
-	
-	Graphics::SetUniformCamPos(m_renderer->GetCamera()->Position());
+	m_skyboxRenderer->GetCamera()->Width(1);
+	m_skyboxRenderer->GetCamera()->Height(1);
+	m_skyboxRenderer->GetCamera()->Position(Math::Vec3(0.5f, 0.5f, 0.5f));
+	m_skyboxRenderer->GetCamera()->FOV(90.f);
+	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
 
 	Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
 	// Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.1f, 1.f, 0.f); 	
@@ -143,14 +163,26 @@ void MainScene::Begin()
 	Graphics::SetUniformLight(2, Vec3_Zero, Vec3_Zero);
 	Graphics::SetUniformLight(3, Vec3_Zero, Vec3_Zero);
 
-	Add(m_renderer);
+	// Renderers
+	Add(m_skyboxRenderer);
+	Add(m_voxelRenderer);
+
+	// Entities
 	Add(m_chunk);
+	Add(m_skybox);
 }
 
 void MainScene::BeforeRender()
 {
-	m_renderer->GetCamera()->Width(static_cast<float>(Engine::Instance()->GetWidth()));
-	m_renderer->GetCamera()->Height(static_cast<float>(Engine::Instance()->GetHeight()));
+	m_voxelRenderer->GetCamera()->Width(static_cast<float>(Engine::Instance()->GetWidth()));
+	m_voxelRenderer->GetCamera()->Height(static_cast<float>(Engine::Instance()->GetHeight()));
+
+	Graphics::SetUniformCamPos(m_voxelRenderer->GetCamera()->Position());
+	const Math::Mat4 orientationMatrix = Math::GetOrientationMatrix(*m_voxelRenderer->GetCamera()->GetViewMatrix());
+	Graphics::SetUniform(m_uniformMtx, &orientationMatrix);
 
 	base::BeforeRender();
 }
+
+BitTag MainScene::ms_skyboxTag;
+BitTag MainScene::ms_voxelTag;

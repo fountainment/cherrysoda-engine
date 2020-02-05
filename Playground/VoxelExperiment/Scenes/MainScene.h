@@ -1,11 +1,14 @@
 #ifndef _SCENES_MAINSCENE_H_
 #define _SCENES_MAINSCENE_H_
 
+#include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Scene.h>
+#include <CherrySoda/Util/BitTag.h>
 
 class Chunk;
 namespace cherrysoda {
-class EverythingRenderer;
+class Entity;
+class SingleTagRenderer;
 } // namespace cherrysoda
 
 class MainScene : public cherrysoda::Scene
@@ -16,9 +19,15 @@ public:
 	void Begin() override;
 	void BeforeRender() override;
 
+	static cherrysoda::BitTag ms_skyboxTag;
+	static cherrysoda::BitTag ms_voxelTag;
+
 private:
-	cherrysoda::EverythingRenderer* m_renderer = nullptr;
+	cherrysoda::SingleTagRenderer* m_voxelRenderer = nullptr;
+	cherrysoda::SingleTagRenderer* m_skyboxRenderer = nullptr;
 	Chunk* m_chunk = nullptr;
+	cherrysoda::Entity* m_skybox = nullptr;
+	cherrysoda::Graphics::UniformHandle m_uniformMtx;
 };
 
 #endif // _SCENES_MAINSCENE_H_

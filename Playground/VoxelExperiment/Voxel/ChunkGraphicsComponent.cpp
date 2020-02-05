@@ -48,6 +48,7 @@ void ChunkGraphicsComponent::Render()
 {
 	Graphics::Instance()->SetTransformMatrix(GetChunkTransformMatrix());
 	Graphics::Instance()->SetMesh(&m_mesh);
+	Graphics::SetStateDefault();
 	Graphics::Instance()->Submit();
 }
 

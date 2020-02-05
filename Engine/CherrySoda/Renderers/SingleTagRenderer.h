@@ -13,7 +13,7 @@ class Scene;
 class SingleTagRenderer : public Renderer
 {
 public:
-	SingleTagRenderer(BitTag tag)
+	SingleTagRenderer(const BitTag& tag)
 	: m_tag(tag)
 	{
 	}

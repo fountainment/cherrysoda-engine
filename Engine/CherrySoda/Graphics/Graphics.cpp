@@ -411,25 +411,28 @@ void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
 	bgfx::setIndexBuffer(bgfx::IndexBufferHandle{indexBuffer});
 }
 
-void Graphics::Submit()
+void Graphics::SetStateDefault()
 {
 	bgfx::setState(BGFX_STATE_DEFAULT);
+}
+
+void Graphics::SetStateNoDepth()
+{
+	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
+}
+
+void Graphics::Submit()
+{
 	bgfx::submit(RenderPass(), { ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader });
 }
 
 void Graphics::Submit(Effect* effect)
 {
-	bgfx::setState(BGFX_STATE_DEFAULT);
-
-	// TODO: Remove temporary code
-	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
-
 	bgfx::submit(RenderPass(), { effect->m_program });
 }
 
 void Graphics::Submit(cherrysoda::type::UInt16 renderPass, Effect* effect)
 {
-	bgfx::setState(BGFX_STATE_DEFAULT);
 	bgfx::submit(renderPass, { effect->m_program });
 }
 

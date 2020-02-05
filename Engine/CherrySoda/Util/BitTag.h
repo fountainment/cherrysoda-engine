@@ -24,7 +24,7 @@ public:
 		m_name = name.GetStr();
 
 		CHERRYSODA_ASSERT(ms_totalTags < TagBitsAmount, "Maximum tag limit exceeded!\n");
-		CHERRYSODA_ASSERT(STL::Contains(ms_byName, name.GetID()), "Two tags defined with the same name: '" + m_name + "'!\n");
+		CHERRYSODA_ASSERT(!STL::Contains(ms_byName, name.GetID()), "Two tags defined with the same name: '" + m_name + "'!\n");
 #endif
 		m_id = ms_totalTags;
 		m_value = 1 << ms_totalTags;
