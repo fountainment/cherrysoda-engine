@@ -13,8 +13,8 @@ public:
 
 	void UpdateMatrices();
 
-	inline Math::Mat4* GetViewMatrix() { return &m_viewMatrix; }
-	inline Math::Mat4* GetProjectionMatrix() { return &m_projMatrix; }
+	inline Math::Mat4* GetViewMatrix() { UpdateMatrices(); return &m_viewMatrix; }
+	inline Math::Mat4* GetProjectionMatrix() { UpdateMatrices(); return &m_projMatrix; }
 
 	inline const Math::Vec3 GetLeftVector() { return Math_Cross(m_upVector, m_direction); }
 	inline const Math::Vec3 GetRightVector() { return Math_Cross(m_direction, m_upVector); }

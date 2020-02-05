@@ -30,24 +30,24 @@
 	inline void NAME(const Math::Vec3& v3) { EXTRA_SET_OP; VALUE = v3; } \
 	inline void NAME(const Math::Vec2& v2) { NAME(Math::Vec3(v2, NAME()[2])); }
 
-#define Vec2_Zero     Math::Vec2(0.f)
-#define Vec2_One      Math::Vec2(1.f)
-#define Vec2_XUp      Math::Vec2(1.f,0.f)
-#define Vec2_YUp      Math::Vec2(0.f,1.f)
+#define Vec2_Zero     cherrysoda::Math::Vec2(0.f)
+#define Vec2_One      cherrysoda::Math::Vec2(1.f)
+#define Vec2_XUp      cherrysoda::Math::Vec2(1.f,0.f)
+#define Vec2_YUp      cherrysoda::Math::Vec2(0.f,1.f)
 
-#define Vec3_Zero     Math::Vec3(0.f)
-#define Vec3_One      Math::Vec3(1.f)
-#define Vec3_XUp      Math::Vec3(1.f,0.f,0.f)
-#define Vec3_YUp      Math::Vec3(0.f,1.f,0.f)
-#define Vec3_ZUp      Math::Vec3(0.f,0.f,1.f)
+#define Vec3_Zero     cherrysoda::Math::Vec3(0.f)
+#define Vec3_One      cherrysoda::Math::Vec3(1.f)
+#define Vec3_XUp      cherrysoda::Math::Vec3(1.f,0.f,0.f)
+#define Vec3_YUp      cherrysoda::Math::Vec3(0.f,1.f,0.f)
+#define Vec3_ZUp      cherrysoda::Math::Vec3(0.f,0.f,1.f)
 
-#define Mat4_Identity Math::Mat4(1.f)
+#define Mat4_Identity cherrysoda::Math::Mat4(1.f)
 
-#define IVec3_Zero    Math::IVec3(0)
-#define IVec3_One     Math::IVec3(1)
-#define IVec3_XUp     Math::IVec3(1,0,0)
-#define IVec3_YUp     Math::IVec3(0,1,0)
-#define IVec3_ZUp     Math::IVec3(0,0,1)
+#define IVec3_Zero    cherrysoda::Math::IVec3(0)
+#define IVec3_One     cherrysoda::Math::IVec3(1)
+#define IVec3_XUp     cherrysoda::Math::IVec3(1,0,0)
+#define IVec3_YUp     cherrysoda::Math::IVec3(0,1,0)
+#define IVec3_ZUp     cherrysoda::Math::IVec3(0,0,1)
 
 #define Math_Abs      glm::abs
 #define Math_Cross    glm::cross

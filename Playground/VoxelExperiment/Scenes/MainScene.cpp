@@ -49,8 +49,9 @@ public:
 	{
 		Graphics::Instance()->RenderPass(1);
 		Graphics::Instance()->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
-		Graphics::Instance()->SetClearColor(cherrysoda::Color::Red);
+		Graphics::Instance()->SetClearDiscard();
 		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
+		Graphics::Instance()->Touch();
 
 		base::Render(scene);
 		Graphics::Instance()->RenderPass(0);
@@ -75,6 +76,7 @@ public:
 		Graphics::Instance()->SetClearDiscard();
 		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
 		Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
+		Graphics::Instance()->Touch();
 
 		base::Render(scene);
 		Graphics::Instance()->RenderPass(0);
@@ -102,7 +104,7 @@ void MainScene::Begin()
 	base::Begin();
 
 	m_uniformMtx = Graphics::CreateUniformMat4("u_mtx");
-	Graphics::Instance()->SetRenderPassOrder({ 1, 2 });
+	Graphics::Instance()->SetRenderPassOrder({ 0, 1, 2 });
 
 	ms_skyboxTag = BitTag("skybox");
 	ms_voxelTag = BitTag("voxel");

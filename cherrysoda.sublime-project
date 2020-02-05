@@ -63,16 +63,20 @@
 					"shell_cmd": "make -j8 rebuild_cache"
 				},
 				{
-					"name": "bgfx",
-					"shell_cmd": "make -j8 bgfx"
+					"name": "bimg",
+					"shell_cmd": "make -j8 bimg"
 				},
 				{
 					"name": "bx",
 					"shell_cmd": "make -j8 bx"
 				},
 				{
-					"name": "bimg",
-					"shell_cmd": "make -j8 bimg"
+					"name": "bimg_decode",
+					"shell_cmd": "make -j8 bimg_decode"
+				},
+				{
+					"name": "bgfx",
+					"shell_cmd": "make -j8 bgfx"
 				},
 				{
 					"name": "glm_static",
