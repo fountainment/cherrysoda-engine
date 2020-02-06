@@ -13,24 +13,19 @@ using crsd::Math;
 using crsd::Color;
 using crsd::Graphics;
 
-void ChunkGraphicsComponent::Added(Entity* entity)
+void ChunkGraphicsComponent::EntityAwake()
 {
-	m_chunk = static_cast<Chunk*>(entity);
 	constexpr int chunkSize = Chunk::Size();
 	constexpr float halfChunkSize = chunkSize * 0.5f;
 	Origin(Math::Vec3(halfChunkSize));
-}
 
-void ChunkGraphicsComponent::EntityAwake()
-{
-	if (m_chunk == nullptr) return;
-
-	constexpr int chunkSize = Chunk::Size();
+	Chunk* chunk = (Chunk*)GetEntity();
+	if (chunk == nullptr) return;
 	for (int i = 0; i < chunkSize; ++i) {
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
-				if (m_chunk->GetBlockType(i, j, k) == Block::Type::White) {
-					int planeMask = m_chunk->GetBlockSurrounding(i, j, k);
+				if (chunk->GetBlockType(i, j, k) == Block::Type::White) {
+					int planeMask = chunk->GetBlockSurrounding(i, j, k);
 					AddCube(Math::Vec3(i, j, k), 1.f, Color::White, planeMask);
 				}
 			}

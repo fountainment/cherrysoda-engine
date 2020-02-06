@@ -118,6 +118,10 @@ void MainScene::Begin()
 	m_chunk = new Chunk;
 	m_chunk->AddTag(ms_voxelTag);
 
+	m_chunk1 = new Chunk;
+	m_chunk1->Position(Math::Vec3(0.f, 0.f, -30.f));
+	m_chunk1->AddTag(ms_voxelTag);
+
 	constexpr int chunkSize = Chunk::Size();
 	auto onEdge = [chunkSize](int x) { return x == 0 || x == chunkSize - 1; };
 	auto onCross = [chunkSize](int x, int y) { return x == y || x == chunkSize - y; };
@@ -140,6 +144,9 @@ void MainScene::Begin()
 
 				if (haveBlock) {
 					m_chunk->SetBlockType(i, j, k, Block::Type::White);
+				}
+				if (!haveBlock) {
+					m_chunk1->SetBlockType(i, j, k, Block::Type::White);
 				}
 			}
 		}
@@ -171,6 +178,7 @@ void MainScene::Begin()
 
 	// Entities
 	Add(m_chunk);
+	Add(m_chunk1);
 	Add(m_skybox);
 }
 

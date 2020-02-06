@@ -30,6 +30,11 @@ public:
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Origin, m_origin, CHERRYSODA_NONE_OP, m_changed = true);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Direction, m_direction, CHERRYSODA_NONE_OP, m_changed = true);
 
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, ZRotation, m_zAngle, CHERRYSODA_NONE_OP, if (m_zAngle == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, FOV, m_fov, CHERRYSODA_NONE_OP, if (m_fov == v) return; m_changed = true);
+
 private:
 	friend class Graphics;
 
@@ -47,12 +52,6 @@ private:
 	float m_zAngle = 0.f;
 	Math::Vec3 m_upVector = Vec3_YUp;
 	float m_fov = 60.f;
-
-public:
-	CHERRYSODA_GETTER_SETTER_EX(ZRotation, m_zAngle, CHERRYSODA_NONE_OP, m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX(Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX(Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX(FOV, m_fov, CHERRYSODA_NONE_OP, if (m_fov == v) return; m_changed = true);
 };
 
 } // namespace cherrysoda

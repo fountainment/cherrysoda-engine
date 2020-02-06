@@ -22,7 +22,6 @@ public:
 
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, YRotation, m_yRotation);
 
-	void Added(cherrysoda::Entity* entity) override;
 	void EntityAwake() override;
 	void Render() override;
 	void Update() override;
@@ -33,7 +32,6 @@ public:
 	const crsd::Math::Mat4 GetChunkTransformMatrix() const;
 
 private:
-	Chunk* m_chunk = nullptr;
 	crsd::Mesh<VertexType> m_mesh;
 	float m_yRotation = 0.f;
 };
