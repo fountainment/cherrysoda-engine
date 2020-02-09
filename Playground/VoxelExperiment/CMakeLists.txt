@@ -1,5 +1,6 @@
 set(PROJECT_SRC
   Program.cpp
+  Program.h
   VoxelExperiment.cpp
   VoxelExperiment.h
   Scenes/MainScene.cpp

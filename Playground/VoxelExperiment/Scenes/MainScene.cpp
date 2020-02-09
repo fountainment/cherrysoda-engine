@@ -17,8 +17,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include "Program.h"
 #include "Scenes/Skybox.h"
-#include "VoxelExperiment.h"
 #include "Voxel/Chunk.h"
 
 using cherrysoda::BitTag;
@@ -50,8 +50,6 @@ public:
 		Graphics::Instance()->RenderPass(1);
 		Graphics::Instance()->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 		Graphics::Instance()->SetClearDiscard();
-		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
-		Graphics::Instance()->Touch();
 
 		base::Render(scene);
 		Graphics::Instance()->RenderPass(0);
@@ -74,9 +72,6 @@ public:
 		Graphics::Instance()->RenderPass(2);
 		Graphics::Instance()->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 		Graphics::Instance()->SetClearDiscard();
-		Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
-		Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
-		Graphics::Instance()->Touch();
 
 		base::Render(scene);
 		Graphics::Instance()->RenderPass(0);

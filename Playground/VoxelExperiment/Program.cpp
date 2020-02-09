@@ -1,10 +1,9 @@
-#include "VoxelExperiment.h"
+#include "Program.h"
 
-using voxelexperiment::VoxelExperiment;
 
 int main()
 {
-	VoxelExperiment* game = new VoxelExperiment;
+	GameApp* game = new GameApp;
 	game->Run();
 	return 0;
 }

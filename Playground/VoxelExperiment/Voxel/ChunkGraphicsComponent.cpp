@@ -1,5 +1,7 @@
 #include "ChunkGraphicsComponent.h"
 
+#include "Program.h"
+
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Color.h>
@@ -41,6 +43,8 @@ void ChunkGraphicsComponent::Update()
 
 void ChunkGraphicsComponent::Render()
 {
+	Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
+	Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
 	Graphics::Instance()->SetTransformMatrix(GetChunkTransformMatrix());
 	Graphics::Instance()->SetMesh(&m_mesh);
 	Graphics::SetStateDefault();

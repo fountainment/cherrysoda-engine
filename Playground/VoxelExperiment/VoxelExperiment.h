@@ -25,6 +25,4 @@ public:
 	static cherrysoda::Effect ms_skyboxShader;
 };
 
-}
-
-using GameApp = voxelexperiment::VoxelExperiment;
+} // namespace voxelexperiment
