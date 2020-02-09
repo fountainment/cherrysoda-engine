@@ -52,6 +52,11 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   include_directories(../External/bgfx/bx/include/compat/msvc)
 endif()
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2") 
+endif()
+
 add_library(CherrySoda STATIC ${ENGINE_SRC})
 if(NOT DEFINED ENV{SDL2_DIR})
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
