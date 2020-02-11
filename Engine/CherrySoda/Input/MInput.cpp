@@ -55,6 +55,8 @@ void MInput::GamePadData::StopRumble()
 
 void MInput::Initialize()
 {
+	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+	SDL_JoystickEventState(SDL_ENABLE);
 	SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
 
 	// TODO: Remove temporary code
@@ -81,6 +83,11 @@ void MInput::Initialize()
 
 void MInput::Update()
 {
+	// TODO: Use gamepad event to detect gamepad connection
+	if (ms_internalDevices[0] == nullptr && SDL_NumJoysticks() > 0) {
+		ms_internalDevices[0] = (void*)SDL_GameControllerOpen(0);
+	}
+
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->Update();
 	}

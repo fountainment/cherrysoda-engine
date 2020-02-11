@@ -9,6 +9,10 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif // __EMSCRIPTEN__
+
 using cherrysoda::Engine;
 
 using cherrysoda::Color;
@@ -17,6 +21,14 @@ using cherrysoda::MInput;
 using cherrysoda::Scene;
 using cherrysoda::String;
 using cherrysoda::Time;
+
+#ifdef __EMSCRIPTEN__
+void Engine::MainLoop()
+{
+	Engine::Instance()->Update();
+	Engine::Instance()->Draw();
+}
+#endif // __EMSCRIPTEN__
 
 Engine::Engine(int width, int height, int windowWidth, int windowHeight,
                const String& title, bool fullscreen)
@@ -54,11 +66,16 @@ void Engine::Run()
 	m_window->Show();
 
 	m_lastFrameTime = Time::GetSystemTime();
+
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(&Engine::MainLoop, -1, 1);
+#else
 	while (!m_shouldExit) {
 		m_window->PollEvents();
 		Update();
 		Draw();
-	}
+	}	
+#endif // __EMSCRIPTEN__ 
 
 	Graphics::Terminate();
 
@@ -130,6 +147,8 @@ void Engine::OnSceneTransition(Scene* from, Scene* to)
 
 void Engine::Update()
 {
+	m_window->PollEvents();
+
 	m_currentTime = Time::GetSystemTime();
 	m_rawDeltaTime = m_currentTime - m_lastFrameTime;
 	m_deltaTime = m_rawDeltaTime * m_timeRate;

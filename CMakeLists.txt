@@ -13,6 +13,27 @@ project(CherrySoda VERSION 0.01
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
+if(EMSCRIPTEN)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 \
+                                          -s WASM=1 \
+                                          -s NO_EXIT_RUNTIME=1 \
+                                          -s USE_WEBGL2=1 \
+                                          -s FULL_ES3=1 \
+                                          -s TOTAL_MEMORY=512MB \
+                                          -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
+                                          -s OFFSCREENCANVAS_SUPPORT=1 \
+                                          --preload-file assets")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g4 -s ASSERTIONS=1")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz") 
+  add_compile_options(-fno-exceptions)
+else()
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
+    set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} -O1 -g -pg")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") 
+  endif()
+endif()
+
 add_subdirectory(External)
 add_subdirectory(Engine)
 add_subdirectory(Playground)

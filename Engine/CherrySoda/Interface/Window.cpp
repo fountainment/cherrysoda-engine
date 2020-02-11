@@ -35,15 +35,20 @@ using cherrysoda::Color;
 using cherrysoda::String;
 
 namespace entry {
+#ifdef __EMSCRIPTEN__
+	static const char* canvas_id = "#canvas";
+#endif // __EMSCRIPTEN__
 
 	static void* sdlNativeWindowHandle(SDL_Window* _window)
 	{
 		SDL_SysWMinfo wmi;
 		SDL_VERSION(&wmi.version);
+#ifndef __EMSCRIPTEN__
 		if (!SDL_GetWindowWMInfo(_window, &wmi))
 		{
 			return NULL;
 		}
+#endif // __EMSCRIPTEN__
 
 #	if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #		if ENTRY_CONFIG_USE_WAYLAND
@@ -69,16 +74,21 @@ namespace entry {
 #	elif BX_PLATFORM_STEAMLINK
 		return wmi.info.vivante.window;
 #	endif // BX_PLATFORM_
+#ifdef __EMSCRIPTEN__
+		return (void*)canvas_id;
+#endif // __EMSCRIPTEN__
 	}
 
 	inline bool sdlSetWindow(SDL_Window* _window)
 	{
 		SDL_SysWMinfo wmi;
 		SDL_VERSION(&wmi.version);
+#ifndef __EMSCRIPTEN__
 		if (!SDL_GetWindowWMInfo(_window, &wmi))
 		{
 			return false;
 		}
+#endif // __EMSCRIPTEN__
 
 		bgfx::PlatformData pd;
 #	if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
@@ -94,6 +104,9 @@ namespace entry {
 #	elif BX_PLATFORM_STEAMLINK
 		pd.ndt = wmi.info.vivante.display;
 #	endif // BX_PLATFORM_
+#ifdef __EMSCRIPTEN__
+		pd.ndt = NULL;
+#endif // __EMSCRIPTEN__
 		pd.nwh = sdlNativeWindowHandle(_window);
 
 		pd.context = NULL;
@@ -204,9 +217,10 @@ void cherrysoda::Window::PollEvents()
 
 bool cherrysoda::Window::Initialize()
 {
-	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) != 0) {
+	if (SDL_Init(0) != 0) {
 		return false;
 	}
+	SDL_InitSubSystem(SDL_INIT_TIMER);
 	return true;
 }
 

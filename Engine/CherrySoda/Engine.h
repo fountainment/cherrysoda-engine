@@ -23,6 +23,10 @@ class Window;
 class Engine
 {
 public:
+#ifdef __EMSCRIPTEN__ 
+	static void MainLoop();
+#endif // __EMSCRIPTEN__ 
+
 	Engine() : Engine(500, 500, 500, 500, "CherrySoda", false) {}
 	Engine(int width, int height, int windowWidth, int windowHeight,
 	       const String& title, bool fullscreen);
