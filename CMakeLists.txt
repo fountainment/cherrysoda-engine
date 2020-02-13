@@ -23,9 +23,12 @@ if(EMSCRIPTEN)
                                           -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
                                           -s OFFSCREENCANVAS_SUPPORT=1 \
                                           --preload-file assets")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g4 -s ASSERTIONS=1")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz") 
-  add_compile_options(-fno-exceptions)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g4 -s ASSERTIONS=2 -s GL_ASSERTIONS=2")
+  # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
+  #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
+  #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1") 
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 --closure 1") 
+  add_compile_options(-fno-exceptions -fno-rtti)
 else()
   if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
