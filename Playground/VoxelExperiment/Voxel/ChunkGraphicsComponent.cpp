@@ -52,6 +52,7 @@ void ChunkGraphicsComponent::Update()
 
 void ChunkGraphicsComponent::Render()
 {
+	if (!m_mesh.IsValid()) return;
 	Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
 	Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
 	Graphics::Instance()->SetTransformMatrix(GetChunkTransformMatrix());
@@ -88,12 +89,12 @@ void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Co
 
 void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Color& color, int planeMask)
 {
-	if (planeMask & 1 << 0) AddQuad(pos + Vec3_XUp * size, size, color,  Vec3_XUp);
-	if (planeMask & 1 << 1) AddQuad(pos                  , size, color, -Vec3_XUp);
-	if (planeMask & 1 << 2) AddQuad(pos + Vec3_YUp * size, size, color,  Vec3_YUp);
-	if (planeMask & 1 << 3) AddQuad(pos                  , size, color, -Vec3_YUp);
-	if (planeMask & 1 << 4) AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
-	if (planeMask & 1 << 5) AddQuad(pos                  , size, color, -Vec3_ZUp);
+	if (planeMask & (1 << 0)) AddQuad(pos + Vec3_XUp * size, size, color,  Vec3_XUp);
+	if (planeMask & (1 << 1)) AddQuad(pos                  , size, color, -Vec3_XUp);
+	if (planeMask & (1 << 2)) AddQuad(pos + Vec3_YUp * size, size, color,  Vec3_YUp);
+	if (planeMask & (1 << 3)) AddQuad(pos                  , size, color, -Vec3_YUp);
+	if (planeMask & (1 << 4)) AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
+	if (planeMask & (1 << 5)) AddQuad(pos                  , size, color, -Vec3_ZUp);
 }
 
 const crsd::Math::Mat4 ChunkGraphicsComponent::GetChunkTransformMatrix() const

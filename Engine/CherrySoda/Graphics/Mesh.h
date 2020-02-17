@@ -26,14 +26,16 @@ public:
 	// void LoadObj(const String& objFile);
 	inline void AddVertex(const VERTEX_T& vertex) { STL::Add(m_vertices, vertex); }
 	inline void AddIndex(type::UInt16 index) { STL::Add(m_indices, index); }
-	inline type::UInt16 VertexAmount() const { return static_cast<type::UInt16>(STL::Count(m_vertices)); }
-	inline type::UInt16 IndexAmount() const { return STL::Count(m_indices); }
+	inline size_t VertexAmount() const { return STL::Count(m_vertices); }
+	inline size_t IndexAmount() const { return STL::Count(m_indices); }
 	inline void AddPoint(VERTEX_T v) { STL::Add(m_indices, VertexAmount()); STL::Add(m_vertices, v); }
 	inline void AddLine(VERTEX_T v1, VERTEX_T v2) { AddPoint(v1); AddPoint(v2); }
 	inline void AddTriangle(VERTEX_T v1, VERTEX_T v2, VERTEX_T v3) { AddPoint(v1); AddPoint(v2); AddPoint(v3); }
 	inline void AddQuad(VERTEX_T v1, VERTEX_T v2, VERTEX_T v3, VERTEX_T v4)
 	{
-		const type::UInt16 i = VertexAmount();
+		size_t vAmount = VertexAmount();
+		if (vAmount + 4 > UINT16_MAX) return;
+		const type::UInt16 i = static_cast<type::UInt16>(vAmount);
 		STL::AddRange(m_vertices, {v1, v2, v3, v4});
 		STL::AddRange(m_indices,  {i, i+1_su, i+2_su, i+1_su, i+3_su, i+2_su});
 	}
@@ -56,16 +58,24 @@ public:
 
 	void InitBuffer()
 	{
-		if (m_vertexBuffer != Graphics::InvalidHandle)
-		{
+		if (m_vertexBuffer != Graphics::InvalidHandle) {
 			Graphics::DestroyVertexBuffer(m_vertexBuffer);
+			m_vertexBuffer = Graphics::InvalidHandle;
 		}
-		if (m_indexBuffer != Graphics::InvalidHandle)
-		{
+		if (m_indexBuffer != Graphics::InvalidHandle) {
 			Graphics::DestroyIndexBuffer(m_indexBuffer);
+			m_indexBuffer = Graphics::InvalidHandle;
 		}
-		m_vertexBuffer = Graphics::CreateVertexBuffer(m_vertices);
-		m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
+
+		if (STL::Count(m_vertices) > 0) {
+			m_vertexBuffer = Graphics::CreateVertexBuffer(m_vertices);
+			m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
+		}
+	}
+
+	bool IsValid()
+	{
+		return m_vertexBuffer != Graphics::InvalidHandle && m_indexBuffer != Graphics::InvalidHandle;
 	}
 
 	Graphics::VertexBufferHandle GetVertexBuffer() const { return m_vertexBuffer; }

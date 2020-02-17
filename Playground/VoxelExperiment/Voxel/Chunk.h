@@ -37,7 +37,7 @@ public:
 	Block* GetBlock(int x, int y, int z);
 	int GetBlockIndex(Block* block)
 	{
-		int index = block - GetBlocks();
+		int index = static_cast<int>(block - GetBlocks());
 		return (index < 0 || index >= BlocksAmount()) ? -1 : index;
 	}
 

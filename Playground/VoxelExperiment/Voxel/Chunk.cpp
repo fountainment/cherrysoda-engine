@@ -43,9 +43,9 @@ Block* Chunk::GetBlock(int x, int y, int z)
 	int index = GetBlockIndex(x, y, z); 
 	if (index < 0) {
 		if (m_world) {
-			int wx = x + Position()[0];
-			int wy = y + Position()[1];
-			int wz = z + Position()[2];
+			int wx = x + static_cast<int>(Position()[0] + 0.5f);
+			int wy = y + static_cast<int>(Position()[1] + 0.5f);
+			int wz = z + static_cast<int>(Position()[2] + 0.5f);
 			return m_world->GetBlock(wx, wy, wz);
 		}
 		return nullptr;
@@ -67,5 +67,6 @@ void Chunk::Update()
 
 	if (m_changed) {
 		Get<ChunkGraphicsComponent>()->RebuildMesh();
+		m_changed = false;
 	}
 }

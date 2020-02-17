@@ -202,8 +202,8 @@ void MainScene::Update()
 	base::Update();
 
 	int halfWorldBlockSize = World::WorldBlockSize() / 2;
-	static float fr = halfWorldBlockSize - 1;
-	int r = fr;
+	static float fr = static_cast<float>(halfWorldBlockSize - 1);
+	int r = static_cast<int>(fr);
 
 	if (r < halfWorldBlockSize)
 	{
@@ -211,9 +211,9 @@ void MainScene::Update()
 		{
 			for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
 				int y = halfWorldBlockSize + i;
-				float rr = glm::pow(r * r - i * i, 0.5f);
-				int x = halfWorldBlockSize + glm::cos(theta) * rr;
-				int z = halfWorldBlockSize + glm::sin(theta) * rr;
+				float rr = static_cast<float>(glm::pow(r * r - i * i, 0.5));
+				int x = halfWorldBlockSize + static_cast<int>(glm::cos(theta) * rr);
+				int z = halfWorldBlockSize + static_cast<int>(glm::sin(theta) * rr);
 				m_voxelWorld->SetBlockType(x, y, z, Block::Type::White);
 			}
 		}

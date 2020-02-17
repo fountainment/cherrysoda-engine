@@ -7,6 +7,8 @@
 #include <string>
 
 #define CHERRYSODA_FORMAT cherrysoda::StringUtil::Format
+#define CHERRYSODA_DEBUG_FORMAT(format, ...) CHERRYSODA_DEBUG(CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
+#define CHERRYSODA_LOG_FORMAT(format, ...) CHERRYSODA_LOG(CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
 
 namespace cherrysoda {
 
@@ -44,9 +46,9 @@ public:
 		auto it = STL::Find(ms_hashCollisionCheckMap, m_id);
 		if (it != ms_hashCollisionCheckMap.end()) {
 			if (it->second != m_str) {
-				CHERRYSODA_DEBUG(StringUtil::Format(
-					"StringID Hash Collision: \"%s\" collide with \"%s\" at %d!", 
-					m_str.c_str(), it->second.c_str(), m_id));
+				CHERRYSODA_DEBUG_FORMAT( \
+					"StringID Hash Collision: \"%s\" collide with \"%s\" at %d!", \
+					m_str.c_str(), it->second.c_str(), m_id);
 			}
 		}
 		ms_hashCollisionCheckMap[m_id] = m_str;

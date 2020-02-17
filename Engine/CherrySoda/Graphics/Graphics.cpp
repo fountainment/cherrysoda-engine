@@ -542,29 +542,35 @@ Graphics::UniformHandle Graphics::CreateUniformSampler(const String& sampler)
 	return bgfx::createUniform(sampler.c_str(), bgfx::UniformType::Sampler).idx;
 }
 
-void Graphics::DestroyVertexBuffer(VertexBufferHandle vertexBuffer)
+void Graphics::DestroyVertexBuffer(VertexBufferHandle handle)
 {
-	bgfx::destroy((bgfx::VertexBufferHandle){ vertexBuffer });
+	bgfx::VertexBufferHandle hdl = { handle };
+	bgfx::destroy(hdl);
 }
 
-void Graphics::DestroyIndexBuffer(IndexBufferHandle indexBuffer)
+void Graphics::DestroyIndexBuffer(IndexBufferHandle handle)
 {
-	bgfx::destroy((bgfx::IndexBufferHandle){ indexBuffer });
+	bgfx::IndexBufferHandle hdl = { handle };
+	bgfx::destroy(hdl);
+
 }
 
-void Graphics::DestroyShader(ShaderHandle shader)
+void Graphics::DestroyShader(ShaderHandle handle)
 {
-	bgfx::destroy((bgfx::ShaderHandle){ shader });
+	bgfx::ShaderHandle hdl = { handle };
+	bgfx::destroy(hdl);
 }
 
-void Graphics::DestroyTexture(TextureHandle texture)
+void Graphics::DestroyTexture(TextureHandle handle)
 {
-	bgfx::destroy((bgfx::TextureHandle){ texture });
+	bgfx::TextureHandle hdl = { handle };
+	bgfx::destroy(hdl);
 }
 
-void Graphics::DestroyUniform(UniformHandle uniform)
+void Graphics::DestroyUniform(UniformHandle handle)
 {
-	bgfx::destroy((bgfx::UniformHandle){ uniform });
+	bgfx::UniformHandle hdl = { handle };
+	bgfx::destroy(hdl);
 }
 
 void Graphics::SetEffect(Effect* effect)

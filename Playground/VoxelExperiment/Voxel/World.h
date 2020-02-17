@@ -10,7 +10,7 @@ class World
 public:
 	Chunk* LoadChunks();
 
-	int GetChunkIndex(Chunk* chunk) { int index = chunk - GetChunks(); if (index < 0 || index >= ChunksAmount()) return -1; return index; }
+	int GetChunkIndex(Chunk* chunk) { int index = static_cast<int>(chunk - GetChunks()); if (index < 0 || index >= ChunksAmount()) return -1; return index; }
 
 	Chunk* GetChunks() { return m_chunks; }
 	Chunk* GetChunk(int x, int y, int z)
