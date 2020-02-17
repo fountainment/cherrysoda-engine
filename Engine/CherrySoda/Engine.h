@@ -45,6 +45,7 @@ public:
 	inline float DeltaTime() const { return static_cast<float>(m_deltaTime); }
 	inline double TimeRate() const { return m_timeRate; }
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
+	inline int FPS() { return m_FPS; }
 
 	void Run();
 	void Exit();

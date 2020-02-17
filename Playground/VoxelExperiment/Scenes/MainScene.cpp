@@ -85,11 +85,15 @@ public:
 		leftStick *= Math_Length(leftStick) * 40.0f;
 		rightStick *= Math_LengthSq(rightStick) * 2.0f;
 		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));
-		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[1], GetCamera()->GetLeftVector()));
+		Math::Vec3 targetDirection = Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[1], GetCamera()->GetLeftVector());
+		if (Math_Dot(Math_Normalize(Math_Cross(GetCamera()->GetUpVector(), targetDirection)), GetCamera()->GetLeftVector()) > 0.0f)
+		{
+			 GetCamera()->Direction(targetDirection);
+		}
 		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetFrontVector() * leftStick[1]);
 		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
 
-		// CHERRYSODA_DEBUG(CHERRYSODA_FORMAT("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]));
+		// CHERRYSODA_DEBUG_FORMAT("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]);
 	}
 
 };
@@ -112,10 +116,6 @@ void MainScene::Begin()
 
 	m_chunk = new Chunk;
 	m_chunk->AddTag(ms_voxelTag);
-
-	m_chunk1 = new Chunk;
-	m_chunk1->Position(Math::Vec3(0.f, 0.f, -30.f));
-	m_chunk1->AddTag(ms_voxelTag);
 
 	m_voxelWorld = new World;
 	Chunk* chunks = m_voxelWorld->LoadChunks();
@@ -148,9 +148,6 @@ void MainScene::Begin()
 				if (haveBlock) {
 					m_chunk->SetBlockType(i, j, k, Block::Type::White);
 				}
-				if (!haveBlock) {
-					m_chunk1->SetBlockType(i, j, k, Block::Type::White);
-				}
 			}
 		}
 	}
@@ -162,7 +159,7 @@ void MainScene::Begin()
 	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
 
 	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
-	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 1.f, 0.5f); 	
+	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 1.f, 0.4f); 	
 	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.99f, 0.f); // Gold
 
 	// Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));
@@ -170,10 +167,10 @@ void MainScene::Begin()
 	// Graphics::SetUniformLight(2, Math::Vec3(-5.f, -5.f, 8.f), Math::Vec3(1.f));
 	// Graphics::SetUniformLight(3, Math::Vec3(5.f, -5.f, 8.f), Math::Vec3(1.f));
 
-	Graphics::SetUniformLight(0, Vec3_Zero, Vec3_Zero);
-	Graphics::SetUniformLight(1, Vec3_Zero, Vec3_Zero);
-	Graphics::SetUniformLight(2, Vec3_Zero, Vec3_Zero);
-	Graphics::SetUniformLight(3, Vec3_Zero, Vec3_Zero);
+	// Graphics::SetUniformLight(0, Vec3_Zero, Vec3_Zero);
+	// Graphics::SetUniformLight(1, Vec3_Zero, Vec3_Zero);
+	// Graphics::SetUniformLight(2, Vec3_Zero, Vec3_Zero);
+	// Graphics::SetUniformLight(3, Vec3_Zero, Vec3_Zero);
 
 	// Renderers
 	Add(m_skyboxRenderer);
@@ -181,7 +178,6 @@ void MainScene::Begin()
 
 	// Entities
 	Add(m_chunk);
-	Add(m_chunk1);
 	Add(m_skybox);
 }
 
@@ -199,26 +195,46 @@ void MainScene::BeforeRender()
 
 void MainScene::Update()
 {
-	base::Update();
-
 	int halfWorldBlockSize = World::WorldBlockSize() / 2;
-	static float fr = static_cast<float>(halfWorldBlockSize - 1);
+	static float fr = static_cast<float>(1.0f);
+	static float dir = 1.0f;
 	int r = static_cast<int>(fr);
 
-	if (r < halfWorldBlockSize)
-	{
-		for (int i = -r; i <= r; ++i)
-		{
-			for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
-				int y = halfWorldBlockSize + i;
-				float rr = static_cast<float>(glm::pow(r * r - i * i, 0.5));
-				int x = halfWorldBlockSize + static_cast<int>(glm::cos(theta) * rr);
-				int z = halfWorldBlockSize + static_cast<int>(glm::sin(theta) * rr);
-				m_voxelWorld->SetBlockType(x, y, z, Block::Type::White);
+	if (dir > 0.0f) {
+		if (r < halfWorldBlockSize) {
+			for (int i = -r; i <= r; ++i) {
+				for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
+					int y = halfWorldBlockSize + i;
+					float rr = static_cast<float>(glm::pow(r * r - i * i, 0.5));
+					int x = halfWorldBlockSize + static_cast<int>(glm::cos(theta) * rr);
+					int z = halfWorldBlockSize + static_cast<int>(glm::sin(theta) * rr);
+					m_voxelWorld->SetBlockType(x, y, z, Block::Type::White);
+				}
 			}
 		}
+		else {
+			dir = -1.0f;
+		}
 	}
-	fr += 0.1f;
+	else {
+		if (r > 0) {
+			for (int i = -r; i <= r; ++i) {
+				for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
+					int y = halfWorldBlockSize + i;
+					float rr = static_cast<float>(glm::pow(r * r - i * i, 0.5));
+					int x = halfWorldBlockSize + static_cast<int>(glm::cos(theta) * rr);
+					int z = halfWorldBlockSize + static_cast<int>(glm::sin(theta) * rr);
+					m_voxelWorld->SetBlockType(x, y, z, Block::Type::None);
+				}
+			}
+		}
+		else {
+			dir = 1.0f;
+		}
+	}
+	fr += 0.016667f * 20.0f * dir * (Math_Abs(glm::sin(fr / halfWorldBlockSize * 3.14159)) + 0.1f) * 2.0f;
+
+	base::Update();
 }
 
 BitTag MainScene::ms_skyboxTag;

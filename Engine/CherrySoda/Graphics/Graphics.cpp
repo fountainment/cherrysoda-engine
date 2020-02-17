@@ -305,7 +305,7 @@ void Graphics::Initialize()
 	entry::init();
 
 	bgfx::init();
-	// bgfx::setDebug(BGFX_DEBUG_TEXT);
+	bgfx::setDebug(BGFX_DEBUG_TEXT);
 
 	Graphics::PosColorVertex::Init();
 	Graphics::PosColorNormalVertex::Init();
@@ -333,10 +333,10 @@ void Graphics::RenderFrame()
 {
 	// static int s_frameCount = 0;
 
-	// bgfx::dbgTextClear();
-	// bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
-	// bgfx::dbgTextPrintf(1, 2, 0x0f, StringUtil::Format("Frame Count: %d", s_frameCount++).c_str());
-	// bgfx::dbgTextPrintf(1, 3, 0x0f, StringUtil::Format("Delta Time: %f", Engine::Instance()->DeltaTime()).c_str());
+	bgfx::dbgTextClear();
+	bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
+	bgfx::dbgTextPrintf(1, 3, 0x0f, StringUtil::Format("FPS: %d", Engine::Instance()->FPS()).c_str());
+	bgfx::dbgTextPrintf(1, 4, 0x0f, StringUtil::Format("DeltaTime: %.4f", Engine::Instance()->DeltaTime()).c_str());
 
 	bgfx::frame();
 }
