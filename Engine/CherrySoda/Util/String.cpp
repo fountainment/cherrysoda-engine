@@ -21,4 +21,4 @@ const String StringUtil::Format(const char* format, ...)
 
 #ifndef NDEBUG // Debug
 STL::Map<int,String> StringID::ms_hashCollisionCheckMap;
-#endif
+#endif // NDEBUG

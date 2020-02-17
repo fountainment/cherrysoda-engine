@@ -13,6 +13,8 @@ set(PROJECT_SRC
   Voxel/Chunk.h
   Voxel/ChunkGraphicsComponent.cpp
   Voxel/ChunkGraphicsComponent.h
+  Voxel/World.cpp
+  Voxel/World.h
 )
 
 file(COPY assets DESTINATION .)

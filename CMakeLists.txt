@@ -7,7 +7,7 @@ else()
 endif()
 
 project(CherrySoda VERSION 0.01
-                   DESCRIPTION "A Toy Game Engine"
+                   DESCRIPTION "A C++ Game Engine Based on BGFX and SDL2"
                    LANGUAGES CXX)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

@@ -114,6 +114,12 @@ public:
 	static UniformHandle CreateUniformMat4(const String& uniform);
 	static UniformHandle CreateUniformSampler(const String& sampler);
 
+	static void DestroyVertexBuffer(VertexBufferHandle vertexBuffer);
+	static void DestroyIndexBuffer(IndexBufferHandle indexBuffer);
+	static void DestroyShader(ShaderHandle shader);
+	static void DestroyTexture(TextureHandle texture);
+	static void DestroyUniform(UniformHandle uniform);
+
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
 	static void SetTexture(UniformHandle uniform, TextureHandle texture);
 	static void SetTexture(type::UInt8 stage, UniformHandle uniform, TextureHandle texture);

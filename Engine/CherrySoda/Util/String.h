@@ -6,6 +6,8 @@
 
 #include <string>
 
+#define CHERRYSODA_FORMAT cherrysoda::StringUtil::Format
+
 namespace cherrysoda {
 
 typedef std::string String;

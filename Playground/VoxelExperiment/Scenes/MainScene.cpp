@@ -20,6 +20,7 @@
 #include "Program.h"
 #include "Scenes/Skybox.h"
 #include "Voxel/Chunk.h"
+#include "Voxel/World.h"
 
 using cherrysoda::BitTag;
 using cherrysoda::Component;
@@ -117,6 +118,14 @@ void MainScene::Begin()
 	m_chunk1->Position(Math::Vec3(0.f, 0.f, -30.f));
 	m_chunk1->AddTag(ms_voxelTag);
 
+	m_voxelWorld = new World;
+	Chunk* chunks = m_voxelWorld->LoadChunks();
+	for (int i = 0; i < World::ChunksAmount(); ++i) {
+		// chunks[i].FillAllBlocks(Block::Type::White);
+		chunks[i].AddTag(ms_voxelTag);
+		Add(chunks + i);
+	}
+
 	constexpr int chunkSize = Chunk::Size();
 	auto onEdge = [chunkSize](int x) { return x == 0 || x == chunkSize - 1; };
 	auto onCross = [chunkSize](int x, int y) { return x == y || x == chunkSize - y; };
@@ -187,6 +196,22 @@ void MainScene::BeforeRender()
 	Graphics::SetUniform(m_uniformMtx, &orientationMatrix);
 
 	base::BeforeRender();
+}
+
+void MainScene::Update()
+{
+	base::Update();
+
+	static int r = 0;
+
+	if (r < World::BlocksAmount())
+	{
+		for (int i = 0; i < 1000; ++i)
+		{
+			m_voxelWorld->SetBlockType(r, Block::Type::White);
+			r += 29;
+		}
+	}
 }
 
 BitTag MainScene::ms_skyboxTag;

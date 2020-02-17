@@ -21,7 +21,7 @@ public:
 	T* Get()
 	{
 		for (auto component : m_components) {
-			if (auto t = dynamic_cast<T*>(component)) {
+			if (auto t = static_cast<T*>(component)) {
 				return t;
 			}
 		}

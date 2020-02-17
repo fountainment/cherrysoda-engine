@@ -48,9 +48,22 @@ public:
 		STL::AddRange(m_indices,  {i     , i+4_su, i+1_su, i+4_su, i+5_su, i+1_su});
 		STL::AddRange(m_indices,  {i+2_su, i+3_su, i+6_su, i+6_su, i+3_su, i+7_su});
 	}
+	inline void Clear()
+	{
+		STL::Clear(m_vertices);
+		STL::Clear(m_indices);
+	}
 
 	void InitBuffer()
 	{
+		if (m_vertexBuffer != Graphics::InvalidHandle)
+		{
+			Graphics::DestroyVertexBuffer(m_vertexBuffer);
+		}
+		if (m_indexBuffer != Graphics::InvalidHandle)
+		{
+			Graphics::DestroyIndexBuffer(m_indexBuffer);
+		}
 		m_vertexBuffer = Graphics::CreateVertexBuffer(m_vertices);
 		m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
 	}

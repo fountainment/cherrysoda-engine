@@ -21,6 +21,15 @@ void ChunkGraphicsComponent::EntityAwake()
 	constexpr float halfChunkSize = chunkSize * 0.5f;
 	Origin(Math::Vec3(halfChunkSize));
 
+	RebuildMesh();
+}
+
+void ChunkGraphicsComponent::RebuildMesh()
+{
+	constexpr int chunkSize = Chunk::Size();
+	constexpr float halfChunkSize = chunkSize * 0.5f;
+
+	m_mesh.Clear();
 	Chunk* chunk = (Chunk*)GetEntity();
 	if (chunk == nullptr) return;
 	for (int i = 0; i < chunkSize; ++i) {
@@ -38,7 +47,7 @@ void ChunkGraphicsComponent::EntityAwake()
 
 void ChunkGraphicsComponent::Update()
 {
-	YRotation(YRotation() + Engine::Instance()->DeltaTime());
+	// YRotation(YRotation() + Engine::Instance()->DeltaTime());
 }
 
 void ChunkGraphicsComponent::Render()

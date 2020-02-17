@@ -6,6 +6,7 @@
 #include <CherrySoda/Util/BitTag.h>
 
 class Chunk;
+class World;
 namespace cherrysoda {
 class Entity;
 class SingleTagRenderer;
@@ -19,6 +20,8 @@ public:
 	void Begin() override;
 	void BeforeRender() override;
 
+	void Update() override;
+
 	static cherrysoda::BitTag ms_skyboxTag;
 	static cherrysoda::BitTag ms_voxelTag;
 
@@ -27,6 +30,7 @@ private:
 	cherrysoda::SingleTagRenderer* m_skyboxRenderer = nullptr;
 	Chunk* m_chunk = nullptr;
 	Chunk* m_chunk1 = nullptr;
+	World* m_voxelWorld = nullptr;
 	cherrysoda::Entity* m_skybox = nullptr;
 	cherrysoda::Graphics::UniformHandle m_uniformMtx;
 };

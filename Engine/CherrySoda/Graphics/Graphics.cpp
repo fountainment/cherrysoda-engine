@@ -542,6 +542,31 @@ Graphics::UniformHandle Graphics::CreateUniformSampler(const String& sampler)
 	return bgfx::createUniform(sampler.c_str(), bgfx::UniformType::Sampler).idx;
 }
 
+void Graphics::DestroyVertexBuffer(VertexBufferHandle vertexBuffer)
+{
+	bgfx::destroy((bgfx::VertexBufferHandle){ vertexBuffer });
+}
+
+void Graphics::DestroyIndexBuffer(IndexBufferHandle indexBuffer)
+{
+	bgfx::destroy((bgfx::IndexBufferHandle){ indexBuffer });
+}
+
+void Graphics::DestroyShader(ShaderHandle shader)
+{
+	bgfx::destroy((bgfx::ShaderHandle){ shader });
+}
+
+void Graphics::DestroyTexture(TextureHandle texture)
+{
+	bgfx::destroy((bgfx::TextureHandle){ texture });
+}
+
+void Graphics::DestroyUniform(UniformHandle uniform)
+{
+	bgfx::destroy((bgfx::UniformHandle){ uniform });
+}
+
 void Graphics::SetEffect(Effect* effect)
 {
 	SetShader(effect != nullptr ? effect->GetShader() : Graphics::InvalidHandle);
