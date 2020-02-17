@@ -12,6 +12,8 @@ class World;
 class Chunk : public cherrysoda::Entity
 {
 public:
+	typedef cherrysoda::Entity base;	
+
 	Chunk();
 
 	Block::Type GetBlockType(int x, int y, int z)

@@ -19,7 +19,7 @@ if(EMSCRIPTEN)
                                           -s NO_EXIT_RUNTIME=1 \
                                           -s USE_WEBGL2=1 \
                                           -s FULL_ES3=1 \
-                                          -s TOTAL_MEMORY=512MB \
+                                          -s TOTAL_MEMORY=1024MB \
                                           -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
                                           -s OFFSCREENCANVAS_SUPPORT=1 \
                                           --preload-file assets")

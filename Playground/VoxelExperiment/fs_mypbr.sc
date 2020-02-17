@@ -32,26 +32,27 @@ void main()
     vec3 Cspec = specTex * u_metallic;
     float EL = 2.0;
     color.xyz += RF * Cspec * EL;
-    color.xyz += (1.0 - RF) * Cdiff * EL;
-    for (int i = 0; i < 4; ++i) {
-        vec3 El = u_lightColors(i) * lightIntensity;
+    color.xyz += (1.0 - RF) * Cdiff * (EL - u_ao);
+    color.xyz += v_color0.xyz * u_ao;
+    // for (int i = 0; i < 4; ++i) {
+    //     vec3 El = u_lightColors(i) * lightIntensity;
 
-        vec3 L = u_lightPositions(i) - v_worldPos;
-        float len = length(L);
-        L = L / len;
-        vec3 H = normalize(L + V);
+    //     vec3 L = u_lightPositions(i) - v_worldPos;
+    //     float len = length(L);
+    //     L = L / len;
+    //     vec3 H = normalize(L + V);
 
-        float cosThetai = max(dot(N, L), 0.0);
-        float cosThetah = 0.0;
-        if (cosThetai != 0.0) {
-            cosThetah = max(dot(N, H), 0.0);
-        }
-        vec3 RF = RF0 + (vec3(1.0, 1.0, 1.0) - RF0) * pow((1.0 - max(dot(N, V), 0.0)), 5.0);
-        float attenuation = 1.0 / pow((len / lightRadius) + 1.0, 2.0);
-        vec3 L0 = (1.0 / Pi * v_color0.xyz * (vec3(1.0, 1.0, 1.0) - RF) * (1.0 - u_metallic) + (u_metallic + specular) * vec3(0.5, 0.5, 0.5) * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
+    //     float cosThetai = max(dot(N, L), 0.0);
+    //     float cosThetah = 0.0;
+    //     if (cosThetai != 0.0) {
+    //         cosThetah = max(dot(N, H), 0.0);
+    //     }
+    //     vec3 RF = RF0 + (vec3(1.0, 1.0, 1.0) - RF0) * pow((1.0 - max(dot(N, V), 0.0)), 5.0);
+    //     float attenuation = 1.0 / pow((len / lightRadius) + 1.0, 2.0);
+    //     vec3 L0 = (1.0 / Pi * v_color0.xyz * (vec3(1.0, 1.0, 1.0) - RF) * (1.0 - u_metallic) + (u_metallic + specular) * vec3(0.5, 0.5, 0.5) * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
 
-        color.xyz += L0;
-    }
+    //     color.xyz += L0;
+    // }
     color.xyz = pow(color.xyz, vec3(gammaInv, gammaInv, gammaInv));
     gl_FragColor = color;
 }

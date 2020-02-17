@@ -63,6 +63,8 @@ void Chunk::FillAllBlocks(Block::Type type)
 
 void Chunk::Update()
 {
+	base::Update();
+
 	if (m_changed) {
 		Get<ChunkGraphicsComponent>()->RebuildMesh();
 	}

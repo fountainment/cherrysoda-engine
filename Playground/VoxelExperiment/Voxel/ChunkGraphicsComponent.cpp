@@ -47,7 +47,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 
 void ChunkGraphicsComponent::Update()
 {
-	// YRotation(YRotation() + Engine::Instance()->DeltaTime());
+	YRotation(YRotation() + Engine::Instance()->DeltaTime());
 }
 
 void ChunkGraphicsComponent::Render()

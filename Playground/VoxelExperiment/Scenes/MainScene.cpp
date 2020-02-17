@@ -33,7 +33,6 @@ using cherrysoda::Math;
 using cherrysoda::MInput;
 using cherrysoda::Renderer;
 using cherrysoda::STL;
-using cherrysoda::StringUtil;
 
 class SkyboxRenderer : public SingleTagRenderer
 {
@@ -90,7 +89,7 @@ public:
 		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetFrontVector() * leftStick[1]);
 		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
 
-		// CHERRYSODA_DEBUG(StringUtil::Format("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]));
+		// CHERRYSODA_DEBUG(CHERRYSODA_FORMAT("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]));
 	}
 
 };
@@ -162,8 +161,8 @@ void MainScene::Begin()
 	m_skyboxRenderer->GetCamera()->FOV(90.f);
 	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
 
-	Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
-	// Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.1f, 1.f, 0.f); 	
+	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
+	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 1.f, 0.5f); 	
 	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.99f, 0.f); // Gold
 
 	// Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));
@@ -202,16 +201,24 @@ void MainScene::Update()
 {
 	base::Update();
 
-	static int r = 0;
+	int halfWorldBlockSize = World::WorldBlockSize() / 2;
+	static float fr = halfWorldBlockSize - 1;
+	int r = fr;
 
-	if (r < World::BlocksAmount())
+	if (r < halfWorldBlockSize)
 	{
-		for (int i = 0; i < 1000; ++i)
+		for (int i = -r; i <= r; ++i)
 		{
-			m_voxelWorld->SetBlockType(r, Block::Type::White);
-			r += 29;
+			for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
+				int y = halfWorldBlockSize + i;
+				float rr = glm::pow(r * r - i * i, 0.5f);
+				int x = halfWorldBlockSize + glm::cos(theta) * rr;
+				int z = halfWorldBlockSize + glm::sin(theta) * rr;
+				m_voxelWorld->SetBlockType(x, y, z, Block::Type::White);
+			}
 		}
 	}
+	fr += 0.1f;
 }
 
 BitTag MainScene::ms_skyboxTag;
