@@ -7,6 +7,7 @@
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/STL.h>
 
 namespace crsd = cherrysoda;
 using crsd::Engine;
@@ -14,6 +15,7 @@ using crsd::Entity;
 using crsd::Math;
 using crsd::Color;
 using crsd::Graphics;
+using crsd::STL;
 
 void ChunkGraphicsComponent::EntityAwake()
 {
@@ -32,15 +34,30 @@ void ChunkGraphicsComponent::RebuildMesh()
 	m_mesh.Clear();
 	Chunk* chunk = (Chunk*)GetEntity();
 	if (chunk == nullptr) return;
+	STL::Vector<STL::Action> pendingActions;
+
+	int overallQuadAmount = 0;
 	for (int i = 0; i < chunkSize; ++i) {
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
 				if (chunk->GetBlockType(i, j, k) == Block::Type::White) {
+					if (overallQuadAmount * 4 + 8 > UINT16_MAX) {
+						continue;
+					}
 					int planeMask = chunk->GetBlockSurrounding(i, j, k);
-					AddCube(Math::Vec3(i, j, k), 1.f, Color::White, planeMask);
+					if (planeMask > 0) {
+						for (int i = 0; i < 6; ++i) {
+							overallQuadAmount += (planeMask & (1 << i)) != 0;
+						}
+						STL::Add(pendingActions, [planeMask, i, j, k, this]() { AddCube(Math::Vec3(i, j, k), 1.f, Color::White, planeMask); });
+					}
 				}
 			}
 		}
+	}
+	m_mesh.ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
+	for (auto action : pendingActions) {
+		action();
 	}
 	m_mesh.InitBuffer();
 }

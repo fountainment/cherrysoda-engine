@@ -232,7 +232,7 @@ void MainScene::Update()
 			dir = 1.0f;
 		}
 	}
-	fr += 0.016667f * 20.0f * dir * (Math_Abs(glm::sin(fr / halfWorldBlockSize * 3.14159)) + 0.1f) * 2.0f;
+	fr += 0.016667f * 20.0f * dir * (Math_Abs(glm::sin(fr / halfWorldBlockSize * 3.14159f)) + 0.1f) * 2.0f;
 
 	base::Update();
 }

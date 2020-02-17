@@ -37,6 +37,12 @@ public:
 		container.resize(size);
 	}
 
+	template<typename T>
+	static void Reserve(T& container, size_t size)
+	{
+		container.reserve(size);
+	}
+
 	template<typename T, typename U>
 	static void Fill(T& container, const U& element)
 	{

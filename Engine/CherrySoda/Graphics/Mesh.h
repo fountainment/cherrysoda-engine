@@ -33,27 +33,33 @@ public:
 	inline void AddTriangle(VERTEX_T v1, VERTEX_T v2, VERTEX_T v3) { AddPoint(v1); AddPoint(v2); AddPoint(v3); }
 	inline void AddQuad(VERTEX_T v1, VERTEX_T v2, VERTEX_T v3, VERTEX_T v4)
 	{
-		size_t vAmount = VertexAmount();
-		if (vAmount + 4 > UINT16_MAX) return;
-		const type::UInt16 i = static_cast<type::UInt16>(vAmount);
-		STL::AddRange(m_vertices, {v1, v2, v3, v4});
-		STL::AddRange(m_indices,  {i, i+1_su, i+2_su, i+1_su, i+3_su, i+2_su});
+		CHERRYSODA_ASSERT(VertexAmount() + 4 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
+		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
+		STL::AddRange(m_vertices, { v1, v2, v3, v4 });
+		STL::AddRange(m_indices,  { i, i+1_su, i+2_su, i+1_su, i+3_su, i+2_su });
 	}
 	inline void AddCube(VERTEX_T v1, VERTEX_T v2, VERTEX_T v3, VERTEX_T v4, VERTEX_T v5, VERTEX_T v6, VERTEX_T v7, VERTEX_T v8)
 	{
-		const type::UInt16 i = VertexAmount();
-		STL::AddRange(m_vertices, {v1, v2, v3, v4, v5, v6, v7, v8});
-		STL::AddRange(m_indices,  {i     , i+1_su, i+2_su, i+1_su, i+3_su, i+2_su});
-		STL::AddRange(m_indices,  {i+4_su, i+6_su, i+5_su, i+5_su, i+6_su, i+7_su});
-		STL::AddRange(m_indices,  {i     , i+2_su, i+4_su, i+4_su, i+2_su, i+6_su});
-		STL::AddRange(m_indices,  {i+1_su, i+5_su, i+3_su, i+5_su, i+7_su, i+3_su});
-		STL::AddRange(m_indices,  {i     , i+4_su, i+1_su, i+4_su, i+5_su, i+1_su});
-		STL::AddRange(m_indices,  {i+2_su, i+3_su, i+6_su, i+6_su, i+3_su, i+7_su});
+		CHERRYSODA_ASSERT(VertexAmount() + 8 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
+		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
+		STL::AddRange(m_vertices, { v1, v2, v3, v4, v5, v6, v7, v8});
+		STL::AddRange(m_indices,  { i     , i+1_su, i+2_su, i+1_su, i+3_su, i+2_su });
+		STL::AddRange(m_indices,  { i+4_su, i+6_su, i+5_su, i+5_su, i+6_su, i+7_su });
+		STL::AddRange(m_indices,  { i     , i+2_su, i+4_su, i+4_su, i+2_su, i+6_su });
+		STL::AddRange(m_indices,  { i+1_su, i+5_su, i+3_su, i+5_su, i+7_su, i+3_su });
+		STL::AddRange(m_indices,  { i     , i+4_su, i+1_su, i+4_su, i+5_su, i+1_su });
+		STL::AddRange(m_indices,  { i+2_su, i+3_su, i+6_su, i+6_su, i+3_su, i+7_su });
 	}
 	inline void Clear()
 	{
 		STL::Clear(m_vertices);
 		STL::Clear(m_indices);
+	}
+
+	inline void ReserverAdditional(int v, int i)
+	{
+		STL::Reserve(m_vertices, STL::Count(m_vertices) + v);
+		STL::Reserve(m_indices, STL::Count(m_indices) + i);
 	}
 
 	void InitBuffer()
