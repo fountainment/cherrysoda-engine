@@ -21,17 +21,13 @@ public:
 		Block* block = GetBlock(x, y, z);
 		return block ? block->m_type : Block::Type::None;
 	}
-	void SetBlockType(int x, int y, int z, Block::Type type)
-	{
-		Block* block = GetBlock(x, y, z);
-		if (block && block->m_type != type) {
-			block->m_type = type;
-			m_changed = true;
-		}
-	}
+
+	void SetBlockType(int x, int y, int z, Block::Type type);
 	void RemoveBlock(int x, int y, int z) { SetBlockType(x, y, z, Block::Type::None); }
 	void FillAllBlocks(Block::Type type);
 	int GetBlockSurrounding(int x, int y, int z);
+
+	void SetChanged();
 
 	Block* GetBlocks() { return m_blocks.data(); }
 	Block* GetBlock(int x, int y, int z);

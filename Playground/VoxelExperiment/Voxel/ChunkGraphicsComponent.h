@@ -35,6 +35,7 @@ public:
 
 private:
 	crsd::Mesh<VertexType> m_mesh;
+	crsd::Math::Mat4 m_transformCache;
 	float m_yRotation = 0.f;
 };
 

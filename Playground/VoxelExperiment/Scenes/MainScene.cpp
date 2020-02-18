@@ -196,6 +196,12 @@ void MainScene::BeforeRender()
 void MainScene::Update()
 {
 	int halfWorldBlockSize = World::WorldBlockSize() / 2;
+
+	for (int i = 0; i < World::ChunksAmount(); ++i) {
+		 m_voxelWorld->GetChunks()[i].FillAllBlocks(Block::Type::White);
+	}
+
+/*
 	static float fr = static_cast<float>(1.0f);
 	static float dir = 1.0f;
 	int r = static_cast<int>(fr);
@@ -233,7 +239,7 @@ void MainScene::Update()
 		}
 	}
 	fr += 0.016667f * 20.0f * dir * (Math_Abs(glm::sin(fr / halfWorldBlockSize * 3.14159f)) + 0.1f) * 2.0f;
-
+*/
 	base::Update();
 }
 

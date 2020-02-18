@@ -36,7 +36,7 @@ public:
 		type::UInt32 m_abgr;
 
 		static void Init();
-		static PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
+		static const PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
 		{
 			return { p[0], p[1], p[2], c };
 		}
@@ -49,7 +49,7 @@ public:
 		float m_nx, m_ny, m_nz;	
 
 		static void Init();
-		static PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
+		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
 		{
 			return { p[0], p[1], p[2], c, n[0], n[1], n[2] };
 		}
@@ -62,15 +62,18 @@ public:
 		float m_u, m_v;
 
 		static void Init();
-		static PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
+		static const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
 		{
 			return { p[0], p[1], p[2], c, uv[0], uv[1] };
 		}
 	};
 
 	using HandleType = type::UInt16;
+	using BufferHandle = HandleType;
 	using VertexBufferHandle = HandleType;
 	using IndexBufferHandle  = HandleType;
+	using DynamicVertexBufferHandle = HandleType;
+	using DynamicIndexBufferHandle  = HandleType;
 	using ShaderHandle = HandleType;
 	using UniformHandle = HandleType;
 	using TextureHandle = HandleType;
@@ -95,6 +98,8 @@ public:
 	void SetMesh(MeshInterface* mesh);
 	void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	void SetIndexBuffer(IndexBufferHandle indexBuffer);
+	void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
+	void SetDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer, size_t indexAmount);
 	static void SetStateDefault();
 	static void SetStateNoDepth();
 	void Submit();
@@ -103,9 +108,8 @@ public:
 
 	void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
 
-	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorVertex>& vertices);
-	static VertexBufferHandle CreateVertexBuffer(STL::Vector<PosColorNormalVertex>& vertices);
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
+	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
 	static TextureHandle CreateTexture(const String& texture);
@@ -114,8 +118,12 @@ public:
 	static UniformHandle CreateUniformMat4(const String& uniform);
 	static UniformHandle CreateUniformSampler(const String& sampler);
 
+	static void UpdateDynamicIndexBuffer(DynamicIndexBufferHandle handle, int index, STL::Vector<cherrysoda::type::UInt16>& indices);
+
 	static void DestroyVertexBuffer(VertexBufferHandle vertexBuffer);
+	static void DestroyDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer);
 	static void DestroyIndexBuffer(IndexBufferHandle indexBuffer);
+	static void DestroyDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer);
 	static void DestroyShader(ShaderHandle shader);
 	static void DestroyTexture(TextureHandle texture);
 	static void DestroyUniform(UniformHandle uniform);
@@ -143,7 +151,8 @@ private:
 	Graphics();
 
 	type::UInt16 m_renderPassId = 0;	
-	bool m_vsyncEnabled = true;
+	// bool m_vsyncEnabled = true;
+	bool m_vsyncEnabled = false;
 
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;
@@ -157,6 +166,15 @@ private:
 	static UniformHandle ms_uniformParams;
 
 	static Graphics* ms_instance;
+
+public:
+	#define CHERRYSODA_VERTEX_DECLARATION(VERTEX_T) \
+	static VertexBufferHandle CreateVertexBuffer(STL::Vector<VERTEX_T>& vertices); \
+	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(STL::Vector<VERTEX_T>& vertices); \
+	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, STL::Vector<VERTEX_T>& vertices); \
+
+	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
+	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);
 };
 
 } // namespace cherrysoda

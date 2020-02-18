@@ -34,9 +34,31 @@ using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
-static bgfx::VertexLayout s_posColorLayout;
-static bgfx::VertexLayout s_posColorNormalLayout;
-static bgfx::VertexLayout s_posColorTexCoord0Layout;
+class PosColorDefine
+{
+public:
+	typedef Graphics::PosColorVertex VertexType;
+
+	static bgfx::VertexLayout s_layout;
+};
+
+class PosColorNormalDefine
+{
+public:
+	typedef Graphics::PosColorNormalVertex VertexType;
+	static bgfx::VertexLayout s_layout;
+};
+
+class PosColorTexCoord0Define
+{
+public:
+	typedef Graphics::PosColorTexCoord0Vertex VertexType;
+	static bgfx::VertexLayout s_layout;
+};
+
+bgfx::VertexLayout PosColorDefine::s_layout;
+bgfx::VertexLayout PosColorNormalDefine::s_layout;
+bgfx::VertexLayout PosColorTexCoord0Define::s_layout;
 
 namespace entry {
 
@@ -107,7 +129,7 @@ bx::AllocatorI* getAllocator()
 
 void Graphics::PosColorVertex::Init()
 {
-	s_posColorLayout
+	PosColorDefine::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
@@ -116,7 +138,7 @@ void Graphics::PosColorVertex::Init()
 
 void Graphics::PosColorNormalVertex::Init()
 {
-	s_posColorNormalLayout
+	PosColorNormalDefine::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
@@ -126,7 +148,7 @@ void Graphics::PosColorNormalVertex::Init()
 
 void Graphics::PosColorTexCoord0Vertex::Init()
 {
-	s_posColorTexCoord0Layout
+	PosColorTexCoord0Define::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
@@ -397,8 +419,14 @@ void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 
 void Graphics::SetMesh(MeshInterface* mesh)
 {
-	SetVertexBuffer(mesh->GetVertexBuffer());
-	SetIndexBuffer(mesh->GetIndexBuffer());
+	if (!mesh->IsDynamic()) {
+		SetVertexBuffer(mesh->GetVertexBuffer());
+		SetIndexBuffer(mesh->GetIndexBuffer());
+	}
+	else {
+		SetDynamicVertexBuffer(mesh->GetVertexBuffer(), mesh->VertexAmount());
+		SetDynamicIndexBuffer(mesh->GetIndexBuffer(), mesh->IndexAmount());
+	}
 }
 
 void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
@@ -409,6 +437,16 @@ void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
 void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
 {
 	bgfx::setIndexBuffer(bgfx::IndexBufferHandle{indexBuffer});
+}
+
+void Graphics::SetDynamicVertexBuffer(Graphics::VertexBufferHandle vertexBuffer, size_t vertexAmount)
+{
+	bgfx::setVertexBuffer(0, bgfx::DynamicVertexBufferHandle{vertexBuffer}, 0, vertexAmount);
+}
+
+void Graphics::SetDynamicIndexBuffer(Graphics::IndexBufferHandle indexBuffer, size_t indexAmount)
+{
+	bgfx::setIndexBuffer(bgfx::DynamicIndexBufferHandle{indexBuffer}, 0, indexAmount);
 }
 
 void Graphics::SetStateDefault()
@@ -439,9 +477,9 @@ void Graphics::Submit(cherrysoda::type::UInt16 renderPass, Effect* effect)
 void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft, float _width, float _height)
 {
 	float s_texelHalf = 0.f;
-	if (3 == bgfx::getAvailTransientVertexBuffer(3, s_posColorTexCoord0Layout)) {
+	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosColorTexCoord0Define::s_layout)) {
 		bgfx::TransientVertexBuffer vb;
-		bgfx::allocTransientVertexBuffer(&vb, 3, s_posColorTexCoord0Layout);
+		bgfx::allocTransientVertexBuffer(&vb, 3, PosColorTexCoord0Define::s_layout);
 		Graphics::PosColorTexCoord0Vertex* vertex = (Graphics::PosColorTexCoord0Vertex*)vb.data;
 
 		const float zz = 0.0f;
@@ -494,27 +532,28 @@ void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _
 	}
 }
 
-Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorVertex>& vertices)
-{
-	return bgfx::createVertexBuffer(
-		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))),
-		s_posColorLayout
-	).idx;
-}
-
-Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<Graphics::PosColorNormalVertex>& vertices)
-{
-	return bgfx::createVertexBuffer(
-		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))),
-		s_posColorNormalLayout
-	).idx;
-}
 
 Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
 {
 	return bgfx::createIndexBuffer(
 		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
 	).idx;
+}
+
+Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
+{
+	return bgfx::createDynamicIndexBuffer(
+		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices))),
+		BGFX_BUFFER_ALLOW_RESIZE
+	).idx;
+}
+
+void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handle, int index, STL::Vector<cherrysoda::type::UInt16>& indices)
+{
+	bgfx::DynamicIndexBufferHandle hdl = { handle };
+	bgfx::update(
+		hdl, index, bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
+	);
 }
 
 Graphics::ShaderHandle Graphics::CreateShaderProgram(const String& vs, const String& fs)
@@ -552,7 +591,18 @@ void Graphics::DestroyIndexBuffer(IndexBufferHandle handle)
 {
 	bgfx::IndexBufferHandle hdl = { handle };
 	bgfx::destroy(hdl);
+}
 
+void Graphics::DestroyDynamicVertexBuffer(DynamicVertexBufferHandle handle)
+{
+	bgfx::DynamicVertexBufferHandle hdl = { handle };
+	bgfx::destroy(hdl);
+}
+
+void Graphics::DestroyDynamicIndexBuffer(DynamicIndexBufferHandle handle)
+{
+	bgfx::DynamicIndexBufferHandle hdl = { handle };
+	bgfx::destroy(hdl);
 }
 
 void Graphics::DestroyShader(ShaderHandle handle)
@@ -640,3 +690,38 @@ Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformParams   = Graphics::InvalidHandle;
 
 Graphics* Graphics::ms_instance = nullptr;
+
+#define CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D) \
+Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \
+{ \
+	return bgfx::createVertexBuffer( \
+		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
+		VERTEX_D::s_layout \
+	).idx; \
+}
+
+#define CHERRYSODA_CREATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D) \
+Graphics::DynamicVertexBufferHandle Graphics::CreateDynamicVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \
+{ \
+	return bgfx::createDynamicVertexBuffer( \
+		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
+		VERTEX_D::s_layout, BGFX_BUFFER_ALLOW_RESIZE \
+	).idx; \
+}
+
+#define CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D) \
+void Graphics::UpdateDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle handle, int index, STL::Vector<VERTEX_D::VertexType>& vertices) \
+{ \
+	bgfx::DynamicVertexBufferHandle hdl = { handle }; \
+	bgfx::update( \
+		hdl, index, bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))) \
+	); \
+}
+
+#define CHERRYSODA_VERTEX_IMPLEMENTATION(VERTEX_D) \
+CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D); \
+CHERRYSODA_CREATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D); \
+CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D);
+
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorDefine);
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalDefine);

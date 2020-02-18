@@ -38,6 +38,7 @@ def make_sure_folder_exist(f):
     pathlib.Path(p).mkdir(parents=True, exist_ok=True)
 
 def execute_command(command):
+    print('$ ' + ' '.join(command))
     subprocess.run(command)
 
 def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None):

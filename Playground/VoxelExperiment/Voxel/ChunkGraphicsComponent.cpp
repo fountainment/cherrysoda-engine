@@ -23,6 +23,9 @@ void ChunkGraphicsComponent::EntityAwake()
 	constexpr float halfChunkSize = chunkSize * 0.5f;
 	Origin(Math::Vec3(halfChunkSize));
 
+	m_transformCache = GetChunkTransformMatrix();
+
+	m_mesh.SetIsDynamic(true);
 	RebuildMesh();
 }
 
@@ -59,7 +62,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	for (auto action : pendingActions) {
 		action();
 	}
-	m_mesh.InitBuffer();
+	m_mesh.UpdateBuffer();
 }
 
 void ChunkGraphicsComponent::Update()
@@ -72,7 +75,7 @@ void ChunkGraphicsComponent::Render()
 	if (!m_mesh.IsValid()) return;
 	Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
 	Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
-	Graphics::Instance()->SetTransformMatrix(GetChunkTransformMatrix());
+	Graphics::Instance()->SetTransformMatrix(m_transformCache);
 	Graphics::Instance()->SetMesh(&m_mesh);
 	Graphics::SetStateDefault();
 	Graphics::Instance()->Submit();
