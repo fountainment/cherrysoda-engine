@@ -34,31 +34,30 @@ using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 
-class PosColorDefine
+class PosColorDefinition
 {
 public:
 	typedef Graphics::PosColorVertex VertexType;
-
 	static bgfx::VertexLayout s_layout;
 };
 
-class PosColorNormalDefine
+class PosColorNormalDefinition
 {
 public:
 	typedef Graphics::PosColorNormalVertex VertexType;
 	static bgfx::VertexLayout s_layout;
 };
 
-class PosColorTexCoord0Define
+class PosColorTexCoord0Definition
 {
 public:
 	typedef Graphics::PosColorTexCoord0Vertex VertexType;
 	static bgfx::VertexLayout s_layout;
 };
 
-bgfx::VertexLayout PosColorDefine::s_layout;
-bgfx::VertexLayout PosColorNormalDefine::s_layout;
-bgfx::VertexLayout PosColorTexCoord0Define::s_layout;
+bgfx::VertexLayout PosColorDefinition::s_layout;
+bgfx::VertexLayout PosColorNormalDefinition::s_layout;
+bgfx::VertexLayout PosColorTexCoord0Definition::s_layout;
 
 namespace entry {
 
@@ -129,7 +128,7 @@ bx::AllocatorI* getAllocator()
 
 void Graphics::PosColorVertex::Init()
 {
-	PosColorDefine::s_layout
+	PosColorDefinition::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
@@ -138,7 +137,7 @@ void Graphics::PosColorVertex::Init()
 
 void Graphics::PosColorNormalVertex::Init()
 {
-	PosColorNormalDefine::s_layout
+	PosColorNormalDefinition::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
@@ -148,7 +147,7 @@ void Graphics::PosColorNormalVertex::Init()
 
 void Graphics::PosColorTexCoord0Vertex::Init()
 {
-	PosColorTexCoord0Define::s_layout
+	PosColorTexCoord0Definition::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
@@ -477,9 +476,9 @@ void Graphics::Submit(cherrysoda::type::UInt16 renderPass, Effect* effect)
 void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft, float _width, float _height)
 {
 	float s_texelHalf = 0.f;
-	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosColorTexCoord0Define::s_layout)) {
+	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosColorTexCoord0Definition::s_layout)) {
 		bgfx::TransientVertexBuffer vb;
-		bgfx::allocTransientVertexBuffer(&vb, 3, PosColorTexCoord0Define::s_layout);
+		bgfx::allocTransientVertexBuffer(&vb, 3, PosColorTexCoord0Definition::s_layout);
 		Graphics::PosColorTexCoord0Vertex* vertex = (Graphics::PosColorTexCoord0Vertex*)vb.data;
 
 		const float zz = 0.0f;
@@ -723,5 +722,6 @@ CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D); \
 CHERRYSODA_CREATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D); \
 CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D);
 
-CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorDefine);
-CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalDefine);
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorDefinition);
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalDefinition);
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorTexCoord0Definition);

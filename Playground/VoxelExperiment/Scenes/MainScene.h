@@ -28,7 +28,6 @@ public:
 private:
 	cherrysoda::SingleTagRenderer* m_voxelRenderer = nullptr;
 	cherrysoda::SingleTagRenderer* m_skyboxRenderer = nullptr;
-	Chunk* m_chunk = nullptr;
 	World* m_voxelWorld = nullptr;
 	cherrysoda::Entity* m_skybox = nullptr;
 	cherrysoda::Graphics::UniformHandle m_uniformMtx;

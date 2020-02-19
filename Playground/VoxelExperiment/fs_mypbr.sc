@@ -26,7 +26,7 @@ void main()
     float CosThetaI = max(dot(V, N), 0.0);
     vec3 RF = RF0 + (RF90 - RF0) * pow((1.0 - CosThetaI), 5.0); 
     vec3 R = reflect(-V, N);
-    vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz, vec3(gamma, gamma, gamma)); 
+    vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz * v_color0.xyz, vec3(gamma, gamma, gamma)); 
     vec3 specTex = pow(textureCube(s_texCube, R).xyz, vec3(gamma, gamma, gamma)); 
     vec3 Cdiff = diffTex * (1.0 - u_metallic) / Pi;
     vec3 Cspec = specTex * u_metallic;

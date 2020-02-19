@@ -132,7 +132,7 @@ public:
 			if (!IsValid()) {
 				InitBuffer();
 			}
-			else {
+			else if (STL::Count(m_vertices) > 0) {
 				Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, 0, m_vertices);
 				Graphics::UpdateDynamicIndexBuffer(m_indexBuffer, 0, m_indices);
 			}

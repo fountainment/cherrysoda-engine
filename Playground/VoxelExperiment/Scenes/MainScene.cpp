@@ -80,8 +80,8 @@ public:
 	void Update(cherrysoda::Scene* scene) override
 	{
 		float deltaTime = Engine::Instance()->DeltaTime();
-		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.01f);
-		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.01f);
+		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.1f);
+		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.1f);
 		leftStick *= Math_Length(leftStick) * 40.0f;
 		rightStick *= Math_LengthSq(rightStick) * 2.0f;
 		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));
@@ -114,49 +114,33 @@ void MainScene::Begin()
 	m_skybox->Add(new Skybox);
 	m_skybox->AddTag(ms_skyboxTag);
 
-	m_chunk = new Chunk;
-	m_chunk->AddTag(ms_voxelTag);
-
-	m_voxelWorld = new World;
+	Math::Vec3 worldBasePosition(-World::Size() * Chunk::Size() / 2.0f);
+	m_voxelWorld = new World(worldBasePosition);
 	Chunk* chunks = m_voxelWorld->LoadChunks();
-	for (int i = 0; i < World::ChunksAmount(); ++i) {
-		// chunks[i].FillAllBlocks(Block::Type::White);
-		chunks[i].AddTag(ms_voxelTag);
-		Add(chunks + i);
-	}
-
-	constexpr int chunkSize = Chunk::Size();
-	auto onEdge = [chunkSize](int x) { return x == 0 || x == chunkSize - 1; };
-	auto onCross = [chunkSize](int x, int y) { return x == y || x == chunkSize - y; };
-	constexpr float halfChunkSize = chunkSize * 0.5f;
-	for (int i = 0; i < chunkSize; ++i) {
-		for (int j = 0; j < chunkSize; ++j) {
-			for (int k = 0; k < chunkSize; ++k) {
-				/*
-				float l = i - halfChunkSize + 0.5f;
-				float m = j - halfChunkSize + 0.5f;
-				float n = k - halfChunkSize + 0.5f;
-				if ((l * l + m * m + n * n) <= halfChunkSize * halfChunkSize) {
-					m_chunk->SetBlockType(i, j, k, Block::Type::White);
-				}
-				*/
-				bool haveBlock = false;
-				haveBlock |= onEdge(i) && onEdge(j);
-				haveBlock |= onEdge(i) && onEdge(k);
-				haveBlock |= onEdge(j) && onEdge(k);
-
-				if (haveBlock) {
-					m_chunk->SetBlockType(i, j, k, Block::Type::White);
+	for (int i = 0; i < World::ChunkAmount(); ++i) {
+		chunks[i].FillAllBlocks(Block::Type::Black);
+		for (int z = 0; z < Chunk::Size(); ++z) {
+			for (int y = 0; y < Chunk::Size(); ++y) {
+				for (int x = 0; x < Chunk::Size(); ++x) {
+					if ((x + y + z) % 2 == 0) {
+						chunks[i].SetBlockType(x, y, z, Block::Type::White);
+					}
+					else {
+						chunks[i].SetBlockType(x, y, z, Block::Type::Black);
+					}
 				}
 			}
 		}
+		chunks[i].AddTag(ms_voxelTag);
+		Add(chunks + i);
 	}
 
 	m_skyboxRenderer->GetCamera()->Width(1);
 	m_skyboxRenderer->GetCamera()->Height(1);
 	m_skyboxRenderer->GetCamera()->Position(Math::Vec3(0.5f, 0.5f, 0.5f));
 	m_skyboxRenderer->GetCamera()->FOV(90.f);
-	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 30.f));
+
+	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 70.f, 0.f));
 
 	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
 	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 1.f, 0.4f); 	
@@ -177,7 +161,6 @@ void MainScene::Begin()
 	Add(m_voxelRenderer);
 
 	// Entities
-	Add(m_chunk);
 	Add(m_skybox);
 }
 
@@ -195,13 +178,9 @@ void MainScene::BeforeRender()
 
 void MainScene::Update()
 {
+/*
 	int halfWorldBlockSize = World::WorldBlockSize() / 2;
 
-	for (int i = 0; i < World::ChunksAmount(); ++i) {
-		 m_voxelWorld->GetChunks()[i].FillAllBlocks(Block::Type::White);
-	}
-
-/*
 	static float fr = static_cast<float>(1.0f);
 	static float dir = 1.0f;
 	int r = static_cast<int>(fr);

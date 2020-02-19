@@ -16,6 +16,9 @@ public:
 
 	Chunk();
 
+	void IndexVec3(int x, int y, int z) { m_chunkIndex = cherrysoda::Math::IVec3(x, y, z); }
+	cherrysoda::Math::Vec3 IndexVec3() { return m_chunkIndex; }
+
 	Block::Type GetBlockType(int x, int y, int z)
 	{
 		Block* block = GetBlock(x, y, z);
@@ -34,13 +37,13 @@ public:
 	int GetBlockIndex(Block* block)
 	{
 		int index = static_cast<int>(block - GetBlocks());
-		return (index < 0 || index >= BlocksAmount()) ? -1 : index;
+		return (index < 0 || index >= BlockAmount()) ? -1 : index;
 	}
 
 	void Update() override;
 
 	static constexpr int Size() { return static_cast<int>(ms_ChunkSize); }
-	static constexpr int BlocksAmount() { return Size() * Size() * Size(); }
+	static constexpr int BlockAmount() { return Size() * Size() * Size(); }
 	static constexpr cherrysoda::type::UInt16 ms_ChunkSize = 16; 
 
 	World* m_world = nullptr;
@@ -48,6 +51,7 @@ public:
 
 private:
 	cherrysoda::STL::Vector<Block> m_blocks;
+	cherrysoda::Math::IVec3 m_chunkIndex = IVec3_Zero;
 
 	static int GetBlockIndex(int x, int y, int z)
 	{ 

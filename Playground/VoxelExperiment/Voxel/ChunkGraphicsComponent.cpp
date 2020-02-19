@@ -43,7 +43,19 @@ void ChunkGraphicsComponent::RebuildMesh()
 	for (int i = 0; i < chunkSize; ++i) {
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
-				if (chunk->GetBlockType(i, j, k) == Block::Type::White) {
+				Block::Type blockType = chunk->GetBlockType(i, j, k);
+				if (blockType != Block::Type::None) {
+					Color color;
+					switch (blockType) {
+					case Block::Type::White:
+						color = Color::White;
+						break;
+					case Block::Type::Black:
+						color = Color::Black;
+						break;
+					default:
+						color = Color::Black;
+					};
 					if (overallQuadAmount * 4 + 8 > UINT16_MAX) {
 						continue;
 					}
@@ -52,7 +64,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 						for (int i = 0; i < 6; ++i) {
 							overallQuadAmount += (planeMask & (1 << i)) != 0;
 						}
-						STL::Add(pendingActions, [planeMask, i, j, k, this]() { AddCube(Math::Vec3(i, j, k), 1.f, Color::White, planeMask); });
+						STL::Add(pendingActions, [planeMask, i, j, k, color, this]() { AddCube(Math::Vec3(i, j, k), 1.f, color, planeMask); });
 					}
 				}
 			}
@@ -72,7 +84,7 @@ void ChunkGraphicsComponent::Update()
 
 void ChunkGraphicsComponent::Render()
 {
-	if (!m_mesh.IsValid()) return;
+	if (!m_mesh.IsValid() || m_mesh.VertexAmount() == 0) return;
 	Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
 	Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
 	Graphics::Instance()->SetTransformMatrix(m_transformCache);

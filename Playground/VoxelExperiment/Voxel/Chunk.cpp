@@ -4,11 +4,15 @@
 
 #include "ChunkGraphicsComponent.h"
 
+#include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/STL.h>
+
+using cherrysoda::Math;
 using cherrysoda::STL;
 
 Chunk::Chunk()
 {
-	STL::Resize(m_blocks, BlocksAmount());
+	STL::Resize(m_blocks, BlockAmount());
 	STL::Fill(m_blocks, Block());
 
 	Add(new ChunkGraphicsComponent);
@@ -26,7 +30,7 @@ void Chunk::SetBlockType(int x, int y, int z, Block::Type type)
 void Chunk::FillAllBlocks(Block::Type type)
 {
 	bool changed = false;
-	for (int i = 0; i < BlocksAmount(); ++i)
+	for (int i = 0; i < BlockAmount(); ++i)
 	{
 		if (GetBlocks()[i].m_type != type) {
 			GetBlocks()[i].m_type = type;
@@ -68,9 +72,9 @@ void Chunk::SetChanged()
 	m_changed = true;
 
 	if (m_world) {
-		int x = static_cast<int>(Position()[0] / Size());
-		int y = static_cast<int>(Position()[1] / Size());
-		int z = static_cast<int>(Position()[2] / Size());
+		int x = m_chunkIndex[0];
+		int y = m_chunkIndex[1];
+		int z = m_chunkIndex[2];
 		Chunk* chunks[6];
 		chunks[0] = m_world->GetChunk(x - 1, y, z);
 		chunks[1] = m_world->GetChunk(x + 1, y, z);
@@ -91,9 +95,10 @@ Block* Chunk::GetBlock(int x, int y, int z)
 	int index = GetBlockIndex(x, y, z); 
 	if (index < 0) {
 		if (m_world) {
-			int wx = x + static_cast<int>(Position()[0] + 0.5f);
-			int wy = y + static_cast<int>(Position()[1] + 0.5f);
-			int wz = z + static_cast<int>(Position()[2] + 0.5f);
+			Math::IVec3 blockIndex = m_chunkIndex * Chunk::Size();
+			int wx = x + blockIndex[0];
+			int wy = y + blockIndex[1];
+			int wz = z + blockIndex[2];
 			return m_world->GetBlock(wx, wy, wz);
 		}
 		return nullptr;

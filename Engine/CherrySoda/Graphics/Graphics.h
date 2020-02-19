@@ -175,6 +175,7 @@ public:
 
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);
+	CHERRYSODA_VERTEX_DECLARATION(PosColorTexCoord0Vertex);
 };
 
 } // namespace cherrysoda

@@ -7,6 +7,7 @@ struct Block
 	{
 		None   = 0,
 		White  = 1,
+		Black  = 2,
 	};
 
 	Type m_type = Type::None;
