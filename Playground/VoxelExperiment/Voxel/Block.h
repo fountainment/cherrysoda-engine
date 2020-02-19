@@ -1,9 +1,11 @@
 #ifndef _VOXELEXPERIMENT_VOXEL_BLOCK_H_
 #define _VOXELEXPERIMENT_VOXEL_BLOCK_H_
 
+#include <CherrySoda/Util/NumType.h>
+
 struct Block
 {
-	enum class Type
+	enum class Type : cherrysoda::type::UInt8
 	{
 		None   = 0,
 		White  = 1,
