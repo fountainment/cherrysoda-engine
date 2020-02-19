@@ -80,8 +80,8 @@ public:
 	void Update(cherrysoda::Scene* scene) override
 	{
 		float deltaTime = Engine::Instance()->DeltaTime();
-		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.1f);
-		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.1f);
+		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.2f);
+		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.2f);
 		leftStick *= Math_Length(leftStick) * 40.0f;
 		rightStick *= Math_LengthSq(rightStick) * 2.0f;
 		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));

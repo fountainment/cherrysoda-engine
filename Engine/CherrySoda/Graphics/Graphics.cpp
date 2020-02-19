@@ -440,12 +440,12 @@ void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
 
 void Graphics::SetDynamicVertexBuffer(Graphics::VertexBufferHandle vertexBuffer, size_t vertexAmount)
 {
-	bgfx::setVertexBuffer(0, bgfx::DynamicVertexBufferHandle{vertexBuffer}, 0, vertexAmount);
+	bgfx::setVertexBuffer(0, bgfx::DynamicVertexBufferHandle{vertexBuffer}, 0, static_cast<type::UInt32>(vertexAmount));
 }
 
 void Graphics::SetDynamicIndexBuffer(Graphics::IndexBufferHandle indexBuffer, size_t indexAmount)
 {
-	bgfx::setIndexBuffer(bgfx::DynamicIndexBufferHandle{indexBuffer}, 0, indexAmount);
+	bgfx::setIndexBuffer(bgfx::DynamicIndexBufferHandle{indexBuffer}, 0, static_cast<type::UInt32>(indexAmount));
 }
 
 void Graphics::SetStateDefault()
