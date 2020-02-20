@@ -219,6 +219,27 @@ void MainScene::Update()
 	}
 	fr += 0.016667f * 20.0f * dir * (Math_Abs(glm::sin(fr / halfWorldBlockSize * 3.14159f)) + 0.1f) * 2.0f;
 */
+
+
+	cherrysoda::Camera* camera = m_voxelRenderer->GetCamera(); 
+	for (int i = 0; i < World::Size(); ++i) {
+		for (int j = 0; j < World::Size(); ++j) {
+			for (int k = 0; k < World::Size(); ++k) {
+				if (Math::RaycastBBox(camera->Position(), camera->Direction(), m_voxelWorld->GetChunkPosition(i, j, k), Math::Vec3(Chunk::Size()))) {
+					for (int x = 0; x < Chunk::Size(); ++x) {
+						for (int y = 0; y < Chunk::Size(); ++y) {
+							for (int z = 0; z < Chunk::Size(); ++z) {
+								if (Math::RaycastBBox(camera->Position(), camera->Direction(), m_voxelWorld->GetChunkPosition(i, j, k) + Math::Vec3(x, y, z), Vec3_One)) {
+									m_voxelWorld->GetChunk(i, j, k)->SetBlockType(x, y, z, Block::Type::None);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	base::Update();
 }
 

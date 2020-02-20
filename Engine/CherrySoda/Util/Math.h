@@ -54,6 +54,8 @@
 #define Math_Dot        glm::dot
 #define Math_Length     glm::length
 #define Math_LengthSq   glm::length2
+#define Math_Min        glm::min 
+#define Math_Max        glm::max 
 #define Math_Normalize  glm::normalize
 #define Math_Rotate     glm::rotate
 
@@ -78,22 +80,14 @@ public:
 	static constexpr auto TranslateMat4 = glm::translate<float,glm::qualifier::defaultp>;
 	static constexpr auto ScaleMat4 = glm::scale<float,glm::qualifier::defaultp>;
 
-	static const Vec3 RotateVector(const Vec3& v3, float angle, const Vec3& axis)
+	static inline const Vec3 RotateVector(const Vec3& v3, float angle, const Vec3& axis)
 	{
 		return Vec3(Vec4(v3, 1.f) * glm::rotate(Mat4_Identity, angle, axis));
 	}
 
-	static const Mat4 GetOrientationMatrix(const Mat4& matrix)
-	{
-		Vec3 scale;
-		Quat rotation;
-		Vec3 translation;
-		Vec3 skew;
-		Vec4 perspective;
-		glm::decompose(matrix, scale, rotation, translation, skew, perspective);
-		rotation = glm::conjugate(rotation);
-		return glm::toMat4(rotation);
-	}
+	static const Mat4 GetOrientationMatrix(const Mat4& matrix);
+
+	static bool RaycastBBox(const Vec3& start, const Vec3& direction, const Vec3& origin, const Vec3& size, float* t1 = nullptr, float* t2 = nullptr);
 };
 
 } // namespace cherrysoda

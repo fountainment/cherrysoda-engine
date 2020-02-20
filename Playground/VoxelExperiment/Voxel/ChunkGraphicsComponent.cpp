@@ -19,10 +19,6 @@ using crsd::STL;
 
 void ChunkGraphicsComponent::EntityAwake()
 {
-	constexpr int chunkSize = Chunk::Size();
-	constexpr float halfChunkSize = chunkSize * 0.5f;
-	Origin(Math::Vec3(halfChunkSize));
-
 	m_transformCache = GetChunkTransformMatrix();
 
 	m_mesh.SetIsDynamic(true);

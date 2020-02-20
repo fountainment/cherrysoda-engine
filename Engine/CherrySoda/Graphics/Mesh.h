@@ -47,7 +47,7 @@ public:
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 8 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
 		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
-		STL::AddRange(m_vertices, { v1, v2, v3, v4, v5, v6, v7, v8});
+		STL::AddRange(m_vertices, { v1, v2, v3, v4, v5, v6, v7, v8 });
 		STL::AddRange(m_indices,  { i     , i+1_su, i+2_su, i+1_su, i+3_su, i+2_su });
 		STL::AddRange(m_indices,  { i+4_su, i+6_su, i+5_su, i+5_su, i+6_su, i+7_su });
 		STL::AddRange(m_indices,  { i     , i+2_su, i+4_su, i+4_su, i+2_su, i+6_su });
@@ -139,13 +139,13 @@ public:
 		}
 	}
 
-	bool IsValid()
+	inline bool IsValid()
 	{
 		return m_vertexBuffer != Graphics::InvalidHandle && m_indexBuffer != Graphics::InvalidHandle;
 	}
 
-	Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
-	Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
+	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
+	inline Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
 
 private:
 	Graphics::BufferHandle m_vertexBuffer = Graphics::InvalidHandle;

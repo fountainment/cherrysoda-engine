@@ -31,6 +31,7 @@ public:
 	int GetBlockSurrounding(int x, int y, int z);
 
 	void SetChanged();
+	void SetChanged(int x, int y, int z);
 
 	Block* GetBlocks() { return m_blocks.data(); }
 	Block* GetBlock(int x, int y, int z);
@@ -47,11 +48,12 @@ public:
 	static constexpr cherrysoda::type::UInt16 ms_ChunkSize = 16; 
 
 	World* m_world = nullptr;
-	bool m_changed = false;
 
 private:
 	cherrysoda::STL::Vector<Block> m_blocks;
 	cherrysoda::Math::IVec3 m_chunkIndex = IVec3_Zero;
+
+	bool m_changed = false;
 
 	static int GetBlockIndex(int x, int y, int z)
 	{ 
