@@ -535,14 +535,14 @@ void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _
 Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
 {
 	return bgfx::createIndexBuffer(
-		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
+		bgfx::copy(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
 	).idx;
 }
 
 Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
 {
 	return bgfx::createDynamicIndexBuffer(
-		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices))),
+		bgfx::copy(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices))),
 		BGFX_BUFFER_ALLOW_RESIZE
 	).idx;
 }
@@ -551,7 +551,7 @@ void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handl
 {
 	bgfx::DynamicIndexBufferHandle hdl = { handle };
 	bgfx::update(
-		hdl, index, bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
+		hdl, index, bgfx::copy(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
 	);
 }
 
@@ -694,7 +694,7 @@ Graphics* Graphics::ms_instance = nullptr;
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \
 { \
 	return bgfx::createVertexBuffer( \
-		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
+		bgfx::copy(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
 		VERTEX_D::s_layout \
 	).idx; \
 }
@@ -703,7 +703,7 @@ Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<VERTEX_D::
 Graphics::DynamicVertexBufferHandle Graphics::CreateDynamicVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \
 { \
 	return bgfx::createDynamicVertexBuffer( \
-		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
+		bgfx::copy(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
 		VERTEX_D::s_layout, BGFX_BUFFER_ALLOW_RESIZE \
 	).idx; \
 }
@@ -713,7 +713,7 @@ void Graphics::UpdateDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle han
 { \
 	bgfx::DynamicVertexBufferHandle hdl = { handle }; \
 	bgfx::update( \
-		hdl, index, bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))) \
+		hdl, index, bgfx::copy(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))) \
 	); \
 }
 
