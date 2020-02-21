@@ -80,7 +80,7 @@ void Chunk::SetChanged(const Math::IVec3& v)
 		Chunk* chunks[6];
 		for (int i = 0; i < 3; ++i) {
 			chunks[i << 1]       = (v[i] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + s_offset[i << 1])       : nullptr;
-			chunks[(i << 1) | 1] = (v[i] == 0)          ? m_world->GetChunk(m_chunkIndex - s_offset[(i << 1) | 1]) : nullptr;
+			chunks[(i << 1) | 1] = (v[i] == 0)          ? m_world->GetChunk(m_chunkIndex + s_offset[(i << 1) | 1]) : nullptr;
 		}
 		for (int i = 0; i < 6; ++i) {
 			if (chunks[i]) {
