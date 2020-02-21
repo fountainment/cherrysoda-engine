@@ -2,6 +2,7 @@
 #define _CHERRYSODA_ENGINE_H_
 
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
 #ifdef _MSC_VER
@@ -33,9 +34,11 @@ public:
 
 	inline int GetWidth() { return m_width; }
 	inline int GetHeight() { return m_height; }
+	inline Math::IVec2 GetViewSize() { return Math::IVec2(GetWidth(), GetHeight()); }
 	inline float GetAspectRatio() { return static_cast<float>(GetWidth()) / static_cast<float>(GetHeight()); }
 	inline int GetWindowWidth() { return m_windowWidth; }
 	inline int GetWindowHeight() { return m_windowHeight; }
+	inline Math::IVec2 GetWindowSize() { return Math::IVec2(GetWindowWidth(), GetWindowHeight()); }
 	inline const String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
 	inline const Color GetClearColor() { return m_clearColor; }

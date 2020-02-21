@@ -166,8 +166,7 @@ void MainScene::Begin()
 
 void MainScene::BeforeRender()
 {
-	m_voxelRenderer->GetCamera()->Width(static_cast<float>(Engine::Instance()->GetWidth()));
-	m_voxelRenderer->GetCamera()->Height(static_cast<float>(Engine::Instance()->GetHeight()));
+	m_voxelRenderer->GetCamera()->SetSize(Engine::Instance()->GetViewSize());
 
 	Graphics::SetUniformCamPos(m_voxelRenderer->GetCamera()->Position());
 	const Math::Mat4 orientationMatrix = Math::GetOrientationMatrix(*m_voxelRenderer->GetCamera()->GetViewMatrix());

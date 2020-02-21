@@ -43,6 +43,11 @@
 
 #define Mat4_Identity   cherrysoda::Math::Mat4(1.f)
 
+#define IVec2_Zero      cherrysoda::Math::IVec2(0)
+#define IVec2_One       cherrysoda::Math::IVec2(1)
+#define IVec2_XUp       cherrysoda::Math::IVec2(1,0)
+#define IVec2_YUp       cherrysoda::Math::IVec2(0,1)
+
 #define IVec3_Zero      cherrysoda::Math::IVec3(0)
 #define IVec3_One       cherrysoda::Math::IVec3(1)
 #define IVec3_XUp       cherrysoda::Math::IVec3(1,0,0)
@@ -70,7 +75,9 @@ public:
 	using Mat4 = glm::mat4;
 	using Quat = glm::quat;
 
+	using IVec2 = glm::i32vec2;
 	using IVec3 = glm::i32vec3;
+	using IVec4 = glm::i32vec4;
 
 	static constexpr auto LookAt = glm::lookAt<glm::f32, glm::qualifier::defaultp>;
 	static constexpr auto Perspective = glm::perspective<glm::f32>;

@@ -11,6 +11,9 @@ public:
 	Camera();
 	Camera(int width, int height);
 
+	inline cherrysoda::Math::Vec2 GetSize() { return cherrysoda::Math::Vec2(m_width, m_height); }
+	inline void SetSize(const cherrysoda::Math::Vec2& size) { m_width = size[0]; m_height = size[1]; }
+
 	void UpdateMatrices();
 
 	inline Math::Mat4* GetViewMatrix() { UpdateMatrices(); return &m_viewMatrix; }
