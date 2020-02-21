@@ -1,5 +1,4 @@
 #include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Util/String.h>
 
 using cherrysoda::Math;
 
@@ -35,8 +34,9 @@ bool Math::RaycastAABB(const Math::Vec3& start, const Math::Vec3& direction, con
 		}
 		float tmpT1 = (0.f - startBC[i]) / direction[i];
 		float tmpT2 = (size[i] - startBC[i]) / direction[i];
-		intervalT1 = Math_Max(Math_Min(intervalT1, intervalT2), Math_Min(tmpT1, tmpT2));
+		float inT1 = Math_Max(Math_Min(intervalT1, intervalT2), Math_Min(tmpT1, tmpT2));
 		intervalT2 = Math_Min(Math_Max(intervalT1, intervalT2), Math_Max(tmpT1, tmpT2));
+		intervalT1 = inT1;
 		if (intervalT1 >= intervalT2) {
 			return false;
 		}

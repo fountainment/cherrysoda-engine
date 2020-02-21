@@ -27,6 +27,7 @@ public:
 		int index = GetChunkIndex(v);
 		return index >= 0 ? GetChunks() + index : nullptr;
 	}
+
 	Block* GetBlock(const cherrysoda::Math::IVec3& v, Chunk** chunkOut = nullptr)
 	{
 		int worldBlockSize = WorldBlockSize();
@@ -68,6 +69,7 @@ public:
 	static constexpr int WorldBlockSize() { return Size() * Chunk::Size(); }
 	static constexpr int ChunkAmount() { return Size() * Size() * Size(); }
 	static constexpr int BlockAmount() { return ChunkAmount() * Chunk::BlockAmount(); }
+
 	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(const cherrysoda::Math::IVec3& v) { return cherrysoda::Math::Vec3(v * Chunk::Size()); }
 
 private:
