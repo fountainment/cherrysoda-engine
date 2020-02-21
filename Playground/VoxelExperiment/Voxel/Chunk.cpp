@@ -10,6 +10,8 @@
 using cherrysoda::Math;
 using cherrysoda::STL;
 
+static constexpr Math::IVec3 s_offset[6] = { IVec3_XUp, -IVec3_XUp, IVec3_YUp, -IVec3_YUp, IVec3_ZUp, -IVec3_ZUp };
+
 Chunk::Chunk()
 {
 	STL::Resize(m_blocks, BlockAmount());
@@ -46,23 +48,10 @@ void Chunk::FillAllBlocks(Block::Type type)
 int Chunk::GetBlockSurrounding(const Math::IVec3& v)
 {
 	int result = 0;
-	if (GetBlockType(v + IVec3_XUp) == Block::Type::None) {
-		result |= 1;
-	}
-	if (GetBlockType(v - IVec3_XUp) == Block::Type::None) {
-		result |= 1 << 1;
-	}
-	if (GetBlockType(v + IVec3_YUp) == Block::Type::None) {
-		result |= 1 << 2;
-	}
-	if (GetBlockType(v - IVec3_YUp) == Block::Type::None) {
-		result |= 1 << 3;
-	}
-	if (GetBlockType(v + IVec3_ZUp) == Block::Type::None) {
-		result |= 1 << 4;
-	}
-	if (GetBlockType(v - IVec3_ZUp) == Block::Type::None) {
-		result |= 1 << 5;
+	for (int i = 0; i < 6; ++i) {
+		if (GetBlockType(v + s_offset[i]) == Block::Type::None) {
+			result |= 1 << i;
+		}
 	}
 	return result;
 }
@@ -73,16 +62,10 @@ void Chunk::SetChanged()
 	m_changed = true;
 
 	if (m_world) {
-		Chunk* chunks[6];
-		chunks[0] = m_world->GetChunk(m_chunkIndex - IVec3_XUp);
-		chunks[1] = m_world->GetChunk(m_chunkIndex + IVec3_XUp);
-		chunks[2] = m_world->GetChunk(m_chunkIndex - IVec3_YUp);
-		chunks[3] = m_world->GetChunk(m_chunkIndex + IVec3_YUp);
-		chunks[4] = m_world->GetChunk(m_chunkIndex - IVec3_ZUp);
-		chunks[5] = m_world->GetChunk(m_chunkIndex + IVec3_ZUp);
 		for (int i = 0; i < 6; ++i) {
-			if (chunks[i]) {
-				chunks[i]->m_changed = true;
+			Chunk* chunk = m_world->GetChunk(m_chunkIndex + s_offset[i]);
+			if (chunk) {
+				chunk->m_changed = true;
 			}
 		}
 	}
@@ -95,12 +78,10 @@ void Chunk::SetChanged(const Math::IVec3& v)
 
 	if (m_world) {
 		Chunk* chunks[6];
-		chunks[0] = (v[0] == 0)          ? m_world->GetChunk(m_chunkIndex - IVec3_XUp) : nullptr;
-		chunks[1] = (v[0] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + IVec3_XUp) : nullptr;
-		chunks[2] = (v[1] == 0)          ? m_world->GetChunk(m_chunkIndex - IVec3_YUp) : nullptr;
-		chunks[3] = (v[1] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + IVec3_YUp) : nullptr;
-		chunks[4] = (v[2] == 0)          ? m_world->GetChunk(m_chunkIndex - IVec3_ZUp) : nullptr;
-		chunks[5] = (v[2] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + IVec3_ZUp) : nullptr;
+		for (int i = 0; i < 3; ++i) {
+			chunks[i << 1]       = (v[i] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + s_offset[i << 1])       : nullptr;
+			chunks[(i << 1) | 1] = (v[i] == 0)          ? m_world->GetChunk(m_chunkIndex - s_offset[(i << 1) | 1]) : nullptr;
+		}
 		for (int i = 0; i < 6; ++i) {
 			if (chunks[i]) {
 				chunks[i]->m_changed = true;
