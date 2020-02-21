@@ -2,6 +2,7 @@
 #define _VOXELEXPERIMENT_VOXEL_CHUNK_H_
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/NumType.h>
 
@@ -19,27 +20,31 @@ public:
 	void IndexVec3(int x, int y, int z) { m_chunkIndex = cherrysoda::Math::IVec3(x, y, z); }
 	cherrysoda::Math::Vec3 IndexVec3() { return m_chunkIndex; }
 
-	Block::Type GetBlockType(int x, int y, int z)
+	Block::Type GetBlockType(const cherrysoda::Math::IVec3& v)
 	{
-		Block* block = GetBlock(x, y, z);
+		Block* block = GetBlock(v);
 		return block ? block->m_type : Block::Type::None;
 	}
+	void SetBlockType(const cherrysoda::Math::IVec3& v, Block::Type type);
 
-	void SetBlockType(int x, int y, int z, Block::Type type);
-	void RemoveBlock(int x, int y, int z) { SetBlockType(x, y, z, Block::Type::None); }
+	void RemoveBlock(const cherrysoda::Math::IVec3& v) { SetBlockType(v, Block::Type::None); }
 	void FillAllBlocks(Block::Type type);
-	int GetBlockSurrounding(int x, int y, int z);
+	int GetBlockSurrounding(const cherrysoda::Math::IVec3& v);
 
 	void SetChanged();
-	void SetChanged(int x, int y, int z);
+	void SetChanged(const cherrysoda::Math::IVec3& v);
 
 	Block* GetBlocks() { return m_blocks.data(); }
-	Block* GetBlock(int x, int y, int z);
+	Block* GetBlock(const cherrysoda::Math::IVec3& v);
 	int GetBlockIndex(Block* block)
 	{
 		int index = static_cast<int>(block - GetBlocks());
 		return (index < 0 || index >= BlockAmount()) ? -1 : index;
 	}
+
+	inline cherrysoda::Math::AABB GetAABB() { return { Position(), Position() + cherrysoda::Math::Vec3(Size()) }; }
+	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) { return { Position() + cherrysoda::Math::Vec3(v), Position() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
+
 
 	void Update() override;
 
@@ -55,10 +60,10 @@ private:
 
 	bool m_changed = false;
 
-	static int GetBlockIndex(int x, int y, int z)
+	static int GetBlockIndex(const cherrysoda::Math::IVec3& v)
 	{ 
-		if (x < 0 || x >= Size() || y < 0 || y >= Size() || z < 0 || z >= Size()) return -1;
-		return z * Size() * Size() + y * Size() + x;
+		if (v[0] < 0 || v[0] >= Size() || v[1] < 0 || v[1] >= Size() || v[2] < 0 || v[2] >= Size()) return -1;
+		return v[2] * Size() * Size() + v[1] * Size() + v[0];
 	}
 };
 

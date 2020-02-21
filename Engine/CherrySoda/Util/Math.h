@@ -87,7 +87,13 @@ public:
 
 	static const Mat4 GetOrientationMatrix(const Mat4& matrix);
 
-	static bool RaycastBBox(const Vec3& start, const Vec3& direction, const Vec3& origin, const Vec3& size, float* t1 = nullptr, float* t2 = nullptr);
+	struct AABB
+	{
+		Vec3 min;
+		Vec3 max;
+	};
+
+	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
 };
 
 } // namespace cherrysoda

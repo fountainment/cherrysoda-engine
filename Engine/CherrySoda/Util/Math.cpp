@@ -13,7 +13,7 @@ const Math::Mat4 Math::GetOrientationMatrix(const Math::Mat4& matrix)
 	return glm::toMat4(rotation);
 }
 
-bool Math::RaycastBBox(const Math::Vec3& start, const Math::Vec3& direction, const Math::Vec3& origin, const Math::Vec3& size, float* t1 /* = nullptr */, float* t2 /* = nullptr */)
+bool Math::RaycastAABB(const Math::Vec3& start, const Math::Vec3& direction, const Math::AABB& aabb, float* t1 /* = nullptr */, float* t2 /* = nullptr */)
 {
 	/*
 	x = a + tx'
@@ -21,7 +21,8 @@ bool Math::RaycastBBox(const Math::Vec3& start, const Math::Vec3& direction, con
 	z = c + tz'
 	*/
 
-	Vec3 startBC = start - origin;
+	Vec3 startBC = start - aabb.min;
+	Vec3 size = aabb.max - aabb.min;
 	float intervalT1 = 0.f;
 	float intervalT2 = FLT_MAX;
 	for (int i = 0; i < 3; ++i)

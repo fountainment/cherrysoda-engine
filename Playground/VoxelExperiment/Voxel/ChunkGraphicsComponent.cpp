@@ -39,7 +39,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	for (int i = 0; i < chunkSize; ++i) {
 		for (int j = 0; j < chunkSize; ++j) {
 			for (int k = 0; k < chunkSize; ++k) {
-				Block::Type blockType = chunk->GetBlockType(i, j, k);
+				Block::Type blockType = chunk->GetBlockType(Math::IVec3(i, j, k));
 				if (blockType != Block::Type::None) {
 					Color color;
 					switch (blockType) {
@@ -55,7 +55,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 					if (overallQuadAmount * 4 + 8 > UINT16_MAX) {
 						continue;
 					}
-					int planeMask = chunk->GetBlockSurrounding(i, j, k);
+					int planeMask = chunk->GetBlockSurrounding(Math::IVec3(i, j, k));
 					if (planeMask > 0) {
 						for (int i = 0; i < 6; ++i) {
 							overallQuadAmount += (planeMask & (1 << i)) != 0;

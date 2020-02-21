@@ -118,15 +118,15 @@ void MainScene::Begin()
 	m_voxelWorld = new World(worldBasePosition);
 	Chunk* chunks = m_voxelWorld->LoadChunks();
 	for (int i = 0; i < World::ChunkAmount(); ++i) {
-		chunks[i].FillAllBlocks(Block::Type::Black);
 		for (int z = 0; z < Chunk::Size(); ++z) {
 			for (int y = 0; y < Chunk::Size(); ++y) {
 				for (int x = 0; x < Chunk::Size(); ++x) {
+					Math::IVec3 blockIndex(x, y, z);
 					if ((x + y + z) % 2 == 0) {
-						chunks[i].SetBlockType(x, y, z, Block::Type::White);
+						chunks[i].SetBlockType(blockIndex, Block::Type::White);
 					}
 					else {
-						chunks[i].SetBlockType(x, y, z, Block::Type::Black);
+						chunks[i].SetBlockType(blockIndex, Block::Type::Black);
 					}
 				}
 			}
@@ -178,59 +178,18 @@ void MainScene::BeforeRender()
 
 void MainScene::Update()
 {
-/*
-	int halfWorldBlockSize = World::WorldBlockSize() / 2;
-
-	static float fr = static_cast<float>(1.0f);
-	static float dir = 1.0f;
-	int r = static_cast<int>(fr);
-
-	if (dir > 0.0f) {
-		if (r < halfWorldBlockSize) {
-			for (int i = -r; i <= r; ++i) {
-				for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
-					int y = halfWorldBlockSize + i;
-					float rr = static_cast<float>(glm::pow(r * r - i * i, 0.5));
-					int x = halfWorldBlockSize + static_cast<int>(glm::cos(theta) * rr);
-					int z = halfWorldBlockSize + static_cast<int>(glm::sin(theta) * rr);
-					m_voxelWorld->SetBlockType(x, y, z, Block::Type::White);
-				}
-			}
-		}
-		else {
-			dir = -1.0f;
-		}
-	}
-	else {
-		if (r > 0) {
-			for (int i = -r; i <= r; ++i) {
-				for (float theta = 0.f; theta < 2.0f * 3.14159f; theta += 0.01f) {
-					int y = halfWorldBlockSize + i;
-					float rr = static_cast<float>(glm::pow(r * r - i * i, 0.5));
-					int x = halfWorldBlockSize + static_cast<int>(glm::cos(theta) * rr);
-					int z = halfWorldBlockSize + static_cast<int>(glm::sin(theta) * rr);
-					m_voxelWorld->SetBlockType(x, y, z, Block::Type::None);
-				}
-			}
-		}
-		else {
-			dir = 1.0f;
-		}
-	}
-	fr += 0.016667f * 20.0f * dir * (Math_Abs(glm::sin(fr / halfWorldBlockSize * 3.14159f)) + 0.1f) * 2.0f;
-*/
-
-
 	cherrysoda::Camera* camera = m_voxelRenderer->GetCamera(); 
 	for (int i = 0; i < World::Size(); ++i) {
 		for (int j = 0; j < World::Size(); ++j) {
 			for (int k = 0; k < World::Size(); ++k) {
-				if (Math::RaycastBBox(camera->Position(), camera->Direction(), m_voxelWorld->GetChunkPosition(i, j, k), Math::Vec3(Chunk::Size()))) {
+				Chunk* chunk = m_voxelWorld->GetChunk(Math::IVec3(i, j, k));
+				if (Math::RaycastAABB(camera->Position(), camera->Direction(), chunk->GetAABB())) {
 					for (int x = 0; x < Chunk::Size(); ++x) {
 						for (int y = 0; y < Chunk::Size(); ++y) {
 							for (int z = 0; z < Chunk::Size(); ++z) {
-								if (Math::RaycastBBox(camera->Position(), camera->Direction(), m_voxelWorld->GetChunkPosition(i, j, k) + Math::Vec3(x, y, z), Vec3_One)) {
-									m_voxelWorld->GetChunk(i, j, k)->SetBlockType(x, y, z, Block::Type::None);
+								Math::IVec3 blockIndex(x, y, z);
+								if (Math::RaycastAABB(camera->Position(), camera->Direction(), chunk->GetBlockAABB(blockIndex))) {
+									chunk->SetBlockType(blockIndex, Block::Type::None);
 								}
 							}
 						}

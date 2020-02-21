@@ -22,30 +22,30 @@ public:
 	}
 
 	inline Chunk* GetChunks() { return m_chunks; }
-	inline Chunk* GetChunk(int x, int y, int z)
+	inline Chunk* GetChunk(const cherrysoda::Math::IVec3& v)
 	{
-		int index = GetChunkIndex(x, y, z);
+		int index = GetChunkIndex(v);
 		return index >= 0 ? GetChunks() + index : nullptr;
 	}
-	Block* GetBlock(int x, int y, int z, Chunk** chunkOut = nullptr)
+	Block* GetBlock(const cherrysoda::Math::IVec3& v, Chunk** chunkOut = nullptr)
 	{
 		int worldBlockSize = WorldBlockSize();
-		if (x < 0 || x >= worldBlockSize || y < 0 || y >= worldBlockSize || z < 0 || z >=worldBlockSize) {
+		if (v[0] < 0 || v[0] >= worldBlockSize || v[1] < 0 || v[1] >= worldBlockSize || v[2] < 0 || v[2] >=worldBlockSize) {
 			return nullptr;
 		}
-		Chunk* chunk = GetChunk(x / Chunk::Size(), y / Chunk::Size(), z / Chunk::Size());
+		Chunk* chunk = GetChunk(v / Chunk::Size());
 		if (chunk && chunkOut) *chunkOut = chunk;
-		return chunk ? chunk->GetBlock(x % Chunk::Size(), y % Chunk::Size(), z % Chunk::Size()) : nullptr;
+		return chunk ? chunk->GetBlock(v % Chunk::Size()) : nullptr;
 	}
 
-	void SetBlockType(int x, int y, int z, Block::Type type)
+	void SetBlockType(const cherrysoda::Math::IVec3& v, Block::Type type)
 	{
 		Chunk* chunk = nullptr;
-		Block* block = GetBlock(x, y, z, &chunk);
+		Block* block = GetBlock(v, &chunk);
 		if (block && block->m_type != type)
 		{
 			block->m_type = type;
-			chunk->SetChanged(x % Chunk::Size(), y % Chunk::Size(), z % Chunk::Size());
+			chunk->SetChanged(v % Chunk::Size());
 		}	
 	}
 
@@ -57,27 +57,27 @@ public:
 		x /= worldBlockSize;
 		int y = x % worldBlockSize;
 		x /= worldBlockSize;
-		SetBlockType(x, y, z, type);
+		SetBlockType(cherrysoda::Math::IVec3(x, y, z), type);
 	}
 
 	inline cherrysoda::Math::Vec3 BasePosition() const { return m_basePosition; }
-	inline cherrysoda::Math::Vec3 GetChunkPosition(int x, int y, int z) const { return BasePosition() + GetWorldChunkPosition(x, y, z); }
-	inline cherrysoda::Math::Vec3 GetBlockPosition(int x, int y, int z) const { return BasePosition() + cherrysoda::Math::Vec3(x, y, z); }
+	inline cherrysoda::Math::Vec3 GetChunkPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + GetWorldChunkPosition(v); }
+	inline cherrysoda::Math::Vec3 GetBlockPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + cherrysoda::Math::Vec3(v); }
 
 	static constexpr int Size() { return static_cast<int>(ms_worldSize); }
 	static constexpr int WorldBlockSize() { return Size() * Chunk::Size(); }
 	static constexpr int ChunkAmount() { return Size() * Size() * Size(); }
 	static constexpr int BlockAmount() { return ChunkAmount() * Chunk::BlockAmount(); }
-	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(int x, int y, int z) { return cherrysoda::Math::Vec3(x * Chunk::Size(), y * Chunk::Size(), z * Chunk::Size()); }
+	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(const cherrysoda::Math::IVec3& v) { return cherrysoda::Math::Vec3(v * Chunk::Size()); }
 
 private:
 	Chunk* m_chunks = nullptr;
 	cherrysoda::Math::Vec3 m_basePosition;
 
-	static inline int GetChunkIndex(int x, int y, int z)
+	static inline int GetChunkIndex(const cherrysoda::Math::IVec3& v)
 	{
-		if (x < 0 || x >= Size() || y < 0 || y >= Size() || z < 0 || z >= Size()) return -1;
-		return z * Size() * Size() + y * Size() + x;
+		if (v[0] < 0 || v[0] >= Size() || v[1] < 0 || v[1] >= Size() || v[2] < 0 || v[2] >= Size()) return -1;
+		return v[2] * Size() * Size() + v[1] * Size() + v[0];
 	}
 	
 	static constexpr int ms_worldSize = 8; 
