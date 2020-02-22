@@ -12,4 +12,4 @@ public:
 	void Initialize() override;
 };
 
-} // namespace voxelexperiment
+} // namespace example
