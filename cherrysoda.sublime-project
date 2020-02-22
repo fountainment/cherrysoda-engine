@@ -89,6 +89,10 @@
 				{
 					"name": "VoxelExperiment",
 					"shell_cmd": "make -j8 VoxelExperiment"
+				},
+				{
+					"name": "FirstTriangle",
+					"shell_cmd": "make -j8 FirstTriangle"
 				}
 			],
 			"working_dir": "${project_path}/build"

@@ -19,9 +19,7 @@ using crsd::STL;
 
 void ChunkGraphicsComponent::EntityAwake()
 {
-	m_transformCache = GetChunkTransformMatrix();
-
-	m_mesh.SetIsDynamic(true);
+	GetMesh()->SetIsDynamic(true);
 	RebuildMesh();
 }
 
@@ -30,7 +28,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	constexpr int chunkSize = Chunk::Size();
 	constexpr float halfChunkSize = chunkSize * 0.5f;
 
-	m_mesh.Clear();
+	GetMesh()->Clear();
 	Chunk* chunk = (Chunk*)GetEntity();
 	if (chunk == nullptr) return;
 	STL::Vector<STL::Action> pendingActions;
@@ -66,27 +64,21 @@ void ChunkGraphicsComponent::RebuildMesh()
 			}
 		}
 	}
-	m_mesh.ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
+	GetMesh()->ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
 	for (auto action : pendingActions) {
 		action();
 	}
-	m_mesh.UpdateBuffer();
-}
-
-void ChunkGraphicsComponent::Update()
-{
-	// YRotation(YRotation() + Engine::Instance()->DeltaTime());
+	GetMesh()->UpdateBuffer();
 }
 
 void ChunkGraphicsComponent::Render()
 {
-	if (!m_mesh.IsValid() || m_mesh.VertexAmount() == 0) return;
+	// TODO: Add virtual BeforeRender to component?
+	if (!GetMesh()->IsValid() || GetMesh()->VertexAmount() == 0) return;
 	Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
 	Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
-	Graphics::Instance()->SetTransformMatrix(m_transformCache);
-	Graphics::Instance()->SetMesh(&m_mesh);
-	Graphics::SetStateDefault();
-	Graphics::Instance()->Submit();
+
+	base::Render();
 }
 
 void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Color& color, const Math::Vec3& normal)
@@ -98,7 +90,7 @@ void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Co
 	const auto pVecV = normal[2] == 0.f ? Math::Vec3(0.f, 0.f, size) : Math::Vec3(0.f, size, 0.f);
 	const auto cU32 = color.U32ABGR();
 	if (positive) {
-		m_mesh.AddQuad(
+		GetMesh()->AddQuad(
 			VertexType::MakeVertex(pos + pVecV, cU32, normal),
 			VertexType::MakeVertex(pos, cU32, normal),
 			VertexType::MakeVertex(pos + pVec, cU32, normal),
@@ -106,7 +98,7 @@ void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Co
 		);
 	}
 	else {
-		m_mesh.AddQuad(
+		GetMesh()->AddQuad(
 			VertexType::MakeVertex(pos + pVec, cU32, normal),
 			VertexType::MakeVertex(pos + pVecH, cU32, normal),
 			VertexType::MakeVertex(pos + pVecV, cU32, normal),
@@ -123,17 +115,4 @@ void ChunkGraphicsComponent::AddCube(const Math::Vec3& pos, float size, const Co
 	if (planeMask & (1 << 3)) AddQuad(pos                  , size, color, -Vec3_YUp);
 	if (planeMask & (1 << 4)) AddQuad(pos + Vec3_ZUp * size, size, color,  Vec3_ZUp);
 	if (planeMask & (1 << 5)) AddQuad(pos                  , size, color, -Vec3_ZUp);
-}
-
-const crsd::Math::Mat4 ChunkGraphicsComponent::GetChunkTransformMatrix() const
-{
-	return Math::TranslateMat4(
-		Math::ScaleMat4(
-			Math_Rotate(
-				Math::TranslateMat4(
-					Mat4_Identity,
-					RenderPosition()),
-				YRotation(), Vec3_YUp),
-			Scale()),
-		-Origin());
 }

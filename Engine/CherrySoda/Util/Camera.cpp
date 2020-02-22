@@ -12,15 +12,13 @@ using cherrysoda::Math;
 
 Camera::Camera()
 {
-	m_width = static_cast<float>(Engine::Instance()->GetWidth());
-	m_height = static_cast<float>(Engine::Instance()->GetHeight());
+	SetSize(Engine::Instance()->GetViewSize());
 	UpdateMatrices();
 }
 
 Camera::Camera(int width, int height)
 {
-	m_width = static_cast<float>(width);
-	m_height = static_cast<float>(height);
+	SetSize(Math::IVec2(width, height));
 	UpdateMatrices();
 }
 

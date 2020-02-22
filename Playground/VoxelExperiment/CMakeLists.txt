@@ -17,11 +17,14 @@ set(PROJECT_SRC
   src/Voxel/World.h
 )
 
+# TODO: Add shader compiling
+file(COPY assets DESTINATION .)
+
 if (EMSCRIPTEN)
   file(COPY index.html DESTINATION .)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB --preload-file assets")
 endif()
-file(COPY assets DESTINATION .)
+
 add_executable(VoxelExperiment ${PROJECT_SRC})
-target_include_directories(VoxelExperiment PRIVATE .)
+target_include_directories(VoxelExperiment PRIVATE src)
 target_link_libraries(VoxelExperiment PRIVATE CherrySoda)
