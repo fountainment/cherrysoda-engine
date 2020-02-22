@@ -9,7 +9,7 @@ using namespace cherrysoda;
 class Triangle : public MeshGraphicsComponent<Graphics::PosColorVertex>
 {
 public:
-	typedef MeshGraphicsComponent<Graphics::PosColorVertex> base;
+	typedef MeshGraphicsComponent<VertexType> base;
 
 	Triangle() : base(true)
 	{
@@ -28,8 +28,7 @@ public:
 	}
 };
 
-FirstTriangle::FirstTriangle()
-	: base()
+FirstTriangle::FirstTriangle() : base()
 {
 	SetTitle("FirstTriangle");
 	SetClearColor(Color::Black);
