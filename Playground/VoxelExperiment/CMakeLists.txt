@@ -18,8 +18,8 @@ set(PROJECT_SRC
 )
 
 if (EMSCRIPTEN)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB \
-                                          --preload-file assets")
+  file(COPY index.html DESTINATION .)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB --preload-file assets")
 endif()
 file(COPY assets DESTINATION .)
 add_executable(VoxelExperiment ${PROJECT_SRC})

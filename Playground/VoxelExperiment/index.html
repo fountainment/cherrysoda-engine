@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <script type="text/javascript">
+            var Module = {
+                canvas: (function() { return document.getElementById('canvas'); })()
+            };
+        </script>
+        <script src="VoxelExperiment.js"></script>
+    </body>
+</html>
