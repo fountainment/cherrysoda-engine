@@ -1,28 +1,10 @@
 #include "FirstTriangle.h"
 
-#include <CherrySoda/Engine.h>
-#include <CherrySoda/Entity.h>
-#include <CherrySoda/Scene.h>
-
-#include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
-#include <CherrySoda/Graphics/Effect.h>
-#include <CherrySoda/Graphics/Graphics.h>
-#include <CherrySoda/Renderers/EverythingRenderer.h>
-#include <CherrySoda/Util/Color.h>
-#include <CherrySoda/Util/Math.h>
+#include <CherrySoda/CherrySoda.h>
 
 using example::FirstTriangle;
 
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::Scene;
-
-using cherrysoda::Color;
-using cherrysoda::Effect;
-using cherrysoda::EverythingRenderer;
-using cherrysoda::Graphics;
-using cherrysoda::Math;
-using cherrysoda::MeshGraphicsComponent;
+using namespace cherrysoda;
 
 class Triangle : public MeshGraphicsComponent<Graphics::PosColorVertex>
 {

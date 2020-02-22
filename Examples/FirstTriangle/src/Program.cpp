@@ -1,6 +1,5 @@
 #include "Program.h"
 
-
 int main()
 {
 	GameApp* game = new GameApp;
