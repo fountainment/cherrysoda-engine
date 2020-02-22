@@ -41,7 +41,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CHERRYSODA_PROJECT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(CHERRYSODA_EXECUTABLE_FOLDER Default)
-set(CHERRYSODA_EXECUTABLE_SRC main.cpp)
+set(CHERRYSODA_EXECUTABLE_SRC src/main.cpp)
 set(CHERRYSODA_SHADER_NAMES "")
 
 macro(cherrysoda_compile_shaders shader_names)

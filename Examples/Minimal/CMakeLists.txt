@@ -1,0 +1,1 @@
+add_cherrysoda_executable(Minimal)
