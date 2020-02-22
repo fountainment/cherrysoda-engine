@@ -33,7 +33,7 @@ public:
 	inline void AddIndex(type::UInt16 index) { STL::Add(m_indices, index); }
 	inline size_t VertexAmount() const { return STL::Count(m_vertices); }
 	inline size_t IndexAmount() const { return STL::Count(m_indices); }
-	inline void AddPoint(const VERTEX_T& v) { STL::Add(m_indices, VertexAmount()); STL::Add(m_vertices, v); }
+	inline void AddPoint(const VERTEX_T& v) { STL::Add(m_indices, static_cast<type::UInt16>(VertexAmount())); STL::Add(m_vertices, v); }
 	inline void AddLine(const VERTEX_T& v1, const VERTEX_T& v2) { AddPoint(v1); AddPoint(v2); }
 	inline void AddTriangle(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3) { AddPoint(v1); AddPoint(v2); AddPoint(v3); }
 	inline void AddQuad(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
