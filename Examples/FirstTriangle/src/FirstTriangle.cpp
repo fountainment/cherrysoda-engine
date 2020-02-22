@@ -15,9 +15,9 @@ public:
 	{
 		GetMesh()->Clear();
 		GetMesh()->AddTriangle(
-			VertexType::MakeVertex(Math::Vec3( 0.0f,   1.0f, 0.0f), Color::Red.U32ABGR()),
-			VertexType::MakeVertex(Math::Vec3(-0.87f, -0.5f, 0.0f), Color::Green.U32ABGR()),
-			VertexType::MakeVertex(Math::Vec3( 0.87f, -0.5f, 0.0f), Color::Blue.U32ABGR())
+			VertexType::MakeVertex(Math::Vec3( 0.0f,   1.0f, 0.0f), Color::Red),
+			VertexType::MakeVertex(Math::Vec3(-0.87f, -0.5f, 0.0f), Color::Green),
+			VertexType::MakeVertex(Math::Vec3( 0.87f, -0.5f, 0.0f), Color::Blue)
 		);
 		GetMesh()->InitBuffer();
 	}

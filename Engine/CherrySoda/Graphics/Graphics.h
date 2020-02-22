@@ -40,6 +40,10 @@ public:
 		{
 			return { p[0], p[1], p[2], c };
 		}
+		static const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c)
+		{
+			return { p[0], p[1], p[2], c.U32ABGR() };
+		}
 	};
 
 	struct PosColorNormalVertex
@@ -53,6 +57,10 @@ public:
 		{
 			return { p[0], p[1], p[2], c, n[0], n[1], n[2] };
 		}
+		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n)
+		{
+			return { p[0], p[1], p[2], c.U32ABGR(), n[0], n[1], n[2] };
+		}
 	};
 
 	struct PosColorTexCoord0Vertex
@@ -65,6 +73,10 @@ public:
 		static const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
 		{
 			return { p[0], p[1], p[2], c, uv[0], uv[1] };
+		}
+		static const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv)
+		{
+			return { p[0], p[1], p[2], c.U32ABGR(), uv[0], uv[1] };
 		}
 	};
 
