@@ -1,20 +1,20 @@
 set(PROJECT_SRC
-  Program.cpp
-  Program.h
-  VoxelExperiment.cpp
-  VoxelExperiment.h
-  Scenes/MainScene.cpp
-  Scenes/MainScene.h
-  Scenes/Skybox.cpp
-  Scenes/Skybox.h
-  Voxel/Block.cpp
-  Voxel/Block.h
-  Voxel/Chunk.cpp
-  Voxel/Chunk.h
-  Voxel/ChunkGraphicsComponent.cpp
-  Voxel/ChunkGraphicsComponent.h
-  Voxel/World.cpp
-  Voxel/World.h
+  src/Program.cpp
+  src/Program.h
+  src/VoxelExperiment.cpp
+  src/VoxelExperiment.h
+  src/Scenes/MainScene.cpp
+  src/Scenes/MainScene.h
+  src/Scenes/Skybox.cpp
+  src/Scenes/Skybox.h
+  src/Voxel/Block.cpp
+  src/Voxel/Block.h
+  src/Voxel/Chunk.cpp
+  src/Voxel/Chunk.h
+  src/Voxel/ChunkGraphicsComponent.cpp
+  src/Voxel/ChunkGraphicsComponent.h
+  src/Voxel/World.cpp
+  src/Voxel/World.h
 )
 
 if (EMSCRIPTEN)

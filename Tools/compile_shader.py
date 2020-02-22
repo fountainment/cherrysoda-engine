@@ -4,8 +4,8 @@ import sys
 def main():
     shader_dir  = sys.argv[1]
     shader_name = sys.argv[2]
-    vert_shader = cherry.join_path(shader_dir, 'vs_' + shader_name + '.sc')
-    frag_shader = cherry.join_path(shader_dir, 'fs_' + shader_name + '.sc')
+    vert_shader = cherry.join_path(shader_dir, 'shaders/vs_' + shader_name + '.sc')
+    frag_shader = cherry.join_path(shader_dir, 'shaders/fs_' + shader_name + '.sc')
     vert_out    = cherry.join_path(shader_dir, '%s/vs_' + shader_name + '.bin')
     frag_out    = cherry.join_path(shader_dir, '%s/fs_' + shader_name + '.bin')
     include_dir = cherry.bgfx_src_path
