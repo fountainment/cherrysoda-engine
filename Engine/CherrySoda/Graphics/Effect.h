@@ -14,13 +14,20 @@ public:
 		Load("vs_" + name, "fs_" + name);
 	}
 
-	void Load(const String& vs, const String& fs)
+	static const Effect LoadEffect(const String& name)
 	{
-		m_program = Graphics::CreateShaderProgram(vs, fs);
+		Effect effect;
+		effect.Load(name);
+		return effect;
 	}
 
 private:
 	friend class Graphics;
+
+	void Load(const String& vs, const String& fs)
+	{
+		m_program = Graphics::CreateShaderProgram(vs, fs);
+	}
 
 	inline Graphics::ShaderHandle GetShader() const { return m_program; }
 

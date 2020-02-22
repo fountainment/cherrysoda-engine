@@ -38,8 +38,6 @@ void FirstTriangle::Initialize()
 {
 	base::Initialize();
 
-	ms_shader.Load("basic");
-
 	auto scene = new Scene();
 	auto entity = new Entity();
 
@@ -50,10 +48,8 @@ void FirstTriangle::Initialize()
 	scene->Add(entity);
 	
 	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 4.f));
-	renderer->SetEffect(ms_shader);
+	renderer->SetEffect(Effect::LoadEffect("basic"));
 	scene->Add(renderer);
 
 	SetScene(scene);
 }
-
-Effect FirstTriangle::ms_shader;
