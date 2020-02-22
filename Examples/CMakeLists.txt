@@ -1,1 +1,2 @@
+set(CHERRYSODA_EXECUTABLE_FOLDER Examples)
 add_subdirectory(FirstTriangle)

@@ -1,4 +1,4 @@
-set(PROJECT_SRC
+set(CHERRYSODA_EXECUTABLE_SRC
   src/Program.cpp
   src/Program.h
   src/VoxelExperiment.cpp
@@ -17,14 +17,6 @@ set(PROJECT_SRC
   src/Voxel/World.h
 )
 
-# TODO: Add shader compiling
-file(COPY assets DESTINATION .)
+set(CHERRYSODA_SHADER_NAMES "mypbr;skybox")
 
-if (EMSCRIPTEN)
-  file(COPY index.html DESTINATION .)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB --preload-file assets")
-endif()
-
-add_executable(VoxelExperiment ${PROJECT_SRC})
-target_include_directories(VoxelExperiment PRIVATE src)
-target_link_libraries(VoxelExperiment PRIVATE CherrySoda)
+add_cherrysoda_executable(VoxelExperiment)
