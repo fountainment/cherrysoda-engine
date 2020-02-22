@@ -21,7 +21,7 @@ git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
 git submodule update --init
 # For Windows
-# python Tools/download\_and\_setup\_sdl2\_for\_windows.py
+# python Tools/setup\_sdl2\_for\_windows.py
 mkdir build & cd build & cmake ..
 ```
 
