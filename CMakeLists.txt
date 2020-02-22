@@ -66,7 +66,7 @@ function(cherrysoda_set_targets_folder targets folder)
 endfunction(cherrysoda_set_targets_folder)
 
 macro(add_cherrysoda_executable executable_name)
-  if (WINDOWS OR LINUX)
+  if (WINDOWS OR LINUX OR EMSCRIPTEN)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
       cherrysoda_compile_shaders("${CHERRYSODA_SHADER_NAMES}")
     endif()
