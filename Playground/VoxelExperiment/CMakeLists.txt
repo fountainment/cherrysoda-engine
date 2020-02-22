@@ -17,6 +17,10 @@ set(PROJECT_SRC
   Voxel/World.h
 )
 
+if (EMSCRIPTEN)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB \
+                                          --preload-file assets")
+endif()
 file(COPY assets DESTINATION .)
 add_executable(VoxelExperiment ${PROJECT_SRC})
 target_include_directories(VoxelExperiment PRIVATE .)

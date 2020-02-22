@@ -49,7 +49,7 @@ set(ENGINE_SRC
   CherrySoda/Util/Time.h
 )
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if(WINDOWS)
   include_directories(../External/bgfx/bx/include/compat/msvc)
 endif()
 
@@ -60,13 +60,13 @@ if(EMSCRIPTEN)
   set(SDL2_LIBRARIES)
 else()
   if(NOT DEFINED ENV{SDL2_DIR})
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/FindSDL2")
   endif()
   find_package(SDL2 REQUIRED)
 endif()
 
 target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.6 ${SDL2_INCLUDE_DIRS})
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC bgfx bimg bimg_decode bx gdi32 kernel32 psapi glm_static ${SDL2_LIBRARIES})
 else()
   target_link_libraries(CherrySoda PUBLIC bgfx bimg bimg_decode bx dl GL pthread X11 glm_static ${SDL2_LIBRARIES})

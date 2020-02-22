@@ -27,7 +27,7 @@ def get_file_path(f):
 executable_suffix = ('', '.exe')[is_windows_system()]
 
 engine_path   = abspath(join_path(get_file_path(__file__), '../..'))
-tool_path     = join_path(engine_path, 'tool')
+tool_path     = join_path(engine_path, 'Tools')
 external_path = join_path(engine_path, 'External')
 bgfx_src_path = join_path(external_path, 'bgfx/bgfx/src')
 
