@@ -341,6 +341,10 @@ void Graphics::Initialize()
 
 	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
+#ifdef CHERRYSODA_PROFILE
+	ms_vsyncEnabled = false;
+#endif
+
 	ms_samplerTex        = CreateUniformSampler("s_tex");
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
 	ms_samplerTexCubeIrr = CreateUniformSampler("s_texCubeIrr");
@@ -688,7 +692,7 @@ void Graphics::SetTextureCubeIrr(TextureCube* texture)
 	SetTexture(1, ms_samplerTexCubeIrr, texture->m_texture);	
 }
 
-bool Graphics::ms_vsyncEnabled = false;
+bool Graphics::ms_vsyncEnabled = true;
 
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
 Graphics::ShaderHandle Graphics::ms_defaultShaderOverride = Graphics::InvalidHandle;
