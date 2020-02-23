@@ -94,9 +94,7 @@ void Engine::OnClientSizeChanged(int width, int height)
 		m_resizing = true;
 		SetWindowSize(width, height);
 		SetViewSize(width, height);
-		if (auto gfxInstance = Graphics::Instance()) {
-			gfxInstance->UpdateView();
-		}
+		Graphics::UpdateView();
 		m_resizing = false;
 	}
 }
@@ -112,8 +110,8 @@ void Engine::Initialize()
 
 	MInput::Initialize();
 	Graphics::Initialize();
+	Graphics::UpdateView();
 	m_graphicsDevice = Graphics::Instance();
-	m_graphicsDevice->UpdateView();
 	m_initialized = true;
 }
 

@@ -107,27 +107,27 @@ public:
 
 	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
 	inline type::UInt16 RenderPass() { return m_renderPassId; }
-	void UpdateView();
+	static void UpdateView();
 	void SetClearColor(const Color& color);
 	void SetClearDiscard();
-	void SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder);
+	static void SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder);
 	void Touch();
-	void SetVsyncEnabled(bool vsyncEnabled);
+	static void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
-	void SetTransformMatrix(const Math::Mat4& transformMatrix);
-	void SetMesh(MeshInterface* mesh);
-	void SetVertexBuffer(VertexBufferHandle vertexBuffer);
-	void SetIndexBuffer(IndexBufferHandle indexBuffer);
-	void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
-	void SetDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer, size_t indexAmount);
+	static void SetTransformMatrix(const Math::Mat4& transformMatrix);
+	static void SetMesh(MeshInterface* mesh);
+	static void SetVertexBuffer(VertexBufferHandle vertexBuffer);
+	static void SetIndexBuffer(IndexBufferHandle indexBuffer);
+	static void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
+	static void SetDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer, size_t indexAmount);
 	static void SetStateDefault();
 	static void SetStateNoDepth();
 	void Submit();
 	void Submit(Effect* effect);
 	void Submit(type::UInt16 renderPass, Effect* effect);
 
-	void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
+	static void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
 
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
@@ -169,11 +169,11 @@ public:
 private:
 	friend class Engine;
 
-	Graphics();
+	Graphics() {}
 
 	type::UInt16 m_renderPassId = 0;	
-	// bool m_vsyncEnabled = true;
-	bool m_vsyncEnabled = false;
+
+	static bool ms_vsyncEnabled;
 
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;

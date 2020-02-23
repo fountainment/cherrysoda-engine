@@ -324,10 +324,6 @@ bgfx::TextureHandle loadTexture(const char* _name, bgfx::TextureInfo* _info = NU
 	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
 }
 
-Graphics::Graphics()
-{
-}
-
 void Graphics::Initialize()
 {
 	entry::init();
@@ -370,7 +366,7 @@ void Graphics::RenderFrame()
 
 void Graphics::UpdateView()
 {
-	bgfx::reset(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight(), m_vsyncEnabled ? BGFX_RESET_VSYNC : BGFX_RESET_NONE);
+	bgfx::reset(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight(), ms_vsyncEnabled ? BGFX_RESET_VSYNC : BGFX_RESET_NONE);
 }
 
 void Graphics::SetClearColor(const Color& color)
@@ -400,7 +396,7 @@ void Graphics::Touch()
 
 void Graphics::SetVsyncEnabled(bool vsyncEnabled)
 {
-	m_vsyncEnabled = vsyncEnabled;
+	ms_vsyncEnabled = vsyncEnabled;
 	if (Engine::Instance()->Initialized()) {
 		UpdateView();
 	}
@@ -687,6 +683,8 @@ void Graphics::SetTextureCubeIrr(TextureCube* texture)
 {
 	SetTexture(1, ms_samplerTexCubeIrr, texture->m_texture);	
 }
+
+bool Graphics::ms_vsyncEnabled = false;
 
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
 Graphics::ShaderHandle Graphics::ms_defaultShaderOverride = Graphics::InvalidHandle;

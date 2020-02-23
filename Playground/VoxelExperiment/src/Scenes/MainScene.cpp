@@ -103,7 +103,7 @@ void MainScene::Begin()
 	base::Begin();
 
 	m_uniformMtx = Graphics::CreateUniformMat4("u_mtx");
-	Graphics::Instance()->SetRenderPassOrder({ 0, 1, 2 });
+	Graphics::SetRenderPassOrder({ 0, 1, 2 });
 
 	ms_skyboxTag = BitTag("skybox");
 	ms_voxelTag = BitTag("voxel");

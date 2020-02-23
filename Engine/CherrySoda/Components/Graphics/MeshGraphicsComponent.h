@@ -18,8 +18,8 @@ public:
 
 	void Render() override
 	{
-		cherrysoda::Graphics::Instance()->SetTransformMatrix(GetTransformMatrix());
-		cherrysoda::Graphics::Instance()->SetMesh(GetMesh());
+		cherrysoda::Graphics::SetTransformMatrix(GetTransformMatrix());
+		cherrysoda::Graphics::SetMesh(GetMesh());
 		cherrysoda::Graphics::SetStateDefault();
 		cherrysoda::Graphics::Instance()->Submit();
 	}
