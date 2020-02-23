@@ -19,7 +19,7 @@ public:
 			VertexType::MakeVertex(Math::Vec3(-0.87f, -0.5f, 0.0f), Color::Green),
 			VertexType::MakeVertex(Math::Vec3( 0.87f, -0.5f, 0.0f), Color::Blue)
 		);
-		GetMesh()->InitBuffer();
+		GetMesh()->SubmitBuffer();
 	}
 
 	void Update() override

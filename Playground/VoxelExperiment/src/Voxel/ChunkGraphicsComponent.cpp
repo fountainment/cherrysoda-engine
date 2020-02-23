@@ -68,7 +68,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	for (auto action : pendingActions) {
 		action();
 	}
-	GetMesh()->UpdateBuffer();
+	GetMesh()->SubmitBuffer();
 }
 
 void ChunkGraphicsComponent::Render()

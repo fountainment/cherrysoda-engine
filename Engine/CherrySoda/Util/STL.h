@@ -137,6 +137,12 @@ public:
 	{
 		std::random_shuffle(container.begin(), container.end());
 	}
+
+	template<typename T>
+	static void Swap(T& a, T& b)
+	{
+		std::swap(a, b);
+	}
 };
 
 } // namespace cherrysoda

@@ -16,8 +16,8 @@ class MeshInterface
 public:
 	virtual bool IsDynamic() const = 0;
 
-	virtual size_t VertexAmount() const = 0;
-	virtual size_t IndexAmount() const = 0;
+	virtual size_t VertexBufferSize() const = 0;
+	virtual size_t IndexBufferSize() const = 0;
 	virtual Graphics::BufferHandle GetVertexBuffer() const = 0;
 	virtual Graphics::BufferHandle GetIndexBuffer() const = 0;
 };
@@ -27,6 +27,9 @@ class Mesh : public MeshInterface
 {
 public:
 	friend class Graphics;
+
+	inline size_t VertexBufferSize() const { return STL::Count(m_verticesFront); }
+	inline size_t IndexBufferSize() const { return STL::Count(m_indicesFront); }
 
 	// void LoadObj(const String& objFile);
 	inline void AddVertex(const VERTEX_T& vertex) { STL::Add(m_vertices, vertex); }
@@ -105,6 +108,39 @@ public:
 		}
 	}
 
+	void SwapLocalBuffer()
+	{
+		STL::Swap(m_vertices, m_verticesFront);
+		STL::Swap(m_indices, m_indicesFront);
+	}
+
+	void SubmitBuffer()
+	{
+		if (!IsDynamic()) {
+			DestroyBuffer();
+			InitBuffer();
+		}
+		else {
+			if (!IsValid()) {
+				InitBuffer();
+			}
+			else if (STL::Count(m_vertices) > 0) {
+				Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, 0, m_vertices);
+				Graphics::UpdateDynamicIndexBuffer(m_indexBuffer, 0, m_indices);
+			}
+		}
+		SwapLocalBuffer();
+	}
+
+	inline bool IsValid()
+	{
+		return m_vertexBuffer != Graphics::InvalidHandle && m_indexBuffer != Graphics::InvalidHandle;
+	}
+
+	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
+	inline Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
+
+private:
 	void InitBuffer()
 	{
 		CHERRYSODA_ASSERT(!IsValid(), "Mesh already initialized!\n");
@@ -122,37 +158,14 @@ public:
 		}
 	}
 
-	void UpdateBuffer()
-	{
-		if (!IsDynamic()) {
-			DestroyBuffer();
-			InitBuffer();
-		}
-		else {
-			if (!IsValid()) {
-				InitBuffer();
-			}
-			else if (STL::Count(m_vertices) > 0) {
-				Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, 0, m_vertices);
-				Graphics::UpdateDynamicIndexBuffer(m_indexBuffer, 0, m_indices);
-			}
-		}
-	}
-
-	inline bool IsValid()
-	{
-		return m_vertexBuffer != Graphics::InvalidHandle && m_indexBuffer != Graphics::InvalidHandle;
-	}
-
-	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
-	inline Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
-
-private:
 	Graphics::BufferHandle m_vertexBuffer = Graphics::InvalidHandle;
 	Graphics::BufferHandle m_indexBuffer = Graphics::InvalidHandle;
 
 	STL::Vector<VERTEX_T> m_vertices;
 	STL::Vector<type::UInt16> m_indices;
+
+	STL::Vector<VERTEX_T> m_verticesFront;
+	STL::Vector<type::UInt16> m_indicesFront;
 
 	bool m_isDynamic = false;
 };
