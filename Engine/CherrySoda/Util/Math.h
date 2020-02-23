@@ -100,12 +100,10 @@ public:
 		Vec3 m_max;
 	};
 
-	struct Rectangle
+	struct IRectangle
 	{
-		int m_x;
-		int m_y;
-		int m_width;
-		int m_height;
+		IVec2 m_coord;
+		IVec2 m_size;
 	};
 
 	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
