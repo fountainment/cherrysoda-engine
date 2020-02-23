@@ -333,7 +333,7 @@ void Graphics::Initialize()
 	entry::init();
 
 	bgfx::init();
-	bgfx::setDebug(BGFX_DEBUG_TEXT);
+	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
 	Graphics::PosColorVertex::Init();
 	Graphics::PosColorNormalVertex::Init();
@@ -364,10 +364,12 @@ void Graphics::Terminate()
 
 void Graphics::RenderFrame()
 {
+	/*
 	bgfx::dbgTextClear();
 	bgfx::dbgTextPrintf(1, 1, 0x0f, "API: %s", bgfx::getRendererName(bgfx::getRendererType()));
 	bgfx::dbgTextPrintf(1, 3, 0x0f, "FPS: %d", Engine::Instance()->FPS());
 	bgfx::dbgTextPrintf(1, 4, 0x0f, "DeltaTime: %.4f", Engine::Instance()->DeltaTime());
+	*/
 
 	bgfx::frame();
 }

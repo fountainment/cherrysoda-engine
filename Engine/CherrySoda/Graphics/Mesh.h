@@ -66,8 +66,8 @@ public:
 
 	inline void ReserverAdditional(int v, int i)
 	{
-		STL::Reserve(m_vertices, STL::Count(m_vertices) + v);
-		STL::Reserve(m_indices, STL::Count(m_indices) + i);
+		STL::Reserve(m_vertices, VertexAmount() + v);
+		STL::Reserve(m_indices, IndexAmount() + i);
 	}
 
 	inline bool IsDynamic() const
@@ -86,32 +86,20 @@ public:
 
 	void DestroyBuffer()
 	{
-		if (!IsDynamic()) {
-			if (m_vertexBuffer != Graphics::InvalidHandle) {
-				Graphics::DestroyVertexBuffer(m_vertexBuffer);
-				m_vertexBuffer = Graphics::InvalidHandle;
-			}
-			if (m_indexBuffer != Graphics::InvalidHandle) {
-				Graphics::DestroyIndexBuffer(m_indexBuffer);
-				m_indexBuffer = Graphics::InvalidHandle;
-			}
-		}
-		else {
-			if (m_vertexBuffer != Graphics::InvalidHandle) {
+		if (m_vertexBuffer != Graphics::InvalidHandle) {
+			if (IsDynamic())
 				Graphics::DestroyDynamicVertexBuffer(m_vertexBuffer);
-				m_vertexBuffer = Graphics::InvalidHandle;
-			}
-			if (m_indexBuffer != Graphics::InvalidHandle) {
-				Graphics::DestroyDynamicIndexBuffer(m_indexBuffer);
-				m_indexBuffer = Graphics::InvalidHandle;
-			}
+			else
+				Graphics::DestroyVertexBuffer(m_vertexBuffer);
+			m_vertexBuffer = Graphics::InvalidHandle;
 		}
-	}
-
-	void SwapLocalBuffer()
-	{
-		STL::Swap(m_vertices, m_verticesFront);
-		STL::Swap(m_indices, m_indicesFront);
+		if (m_indexBuffer != Graphics::InvalidHandle) {
+			if (IsDynamic())
+				Graphics::DestroyDynamicIndexBuffer(m_vertexBuffer);
+			else
+				Graphics::DestroyIndexBuffer(m_indexBuffer);
+			m_indexBuffer = Graphics::InvalidHandle;
+		}
 	}
 
 	void SubmitBuffer()
@@ -129,7 +117,7 @@ public:
 				Graphics::UpdateDynamicIndexBuffer(m_indexBuffer, 0, m_indices);
 			}
 		}
-		SwapLocalBuffer();
+		SwapBuffer();
 	}
 
 	inline bool IsValid()
@@ -158,13 +146,18 @@ private:
 		}
 	}
 
+	void SwapBuffer()
+	{
+		STL::Swap(m_vertices, m_verticesFront);
+		STL::Swap(m_indices, m_indicesFront);
+	}
+
 	Graphics::BufferHandle m_vertexBuffer = Graphics::InvalidHandle;
 	Graphics::BufferHandle m_indexBuffer = Graphics::InvalidHandle;
 
 	STL::Vector<VERTEX_T> m_vertices;
-	STL::Vector<type::UInt16> m_indices;
-
 	STL::Vector<VERTEX_T> m_verticesFront;
+	STL::Vector<type::UInt16> m_indices;
 	STL::Vector<type::UInt16> m_indicesFront;
 
 	bool m_isDynamic = false;

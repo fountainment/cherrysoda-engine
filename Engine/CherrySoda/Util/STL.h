@@ -32,49 +32,49 @@ public:
 	using Vector = std::vector<T>;
 
 	template<typename T>
-	static void Resize(T& container, size_t size)
+	static inline void Resize(T& container, size_t size)
 	{
 		container.resize(size);
 	}
 
 	template<typename T>
-	static void Reserve(T& container, size_t size)
+	static inline void Reserve(T& container, size_t size)
 	{
 		container.reserve(size);
 	}
 
 	template<typename T, typename U>
-	static void Fill(T& container, const U& element)
+	static inline void Fill(T& container, const U& element)
 	{
 		std::fill(container.begin(), container.end(), element);
 	}
 
 	template<typename T, typename U>
-	static void Add(T& container, const U& element)
+	static inline void Add(T& container, const U& element)
 	{
 		container.emplace_back(element);
 	}
 
 	template<typename T>
-	static void Add(HashSet<T>& container, const T& element)
+	static inline void Add(HashSet<T>& container, const T& element)
 	{
 		container.emplace(element);
 	}
 
 	template<typename T>
-	static void AddRange(T& container, const T& iterable)
+	static inline void AddRange(T& container, const T& iterable)
 	{
 		container.insert(std::end(container), std::begin(iterable), std::end(iterable));
 	}
 
 	template<typename T, typename U>
-	static void AddRange(T& container, const U& iterable)
+	static inline void AddRange(T& container, const U& iterable)
 	{
 		container.insert(std::end(container), std::begin(iterable), std::end(iterable));
 	}
 
 	template<typename T, typename U>
-	static bool Remove(T& container, const U& element)
+	static inline bool Remove(T& container, const U& element)
 	{
 		auto it = Find(container, element);
 		if (it == container.end()) {
@@ -85,61 +85,61 @@ public:
 	}
 
 	template<typename T>
-	static size_t Count(const T& container)
+	static inline size_t Count(const T& container)
 	{
 		return container.size();
 	}
 
 	template<typename T>
-	static auto Data(const T& container)
+	static inline auto Data(const T& container)
 	{
 		return container.data();
 	}
 
 	template<typename T>
-	static void Clear(T& container)
+	static inline void Clear(T& container)
 	{
 		container.clear();
 	}
 
 	template<typename T>
-	static size_t ByteSize(const T& container)
+	static inline size_t ByteSize(const T& container)
 	{
 		return Count(container) * sizeof (typename T::value_type);
 	}
 
 	template<typename T, typename U>
-	static auto Find(const T& container, const U& element)
+	static inline auto Find(const T& container, const U& element)
 	{
 		return std::find(std::begin(container), std::end(container), element);
 	}
 
 	template<typename T>
-	static auto Find(const HashSet<T>& container, const T& element)
+	static inline auto Find(const HashSet<T>& container, const T& element)
 	{
 		return container.find(element);
 	}
 
 	template<typename T, typename U>
-	static auto Find(const Map<T,U>& container, const T& key)
+	static inline auto Find(const Map<T,U>& container, const T& key)
 	{
 		return container.find(key);
 	}
 
 	template<typename T, typename U>
-	static bool Contains(const T& container, const U& element)
+	static inline bool Contains(const T& container, const U& element)
 	{
 		return Find(container, element) != container.end();
 	}
 
 	template<typename T>
-	static void Shuffle(T& container)
+	static inline void Shuffle(T& container)
 	{
 		std::random_shuffle(container.begin(), container.end());
 	}
 
 	template<typename T>
-	static void Swap(T& a, T& b)
+	static inline void Swap(T& a, T& b)
 	{
 		std::swap(a, b);
 	}

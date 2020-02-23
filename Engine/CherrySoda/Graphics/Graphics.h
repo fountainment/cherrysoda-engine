@@ -164,7 +164,7 @@ public:
 	static void SetTextureCube(TextureCube* texture);
 	static void SetTextureCubeIrr(TextureCube* texture);
 
-	static Graphics* Instance() { return ms_instance; };
+	static Graphics* Instance() { return ms_instance; }
 
 private:
 	friend class Engine;
