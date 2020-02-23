@@ -12,7 +12,7 @@ using voxelexperiment::VoxelExperiment;
 using cherrysoda::Color;
 using cherrysoda::Effect;
 using cherrysoda::Graphics;
-using cherrysoda::Texture;
+using cherrysoda::TextureCube;
 
 VoxelExperiment::VoxelExperiment()
 	: base()
@@ -36,15 +36,15 @@ void VoxelExperiment::Initialize()
 
 void VoxelExperiment::LoadContent()
 {
-	ms_texCube = Texture::FromFile("assets/textures/bolonga_lod.dds");
-	ms_texCubeIrr = Texture::FromFile("assets/textures/bolonga_irr.dds");
+	ms_texCube = TextureCube::FromFile("assets/textures/bolonga_lod.dds");
+	ms_texCubeIrr = TextureCube::FromFile("assets/textures/bolonga_irr.dds");
 
 	ms_voxelShader.Load("mypbr");
 	ms_skyboxShader.Load("skybox");
 }
 
-Texture VoxelExperiment::ms_texCube;
-Texture VoxelExperiment::ms_texCubeIrr;
+TextureCube VoxelExperiment::ms_texCube;
+TextureCube VoxelExperiment::ms_texCubeIrr;
 
 Effect VoxelExperiment::ms_voxelShader;
 Effect VoxelExperiment::ms_skyboxShader;

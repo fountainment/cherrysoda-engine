@@ -75,8 +75,8 @@ void ChunkGraphicsComponent::Render()
 {
 	// TODO: Add virtual BeforeRender to component?
 	if (!GetMesh()->IsValid() || GetMesh()->VertexAmount() == 0) return;
-	Graphics::SetSamplerTexCube(&GameApp::ms_texCube);
-	Graphics::SetSamplerTexCubeIrr(&GameApp::ms_texCubeIrr);
+	Graphics::SetTextureCube(&GameApp::ms_texCube);
+	Graphics::SetTextureCubeIrr(&GameApp::ms_texCubeIrr);
 
 	base::Render();
 }
@@ -92,17 +92,17 @@ void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Co
 	if (positive) {
 		GetMesh()->AddQuad(
 			VertexType::MakeVertex(pos + pVecV, cU32, normal),
-			VertexType::MakeVertex(pos, cU32, normal),
-			VertexType::MakeVertex(pos + pVec, cU32, normal),
+			VertexType::MakeVertex(pos,         cU32, normal),
+			VertexType::MakeVertex(pos + pVec,  cU32, normal),
 			VertexType::MakeVertex(pos + pVecH, cU32, normal)
 		);
 	}
 	else {
 		GetMesh()->AddQuad(
-			VertexType::MakeVertex(pos + pVec, cU32, normal),
+			VertexType::MakeVertex(pos + pVec,  cU32, normal),
 			VertexType::MakeVertex(pos + pVecH, cU32, normal),
 			VertexType::MakeVertex(pos + pVecV, cU32, normal),
-			VertexType::MakeVertex(pos, cU32, normal)
+			VertexType::MakeVertex(pos,         cU32, normal)
 		);
 	}
 }

@@ -93,6 +93,10 @@
 				{
 					"name": "FirstTriangle",
 					"shell_cmd": "make -j8 FirstTriangle"
+				},
+				{
+					"name": "Minimal",
+					"shell_cmd": "make -j8 Minimal"
 				}
 			],
 			"working_dir": "${project_path}/build"

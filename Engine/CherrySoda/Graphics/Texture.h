@@ -11,10 +11,26 @@ class Texture
 public:
 	static Texture FromFile(const String& filename);
 
-private:
+protected:
 	friend class Graphics;
 
 	Graphics::TextureHandle m_texture = Graphics::InvalidHandle;
+};
+
+class Texture2D : public Texture
+{
+public:
+	static Texture2D FromFile(const String& filename);
+
+private:
+	int m_width;
+	int m_height;
+};
+
+class TextureCube : public Texture
+{
+public:
+	static TextureCube FromFile(const String& filename);
 };
 
 } // namespace cherrysoda

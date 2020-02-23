@@ -96,8 +96,16 @@ public:
 
 	struct AABB
 	{
-		Vec3 min;
-		Vec3 max;
+		Vec3 m_min;
+		Vec3 m_max;
+	};
+
+	struct Rectangle
+	{
+		int m_x;
+		int m_y;
+		int m_width;
+		int m_height;
 	};
 
 	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);

@@ -26,6 +26,8 @@ class Camera;
 class Effect;
 class MeshInterface;
 class Texture;
+class Texture2D;
+class TextureCube;
 
 class Graphics
 {
@@ -80,6 +82,13 @@ public:
 		}
 	};
 
+	struct TextureInfo
+	{
+		int m_width;
+		int m_height;
+		bool m_cubeMap;
+	};
+
 	using HandleType = type::UInt16;
 	using BufferHandle = HandleType;
 	using VertexBufferHandle = HandleType;
@@ -124,7 +133,7 @@ public:
 	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
-	static TextureHandle CreateTexture(const String& texture);
+	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
 
 	static UniformHandle CreateUniformVec4(const String& uniform, type::UInt16 num = 1U);
 	static UniformHandle CreateUniformMat4(const String& uniform);
@@ -152,8 +161,8 @@ public:
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor);
 
-	static void SetSamplerTexCube(Texture* texture);
-	static void SetSamplerTexCubeIrr(Texture* texture);
+	static void SetTextureCube(TextureCube* texture);
+	static void SetTextureCubeIrr(TextureCube* texture);
 
 	static Graphics* Instance() { return ms_instance; };
 
@@ -169,6 +178,7 @@ private:
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;
 	
+	static UniformHandle ms_samplerTex;
 	static UniformHandle ms_samplerTexCube;
 	static UniformHandle ms_samplerTexCubeIrr;
 
@@ -188,6 +198,8 @@ public:
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorTexCoord0Vertex);
+
+	#undef CHERRYSODA_VERTEX_DECLARATION
 };
 
 } // namespace cherrysoda

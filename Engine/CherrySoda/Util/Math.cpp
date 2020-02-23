@@ -20,8 +20,8 @@ bool Math::RaycastAABB(const Math::Vec3& start, const Math::Vec3& direction, con
 	z = c + tz'
 	*/
 
-	Vec3 startBC = start - aabb.min;
-	Vec3 size = aabb.max - aabb.min;
+	Vec3 startBC = start - aabb.m_min;
+	Vec3 size = aabb.m_max - aabb.m_min;
 	float intervalT1 = 0.f;
 	float intervalT2 = FLT_MAX;
 	for (int i = 0; i < 3; ++i)

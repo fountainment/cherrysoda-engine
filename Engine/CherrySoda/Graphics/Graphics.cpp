@@ -30,6 +30,8 @@ using cherrysoda::Engine;
 using cherrysoda::Math;
 using cherrysoda::MeshInterface;
 using cherrysoda::Texture;
+using cherrysoda::Texture2D;
+using cherrysoda::TextureCube;
 using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
@@ -317,6 +319,11 @@ bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = BGFX_TEXTUR
 	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
 }
 
+bgfx::TextureHandle loadTexture(const char* _name, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL, uint64_t _flags = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE, uint8_t _skip = 0)
+{
+	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
+}
+
 Graphics::Graphics()
 {
 }
@@ -334,6 +341,7 @@ void Graphics::Initialize()
 
 	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
+	ms_samplerTex        = CreateUniformSampler("s_tex");
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
 	ms_samplerTexCubeIrr = CreateUniformSampler("s_texCubeIrr");
 
@@ -352,12 +360,10 @@ void Graphics::Terminate()
 
 void Graphics::RenderFrame()
 {
-	// static int s_frameCount = 0;
-
 	bgfx::dbgTextClear();
-	bgfx::dbgTextPrintf(1, 1, 0x0f, StringUtil::Format("API: %s", bgfx::getRendererName(bgfx::getRendererType())).c_str());
-	bgfx::dbgTextPrintf(1, 3, 0x0f, StringUtil::Format("FPS: %d", Engine::Instance()->FPS()).c_str());
-	bgfx::dbgTextPrintf(1, 4, 0x0f, StringUtil::Format("DeltaTime: %.4f", Engine::Instance()->DeltaTime()).c_str());
+	bgfx::dbgTextPrintf(1, 1, 0x0f, "API: %s", bgfx::getRendererName(bgfx::getRendererType()));
+	bgfx::dbgTextPrintf(1, 3, 0x0f, "FPS: %d", Engine::Instance()->FPS());
+	bgfx::dbgTextPrintf(1, 4, 0x0f, "DeltaTime: %.4f", Engine::Instance()->DeltaTime());
 
 	bgfx::frame();
 }
@@ -560,9 +566,14 @@ Graphics::ShaderHandle Graphics::CreateShaderProgram(const String& vs, const Str
 	return loadProgram(vs, fs).idx;
 }
 
-Graphics::TextureHandle Graphics::CreateTexture(const String& texture)
+Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics::TextureInfo* info/* = nullptr */)
 {
-	return loadTexture(texture.c_str()).idx;
+	bgfx::TextureInfo bInfo;
+	Graphics::TextureHandle tex = loadTexture(texture.c_str(), &bInfo).idx;
+	if (info != nullptr) {
+		*info = { bInfo.width, bInfo.height, bInfo.cubeMap };
+	}
+	return tex;
 }
 
 Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, cherrysoda::type::UInt16 num)
@@ -639,7 +650,7 @@ void Graphics::SetTexture(cherrysoda::type::UInt8 stage, Graphics::UniformHandle
 
 void Graphics::SetTexture(Texture* texture)
 {
-	SetTexture(ms_samplerTexCube, texture->m_texture);
+	SetTexture(ms_samplerTex, texture->m_texture);
 }
 
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, cherrysoda::type::UInt16 size)
@@ -667,12 +678,12 @@ void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math
 	bgfx::setUniform({ ms_uniformLights }, lightVec4, 8U);
 }
 
-void Graphics::SetSamplerTexCube(Texture* texture)
+void Graphics::SetTextureCube(TextureCube* texture)
 {
 	SetTexture(ms_samplerTexCube, texture->m_texture);	
 }
 
-void Graphics::SetSamplerTexCubeIrr(Texture* texture)
+void Graphics::SetTextureCubeIrr(TextureCube* texture)
 {
 	SetTexture(1, ms_samplerTexCubeIrr, texture->m_texture);	
 }
@@ -680,6 +691,7 @@ void Graphics::SetSamplerTexCubeIrr(Texture* texture)
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
 Graphics::ShaderHandle Graphics::ms_defaultShaderOverride = Graphics::InvalidHandle;
 
+Graphics::UniformHandle Graphics::ms_samplerTex        = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCube    = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCubeIrr = Graphics::InvalidHandle;
 
