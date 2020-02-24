@@ -5,6 +5,9 @@ set(CHERRYSODA_EXECUTABLE_SRC
   src/FirstTriangle.h
 )
 
-set(CHERRYSODA_SHADER_NAMES "basic")
+set(CHERRYSODA_SHADER_SRC
+  shaders/vs_basic.sc
+  shaders/fs_basic.sc
+)
 
 add_cherrysoda_executable(FirstTriangle)

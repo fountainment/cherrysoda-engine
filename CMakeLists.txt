@@ -48,15 +48,7 @@ set(CHERRYSODA_PROJECT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(CHERRYSODA_TOOL_PATH ${CHERRYSODA_PROJECT_PATH}/Tools)
 set(CHERRYSODA_EXECUTABLE_FOLDER Default)
 set(CHERRYSODA_EXECUTABLE_SRC src/main.cpp)
-set(CHERRYSODA_SHADER_NAMES "")
-
-function(cherrysoda_compile_shaders shader_names)
-  foreach(shader_name ${shader_names})
-    message("Compiling shader ${shader_name}...")
-    execute_process(COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py ${CMAKE_CURRENT_SOURCE_DIR} ${shader_name}
-                    OUTPUT_FILE compile_shader.log)
-  endforeach()
-endfunction(cherrysoda_compile_shaders)
+set(CHERRYSODA_SHADER_SRC "")
 
 function(cherrysoda_set_target_folder target folder)
   set_target_properties(${target} PROPERTIES
@@ -71,11 +63,8 @@ function(cherrysoda_set_targets_folder targets folder)
 endfunction(cherrysoda_set_targets_folder)
 
 function(add_cherrysoda_executable executable_name)
-  if(WINDOWS OR LINUX OR EMSCRIPTEN)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-      cherrysoda_compile_shaders("${CHERRYSODA_SHADER_NAMES}")
-    endif()
-  endif()
+  set(program_src "${CHERRYSODA_EXECUTABLE_SRC}")
+  set(shader_src "${CHERRYSODA_SHADER_SRC}")
   if(MSVC)
     if("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
       file(COPY ${CHERRYSODA_PROJECT_PATH}/External/SDL2-2.0.10/lib/x64/SDL2.dll DESTINATION .)
@@ -87,42 +76,27 @@ function(add_cherrysoda_executable executable_name)
   if(EMSCRIPTEN)
     file(COPY index.html DESTINATION .)
   endif()
-  add_executable(${executable_name} ${CHERRYSODA_EXECUTABLE_SRC})
-  source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src FILES ${CHERRYSODA_EXECUTABLE_SRC})
-  target_link_libraries(${executable_name} PRIVATE CherrySoda)
-  target_include_directories(${executable_name} PRIVATE src)
-  cherrysoda_set_target_folder(${executable_name} ${CHERRYSODA_EXECUTABLE_FOLDER})
-endfunction(add_cherrysoda_executable)
-
-function(add_cherrysoda_executable_new executable_name program_src shader_src)
-  if(MSVC)
-    if("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
-      file(COPY ${CHERRYSODA_PROJECT_PATH}/External/SDL2-2.0.10/lib/x64/SDL2.dll DESTINATION .)
-    else()
-      file(COPY ${CHERRYSODA_PROJECT_PATH}/External/SDL2-2.0.10/lib/x86/SDL2.dll DESTINATION .)
+  if(NOT "${shader_src}" STREQUAL "")
+    if(WINDOWS OR LINUX OR EMSCRIPTEN)
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+        set(SHADER_COMPILE_STAMP shader_compile.stamp)
+        add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_COMPILE_STAMP}
+                           COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list "${shader_src}"
+                           COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
+                           DEPENDS ${shader_src}
+                           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+      endif()
     endif()
   endif()
-  file(COPY assets DESTINATION .)
-  if(EMSCRIPTEN)
-    file(COPY index.html DESTINATION .)
-  endif()
-  if(WINDOWS OR LINUX OR EMSCRIPTEN)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-	  set(SHADER_COMPILE_MARK shader_compile.tmp)
-	  add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_COMPILE_MARK}
-	                     COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list "${shader_src}"
-	                     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
-						 COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_MARK}
-						 DEPENDS ${shader_src}
-						 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    endif()
-  endif()
-  add_executable(${executable_name} ${program_src} ${shader_src} ${SHADER_COMPILE_MARK})
+  add_executable(${executable_name} ${program_src} ${shader_src} ${SHADER_COMPILE_STAMP})
+  add_custom_command(TARGET ${executable_name}
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets)
   source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${program_src} ${shader_src})
   target_link_libraries(${executable_name} PRIVATE CherrySoda)
   target_include_directories(${executable_name} PRIVATE src)
   cherrysoda_set_target_folder(${executable_name} ${CHERRYSODA_EXECUTABLE_FOLDER})
-endfunction(add_cherrysoda_executable_new)
+endfunction(add_cherrysoda_executable)
 
 add_subdirectory(External)
 add_subdirectory(Engine)

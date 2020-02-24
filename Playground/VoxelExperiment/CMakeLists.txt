@@ -1,4 +1,4 @@
-set(PROJECT_EXECUTABLE_SRC
+set(CHERRYSODA_EXECUTABLE_SRC
   src/Program.cpp
   src/Program.h
   src/VoxelExperiment.cpp
@@ -17,7 +17,7 @@ set(PROJECT_EXECUTABLE_SRC
   src/Voxel/World.h
 )
 
-set(PROJECT_SHADER_SRC
+set(CHERRYSODA_SHADER_SRC
   shaders/uniform.sh
   shaders/varying.def.sc
   shaders/vs_mypbr.sc
@@ -26,4 +26,4 @@ set(PROJECT_SHADER_SRC
   shaders/fs_skybox.sc
 )
 
-add_cherrysoda_executable_new(VoxelExperiment "${PROJECT_EXECUTABLE_SRC}" "${PROJECT_SHADER_SRC}")
+add_cherrysoda_executable(VoxelExperiment)
