@@ -39,7 +39,7 @@ build
 # Temp
 .*.swp
 __pycache__
-tmp
+*.tmp
 *.log
 
 # Download
