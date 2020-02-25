@@ -29,7 +29,9 @@ if(EMSCRIPTEN)
   # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
   #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
   #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1") 
-  add_compile_options(-fno-exceptions -fno-rtti)
+  add_compile_options(-fno-exceptions)
+  # TODO: replace all dynamic_cast and close rtti in the future
+  # add_compile_options(-fno-exceptions -fno-rtti)
 else()
   if(LINUX)
     set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g")
@@ -37,7 +39,7 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") 
   else()
     if(MSVC)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP -D_CRT_SECURE_NO_WARNINGS")
       set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /DCHERRYSODA_PROFILE")
     endif()
   endif()
@@ -51,9 +53,7 @@ set(CHERRYSODA_EXECUTABLE_SRC src/main.cpp)
 set(CHERRYSODA_SHADER_SRC "")
 
 function(cherrysoda_set_target_folder target folder)
-  set_target_properties(${target} PROPERTIES
-    FOLDER ${folder}
-  )
+  set_target_properties(${target} PROPERTIES FOLDER ${folder})
 endfunction(cherrysoda_set_target_folder)
 
 function(cherrysoda_set_targets_folder targets folder)

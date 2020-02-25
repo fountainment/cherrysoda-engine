@@ -1,6 +1,5 @@
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   include_directories(bx/include/compat/msvc)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 #bx

@@ -55,7 +55,7 @@ if(WINDOWS)
 endif()
 
 add_library(CherrySoda STATIC ${ENGINE_SRC})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda FILES ${ENGINE_SRC})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC})
 
 if(EMSCRIPTEN)
   set(SDL2_INCLUDE_DIRS)
@@ -75,6 +75,4 @@ else()
 endif()
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
 target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)
-set_target_properties(CherrySoda PROPERTIES
-    FOLDER Engine
-)
+set_target_properties(CherrySoda PROPERTIES FOLDER Engine)

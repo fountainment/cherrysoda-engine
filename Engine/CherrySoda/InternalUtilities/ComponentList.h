@@ -21,7 +21,7 @@ public:
 	T* Get()
 	{
 		for (auto component : m_components) {
-			if (auto t = static_cast<T*>(component)) {
+			if (auto t = dynamic_cast<T*>(component)) {
 				return t;
 			}
 		}
@@ -29,7 +29,7 @@ public:
 	}
 
 	inline Entity* GetEntity() { return m_entity; }
-	
+
 private:
 	friend class Entity;
 
