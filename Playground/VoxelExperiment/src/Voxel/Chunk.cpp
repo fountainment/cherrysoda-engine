@@ -17,7 +17,8 @@ Chunk::Chunk()
 	STL::Resize(m_blocks, BlockAmount());
 	STL::Fill(m_blocks, Block());
 
-	Add(new ChunkGraphicsComponent);
+	m_chunkGraphicsComponent = new ChunkGraphicsComponent;
+	Add(m_chunkGraphicsComponent);
 }
 
 void Chunk::SetBlockType(const Math::IVec3& v, Block::Type type)
@@ -108,7 +109,7 @@ void Chunk::Update()
 	base::Update();
 
 	if (m_changed) {
-		Get<ChunkGraphicsComponent>()->RebuildMesh();
+		m_chunkGraphicsComponent->RebuildMesh();
 		m_changed = false;
 	}
 }

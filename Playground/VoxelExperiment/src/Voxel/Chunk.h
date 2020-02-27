@@ -9,6 +9,7 @@
 #include "Voxel/Block.h"
 
 class World;
+class ChunkGraphicsComponent;
 
 class Chunk : public cherrysoda::Entity
 {
@@ -58,6 +59,7 @@ private:
 	cherrysoda::STL::Vector<Block> m_blocks;
 	cherrysoda::Math::IVec3 m_chunkIndex = IVec3_Zero;
 
+	ChunkGraphicsComponent* m_chunkGraphicsComponent;
 	bool m_changed = false;
 
 	static inline int GetBlockIndex(const cherrysoda::Math::IVec3& v)
