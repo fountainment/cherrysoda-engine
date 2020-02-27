@@ -52,16 +52,16 @@ public:
 	{
 		float m_x, m_y, m_z;
 		type::UInt32 m_abgr;
-		float m_nx, m_ny, m_nz;	
+		type::UInt32 m_normal;
 
 		static void Init();
 		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
 		{
-			return { p[0], p[1], p[2], c, n[0], n[1], n[2] };
+			return { p[0], p[1], p[2], c, Math::EncodeNormalU32(n) };
 		}
 		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n)
 		{
-			return { p[0], p[1], p[2], c.U32ABGR(), n[0], n[1], n[2] };
+			return { p[0], p[1], p[2], c.U32ABGR(), Math::EncodeNormalU32(n) };
 		}
 	};
 

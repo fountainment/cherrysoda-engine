@@ -79,6 +79,14 @@ public:
 	using IVec3 = glm::i32vec3;
 	using IVec4 = glm::i32vec4;
 
+	static constexpr uint32_t EncodeNormalU32(const Math::Vec3& v)
+	{
+		uint32_t a = static_cast<uint32_t>((v[0] + 1.0f) * 0.5f * 255.f + 0.5f);
+		uint32_t b = static_cast<uint32_t>((v[1] + 1.0f) * 0.5f * 255.f + 0.5f);
+		uint32_t c = static_cast<uint32_t>((v[2] + 1.0f) * 0.5f * 255.f + 0.5f);
+		return a | b << 8 | c << 16;
+	}
+
 	static constexpr auto LookAt = glm::lookAt<glm::f32, glm::qualifier::defaultp>;
 	static constexpr auto Perspective = glm::perspective<glm::f32>;
 

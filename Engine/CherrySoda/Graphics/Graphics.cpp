@@ -133,7 +133,7 @@ void Graphics::PosColorVertex::Init()
 	PosColorDefinition::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::Color0,   4, bgfx::AttribType::Uint8, true)
 		.end();
 }
 
@@ -142,8 +142,8 @@ void Graphics::PosColorNormalVertex::Init()
 	PosColorNormalDefinition::s_layout
 		.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-		.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0,   4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::Normal,   4, bgfx::AttribType::Uint8, true, true)
 		.end();
 }
 
@@ -151,8 +151,8 @@ void Graphics::PosColorTexCoord0Vertex::Init()
 {
 	PosColorTexCoord0Definition::s_layout
 		.begin()
-		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
 		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 		.end();
 }
