@@ -65,6 +65,7 @@ endfunction(cherrysoda_set_targets_folder)
 function(add_cherrysoda_executable executable_name)
   set(program_src "${CHERRYSODA_EXECUTABLE_SRC}")
   set(shader_src "${CHERRYSODA_SHADER_SRC}")
+  set(shader_compile_stamp "")
   if(MSVC)
     if("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
       file(COPY ${CHERRYSODA_PROJECT_PATH}/External/SDL2-2.0.10/lib/x64/SDL2.dll DESTINATION .)
@@ -76,21 +77,20 @@ function(add_cherrysoda_executable executable_name)
   if(EMSCRIPTEN)
     file(COPY index.html DESTINATION .)
   endif()
-  set(SHADER_COMPILE_STAMP "")
   if(NOT "${shader_src}" STREQUAL "")
     if(WINDOWS OR LINUX OR EMSCRIPTEN)
       if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-        set(SHADER_COMPILE_STAMP shader_compile.stamp)
-        add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_COMPILE_STAMP}
+        set(shader_compile_stamp shader_compile.stamp)
+        add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${shader_compile_stamp}
                            COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
-                           COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
+                           COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
                            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
                            DEPENDS ${shader_src}
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
       endif()
     endif()
   endif()
-  add_executable(${executable_name} ${program_src} ${shader_src} ${SHADER_COMPILE_STAMP})
+  add_executable(${executable_name} ${program_src} ${shader_src} ${shader_compile_stamp})
   source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${program_src} ${shader_src})
   target_link_libraries(${executable_name} PRIVATE CherrySoda)
   target_include_directories(${executable_name} PRIVATE src)

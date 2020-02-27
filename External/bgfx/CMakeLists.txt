@@ -30,7 +30,7 @@ target_compile_features(bimg_decode PRIVATE cxx_std_14)
 
 
 # bgfx
-file(GLOB BGFX_SRC include/bgfx/**.h bgfx/src/*.cpp bgfx/src/*.h)
+file(GLOB BGFX_SRC include/bgfx/*.h bgfx/src/*.cpp bgfx/src/*.h)
 list(REMOVE_ITEM BGFX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bgfx/src/amalgamated.cpp)
 list(REMOVE_ITEM BGFX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bgfx/src/ctrone.cpp)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
