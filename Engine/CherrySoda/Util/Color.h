@@ -20,9 +20,16 @@ public:
 	constexpr float B() const { return m_b; }
 	constexpr float A() const { return m_a; }
 
-	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>(f * 255.0f + 0.5f); };
-	constexpr type::UInt32 U32() const { return F2U32(R()) << 24 | F2U32(G()) << 16 | F2U32(B()) << 8 | F2U32(A()); };
-	constexpr type::UInt32 U32ABGR() const { return F2U32(A()) << 24 | F2U32(B()) << 16 | F2U32(G()) << 8 | F2U32(R()); }
+	static constexpr type::UInt8  F2U8(float f)  { return static_cast<type::UInt8 >(f * 255.0f + 0.5f); }
+	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>(f * 255.0f + 0.5f); }
+
+	constexpr type::UInt32 U32() const { return U32BigEndian(); }
+	constexpr type::UInt32 U32BigEndian()    const { return F2U32(R()) << 24 | F2U32(G()) << 16 | F2U32(B()) << 8  | F2U32(A()); }
+	constexpr type::UInt32 U32LittleEndian() const { return F2U32(R())       | F2U32(G()) <<  8 | F2U32(B()) << 16 | F2U32(A()) << 24; }
+
+	constexpr type::UInt32 U32ABGR() const { return U32ABGRBigEndian(); }
+	constexpr type::UInt32 U32ABGRBigEndian()    const { return F2U32(A()) << 24 | F2U32(B()) << 16 | F2U32(G()) <<  8 | F2U32(R()); }
+	constexpr type::UInt32 U32ABGRLittleEndian() const { return F2U32(A())       | F2U32(B()) <<  8 | F2U32(G()) << 16 | F2U32(R()) << 24; }
 
 	inline void R(float v) { m_r = v; }
 	inline void G(float v) { m_g = v; }
