@@ -32,6 +32,14 @@ class TextureCube;
 class Graphics
 {
 public:
+	static constexpr type::UInt32 EncodeNormalU32(const Math::Vec3& v)
+	{
+		type::UInt32 a = static_cast<type::UInt32>((v[0] + 1.0f) * 0.5f * 255.f + 0.5f);
+		type::UInt32 b = static_cast<type::UInt32>((v[1] + 1.0f) * 0.5f * 255.f + 0.5f);
+		type::UInt32 c = static_cast<type::UInt32>((v[2] + 1.0f) * 0.5f * 255.f + 0.5f);
+		return a | b << 8 | c << 16;
+	}
+
 	struct PosColorVertex
 	{
 		float m_x, m_y, m_z;
@@ -57,11 +65,11 @@ public:
 		static void Init();
 		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
 		{
-			return { p[0], p[1], p[2], c, Math::EncodeNormalU32(n) };
+			return { p[0], p[1], p[2], c, EncodeNormalU32(n) };
 		}
 		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n)
 		{
-			return { p[0], p[1], p[2], c.U32ABGR(), Math::EncodeNormalU32(n) };
+			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n) };
 		}
 	};
 
