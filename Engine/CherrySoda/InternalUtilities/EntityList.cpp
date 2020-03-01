@@ -116,7 +116,7 @@ void EntityList::RenderOnly(BitTagValueType matchTags)
 	}
 }
 
-void EntityList::RenderOnlyFullMatch(int matchTags)
+void EntityList::RenderOnlyFullMatch(BitTagValueType matchTags)
 {
 	for (auto entity : m_entities) {
 		if (entity->m_visible && entity->TagFullCheck(matchTags)) {
@@ -125,7 +125,7 @@ void EntityList::RenderOnlyFullMatch(int matchTags)
 	}	
 }
 
-void EntityList::RenderExcept(int excludeTags)
+void EntityList::RenderExcept(BitTagValueType excludeTags)
 {
 	for (auto entity : m_entities) {
 		if (entity->m_visible && !entity->TagCheck(excludeTags)) {

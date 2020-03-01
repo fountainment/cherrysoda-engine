@@ -201,7 +201,7 @@ public:
 	#define CHERRYSODA_VERTEX_DECLARATION(VERTEX_T) \
 	static VertexBufferHandle CreateVertexBuffer(STL::Vector<VERTEX_T>& vertices); \
 	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(STL::Vector<VERTEX_T>& vertices); \
-	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, STL::Vector<VERTEX_T>& vertices); \
+	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, STL::Vector<VERTEX_T>& vertices);
 
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);

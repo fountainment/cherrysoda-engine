@@ -2,12 +2,13 @@
 #define _CHERRYSODA_UTIL_BITTAG_H_
 
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
-typedef int BitTagValueType;
+typedef type::UInt32 BitTagValueType;
 
 static constexpr int TagBitsAmount = sizeof(BitTagValueType) * 8;
 

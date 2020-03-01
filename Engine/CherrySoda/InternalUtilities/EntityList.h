@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Entity.h>
 
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
@@ -22,9 +23,9 @@ public:
 	void Remove(Entity* entity);
 
 	void Render();
-	void RenderOnly(int matchTags);
-	void RenderOnlyFullMatch(int matchTags);
-	void RenderExcept(int excludeTags);
+	void RenderOnly(BitTagValueType matchTags);
+	void RenderOnlyFullMatch(BitTagValueType matchTags);
+	void RenderExcept(BitTagValueType excludeTags);
 	void DebugRender(Camera* camera);
 
 private:
