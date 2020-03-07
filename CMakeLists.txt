@@ -80,8 +80,8 @@ function(add_cherrysoda_executable executable_name)
   if(NOT "${shader_src}" STREQUAL "")
     if(WINDOWS OR LINUX OR EMSCRIPTEN)
       if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-        set(shader_compile_stamp shader_compile.stamp)
-        add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${shader_compile_stamp}
+        set(shader_compile_stamp ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
+        add_custom_command(OUTPUT ${shader_compile_stamp}
                            COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
                            COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
                            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
