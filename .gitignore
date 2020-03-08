@@ -32,8 +32,6 @@
 
 # Build
 build
-*.bin
-*.exe
 
 # Local
 *.sublime-workspace
