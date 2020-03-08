@@ -678,10 +678,13 @@ void Graphics::SetUniformMaterial(const Math::Vec3& albedo, float metallic, floa
 
 static Math::Vec4 s_lightVec4[8];
 
-void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor)
+void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit/* = false*/)
 {
 	s_lightVec4[index * 2] = Math::Vec4(lightPos, 1.0f);
 	s_lightVec4[index * 2 + 1] = Math::Vec4(lightColor, 1.0f);
+	if (submit) {
+		bgfx::setUniform({ ms_uniformLights }, s_lightVec4, 8U);
+	}
 }
 
 void Graphics::SubmitUniformLight()

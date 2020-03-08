@@ -151,10 +151,10 @@ void MainScene::Begin()
 	// Graphics::SetUniformLight(2, Math::Vec3(-5.f, -5.f, 8.f), Math::Vec3(1.f));
 	// Graphics::SetUniformLight(3, Math::Vec3(5.f, -5.f, 8.f), Math::Vec3(1.f));
 
-	Graphics::SetUniformLight(0, Math::Vec3(0.f, 68.f, 0.f), Vec3_One * 5.f);
-	Graphics::SetUniformLight(1, Vec3_Zero, Vec3_Zero);
-	Graphics::SetUniformLight(2, Vec3_Zero, Vec3_Zero);
-	Graphics::SetUniformLight(3, Vec3_Zero, Vec3_Zero);
+	Graphics::SetUniformLight(0, Math::Vec3(  0.f, 68.f,   0.f), Vec3_One * 5.f, false);
+	Graphics::SetUniformLight(1, Math::Vec3( 30.f, 68.f,   0.f), Vec3_XUp * 5.f, false);
+	Graphics::SetUniformLight(2, Math::Vec3(-15.f, 68.f, -26.f), Vec3_YUp * 5.f, false);
+	Graphics::SetUniformLight(3, Math::Vec3(-15.f, 68.f,  26.f), Vec3_ZUp * 5.f, false);
 	Graphics::SubmitUniformLight();
 
 	// Renderers
