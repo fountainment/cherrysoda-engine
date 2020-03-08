@@ -84,7 +84,7 @@ function(add_cherrysoda_executable executable_name)
         add_custom_command(OUTPUT ${shader_compile_stamp}
                            COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
                            COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
-                           COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
+                           COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders ${CMAKE_CURRENT_BINARY_DIR}/assets/shaders
                            DEPENDS ${shader_src}
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
       endif()

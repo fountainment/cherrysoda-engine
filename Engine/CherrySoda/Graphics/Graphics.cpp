@@ -676,12 +676,17 @@ void Graphics::SetUniformMaterial(const Math::Vec3& albedo, float metallic, floa
 	bgfx::setUniform({ ms_uniformMaterial }, materialVec4, 2U);
 }
 
+static Math::Vec4 s_lightVec4[8];
+
 void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor)
 {
-	static Math::Vec4 lightVec4[8];
-	lightVec4[index * 2] = Math::Vec4(lightPos, 1.0f);
-	lightVec4[index * 2 + 1] = Math::Vec4(lightColor, 1.0f);
-	bgfx::setUniform({ ms_uniformLights }, lightVec4, 8U);
+	s_lightVec4[index * 2] = Math::Vec4(lightPos, 1.0f);
+	s_lightVec4[index * 2 + 1] = Math::Vec4(lightColor, 1.0f);
+}
+
+void Graphics::SubmitUniformLight()
+{
+	bgfx::setUniform({ ms_uniformLights }, s_lightVec4, 8U);
 }
 
 void Graphics::SetTextureCube(TextureCube* texture)

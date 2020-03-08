@@ -168,6 +168,7 @@ public:
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor);
+	static void SubmitUniformLight();
 
 	static void SetTextureCube(TextureCube* texture);
 	static void SetTextureCubeIrr(TextureCube* texture);

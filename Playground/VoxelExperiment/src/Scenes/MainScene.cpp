@@ -142,19 +142,20 @@ void MainScene::Begin()
 
 	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 70.f, 0.f));
 
-	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93, 0.88f), 1.f, 0.5f, 0.f); // Silver
-	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 1.f, 0.4f); 	
-	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.99f, 0.f); // Gold
+	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93f, 0.88f), 1.f, 0.f, 0.f); // Silver
+	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 0.f, 0.f);
+	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.f, 0.f); // Gold
 
 	// Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));
 	// Graphics::SetUniformLight(1, Math::Vec3(5.f, 5.f, 8.f), Math::Vec3(1.f));
 	// Graphics::SetUniformLight(2, Math::Vec3(-5.f, -5.f, 8.f), Math::Vec3(1.f));
 	// Graphics::SetUniformLight(3, Math::Vec3(5.f, -5.f, 8.f), Math::Vec3(1.f));
 
-	// Graphics::SetUniformLight(0, Vec3_Zero, Vec3_Zero);
-	// Graphics::SetUniformLight(1, Vec3_Zero, Vec3_Zero);
-	// Graphics::SetUniformLight(2, Vec3_Zero, Vec3_Zero);
-	// Graphics::SetUniformLight(3, Vec3_Zero, Vec3_Zero);
+	Graphics::SetUniformLight(0, Math::Vec3(0.f, 68.f, 0.f), Vec3_One * 5.f);
+	Graphics::SetUniformLight(1, Vec3_Zero, Vec3_Zero);
+	Graphics::SetUniformLight(2, Vec3_Zero, Vec3_Zero);
+	Graphics::SetUniformLight(3, Vec3_Zero, Vec3_Zero);
+	Graphics::SubmitUniformLight();
 
 	// Renderers
 	Add(m_skyboxRenderer);
