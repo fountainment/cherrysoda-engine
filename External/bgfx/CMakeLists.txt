@@ -2,6 +2,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   include_directories(bx/include/compat/msvc)
 endif()
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBGFX_CONFIG_DEBUG")
+
 #bx
 file(GLOB BX_SRC bx/include/bx/*.h bx/include/bx/inline/*.inl bx/src/*.cpp )
 list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/amalgamated.cpp)
