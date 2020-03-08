@@ -46,9 +46,9 @@ void main()
         if (cosThetai != 0.0) {
             cosThetah = max(dot(N, H), 0.0);
         }
-        vec3 RF = RF0 + (vec3(1.0, 1.0, 1.0) - RF0) * pow((1.0 - max(dot(N, V), 0.0)), 5.0);
+        vec3 RF = RF0 + (vec3_splat(1.0) - RF0) * pow((1.0 - max(dot(N, V), 0.0)), 5.0);
         float attenuation = 1.0 / pow((len / lightRadius) + 1.0, 2.0);
-        vec3 L0 = (1.0 / Pi * v_color0.xyz * (vec3(1.0, 1.0, 1.0) - RF) * (1.0 - u_metallic) + (u_metallic + specular) * vec3(0.5, 0.5, 0.5) * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
+        vec3 L0 = (1.0 / Pi * v_color0.xyz * (vec3_splat(1.0) - RF) * (1.0 - u_metallic) + (u_metallic + specular) * vec3_splat(0.5) * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
 
         color.xyz += L0;
     }
