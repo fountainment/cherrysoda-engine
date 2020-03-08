@@ -29,7 +29,7 @@ void main()
     vec3 R = reflect(-V, N);
     vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz * v_color0.xyz, vec3_splat(gamma)); 
     vec3 specTex = pow(textureCubeLod(s_texCube, R, u_roughness * maxLod).xyz, vec3_splat(gamma)); 
-    vec3 Cdiff = (diffTex + v_color0.xyz) * (1.0 - u_metallic) / Pi;
+    vec3 Cdiff = diffTex * v_color0.xyz * (1.0 - u_metallic) / Pi;
     vec3 Cspec = specTex * u_metallic;
     color.xyz += RF * Cspec;
     color.xyz += (1.0 - RF) * Cdiff * (1.0 - u_ao);
