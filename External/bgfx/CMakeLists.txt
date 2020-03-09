@@ -2,7 +2,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   include_directories(bx/include/compat/msvc)
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBGFX_CONFIG_DEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBGFX_CONFIG_DEBUG=1")
 
 #bx
 file(GLOB BX_SRC bx/include/bx/*.h bx/include/bx/inline/*.inl bx/src/*.cpp )
