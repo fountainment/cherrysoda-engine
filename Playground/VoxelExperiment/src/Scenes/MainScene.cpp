@@ -23,6 +23,7 @@
 #include "Voxel/World.h"
 
 using cherrysoda::BitTag;
+using cherrysoda::Camera;
 using cherrysoda::Component;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
@@ -178,23 +179,18 @@ void MainScene::BeforeRender()
 
 void MainScene::Update()
 {
-	cherrysoda::Camera* camera = m_voxelRenderer->GetCamera(); 
-	for (int i = 0; i < World::Size(); ++i) {
-		for (int j = 0; j < World::Size(); ++j) {
-			for (int k = 0; k < World::Size(); ++k) {
-				Chunk* chunk = m_voxelWorld->GetChunk(Math::IVec3(i, j, k));
-				if (Math::RaycastAABB(camera->Position(), camera->Direction(), chunk->GetAABB())) {
-					for (int x = 0; x < Chunk::Size(); ++x) {
-						for (int y = 0; y < Chunk::Size(); ++y) {
-							for (int z = 0; z < Chunk::Size(); ++z) {
-								Math::IVec3 blockIndex(x, y, z);
-								if (Math::RaycastAABB(camera->Position(), camera->Direction(), chunk->GetBlockAABB(blockIndex))) {
-									chunk->SetBlockType(blockIndex, Block::Type::None);
-								}
-							}
-						}
-					}
-				}
+	Camera* camera = m_voxelRenderer->GetCamera();
+	float t;
+	Math::Vec3 pos = camera->Position();
+	Math::Vec3 direction = camera->Direction();
+	if (Math::RaycastAABB(pos, direction, m_voxelWorld->GetAABB(), &t)) {
+		for (;;) {
+			pos = pos + direction * (t + 0.1f);
+			auto index = m_voxelWorld->GetIndexOfBlockAt(pos);
+			auto block = m_voxelWorld->GetBlock(index);
+			m_voxelWorld->SetBlockType(index, Block::Type::None);
+			if (!block || !Math::RaycastAABB(pos, direction, m_voxelWorld->GetBlockAABB(index), nullptr, &t)) {
+				break;
 			}
 		}
 	}

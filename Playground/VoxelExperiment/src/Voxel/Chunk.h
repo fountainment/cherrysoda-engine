@@ -43,9 +43,8 @@ public:
 		return (index < 0 || index >= BlockAmount()) ? -1 : index;
 	}
 
-	inline cherrysoda::Math::AABB GetAABB() { return { Position(), Position() + cherrysoda::Math::Vec3(static_cast<float>(Size())) }; }
-	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) { return { Position() + cherrysoda::Math::Vec3(v), Position() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
-
+	inline cherrysoda::Math::AABB GetAABB() const { return { Position(), Position() + cherrysoda::Math::Vec3(static_cast<float>(Size())) }; }
+	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const { return { Position() + cherrysoda::Math::Vec3(v), Position() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
 
 	void Update() override;
 

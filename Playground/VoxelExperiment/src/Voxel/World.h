@@ -28,6 +28,13 @@ public:
 		return index >= 0 ? GetChunks() + index : nullptr;
 	}
 
+	inline const Chunk* GetChunks() const { return m_chunks; }
+	inline const Chunk* GetChunk(const cherrysoda::Math::IVec3& v) const
+	{
+		int index = GetChunkIndex(v);
+		return index >= 0 ? GetChunks() + index : nullptr;
+	}
+
 	Block* GetBlock(const cherrysoda::Math::IVec3& v, Chunk** chunkOut = nullptr)
 	{
 		int worldBlockSize = WorldBlockSize();
@@ -50,6 +57,11 @@ public:
 		}	
 	}
 
+	cherrysoda::Math::IVec3 GetIndexOfBlockAt(const cherrysoda::Math::Vec3& v)
+	{
+		return cherrysoda::Math::IVec3(v - BasePosition());
+	}
+
 	void SetBlockType(int index, Block::Type type)
 	{
 		int worldBlockSize = WorldBlockSize();
@@ -64,6 +76,10 @@ public:
 	inline cherrysoda::Math::Vec3 BasePosition() const { return m_basePosition; }
 	inline cherrysoda::Math::Vec3 GetChunkPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + GetWorldChunkPosition(v); }
 	inline cherrysoda::Math::Vec3 GetBlockPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + cherrysoda::Math::Vec3(v); }
+
+	inline cherrysoda::Math::AABB GetAABB() const { return { BasePosition(), BasePosition() + cherrysoda::Math::Vec3(WorldBlockSize()) }; }
+	inline cherrysoda::Math::AABB GetChunkAABB(const cherrysoda::Math::IVec3& v) const { cherrysoda::Math::AABB ret; auto ck = GetChunk(v); if (ck) ret = ck->GetAABB(); return ret; }
+	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const { return { BasePosition() + cherrysoda::Math::Vec3(v), BasePosition() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
 
 	static constexpr int Size() { return static_cast<int>(ms_worldSize); }
 	static constexpr int WorldBlockSize() { return Size() * Chunk::Size(); }
