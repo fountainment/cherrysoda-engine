@@ -21,7 +21,7 @@ public:
 		cherrysoda::Graphics::SetTransformMatrix(GetTransformMatrix());
 		cherrysoda::Graphics::SetMesh(GetMesh());
 		cherrysoda::Graphics::SetStateDefault();
-		cherrysoda::Graphics::Instance()->Submit();
+		cherrysoda::Graphics::SubmitOnCurrentRenderPass();
 	}
 
 	cherrysoda::Mesh<VERTEX_T>* GetMesh() { return &m_mesh; }

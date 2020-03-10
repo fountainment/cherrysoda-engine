@@ -12,9 +12,11 @@ using cherrysoda::Scene;
 void EverythingRenderer::Render(Scene* scene)
 {
 	// TODO: RenderState stuffs
-	Graphics::SetEffect(&m_effect);
-	Graphics::Instance()->SetCamera(GetCamera());
+	Graphics::BeginRenderPass(RenderPass());
+	Graphics::SetEffect(GetEffect());
+	Graphics::UseCurrentRenderPass()->SetCamera(GetCamera());
 	scene->Entities()->Render();
 	// TODO: Add DebugRender
 	Graphics::SetEffect(nullptr);
+	Graphics::EndRenderPass(RenderPass());
 }

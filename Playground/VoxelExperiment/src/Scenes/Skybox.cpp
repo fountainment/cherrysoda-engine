@@ -11,5 +11,5 @@ void Skybox::Render()
 	Graphics::SetTextureCube(&GameApp::ms_texCube);
 	Graphics::ScreenSpaceQuad(1.f, 1.f);
 	Graphics::SetStateNoDepth();
-	Graphics::Instance()->Submit();
+	Graphics::SubmitOnCurrentRenderPass();
 }

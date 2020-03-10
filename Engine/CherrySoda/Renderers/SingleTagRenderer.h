@@ -25,10 +25,14 @@ public:
 
 	inline void SetEffect(const Effect& effect) { *GetEffect() = effect; }
 
+	inline type::UInt16 RenderPass() { return m_renderPass; };
+	inline void RenderPass(type::UInt16 renderPass) { m_renderPass = renderPass; }
+
 private:
 	BitTag m_tag;
 	Camera m_camera;
 	Effect m_effect;
+	type::UInt16 m_renderPass = 0;
 };
 
 } // namespace cherrysoda

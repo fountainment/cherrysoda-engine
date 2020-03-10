@@ -125,7 +125,7 @@ void Engine::RenderCore()
 		m_scene->BeforeRender();
 	}
 
-	m_graphicsDevice->RenderPass(0);
+	m_graphicsDevice->BeginRenderPass(0);
 	// TODO: add RenderTarget
 	// m_graphicsDevice->SetRenderTarget(nullptr);
 	m_graphicsDevice->SetViewport(0, 0, GetWidth(), GetHeight());

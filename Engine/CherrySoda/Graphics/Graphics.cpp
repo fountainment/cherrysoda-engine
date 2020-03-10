@@ -355,6 +355,7 @@ void Graphics::Initialize()
 	ms_uniformParams   = CreateUniformVec4("u_params", 16);
 
 	ms_instance = new Graphics();
+	ms_renderPassHelperInstance = new Graphics();
 }
 
 void Graphics::Terminate()
@@ -472,7 +473,7 @@ void Graphics::SetStateNoDepth()
 
 void Graphics::Submit()
 {
-	bgfx::submit(RenderPass(), { ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader });
+	bgfx::submit(RenderPass(), { CurrentShader() });
 }
 
 void Graphics::Submit(Effect* effect)
@@ -480,9 +481,24 @@ void Graphics::Submit(Effect* effect)
 	bgfx::submit(RenderPass(), { effect->m_program });
 }
 
+void Graphics::Submit(cherrysoda::type::UInt16 renderPass)
+{
+	bgfx::submit(renderPass, { CurrentShader() });
+}
+
 void Graphics::Submit(cherrysoda::type::UInt16 renderPass, Effect* effect)
 {
 	bgfx::submit(renderPass, { effect->m_program });
+}
+
+void Graphics::SubmitOnCurrentRenderPass()
+{
+	bgfx::submit(CurrentRenderPass(), { CurrentShader() });
+}
+
+void Graphics::SubmitOnCurrentRenderPass(Effect* effect)
+{
+	bgfx::submit(CurrentRenderPass(), { effect->m_program });
 }
 
 void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft, float _width, float _height)
@@ -717,6 +733,7 @@ Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformParams   = Graphics::InvalidHandle;
 
 Graphics* Graphics::ms_instance = nullptr;
+Graphics* Graphics::ms_renderPassHelperInstance = nullptr;
 
 #define CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D) \
 Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \

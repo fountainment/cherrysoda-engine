@@ -4,6 +4,7 @@
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Util/Camera.h>
+#include <CherrySoda/Util/NumType.h>
 
 namespace cherrysoda {
 
@@ -19,9 +20,13 @@ public:
 
 	inline void SetEffect(const Effect& effect) { *GetEffect() = effect; }
 
+	inline type::UInt16 RenderPass() { return m_renderPass; };
+	inline void RenderPass(type::UInt16 renderPass) { m_renderPass = renderPass; }
+
 private:
 	Camera m_camera;
 	Effect m_effect;
+	type::UInt16 m_renderPass = 0;
 };
 
 } // namespace cherrysoda

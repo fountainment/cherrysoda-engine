@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Literals.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
@@ -113,8 +114,17 @@ public:
 
 	void RenderFrame();
 
-	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
-	inline type::UInt16 RenderPass() { return m_renderPassId; }
+	static inline void BeginRenderPass(type::UInt16 renderPassId) { Instance()->RenderPass(renderPassId); }
+	static inline void EndRenderPass(type::UInt16 renderPassId)
+	{
+		CHERRYSODA_ASSERT(Instance()->RenderPass() == renderPassId, \
+			CHERRYSODA_FORMAT("Current RenderPass %u != %u!\n", Instance()->RenderPass(), renderPassId));
+		Instance()->RenderPass(0);
+	}
+	static inline type::UInt16 CurrentRenderPass() { return Instance()->m_renderPassId; }
+	static inline Graphics* UseRenderPass(type::UInt16 renderPassId) { ms_renderPassHelperInstance->RenderPass(renderPassId); return ms_renderPassHelperInstance; }
+	static inline Graphics* UseCurrentRenderPass() { return Instance(); }
+
 	static void UpdateView();
 	void SetClearColor(const Color& color);
 	void SetClearDiscard();
@@ -133,7 +143,10 @@ public:
 	static void SetStateNoDepth();
 	void Submit();
 	void Submit(Effect* effect);
-	void Submit(type::UInt16 renderPass, Effect* effect);
+	static void Submit(type::UInt16 renderPass);
+	static void Submit(type::UInt16 renderPass, Effect* effect);
+	static void SubmitOnCurrentRenderPass();
+	static void SubmitOnCurrentRenderPass(Effect* effect);
 
 	static void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
 
@@ -173,12 +186,17 @@ public:
 	static void SetTextureCube(TextureCube* texture);
 	static void SetTextureCubeIrr(TextureCube* texture);
 
-	static Graphics* Instance() { return ms_instance; }
-
 private:
 	friend class Engine;
 
 	Graphics() {}
+
+	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
+	inline type::UInt16 RenderPass() { return m_renderPassId; }	
+
+	static inline ShaderHandle CurrentShader() { return ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader; }
+
+	static inline Graphics* Instance() { return ms_instance; }
 
 	type::UInt16 m_renderPassId = 0;	
 
@@ -197,6 +215,7 @@ private:
 	static UniformHandle ms_uniformParams;
 
 	static Graphics* ms_instance;
+	static Graphics* ms_renderPassHelperInstance;
 
 public:
 	#define CHERRYSODA_VERTEX_DECLARATION(VERTEX_T) \
