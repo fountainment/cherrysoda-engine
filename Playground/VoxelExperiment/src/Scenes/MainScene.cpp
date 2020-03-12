@@ -74,7 +74,7 @@ public:
 		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.2f);
 		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.2f);
 		leftStick *= Math_Length(leftStick) * 40.0f;
-		rightStick *= Math_LengthSq(rightStick) * 2.0f;
+		rightStick *= Math_LengthSq(rightStick) * 3.14f;
 		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));
 		Math::Vec3 targetDirection = Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[1], GetCamera()->GetLeftVector());
 		if (Math_Dot(Math_Normalize(Math_Cross(GetCamera()->GetUpVector(), targetDirection)), GetCamera()->GetLeftVector()) > 0.0f)
@@ -86,7 +86,6 @@ public:
 
 		// CHERRYSODA_DEBUG_FORMAT("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]);
 	}
-
 };
 
 void MainScene::Begin()
@@ -139,7 +138,7 @@ void MainScene::Begin()
 	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 70.f, 0.f));
 
 	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93f, 0.88f), 1.f, 0.f, 0.f); // Silver
-	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 0.f, 0.f);
+	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 0.1f, 0.f);
 	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.f, 0.f); // Gold
 
 	// Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));

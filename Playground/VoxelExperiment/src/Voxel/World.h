@@ -4,6 +4,7 @@
 #include "Voxel/Chunk.h"
 
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/STL.h>
 
 class World
 {
@@ -15,20 +16,25 @@ public:
 
 	Chunk* LoadChunks();
 
+	static constexpr int Size() { return static_cast<int>(ms_worldSize); }
+	static constexpr int WorldBlockSize() { return Size() * Chunk::Size(); }
+	static constexpr int ChunkAmount() { return Size() * Size() * Size(); }
+	static constexpr int BlockAmount() { return ChunkAmount() * Chunk::BlockAmount(); }
+
 	inline int GetChunkIndex(Chunk* chunk)
 	{
 		int index = static_cast<int>(chunk - GetChunks());
 		return (index >= 0 && index < ChunkAmount()) ? index : -1;
 	}
 
-	inline Chunk* GetChunks() { return m_chunks; }
+	inline Chunk* GetChunks() { return cherrysoda::STL::Data(m_chunks); }
 	inline Chunk* GetChunk(const cherrysoda::Math::IVec3& v)
 	{
 		int index = GetChunkIndex(v);
 		return index >= 0 ? GetChunks() + index : nullptr;
 	}
 
-	inline const Chunk* GetChunks() const { return m_chunks; }
+	inline const Chunk* GetChunks() const { return cherrysoda::STL::Data(m_chunks); }
 	inline const Chunk* GetChunk(const cherrysoda::Math::IVec3& v) const
 	{
 		int index = GetChunkIndex(v);
@@ -37,7 +43,7 @@ public:
 
 	Block* GetBlock(const cherrysoda::Math::IVec3& v, Chunk** chunkOut = nullptr)
 	{
-		int worldBlockSize = WorldBlockSize();
+		constexpr int worldBlockSize = WorldBlockSize();
 		if (v[0] < 0 || v[0] >= worldBlockSize || v[1] < 0 || v[1] >= worldBlockSize || v[2] < 0 || v[2] >=worldBlockSize) {
 			return nullptr;
 		}
@@ -64,7 +70,7 @@ public:
 
 	void SetBlockType(int index, Block::Type type)
 	{
-		int worldBlockSize = WorldBlockSize();
+		constexpr int worldBlockSize = WorldBlockSize();
 		int x = index;
 		int z = x % worldBlockSize;
 		x /= worldBlockSize;
@@ -81,15 +87,10 @@ public:
 	inline cherrysoda::Math::AABB GetChunkAABB(const cherrysoda::Math::IVec3& v) const { cherrysoda::Math::AABB ret; auto ck = GetChunk(v); if (ck) ret = ck->GetAABB(); return ret; }
 	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const { return { BasePosition() + cherrysoda::Math::Vec3(v), BasePosition() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
 
-	static constexpr int Size() { return static_cast<int>(ms_worldSize); }
-	static constexpr int WorldBlockSize() { return Size() * Chunk::Size(); }
-	static constexpr int ChunkAmount() { return Size() * Size() * Size(); }
-	static constexpr int BlockAmount() { return ChunkAmount() * Chunk::BlockAmount(); }
-
 	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(const cherrysoda::Math::IVec3& v) { return cherrysoda::Math::Vec3(v * Chunk::Size()); }
 
 private:
-	Chunk* m_chunks = nullptr;
+	cherrysoda::STL::Vector<Chunk> m_chunks;
 	cherrysoda::Math::Vec3 m_basePosition;
 
 	static inline int GetChunkIndex(const cherrysoda::Math::IVec3& v)
@@ -99,6 +100,9 @@ private:
 	}
 	
 	static constexpr int ms_worldSize = 8; 
+
+public:
+	CHERRYSODA_ITERABLE(m_chunks);
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_WORLD_H_

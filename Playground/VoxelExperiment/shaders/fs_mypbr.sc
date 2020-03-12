@@ -21,7 +21,7 @@ void main()
     vec3 V = normalize(u_camPos.xyz - v_worldPos.xyz); 
     vec3 N = normalize(v_normal.xyz);
     float specular = 1.0 - u_roughness;
-    float m = specular * 500.0;
+    float m = specular * 1000.0;
     vec3 RF0 = pow(u_albedo, vec3_splat(gamma));
     vec3 RF90 = vec3_splat(1.0);
     float CosThetaI = max(dot(V, N), 0.0);

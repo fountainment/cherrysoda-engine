@@ -97,6 +97,12 @@ public:
 	}
 
 	template<typename T>
+	static inline auto Data(T& container)
+	{
+		return container.data();
+	}
+
+	template<typename T>
 	static inline void Clear(T& container)
 	{
 		container.clear();

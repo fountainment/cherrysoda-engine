@@ -18,6 +18,9 @@ public:
 
 	Chunk();
 
+	static constexpr int Size() { return static_cast<int>(ms_ChunkSize); }
+	static constexpr int BlockAmount() { return Size() * Size() * Size(); }
+
 	void IndexVec3(int x, int y, int z) { m_chunkIndex = cherrysoda::Math::IVec3(x, y, z); }
 	cherrysoda::Math::Vec3 IndexVec3() { return m_chunkIndex; }
 
@@ -48,10 +51,6 @@ public:
 
 	void Update() override;
 
-	static constexpr int Size() { return static_cast<int>(ms_ChunkSize); }
-	static constexpr int BlockAmount() { return Size() * Size() * Size(); }
-	static constexpr cherrysoda::type::UInt16 ms_ChunkSize = 16; 
-
 	World* m_world = nullptr;
 
 private:
@@ -61,11 +60,16 @@ private:
 	ChunkGraphicsComponent* m_chunkGraphicsComponent;
 	bool m_changed = false;
 
+	static constexpr cherrysoda::type::UInt16 ms_ChunkSize = 16;
+
 	static inline int GetBlockIndex(const cherrysoda::Math::IVec3& v)
 	{ 
 		if (v[0] < 0 || v[0] >= Size() || v[1] < 0 || v[1] >= Size() || v[2] < 0 || v[2] >= Size()) return -1;
 		return v[2] * Size() * Size() + v[1] * Size() + v[0];
 	}
+
+public:
+	CHERRYSODA_ITERABLE(m_blocks);
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_CHUNK_H_
