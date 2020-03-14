@@ -151,7 +151,7 @@ public:
 		PlayerIndex m_playerIndex;
 		GamePadState m_currentState;
 		GamePadState m_previousState;
-		bool m_attached;
+		bool m_attached = false;
 
 		float m_rumbleStrength = 0.f;
 		float m_rumbleTime = 0.f;

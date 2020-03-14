@@ -180,7 +180,7 @@ public:
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
-	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit = false);
+	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit = true);
 	static void SubmitUniformLight();
 
 	static void SetTextureCube(TextureCube* texture);

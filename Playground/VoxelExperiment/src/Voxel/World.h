@@ -84,7 +84,13 @@ public:
 	inline cherrysoda::Math::Vec3 GetBlockPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + cherrysoda::Math::Vec3(v); }
 
 	inline cherrysoda::Math::AABB GetAABB() const { return { BasePosition(), BasePosition() + cherrysoda::Math::Vec3(static_cast<float>(WorldBlockSize())) }; }
-	inline cherrysoda::Math::AABB GetChunkAABB(const cherrysoda::Math::IVec3& v) const { cherrysoda::Math::AABB ret; auto ck = GetChunk(v); if (ck) ret = ck->GetAABB(); return ret; }
+	inline cherrysoda::Math::AABB GetChunkAABB(const cherrysoda::Math::IVec3& v) const
+	{
+		cherrysoda::Math::AABB ret = { Vec3_Zero, Vec3_Zero };
+		auto ck = GetChunk(v);
+		if (ck) ret = ck->GetAABB();
+		return ret;
+	}
 	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const { return { BasePosition() + cherrysoda::Math::Vec3(v), BasePosition() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
 
 	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(const cherrysoda::Math::IVec3& v) { return cherrysoda::Math::Vec3(v * Chunk::Size()); }
