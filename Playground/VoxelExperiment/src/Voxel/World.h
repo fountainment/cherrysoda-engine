@@ -44,7 +44,7 @@ public:
 	Block* GetBlock(const cherrysoda::Math::IVec3& v, Chunk** chunkOut = nullptr)
 	{
 		constexpr int worldBlockSize = WorldBlockSize();
-		if (v[0] < 0 || v[0] >= worldBlockSize || v[1] < 0 || v[1] >= worldBlockSize || v[2] < 0 || v[2] >=worldBlockSize) {
+		if (v.x < 0 || v.x >= worldBlockSize || v.y < 0 || v.y >= worldBlockSize || v.z < 0 || v.z >=worldBlockSize) {
 			return nullptr;
 		}
 		Chunk* chunk = GetChunk(v / Chunk::Size());
@@ -101,8 +101,8 @@ private:
 
 	static inline int GetChunkIndex(const cherrysoda::Math::IVec3& v)
 	{
-		if (v[0] < 0 || v[0] >= Size() || v[1] < 0 || v[1] >= Size() || v[2] < 0 || v[2] >= Size()) return -1;
-		return v[2] * Size() * Size() + v[1] * Size() + v[0];
+		if (v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()) return -1;
+		return v.z * Size() * Size() + v.y * Size() + v.x;
 	}
 	
 	static constexpr int ms_worldSize = 8; 

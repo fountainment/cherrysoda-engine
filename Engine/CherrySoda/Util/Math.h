@@ -56,6 +56,7 @@
 
 #define Math_Abs        glm::abs
 #define Math_Cross      glm::cross
+#define Math_Cos        glm::cos
 #define Math_Dot        glm::dot
 #define Math_Length     glm::length
 #define Math_LengthSq   glm::length2
@@ -63,12 +64,17 @@
 #define Math_Max        glm::max 
 #define Math_Normalize  glm::normalize
 #define Math_Rotate     glm::rotate
+#define Math_Sin        glm::sin
 
 namespace cherrysoda {
 
 class Math
 {
 public:
+	static constexpr float Pi     = 3.14159265357878323846f;
+	static constexpr float Pi2    = Pi * 2.0f;
+	static constexpr float PiHalf = Pi * 0.5f;
+
 	using Vec2 = glm::vec2;
 	using Vec3 = glm::vec3;
 	using Vec4 = glm::vec4;
@@ -107,6 +113,16 @@ public:
 	};
 
 	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
+
+	static inline int BitCount(int x)
+	{
+		int ret = 0;
+		while (x) {
+			x &= ~(x & (-x));
+			++ret;
+		}
+		return ret;
+	}
 };
 
 } // namespace cherrysoda

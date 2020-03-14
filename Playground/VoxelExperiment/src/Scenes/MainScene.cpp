@@ -1,39 +1,13 @@
 #include "MainScene.h"
 
-#include <CherrySoda/Engine.h>
-#include <CherrySoda/Entity.h>
-#include <CherrySoda/Scene.h>
-#include <CherrySoda/Input/MInput.h>
-#include <CherrySoda/InternalUtilities/EntityList.h>
-#include <CherrySoda/Components/Component.h>
-#include <CherrySoda/Graphics/Effect.h>
-#include <CherrySoda/Graphics/Graphics.h>
-#include <CherrySoda/Renderers/Renderer.h>
-#include <CherrySoda/Renderers/SingleTagRenderer.h>
-#include <CherrySoda/Util/BitTag.h>
-#include <CherrySoda/Util/Log.h>
-#include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Util/NumType.h>
-#include <CherrySoda/Util/STL.h>
-#include <CherrySoda/Util/String.h>
+#include <CherrySoda/CherrySoda.h>
 
 #include "Program.h"
 #include "Scenes/Skybox.h"
 #include "Voxel/Chunk.h"
 #include "Voxel/World.h"
 
-using cherrysoda::BitTag;
-using cherrysoda::Camera;
-using cherrysoda::Component;
-using cherrysoda::Effect;
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::SingleTagRenderer;
-using cherrysoda::Graphics;
-using cherrysoda::Math;
-using cherrysoda::MInput;
-using cherrysoda::Renderer;
-using cherrysoda::STL;
+using namespace cherrysoda;
 
 class SkyboxRenderer : public SingleTagRenderer
 {
@@ -46,7 +20,7 @@ public:
 		SetEffect(GameApp::ms_skyboxShader);
 	}
 
-	void BeforeRender(cherrysoda::Scene* scene) override
+	void BeforeRender(Scene* scene) override
 	{
 		Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 	}
@@ -63,18 +37,18 @@ public:
 		SetEffect(GameApp::ms_voxelShader);
 	}
 
-	void BeforeRender(cherrysoda::Scene* scene) override
+	void BeforeRender(Scene* scene) override
 	{
 		Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 	}
 
-	void Update(cherrysoda::Scene* scene) override
+	void Update(Scene* scene) override
 	{
 		float deltaTime = Engine::Instance()->DeltaTime();
 		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.2f);
 		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.2f);
 		leftStick *= Math_Length(leftStick) * 40.0f;
-		rightStick *= Math_LengthSq(rightStick) * 3.14f;
+		rightStick *= Math_LengthSq(rightStick) * Math::Pi;
 		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));
 		Math::Vec3 targetDirection = Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[1], GetCamera()->GetLeftVector());
 		if (Math_Dot(Math_Normalize(Math_Cross(GetCamera()->GetUpVector(), targetDirection)), GetCamera()->GetLeftVector()) > 0.0f)
@@ -138,13 +112,8 @@ void MainScene::Begin()
 	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 70.f, 0.f));
 
 	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93f, 0.88f), 1.f, 0.f, 0.f); // Silver
-	Graphics::SetUniformMaterial(Math::Vec3(0.0277f), 0.3f, 0.1f, 0.f);
+	Graphics::SetUniformMaterial(Math::Vec3(0.08f), 0.3f, 0.1f, 0.f); // Glass
 	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.f, 0.f); // Gold
-
-	// Graphics::SetUniformLight(0, Math::Vec3(-5.f, 5.f, 8.f), Math::Vec3(1.f));
-	// Graphics::SetUniformLight(1, Math::Vec3(5.f, 5.f, 8.f), Math::Vec3(1.f));
-	// Graphics::SetUniformLight(2, Math::Vec3(-5.f, -5.f, 8.f), Math::Vec3(1.f));
-	// Graphics::SetUniformLight(3, Math::Vec3(5.f, -5.f, 8.f), Math::Vec3(1.f));
 
 	Graphics::SetUniformLight(0, Math::Vec3(  0.f, 68.f,   0.f), Vec3_One * 5.f, false);
 	Graphics::SetUniformLight(1, Math::Vec3( 30.f, 68.f,   0.f), Vec3_XUp * 5.f, false);
@@ -188,6 +157,13 @@ void MainScene::Update()
 			}
 		}
 	}
+
+	static float s_t = 0.f;
+	s_t += Engine::Instance()->DeltaTime();
+	Graphics::SetUniformLight(1, Math::Vec3(Math_Cos(s_t) * 30.0f, 68.f, Math_Sin(s_t) * 30.0f), Vec3_XUp * 5.f, false);
+	Graphics::SetUniformLight(2, Math::Vec3(Math_Cos(s_t + Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t + Math::Pi2 / 3.f) * 30.0f), Vec3_YUp * 5.f, false);
+	Graphics::SetUniformLight(3, Math::Vec3(Math_Cos(s_t - Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t - Math::Pi2 / 3.f) * 30.0f), Vec3_ZUp * 5.f, false);
+	Graphics::SubmitUniformLight();
 
 	base::Update();
 }

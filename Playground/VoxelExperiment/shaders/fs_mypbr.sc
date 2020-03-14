@@ -22,7 +22,7 @@ void main()
     vec3 N = normalize(v_normal.xyz);
     float specular = 1.0 - u_roughness;
     float m = specular * 1000.0;
-    vec3 RF0 = pow(u_albedo, vec3_splat(gamma));
+    vec3 RF0 = u_albedo;
     vec3 RF90 = vec3_splat(1.0);
     float CosThetaI = max(dot(V, N), 0.0);
     vec3 RF = RF0 + (RF90 - RF0) * pow((1.0 - CosThetaI), 5.0); 
