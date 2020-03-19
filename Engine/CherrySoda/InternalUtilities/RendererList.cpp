@@ -2,12 +2,14 @@
 
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Renderers/Renderer.h>
+#include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::RendererList;
 
 using cherrysoda::Renderer;
 using cherrysoda::Scene;
+using cherrysoda::Draw;
 using cherrysoda::STL;
 
 RendererList::RendererList(Scene* scene)
@@ -54,7 +56,7 @@ void RendererList::BeforeRender()
 {
 	for (auto renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
-		//Draw::SetRenderer(renderer);
+		Draw::SetRenderer(renderer);
 		renderer->BeforeRender(m_scene);
 	}
 }
@@ -63,7 +65,7 @@ void RendererList::Render()
 {
 	for (auto renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
-		//Draw::SetRenderer(renderer);
+		Draw::SetRenderer(renderer);
 		renderer->Render(m_scene);
 	}
 }
@@ -72,7 +74,7 @@ void RendererList::AfterRender()
 {
 	for (auto renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
-		//Draw::SetRenderer(renderer);
+		Draw::SetRenderer(renderer);
 		renderer->AfterRender(m_scene);
 	}
 }

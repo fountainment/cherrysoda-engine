@@ -34,10 +34,10 @@ public:
 	void RemoveSelf();	
 
 	template <class T>
-	T SceneAs() { return dynamic_cast<T>(GetScene()); }
+	T* SceneAs() { return dynamic_cast<T*>(GetScene()); }
 
 	template <class T>
-	T EntityAs() { return dynamic_cast<T>(GetEntity()); }
+	T* EntityAs() { return dynamic_cast<T*>(GetEntity()); }
 
 	inline Entity* GetEntity() { return m_entity; };
 	inline const Entity* GetEntity() const { return m_entity; };
