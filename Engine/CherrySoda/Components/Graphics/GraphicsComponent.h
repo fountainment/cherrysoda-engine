@@ -24,6 +24,7 @@ public:
 	inline void RenderPosition(Math::Vec3 pos3d) { Position(pos3d - EntityPos()); }
 	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
 
+	inline const Color GetColor() const { return m_color; }
 	virtual const Math::Mat4 GetTransformMatrix() const;
 
 private:

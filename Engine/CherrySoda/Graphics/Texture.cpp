@@ -1,9 +1,12 @@
 #include <CherrySoda/Graphics/Texture.h>
 
+#include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
 using cherrysoda::Graphics;
+using cherrysoda::Math;
 using cherrysoda::Texture;
 using cherrysoda::Texture2D;
 using cherrysoda::TextureCube;

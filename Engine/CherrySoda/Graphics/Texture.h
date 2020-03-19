@@ -26,21 +26,16 @@ public:
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
 	inline const Math::IVec2 Size() const { return Math::IVec2(Width(), Height()); }
-
-	virtual const Math::IRectangle* ClipRect() { return nullptr; }
+	inline int TotalPixels() const { return Width() * Height(); }
 
 private:
 	int m_width  = 0;
 	int m_height = 0;
 };
 
-class Subtexture2D : public Texture2D
+class Texture3D : public Texture
 {
-public:
-	const Math::IRectangle* ClipRect() override { return &m_clipRect; }
-
-private:
-	Math::IRectangle m_clipRect;
+	// TODO: Add Texture3D
 };
 
 class TextureCube : public Texture
