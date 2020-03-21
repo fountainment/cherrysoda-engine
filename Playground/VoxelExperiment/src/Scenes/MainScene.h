@@ -29,6 +29,7 @@ private:
 	cherrysoda::SingleTagRenderer* m_voxelRenderer = nullptr;
 	cherrysoda::SingleTagRenderer* m_skyboxRenderer = nullptr;
 	World* m_voxelWorld = nullptr;
+	cherrysoda::Entity* m_player = nullptr;
 	cherrysoda::Entity* m_skybox = nullptr;
 	cherrysoda::Graphics::UniformHandle m_uniformMtx;
 };

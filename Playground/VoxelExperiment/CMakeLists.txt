@@ -3,10 +3,12 @@ set(CHERRYSODA_EXECUTABLE_SRC
   src/Program.h
   src/VoxelExperiment.cpp
   src/VoxelExperiment.h
+  src/Entities/Player.cpp
+  src/Entities/Player.h
+  src/Graphics/Skybox.cpp
+  src/Graphics/Skybox.h
   src/Scenes/MainScene.cpp
   src/Scenes/MainScene.h
-  src/Scenes/Skybox.cpp
-  src/Scenes/Skybox.h
   src/Voxel/Block.cpp
   src/Voxel/Block.h
   src/Voxel/Chunk.cpp

@@ -3,7 +3,8 @@
 #include <CherrySoda/CherrySoda.h>
 
 #include "Program.h"
-#include "Scenes/Skybox.h"
+#include "Entities/Player.h"
+#include "Graphics/Skybox.h"
 #include "Voxel/Chunk.h"
 #include "Voxel/World.h"
 
@@ -41,25 +42,6 @@ public:
 	{
 		Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 	}
-
-	void Update(Scene* scene) override
-	{
-		float deltaTime = Engine::Instance()->DeltaTime();
-		Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.2f);
-		Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.2f);
-		leftStick *= Math_Length(leftStick) * 40.0f;
-		rightStick *= Math_LengthSq(rightStick) * Math::Pi;
-		GetCamera()->Direction(Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[0], GetCamera()->GetUpVector()));
-		Math::Vec3 targetDirection = Math::RotateVector(GetCamera()->Direction(), deltaTime * rightStick[1], GetCamera()->GetLeftVector());
-		if (Math_Dot(Math_Normalize(Math_Cross(GetCamera()->GetUpVector(), targetDirection)), GetCamera()->GetLeftVector()) > 0.0f)
-		{
-			 GetCamera()->Direction(targetDirection);
-		}
-		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetFrontVector() * leftStick[1]);
-		GetCamera()->Position(GetCamera()->Position() + deltaTime * GetCamera()->GetRightVector() * leftStick[0]);
-
-		// CHERRYSODA_DEBUG_FORMAT("%f %f %f %f\n", leftStick[0], leftStick[1], rightStick[0], rightStick[1]);
-	}
 };
 
 void MainScene::Begin()
@@ -74,12 +56,23 @@ void MainScene::Begin()
 
 	ms_skyboxTag = BitTag("skybox");
 	ms_voxelTag = BitTag("voxel");
+
 	m_skyboxRenderer = new SkyboxRenderer(ms_skyboxTag);
+	m_skyboxRenderer->RenderPass(1);
+	m_skyboxRenderer->GetCamera()->Width(1);
+	m_skyboxRenderer->GetCamera()->Height(1);
+	m_skyboxRenderer->GetCamera()->Position(Math::Vec3(0.5f, 0.5f, 0.5f));
+	m_skyboxRenderer->GetCamera()->FOV(90.f);
+
 	m_voxelRenderer = new VoxelRenderer(ms_voxelTag);
+	m_voxelRenderer->RenderPass(2);
 
 	m_skybox = new Entity;
 	m_skybox->Add(new Skybox);
 	m_skybox->AddTag(ms_skyboxTag);
+
+	m_player = new Player(m_voxelRenderer->GetCamera());
+	m_player->Position(Math::Vec3(0.f, 70.f, 0.f));
 
 	Math::Vec3 worldBasePosition(-World::Size() * Chunk::Size() / 2.0f);
 	m_voxelWorld = new World(worldBasePosition);
@@ -102,15 +95,6 @@ void MainScene::Begin()
 		Add(chunks + i);
 	}
 
-	m_skyboxRenderer->RenderPass(1);
-	m_skyboxRenderer->GetCamera()->Width(1);
-	m_skyboxRenderer->GetCamera()->Height(1);
-	m_skyboxRenderer->GetCamera()->Position(Math::Vec3(0.5f, 0.5f, 0.5f));
-	m_skyboxRenderer->GetCamera()->FOV(90.f);
-
-	m_voxelRenderer->RenderPass(2);
-	m_voxelRenderer->GetCamera()->Position(Math::Vec3(0.f, 70.f, 0.f));
-
 	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93f, 0.88f), 1.f, 0.f, 0.f); // Silver
 	Graphics::SetUniformMaterial(Math::Vec3(0.08f), 0.3f, 0.1f, 0.f); // Glass
 	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.f, 0.f); // Gold
@@ -127,6 +111,7 @@ void MainScene::Begin()
 
 	// Entities
 	Add(m_skybox);
+	Add(m_player);
 }
 
 void MainScene::BeforeRender()
