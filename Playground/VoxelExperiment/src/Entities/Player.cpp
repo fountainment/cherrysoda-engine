@@ -13,16 +13,17 @@ void PlayerControl::Update()
 	Math::Vec2 leftStick = MInput::GamePads(0)->GetLeftStick(0.2f);
 	Math::Vec2 rightStick = MInput::GamePads(0)->GetRightStick(0.2f);
 	leftStick *= Math_Length(leftStick) * 40.0f;
-	rightStick *= Math_LengthSq(rightStick) * Math::Pi;
+	rightStick *= Math_Length(rightStick) * Math::Pi * Math::Vec2(1.2f, 1.f);
 
-	player->Move(deltaTime * player->FacingDirection() * leftStick[1]);
-	player->Move(deltaTime * player->RightDirection() * leftStick[0]);
+	player->RotateXY(deltaTime * rightStick);
+	player->MoveXY(deltaTime * leftStick);
 }
 
 void PlayerCamera::Update()
 {
 	auto player = EntityAs<Player>();
 	CHERRYSODA_ASSERT(player, "PlayerCamera can only be used on Player!\n");
+
 	GetCamera()->Direction(player->FacingDirection());
-	GetCamera()->Position(GetEntity()->Position());
+	GetCamera()->Position(player->Position());
 }

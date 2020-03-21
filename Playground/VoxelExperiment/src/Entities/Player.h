@@ -48,11 +48,28 @@ public:
 	}
 
 	inline void Move(const cherrysoda::Math::Vec3& delta) { Position(Position() + delta); }
-	inline cherrysoda::Math::Vec3 FacingDirection() { return m_direction; }
-	inline cherrysoda::Math::Vec3 RightDirection() { return Vec3_XUp; }
+	inline void MoveXY(const cherrysoda::Math::Vec2& xy)
+	{
+		Move(FacingDirection() * xy.y);
+		Move(LeftDirection() * -xy.x);
+	}
+	inline void RotateXY(const cherrysoda::Math::Vec2& xy)
+	{
+		m_leftDirection = Math_RotateVector(LeftDirection(), xy.x, UpDirection());
+		m_direction = Math_RotateVector(FacingDirection(), xy.x, UpDirection());
+		auto newDirection = Math_RotateVector(FacingDirection(), xy.y, LeftDirection());
+		if (Math_Dot(Math_Normalize(Math_Cross(newDirection, LeftDirection())), UpDirection()) > 0.f) {
+			m_direction = newDirection;
+		}
+	}
+	inline cherrysoda::Math::Vec3 FacingDirection() const { return m_direction; }
+	inline cherrysoda::Math::Vec3 LeftDirection() const { return m_leftDirection; }
+	inline cherrysoda::Math::Vec3 UpDirection() const { return m_upDirection; }
 
 private:
 	cherrysoda::Math::Vec3 m_direction = -Vec3_ZUp;
+	cherrysoda::Math::Vec3 m_leftDirection = -Vec3_XUp;
+	cherrysoda::Math::Vec3 m_upDirection = Vec3_YUp;
 };
 
 #endif // _VOXELEXPERIMENT_PLAYER_H_

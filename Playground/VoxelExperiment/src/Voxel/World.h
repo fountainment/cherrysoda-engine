@@ -107,7 +107,7 @@ private:
 		return v.z * Size() * Size() + v.y * Size() + v.x;
 	}
 	
-	static constexpr int ms_worldSize = 8; 
+	static constexpr int ms_worldSize = 8;
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_WORLD_H_
