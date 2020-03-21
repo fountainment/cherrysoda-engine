@@ -118,6 +118,8 @@ public:
 		inline int Height() const { return m_size.y; }
 		inline int Left() const { return X(); }
 		inline int Right() const { return X() + Width(); }
+		inline int Top() const { return Y() + Height(); }
+		inline int Bottom() const { return Y(); }
 	};
 
 	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);

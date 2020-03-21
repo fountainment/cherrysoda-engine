@@ -38,7 +38,7 @@ private:
 	inline void DrawOffset(const Math::IVec2& drawOffset) { m_drawOffset = drawOffset; }
 	inline void Width(int width) { m_width = width; }
 	inline void Height(int height) { m_height = height; }
-	inline Texture2D Texture() const { return m_texture; }
+	inline const Texture2D& Texture() const { return m_texture; }
 
 	Texture2D m_texture;
 	Math::IRectangle m_clipRect;

@@ -33,6 +33,9 @@ MTexture::MTexture(const MTexture& parent, int x, int y, int width, int height)
 	m_texture = parent.Texture();
 	ClipRect(parent.GetRelativeRect(x, y, width, height));
 	DrawOffset(Math::IVec2(-Math_Min(x - parent.DrawOffset().x, 0), -Math_Min(y - parent.DrawOffset().y, 0)));
+	Width(ClipRect().Width());
+	Height(ClipRect().Height());
+	SetUtil();
 }
 
 MTexture::MTexture(const MTexture& parent, const Math::IRectangle& clipRect)
@@ -45,8 +48,12 @@ Math::IRectangle MTexture::GetRelativeRect(int x, int y, int width, int height) 
 	int atX = ClipRect().X() - DrawOffset().x + x;
 	int atY = ClipRect().Y() - DrawOffset().y + y;
 
-	int rx = Math_Clamp(atX, ClipRect().Left(), ClipRect().Right());
-	return {  };
+	int rX = Math_Clamp(atX, ClipRect().Left(), ClipRect().Right());
+	int rY = Math_Clamp(atY, ClipRect().Bottom(), ClipRect().Top());
+	int rW = Math_Max(0, Math_Min(atX + Width(), ClipRect().Right()) - rX);
+	int rH = Math_Max(0, Math_Min(atY + Height(), ClipRect().Top()) - rY);
+
+	return { Math::IVec2(rX, rY), Math::IVec2(rW, rH) };
 }
 
 Math::IRectangle MTexture::GetRelativeRect(const Math::IRectangle& rect) const
@@ -56,8 +63,7 @@ Math::IRectangle MTexture::GetRelativeRect(const Math::IRectangle& rect) const
 
 MTexture MTexture::GetSubtexture(const Math::IRectangle& rect)
 {
-	auto r = GetRelativeRect(rect);
-	return MTexture(m_texture, r);
+	return MTexture(Texture(), rect);
 }
 
 void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, const Color& color, const Math::Vec3& scale, float zRotation)
@@ -67,4 +73,9 @@ void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, 
 
 void MTexture::SetUtil()
 {
+	m_center = Math::Vec2(Width(), Height()) * 0.5f;
+	m_leftUV = ClipRect().Left() / (float)Texture().Width();
+	m_rightUV = ClipRect().Right() / (float)Texture().Width();
+	m_bottomUV = ClipRect().Bottom() / (float)Texture().Height();
+	m_topUV = ClipRect().Top() / (float)Texture().Height();
 }
