@@ -7,7 +7,10 @@
 
 using cherrysoda::MTexture;
 
+using cherrysoda::Color;
 using cherrysoda::Math;
+using cherrysoda::String;
+using cherrysoda::Texture2D;
 
 MTexture MTexture::FromFile(const String& filename)
 {

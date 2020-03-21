@@ -18,17 +18,17 @@ void main()
     const float maxLod = 3.0;
 
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    vec3 V = normalize(u_camPos.xyz - v_worldPos.xyz); 
+    vec3 V = normalize(u_camPos.xyz - v_worldPos.xyz);
     vec3 N = normalize(v_normal.xyz);
     float specular = 1.0 - u_roughness;
     float m = specular * 1000.0;
     vec3 RF0 = u_albedo;
     vec3 RF90 = vec3_splat(1.0);
     float CosThetaI = max(dot(V, N), 0.0);
-    vec3 RF = RF0 + (RF90 - RF0) * pow((1.0 - CosThetaI), 5.0); 
+    vec3 RF = RF0 + (RF90 - RF0) * pow((1.0 - CosThetaI), 5.0);
     vec3 R = reflect(-V, N);
-    vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz * v_color0.xyz, vec3_splat(gamma)); 
-    vec3 specTex = pow(textureCubeLod(s_texCube, R, u_roughness * maxLod).xyz, vec3_splat(gamma)); 
+    vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz * v_color0.xyz, vec3_splat(gamma));
+    vec3 specTex = pow(textureCubeLod(s_texCube, R, u_roughness * maxLod).xyz, vec3_splat(gamma));
     vec3 Cdiff = diffTex * v_color0.xyz * (1.0 - u_metallic);
     vec3 Cspec = specTex * u_metallic;
     color.xyz += RF * Cspec;
@@ -48,7 +48,7 @@ void main()
         }
         vec3 RF = RF0 + (vec3_splat(1.0) - RF0) * pow((1.0 - max(dot(N, V), 0.0)), 5.0);
         float attenuation = 1.0 / pow((len / lightRadius) + 1.0, 2.0);
-        vec3 L0 = (1.0 / Pi * v_color0.xyz * (vec3_splat(1.0) - RF) * (1.0 - u_metallic) + (u_metallic + specular) * vec3_splat(0.5) * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
+        vec3 L0 = (1.0 / Pi * v_color0.xyz * (1.0 - RF) * (1.0 - u_metallic) + (u_metallic + specular) * 0.5 * RF * (m + 8.0) / (8.0 * Pi) * pow(cosThetah, m)) * (El * cosThetai * attenuation);
 
         color.xyz += L0;
     }
