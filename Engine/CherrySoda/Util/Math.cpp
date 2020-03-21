@@ -2,7 +2,7 @@
 
 using cherrysoda::Math;
 
-const Math::Mat4 Math::GetOrientationMatrix(const Math::Mat4& matrix)
+const Math::Mat4 Math::GetOrientationMatrix_(const Math::Mat4& matrix)
 {
 	Vec3 scale, translation, skew;
 	Quat rotation;
@@ -12,7 +12,7 @@ const Math::Mat4 Math::GetOrientationMatrix(const Math::Mat4& matrix)
 	return glm::toMat4(rotation);
 }
 
-bool Math::RaycastAABB(const Math::Vec3& start, const Math::Vec3& direction, const Math::AABB& aabb, float* t1 /* = nullptr */, float* t2 /* = nullptr */)
+bool Math::RaycastAABB_(const Math::Vec3& start, const Math::Vec3& direction, const Math::AABB& aabb, float* t1 /* = nullptr */, float* t2 /* = nullptr */)
 {
 	/*
 	x = a + tx'

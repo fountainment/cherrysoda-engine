@@ -56,7 +56,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 					};
 					int planeMask = chunk->GetBlockSurrounding(Math::IVec3(i, j, k));
 					if (planeMask > 0) {
-						overallQuadAmount += Math::BitCount(planeMask);
+						overallQuadAmount += Math_BitCount(planeMask);
 						STL::Add(pendingActions, [planeMask, i, j, k, color, this]() { AddCube(Math::Vec3(i, j, k), 1.f, color, planeMask); });
 					}
 				}

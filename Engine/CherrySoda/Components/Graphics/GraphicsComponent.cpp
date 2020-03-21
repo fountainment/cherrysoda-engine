@@ -5,11 +5,11 @@ using cherrysoda::Math;
 
 const Math::Mat4 GraphicsComponent::GetTransformMatrix() const
 {
-	return Math::TranslateMat4(
-		Math::ScaleMat4(
+	return Math_Translate(
+		Math_Scale(
 			Math_Rotate(
-				Math::TranslateMat4(
-					Mat4_Identity,
+				Math_Translate(
+					Math_Identity<Math::Mat4>(),
 				RenderPosition()),
 			ZRotation(), Vec3_ZUp),
 		Scale()),

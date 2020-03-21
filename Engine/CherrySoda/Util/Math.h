@@ -41,8 +41,6 @@
 #define Vec3_YUp        cherrysoda::Math::Vec3(0.f,1.f,0.f)
 #define Vec3_ZUp        cherrysoda::Math::Vec3(0.f,0.f,1.f)
 
-#define Mat4_Identity   cherrysoda::Math::Mat4(1.f)
-
 #define IVec2_Zero      cherrysoda::Math::IVec2(0)
 #define IVec2_One       cherrysoda::Math::IVec2(1)
 #define IVec2_XUp       cherrysoda::Math::IVec2(1,0)
@@ -65,7 +63,20 @@
 #define Math_Max        glm::max 
 #define Math_Normalize  glm::normalize
 #define Math_Rotate     glm::rotate
+#define Math_Radians    glm::radians
 #define Math_Sin        glm::sin
+
+#define Math_Identity     glm::identity
+#define Math_Inverse      glm::inverse
+#define Math_LookAt       glm::lookAt
+#define Math_Perspective  glm::perspective
+#define Math_Scale        glm::scale
+#define Math_Translate    glm::translate
+
+#define Math_BitCount             cherrysoda::Math::BitCount_
+#define Math_RotateVector         cherrysoda::Math::RotateVector_
+#define Math_GetOrientationMatrix cherrysoda::Math::GetOrientationMatrix_
+#define Math_RaycastAABB          cherrysoda::Math::RaycastAABB_
 
 namespace cherrysoda {
 
@@ -85,21 +96,6 @@ public:
 	using IVec2 = glm::i32vec2;
 	using IVec3 = glm::i32vec3;
 	using IVec4 = glm::i32vec4;
-
-	static constexpr auto LookAt = glm::lookAt<glm::f32, glm::qualifier::defaultp>;
-	static constexpr auto Perspective = glm::perspective<glm::f32>;
-
-	static constexpr auto IdentityMat4 = glm::identity<Mat4>;
-	static constexpr auto InverseMat4 = glm::inverse<4, 4, glm::f32, glm::qualifier::defaultp>;
-	static constexpr auto TranslateMat4 = glm::translate<float,glm::qualifier::defaultp>;
-	static constexpr auto ScaleMat4 = glm::scale<float,glm::qualifier::defaultp>;
-
-	static inline const Vec3 RotateVector(const Vec3& v3, float angle, const Vec3& axis)
-	{
-		return Vec3(Vec4(v3, 1.f) * glm::rotate(Mat4_Identity, angle, axis));
-	}
-
-	static const Mat4 GetOrientationMatrix(const Mat4& matrix);
 
 	struct AABB
 	{
@@ -122,9 +118,16 @@ public:
 		inline int Bottom() const { return Y(); }
 	};
 
-	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
+	static inline const Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis)
+	{
+		return Vec3(Vec4(v3, 1.f) * Math_Rotate(Math_Identity<Mat4>(), angle, axis));
+	}
 
-	static inline int BitCount(int x)
+	static const Mat4 GetOrientationMatrix_(const Mat4& matrix);
+
+	static bool RaycastAABB_(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
+
+	static inline int BitCount_(int x)
 	{
 		int ret = 0;
 		while (x) { x &= ~(x & (-x)); ++ret; }
