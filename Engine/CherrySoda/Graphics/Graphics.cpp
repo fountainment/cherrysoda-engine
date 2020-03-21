@@ -568,7 +568,7 @@ Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vecto
 	).idx;
 }
 
-void Graphics::SetTransientIndexBuffer(const STL::Vector<type::UInt16>& indices)
+void Graphics::SetTransientIndexBuffer(const STL::Vector<cherrysoda::type::UInt16>& indices)
 {
 	auto indexAmount = static_cast<cherrysoda::type::UInt32>(STL::Count(indices));
 	if (!indexAmount) return;
