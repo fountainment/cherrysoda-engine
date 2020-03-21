@@ -13,13 +13,14 @@ namespace crsd = cherrysoda;
 using crsd::Engine;
 using crsd::Entity;
 using crsd::Math;
+using crsd::MeshInterface;
 using crsd::Color;
 using crsd::Graphics;
 using crsd::STL;
 
 void ChunkGraphicsComponent::EntityAwake()
 {
-	GetMesh()->SetIsDynamic(true);
+	GetMesh()->SetBufferType(MeshInterface::BufferType::Dynamic);
 	RebuildMesh();
 }
 

@@ -1,7 +1,7 @@
 #ifndef _CHERRYSODA_COMPONENTS_GRAPHICS_IMAGE_H_
 #define _CHERRYSODA_COMPONENTS_GRAPHICS_IMAGE_H_
 
-#include <CherrySoda/Graphics/GraphicsComponent.h>
+#include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Graphics/MTexture.h>
 
 // TODO: Use shared_ptr for texture?
@@ -11,6 +11,8 @@ namespace cherrysoda {
 class Image : public GraphicsComponent
 {
 public:
+	typedef GraphicsComponent base;
+
 	Image(const MTexture& texture)
 	: base(false)
 	, m_texture(texture)
@@ -33,6 +35,12 @@ public:
 	inline const  Math::Vec2 Size() const { return Math::Vec2(Width(), Height()); } 
 	inline const Math::Vec2 HalfSize() const { return Size() * 0.5f; }
 
+	Image& SetOrigin(float x, float y)
+	{
+		Origin(Math::Vec2(x, y));
+		return *this;
+	}
+
 	Image& CenterOrigin()
 	{
 		Origin(HalfSize());
@@ -42,6 +50,12 @@ public:
 	Image& JustifyOrigin(const Math::Vec2& at)
 	{
 		Origin(Size() * at);
+		return *this;
+	}
+
+	Image& JustifyOrigin(float x, float y)
+	{
+		Origin(Size() * Math::Vec2(x, y));
 		return *this;
 	}
 

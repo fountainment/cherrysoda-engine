@@ -14,13 +14,23 @@ namespace cherrysoda {
 class MeshInterface
 {
 public:
-	virtual bool IsDynamic() const = 0;
+	enum class BufferType
+	{
+		Static,
+		Dynamic,
+		Transient
+	};
+
+	virtual BufferType GetBufferType() const = 0;
 
 	virtual size_t VertexBufferSize() const = 0;
 	virtual size_t IndexBufferSize() const = 0;
 	virtual Graphics::BufferHandle GetVertexBuffer() const = 0;
 	virtual Graphics::BufferHandle GetIndexBuffer() const = 0;
+
+	virtual void SetTransientBuffer() const = 0;
 };
+
 
 template <class VERTEX_T>
 class Mesh : public MeshInterface
@@ -36,7 +46,7 @@ public:
 	inline void AddIndex(type::UInt16 index) { STL::Add(m_indices, index); }
 	inline size_t VertexAmount() const { return STL::Count(m_vertices); }
 	inline size_t IndexAmount() const { return STL::Count(m_indices); }
-	inline void AddPoint(const VERTEX_T& v) { STL::Add(m_indices, static_cast<type::UInt16>(VertexAmount())); STL::Add(m_vertices, v); }
+	inline void AddPoint(const VERTEX_T& v) { AddVertex(v); AddIndex(static_cast<type::UInt16>(VertexAmount())); }
 	inline void AddLine(const VERTEX_T& v1, const VERTEX_T& v2) { AddPoint(v1); AddPoint(v2); }
 	inline void AddTriangle(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3) { AddPoint(v1); AddPoint(v2); AddPoint(v3); }
 	inline void AddQuad(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
@@ -70,16 +80,16 @@ public:
 		STL::Reserve(m_indices, IndexAmount() + i);
 	}
 
-	inline bool IsDynamic() const
+	inline BufferType GetBufferType() const
 	{
-		return m_isDynamic;
+		return m_bufferType;
 	}
 
-	inline void SetIsDynamic(bool isDynamic)
+	inline void SetBufferType(BufferType buffertype)
 	{
-		if (m_isDynamic != isDynamic) {
+		if (m_bufferType != buffertype) {
 			DestroyBuffer();
-			m_isDynamic = isDynamic;
+			m_bufferType = buffertype;
 			InitBuffer();
 		}
 	}
@@ -87,40 +97,70 @@ public:
 	void DestroyBuffer()
 	{
 		if (m_vertexBuffer != Graphics::InvalidHandle) {
-			if (IsDynamic())
-				Graphics::DestroyDynamicVertexBuffer(m_vertexBuffer);
-			else
+			switch (GetBufferType()) {
+			case BufferType::Static:
 				Graphics::DestroyVertexBuffer(m_vertexBuffer);
+				break;
+			case BufferType::Dynamic:
+				Graphics::DestroyDynamicVertexBuffer(m_vertexBuffer);
+				break;
+			case BufferType::Transient:
+				break;
+			}
 			m_vertexBuffer = Graphics::InvalidHandle;
 		}
 		if (m_indexBuffer != Graphics::InvalidHandle) {
-			if (IsDynamic())
-				Graphics::DestroyDynamicIndexBuffer(m_vertexBuffer);
-			else
+			switch (GetBufferType()) {
+			case BufferType::Static:
 				Graphics::DestroyIndexBuffer(m_indexBuffer);
+				break;
+			case BufferType::Dynamic:
+				Graphics::DestroyDynamicIndexBuffer(m_vertexBuffer);
+				break;
+			case BufferType::Transient:
+				break;
+			}
 			m_indexBuffer = Graphics::InvalidHandle;
 		}
 	}
 
 	void SubmitBuffer()
 	{
-		if (!IsDynamic()) {
+		switch (GetBufferType()) {
+		case BufferType::Static:
 			DestroyBuffer();
 			InitBuffer();
-		}
-		else {
+			break;
+		case BufferType::Dynamic:
 			if (!IsValid()) {
 				InitBuffer();
 			}
 			else if (STL::Count(m_vertices) > 0) {
-				Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, 0, m_vertices);
-				Graphics::UpdateDynamicIndexBuffer(m_indexBuffer, 0, m_indices);
+				UpdateVertexBuffer(0, m_vertices);
+				UpdateIndexBuffer(0, m_indices);
 			}
+			break;
+		case BufferType::Transient:
+			break;
 		}
 		SwapBuffer();
 	}
 
-	inline bool IsValid()
+	inline void UpdateVertexBuffer(int index, const STL::Vector<VERTEX_T>& vertices)
+	{
+		CHERRYSODA_ASSERT(GetBufferType() == BufferType::Dynamic, "Only dynamic buffer type can use UpdateVertexBuffer!\n");
+		CHERRYSODA_ASSERT(IsValid(), "Only initialized buffer can be updated!\n");
+		Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, index, m_vertices);
+	}
+
+	inline void UpdateIndexBuffer(int index, const STL::Vector<type::UInt16>& indices)
+	{
+		CHERRYSODA_ASSERT(GetBufferType() == BufferType::Dynamic, "Only dynamic buffer type can use UpdateIndexbBuffer!\n");
+		CHERRYSODA_ASSERT(IsValid(), "Only initialized buffer can be updated!\n");
+		Graphics::UpdateDynamicIndexBuffer(m_indexBuffer, index, indices);
+	}
+
+	inline bool IsValid() const
 	{
 		return m_vertexBuffer != Graphics::InvalidHandle && m_indexBuffer != Graphics::InvalidHandle;
 	}
@@ -128,21 +168,30 @@ public:
 	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
 	inline Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
 
+	inline void SetTransientBuffer() const
+	{
+		// TODO: Implement SetTransientBuffer
+	}
+
 private:
 	void InitBuffer()
 	{
 		CHERRYSODA_ASSERT(!IsValid(), "Mesh already initialized!\n");
-		if (!IsDynamic()) {
+		switch (GetBufferType()) {
+		case BufferType::Static:
 			if (STL::Count(m_vertices) > 0) {
 				m_vertexBuffer = Graphics::CreateVertexBuffer(m_vertices);
 				m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
 			}
-		}
-		else {
+			break;
+		case BufferType::Dynamic:
 			if (STL::Count(m_vertices) > 0) {
 				m_vertexBuffer = Graphics::CreateDynamicVertexBuffer(m_vertices);
 				m_indexBuffer = Graphics::CreateDynamicIndexBuffer(m_indices);
 			}
+			break;
+		case BufferType::Transient:
+			break;
 		}
 	}
 
@@ -160,7 +209,7 @@ private:
 	STL::Vector<type::UInt16> m_indices;
 	STL::Vector<type::UInt16> m_indicesFront;
 
-	bool m_isDynamic = false;
+	BufferType m_bufferType = BufferType::Static;
 };
 
 } // namespace cherrysoda

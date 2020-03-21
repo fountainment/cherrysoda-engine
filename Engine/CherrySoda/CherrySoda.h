@@ -7,6 +7,7 @@
 
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
+#include <CherrySoda/Components/Graphics/Image.h>
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
 
 #include <CherrySoda/Graphics/Effect.h>

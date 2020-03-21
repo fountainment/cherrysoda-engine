@@ -431,13 +431,18 @@ void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 
 void Graphics::SetMesh(MeshInterface* mesh)
 {
-	if (!mesh->IsDynamic()) {
+	switch (mesh->GetBufferType()) {
+	case MeshInterface::BufferType::Static:
 		SetVertexBuffer(mesh->GetVertexBuffer());
 		SetIndexBuffer(mesh->GetIndexBuffer());
-	}
-	else {
+		break;
+	case MeshInterface::BufferType::Dynamic:
 		SetDynamicVertexBuffer(mesh->GetVertexBuffer(), mesh->VertexBufferSize());
 		SetDynamicIndexBuffer(mesh->GetIndexBuffer(), mesh->IndexBufferSize());
+		break;
+	case MeshInterface::BufferType::Transient:
+		mesh->SetTransientBuffer();
+		break;
 	}
 }
 
@@ -575,7 +580,7 @@ Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vecto
 	).idx;
 }
 
-void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handle, int index, STL::Vector<cherrysoda::type::UInt16>& indices)
+void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handle, int index, const STL::Vector<cherrysoda::type::UInt16>& indices)
 {
 	bgfx::DynamicIndexBufferHandle hdl = { handle };
 	bgfx::update(

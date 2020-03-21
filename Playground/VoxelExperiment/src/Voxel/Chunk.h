@@ -14,6 +14,8 @@ class ChunkGraphicsComponent;
 class Chunk : public cherrysoda::Entity
 {
 public:
+	CHERRYSODA_ITERABLE(m_blocks);
+
 	typedef cherrysoda::Entity base;	
 
 	Chunk();
@@ -67,9 +69,6 @@ private:
 		if (v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()) return -1;
 		return v.z * Size() * Size() + v.y * Size() + v.x;
 	}
-
-public:
-	CHERRYSODA_ITERABLE(m_blocks);
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_CHUNK_H_

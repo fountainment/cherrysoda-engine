@@ -9,8 +9,8 @@
 #include <vector>
 
 #define CHERRYSODA_ITERABLE(iterable) \
-	decltype(iterable)::iterator begin() { return iterable.begin(); } \
-	decltype(iterable)::iterator end()   { return iterable.end(); }
+	auto begin() { return iterable.begin(); } \
+	auto end()   { return iterable.end(); }
 
 namespace cherrysoda {
 

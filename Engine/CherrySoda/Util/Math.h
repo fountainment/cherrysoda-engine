@@ -57,6 +57,7 @@
 #define Math_Abs        glm::abs
 #define Math_Cross      glm::cross
 #define Math_Cos        glm::cos
+#define Math_Clamp      glm::clamp
 #define Math_Dot        glm::dot
 #define Math_Length     glm::length
 #define Math_LengthSq   glm::length2
@@ -110,6 +111,13 @@ public:
 	{
 		IVec2 m_coord;
 		IVec2 m_size;
+
+		inline int X() const { return m_coord.x; }
+		inline int Y() const { return m_coord.y; }
+		inline int Width() const { return m_size.x; }
+		inline int Height() const { return m_size.y; }
+		inline int Left() const { return X(); }
+		inline int Right() const { return X() + Width(); }
 	};
 
 	static bool RaycastAABB(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
@@ -117,10 +125,7 @@ public:
 	static inline int BitCount(int x)
 	{
 		int ret = 0;
-		while (x) {
-			x &= ~(x & (-x));
-			++ret;
-		}
+		while (x) { x &= ~(x & (-x)); ++ret; }
 		return ret;
 	}
 };

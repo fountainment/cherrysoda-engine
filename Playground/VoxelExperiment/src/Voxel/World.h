@@ -9,6 +9,8 @@
 class World
 {
 public:
+	CHERRYSODA_ITERABLE(m_chunks);
+
 	World(cherrysoda::Math::Vec3 basePosition = Vec3_Zero)
 	: m_basePosition(basePosition)
 	{
@@ -106,9 +108,6 @@ private:
 	}
 	
 	static constexpr int ms_worldSize = 8; 
-
-public:
-	CHERRYSODA_ITERABLE(m_chunks);
 };
 
 #endif // _VOXELEXPERIMENT_VOXEL_WORLD_H_
