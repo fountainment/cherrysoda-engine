@@ -134,7 +134,7 @@ public:
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
 	static void SetTransformMatrix(const Math::Mat4& transformMatrix);
-	static void SetMesh(MeshInterface* mesh);
+	static void SetMesh(const MeshInterface* mesh);
 	static void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	static void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	static void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
@@ -152,6 +152,7 @@ public:
 
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
+	static void SetTransientIndexBuffer(const STL::Vector<type::UInt16>& indices);
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
@@ -219,9 +220,10 @@ private:
 
 public:
 	#define CHERRYSODA_VERTEX_DECLARATION(VERTEX_T) \
-	static VertexBufferHandle CreateVertexBuffer(STL::Vector<VERTEX_T>& vertices); \
-	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(STL::Vector<VERTEX_T>& vertices); \
-	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, STL::Vector<VERTEX_T>& vertices);
+	static VertexBufferHandle CreateVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
+	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
+	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, const STL::Vector<VERTEX_T>& vertices); \
+	static void SetTransientVertexBuffer(const STL::Vector<VERTEX_T>& vertices);
 
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);

@@ -429,21 +429,9 @@ void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 	bgfx::setTransform(&transformMatrix);
 }
 
-void Graphics::SetMesh(MeshInterface* mesh)
+void Graphics::SetMesh(const MeshInterface* mesh)
 {
-	switch (mesh->GetBufferType()) {
-	case MeshInterface::BufferType::Static:
-		SetVertexBuffer(mesh->GetVertexBuffer());
-		SetIndexBuffer(mesh->GetIndexBuffer());
-		break;
-	case MeshInterface::BufferType::Dynamic:
-		SetDynamicVertexBuffer(mesh->GetVertexBuffer(), mesh->VertexBufferSize());
-		SetDynamicIndexBuffer(mesh->GetIndexBuffer(), mesh->IndexBufferSize());
-		break;
-	case MeshInterface::BufferType::Transient:
-		mesh->SetTransientBuffer();
-		break;
-	}
+	mesh->SetBuffer();
 }
 
 void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
@@ -578,6 +566,19 @@ Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vecto
 		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices))),
 		BGFX_BUFFER_ALLOW_RESIZE
 	).idx;
+}
+
+void Graphics::SetTransientIndexBuffer(const STL::Vector<type::UInt16>& indices)
+{
+	auto indexAmount = static_cast<cherrysoda::type::UInt32>(STL::Count(indices));
+	if (!indexAmount) return;
+	if (indexAmount == bgfx::getAvailTransientIndexBuffer(indexAmount)) {
+		bgfx::TransientIndexBuffer ib;
+		bgfx::allocTransientIndexBuffer(&ib, indexAmount);
+		auto index = (type::UInt16*)ib.data;
+		bx::memCopy((void*)index, (void*)STL::Data(indices), STL::ByteSize(indices));
+		bgfx::setIndexBuffer(&ib);
+	}
 }
 
 void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handle, int index, const STL::Vector<cherrysoda::type::UInt16>& indices)
@@ -741,7 +742,7 @@ Graphics* Graphics::ms_instance = nullptr;
 Graphics* Graphics::ms_renderPassHelperInstance = nullptr;
 
 #define CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D) \
-Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \
+Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(const STL::Vector<VERTEX_D::VertexType>& vertices) \
 { \
 	return bgfx::createVertexBuffer( \
 		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
@@ -750,7 +751,7 @@ Graphics::VertexBufferHandle Graphics::CreateVertexBuffer(STL::Vector<VERTEX_D::
 }
 
 #define CHERRYSODA_CREATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D) \
-Graphics::DynamicVertexBufferHandle Graphics::CreateDynamicVertexBuffer(STL::Vector<VERTEX_D::VertexType>& vertices) \
+Graphics::DynamicVertexBufferHandle Graphics::CreateDynamicVertexBuffer(const STL::Vector<VERTEX_D::VertexType>& vertices) \
 { \
 	return bgfx::createDynamicVertexBuffer( \
 		bgfx::makeRef(STL::Data(vertices), static_cast<uint32_t>(STL::ByteSize(vertices))), \
@@ -759,7 +760,7 @@ Graphics::DynamicVertexBufferHandle Graphics::CreateDynamicVertexBuffer(STL::Vec
 }
 
 #define CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D) \
-void Graphics::UpdateDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle handle, int index, STL::Vector<VERTEX_D::VertexType>& vertices) \
+void Graphics::UpdateDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle handle, int index, const STL::Vector<VERTEX_D::VertexType>& vertices) \
 { \
 	bgfx::DynamicVertexBufferHandle hdl = { handle }; \
 	bgfx::update( \
@@ -767,10 +768,25 @@ void Graphics::UpdateDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle han
 	); \
 }
 
+#define CHERRYSODA_SET_TRANSIENT_VERTEX_BUFFER(VERTEX_D) \
+void Graphics::SetTransientVertexBuffer(const STL::Vector<VERTEX_D::VertexType>& vertices) \
+{ \
+	auto vertexAmount = static_cast<cherrysoda::type::UInt32>(STL::Count(vertices)); \
+	if (!vertexAmount) return; \
+	if (vertexAmount == bgfx::getAvailTransientVertexBuffer(vertexAmount, VERTEX_D::s_layout)) { \
+		bgfx::TransientVertexBuffer vb; \
+		bgfx::allocTransientVertexBuffer(&vb, vertexAmount, VERTEX_D::s_layout); \
+		auto vertex = (VERTEX_D::VertexType*)vb.data; \
+		bx::memCopy((void*)vertex, (void*)STL::Data(vertices), STL::ByteSize(vertices)); \
+		bgfx::setVertexBuffer(0, &vb); \
+	} \
+}
+
 #define CHERRYSODA_VERTEX_IMPLEMENTATION(VERTEX_D) \
 CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D); \
 CHERRYSODA_CREATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D); \
-CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D);
+CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D); \
+CHERRYSODA_SET_TRANSIENT_VERTEX_BUFFER(VERTEX_D);
 
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorDefinition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalDefinition);

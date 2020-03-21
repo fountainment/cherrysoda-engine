@@ -21,14 +21,15 @@ public:
 		Transient
 	};
 
-	virtual BufferType GetBufferType() const = 0;
+	virtual void SetBufferType(BufferType bufferType) { CHERRYSODA_ASSERT(false, "There is no SetBufferType override!\n"); }
+	virtual BufferType GetBufferType() const { return BufferType::Static; }
 
 	virtual size_t VertexBufferSize() const = 0;
 	virtual size_t IndexBufferSize() const = 0;
 	virtual Graphics::BufferHandle GetVertexBuffer() const = 0;
 	virtual Graphics::BufferHandle GetIndexBuffer() const = 0;
 
-	virtual void SetTransientBuffer() const = 0;
+	virtual void SetBuffer() const = 0;
 };
 
 
@@ -38,6 +39,8 @@ class Mesh : public MeshInterface
 public:
 	friend class Graphics;
 
+	inline VERTEX_T* VertexBufferData() { return STL::Data(m_verticesFront); }
+	inline type::UInt16* IndexBufferData() { return STL::Data(m_indicesFront); }
 	inline size_t VertexBufferSize() const { return STL::Count(m_verticesFront); }
 	inline size_t IndexBufferSize() const { return STL::Count(m_indicesFront); }
 
@@ -47,8 +50,11 @@ public:
 	inline size_t VertexAmount() const { return STL::Count(m_vertices); }
 	inline size_t IndexAmount() const { return STL::Count(m_indices); }
 	inline void AddPoint(const VERTEX_T& v) { AddIndex(static_cast<type::UInt16>(VertexAmount())); AddVertex(v);}
+	inline void AddPointNoIndex(const VERTEX_T& v) { AddVertex(v); }
 	inline void AddLine(const VERTEX_T& v1, const VERTEX_T& v2) { AddPoint(v1); AddPoint(v2); }
+	inline void AddLineNoIndex(const VERTEX_T& v1, const VERTEX_T& v2) { AddPointNoIndex(v1); AddPointNoIndex(v2); }
 	inline void AddTriangle(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3) { AddPoint(v1); AddPoint(v2); AddPoint(v3); }
+	inline void AddTriangleNoIndex(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3) { AddPointNoIndex(v1); AddPointNoIndex(v2); AddPointNoIndex(v3); }
 	inline void AddQuad(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 4 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
@@ -162,15 +168,28 @@ public:
 
 	inline bool IsValid() const
 	{
-		return m_vertexBuffer != Graphics::InvalidHandle && m_indexBuffer != Graphics::InvalidHandle;
+		return m_vertexBuffer != Graphics::InvalidHandle;
 	}
 
 	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
 	inline Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
 
-	inline void SetTransientBuffer() const
+	void SetBuffer() const
 	{
-		// TODO: Implement SetTransientBuffer
+		switch (GetBufferType()) {
+		case MeshInterface::BufferType::Static:
+			Graphics::SetVertexBuffer(GetVertexBuffer());
+			Graphics::SetIndexBuffer(GetIndexBuffer());
+			break;
+		case MeshInterface::BufferType::Dynamic:
+			Graphics::SetDynamicVertexBuffer(GetVertexBuffer(), VertexBufferSize());
+			Graphics::SetDynamicIndexBuffer(GetIndexBuffer(), IndexBufferSize());
+			break;
+		case MeshInterface::BufferType::Transient:
+			Graphics::SetTransientVertexBuffer(m_verticesFront);
+			Graphics::SetTransientIndexBuffer(m_indicesFront);
+			break;
+		}	
 	}
 
 private:
@@ -181,13 +200,17 @@ private:
 		case BufferType::Static:
 			if (STL::Count(m_vertices) > 0) {
 				m_vertexBuffer = Graphics::CreateVertexBuffer(m_vertices);
-				m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
+				if (STL::Count(m_indices) > 0) {
+					m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
+				}
 			}
 			break;
 		case BufferType::Dynamic:
 			if (STL::Count(m_vertices) > 0) {
 				m_vertexBuffer = Graphics::CreateDynamicVertexBuffer(m_vertices);
-				m_indexBuffer = Graphics::CreateDynamicIndexBuffer(m_indices);
+				if (STL::Count(m_indices) > 0) {
+					m_indexBuffer = Graphics::CreateDynamicIndexBuffer(m_indices);
+				}
 			}
 			break;
 		case BufferType::Transient:
