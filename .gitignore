@@ -32,6 +32,7 @@
 
 # Build
 build
+build_*
 
 # Local
 *.sublime-workspace
