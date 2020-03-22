@@ -19,10 +19,11 @@ A C++ game engine based on bgfx and SDL2 (currently at early stage)
 ```sh
 git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
-git submodule update --init
 # For Windows
 # python Tools/setup_sdl2_for_windows.py
-mkdir build & cd build & cmake ..
+mkdir build
+cd build
+cmake ..
 ```
 
 ## Current Status
