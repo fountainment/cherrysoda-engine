@@ -53,9 +53,7 @@ set(CHERRYSODA_EXECUTABLE_SRC src/main.cpp)
 set(CHERRYSODA_SHADER_SRC "")
 
 function(cherrysoda_set_target_folder target folder)
-  if(MSVC)
-    set_target_properties(${target} PROPERTIES FOLDER ${folder})
-  endif()
+  set_target_properties(${target} PROPERTIES FOLDER ${folder})
 endfunction(cherrysoda_set_target_folder)
 
 function(cherrysoda_set_targets_folder targets folder)
