@@ -1,9 +1,0 @@
-[submodule "External/bgfx/bgfx"]
-	path = External/bgfx/bgfx
-	url = https://github.com/bkaradzic/bgfx.git
-[submodule "External/bgfx/bx"]
-	path = External/bgfx/bx
-	url = https://github.com/bkaradzic/bx.git
-[submodule "External/bgfx/bimg"]
-	path = External/bgfx/bimg
-	url = https://github.com/bkaradzic/bimg.git
