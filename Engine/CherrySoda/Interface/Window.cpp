@@ -32,6 +32,7 @@ BX_PRAGMA_DIAGNOSTIC_POP()
 #endif // defined(CreateWindow)
 
 using cherrysoda::Color;
+using cherrysoda::Graphics;
 using cherrysoda::String;
 
 namespace entry {
@@ -112,7 +113,7 @@ namespace entry {
 		pd.context = NULL;
 		pd.backBuffer = NULL;
 		pd.backBufferDS = NULL;
-		bgfx::setPlatformData(pd);
+		Graphics::SetPlatformData(&pd);
 
 		return true;
 	}

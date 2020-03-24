@@ -109,6 +109,8 @@ public:
 	using TextureHandle = HandleType;
 	static constexpr HandleType InvalidHandle = UINT16_MAX;
 
+	static void SetPlatformData(void* platformData);
+
 	static void Initialize();
 	static void Terminate();
 

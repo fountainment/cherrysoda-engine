@@ -63,6 +63,8 @@ bgfx::VertexLayout PosColorTexCoord0Definition::s_layout;
 
 namespace entry {
 
+static bgfx::PlatformData s_platformData;
+
 static bx::DefaultAllocator s_allocator;
 static bx::FileReaderI* s_fileReader;
 static bx::FileWriterI* s_fileWriter;
@@ -328,11 +330,20 @@ bgfx::TextureHandle loadTexture(const char* _name, bgfx::TextureInfo* _info = NU
 	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
 }
 
+void Graphics::SetPlatformData(void* platformData)
+{
+	entry::s_platformData = *(bgfx::PlatformData*)platformData;
+}
+
 void Graphics::Initialize()
 {
 	entry::init();
 
-	bgfx::init();
+	bgfx::Init init;
+
+	init.platformData = entry::s_platformData;
+
+	bgfx::init(init);
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
 	Graphics::PosColorVertex::Init();
