@@ -110,6 +110,7 @@ public:
 
 		inline int X() const { return m_coord.x; }
 		inline int Y() const { return m_coord.y; }
+		inline IVec2 Size() const { return m_size; }
 		inline int Width() const { return m_size.x; }
 		inline int Height() const { return m_size.y; }
 		inline int Left() const { return X(); }

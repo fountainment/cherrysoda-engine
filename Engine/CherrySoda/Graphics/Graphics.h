@@ -148,6 +148,8 @@ public:
 	static void SubmitOnCurrentRenderPass();
 	static void SubmitOnCurrentRenderPass(Effect* effect);
 
+	static void Discard();
+
 	static void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
 
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
@@ -175,8 +177,8 @@ public:
 	static void SetTexture(UniformHandle uniform, TextureHandle texture);
 	static void SetTexture(type::UInt8 stage, UniformHandle uniform, TextureHandle texture);
 
-	static void SetEffect(Effect* effect);
-	static void SetTexture(Texture* texture);
+	static void SetEffect(const Effect* effect);
+	static void SetTexture(const Texture* texture);
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniformCamPos(const Math::Vec3& camPos);
@@ -184,8 +186,8 @@ public:
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit = true);
 	static void SubmitUniformLight();
 
-	static void SetTextureCube(TextureCube* texture);
-	static void SetTextureCubeIrr(TextureCube* texture);
+	static void SetTextureCube(const TextureCube* texture);
+	static void SetTextureCubeIrr(const TextureCube* texture);
 
 private:
 	friend class Engine;

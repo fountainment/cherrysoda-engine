@@ -7,11 +7,11 @@
 #ifdef NDEBUG
 #	define CHERRYSODA_DEBUG(output)
 #	define CHERRYSODA_DEBUG_CHANNEL(output,channel)
-#	define CHERRYSODA_ASSERT(expression,output)
+#	define CHERRYSODA_ASSERT(condition,output)
 #else
 #	define CHERRYSODA_DEBUG(output)                 cherrysoda::Log::DebugOutput(output)
 #	define CHERRYSODA_DEBUG_CHANNEL(output,channel) cherrysoda::Log::DebugOutput(output,channel)
-#	define CHERRYSODA_ASSERT(expression,output)     if(!(expression)){CHERRYSODA_DEBUG(output);assert(0);}
+#	define CHERRYSODA_ASSERT(condition,output)      if(!(condition)){CHERRYSODA_DEBUG(output);assert(0);}
 #endif
 
 #define CHERRYSODA_LOG(output)                   cherrysoda::Log::LogOutput(output)

@@ -9,6 +9,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#define MK_VERT VertexType::MakeVertex
+
 namespace cherrysoda {
 
 class MeshInterface
@@ -39,6 +41,8 @@ class Mesh : public MeshInterface
 public:
 	friend class Graphics;
 
+	typedef VERTEX_T VertexType;
+
 	inline VERTEX_T* VertexBufferData() { return STL::Data(m_verticesFront); }
 	inline type::UInt16* IndexBufferData() { return STL::Data(m_indicesFront); }
 	inline size_t VertexBufferSize() const { return STL::Count(m_verticesFront); }
@@ -61,6 +65,12 @@ public:
 		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
 		STL::AddRange(m_vertices, { v1, v2, v3, v4 });
 		STL::AddRange(m_indices,  { i, i+1_su, i+2_su, i+1_su, i+3_su, i+2_su });
+	}
+	inline void AddQuadNoIndex(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
+	{
+		CHERRYSODA_ASSERT(VertexAmount() + 6 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
+		AddTriangleNoIndex(v1, v2, v3);
+		AddTriangleNoIndex(v2, v4, v3);
 	}
 	inline void AddCube(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4, const VERTEX_T& v5, const VERTEX_T& v6, const VERTEX_T& v7, const VERTEX_T& v8)
 	{

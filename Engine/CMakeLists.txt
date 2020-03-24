@@ -17,6 +17,7 @@ set(ENGINE_SRC
   CherrySoda/Graphics/Mesh.h
   CherrySoda/Graphics/MTexture.cpp
   CherrySoda/Graphics/MTexture.h
+  CherrySoda/Graphics/SpriteBatch.h
   CherrySoda/Graphics/Texture.cpp
   CherrySoda/Graphics/Texture.h
   CherrySoda/Input/MInput.cpp

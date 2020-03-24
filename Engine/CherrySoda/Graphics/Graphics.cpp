@@ -494,6 +494,11 @@ void Graphics::SubmitOnCurrentRenderPass(Effect* effect)
 	bgfx::submit(CurrentRenderPass(), { effect->m_program });
 }
 
+void Graphics::Discard()
+{
+	bgfx::discard();
+}
+
 void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft, float _width, float _height)
 {
 	float s_texelHalf = 0.f;
@@ -601,6 +606,7 @@ Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics:
 	if (info != nullptr) {
 		*info = { bInfo.width, bInfo.height, bInfo.cubeMap };
 	}
+	CHERRYSODA_ASSERT_FORMAT(tex != Graphics::InvalidHandle, "Texture: %s load failed!\n", texture.c_str());
 	return tex;
 }
 
@@ -661,7 +667,7 @@ void Graphics::DestroyUniform(UniformHandle handle)
 	bgfx::destroy(hdl);
 }
 
-void Graphics::SetEffect(Effect* effect)
+void Graphics::SetEffect(const Effect* effect)
 {
 	SetShader(effect != nullptr ? effect->GetShader() : Graphics::InvalidHandle);
 } 
@@ -676,9 +682,9 @@ void Graphics::SetTexture(cherrysoda::type::UInt8 stage, Graphics::UniformHandle
 	bgfx::setTexture(stage, { uniform }, { texture });
 }
 
-void Graphics::SetTexture(Texture* texture)
+void Graphics::SetTexture(const Texture* texture)
 {
-	SetTexture(ms_samplerTex, texture->m_texture);
+	SetTexture(ms_samplerTex, texture->GetHandle());
 }
 
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, cherrysoda::type::UInt16 size/* = 1U*/)
@@ -714,14 +720,14 @@ void Graphics::SubmitUniformLight()
 	bgfx::setUniform({ ms_uniformLights }, s_lightVec4, 8U);
 }
 
-void Graphics::SetTextureCube(TextureCube* texture)
+void Graphics::SetTextureCube(const TextureCube* texture)
 {
-	SetTexture(ms_samplerTexCube, texture->m_texture);	
+	SetTexture(ms_samplerTexCube, texture->GetHandle());
 }
 
-void Graphics::SetTextureCubeIrr(TextureCube* texture)
+void Graphics::SetTextureCubeIrr(const TextureCube* texture)
 {
-	SetTexture(1, ms_samplerTexCubeIrr, texture->m_texture);	
+	SetTexture(1, ms_samplerTexCubeIrr, texture->GetHandle());	
 }
 
 bool Graphics::ms_vsyncEnabled = true;

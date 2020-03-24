@@ -8,6 +8,8 @@
 
 namespace cherrysoda {
 
+enum class SpriteEffects;
+
 class MTexture
 {
 public:
@@ -25,9 +27,9 @@ public:
 
 	const Math::IRectangle& ClipRect() const { return m_clipRect; }
 
-	void Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, const Color& color, const Math::Vec3& scale, float zRotation);
+	void Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, const Color& color, const Math::Vec3& scale, float zRotation, SpriteEffects flip);
 
-	inline Math::IVec2 DrawOffset() const { return m_drawOffset; }
+	inline Math::Vec2 DrawOffset() const { return m_drawOffset; }
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
 
@@ -35,7 +37,7 @@ public:
 
 private:
 	inline void ClipRect(const Math::IRectangle& rect) { m_clipRect = rect; }
-	inline void DrawOffset(const Math::IVec2& drawOffset) { m_drawOffset = drawOffset; }
+	inline void DrawOffset(const Math::Vec2& drawOffset) { m_drawOffset = drawOffset; }
 	inline void Width(int width) { m_width = width; }
 	inline void Height(int height) { m_height = height; }
 	inline const Texture2D& Texture() const { return m_texture; }
@@ -43,7 +45,7 @@ private:
 	Texture2D m_texture;
 	Math::IRectangle m_clipRect;
 	String m_atlasPath;
-	Math::IVec2 m_drawOffset;
+	Math::Vec2 m_drawOffset;
 	int m_width;
 	int m_height;
 	Math::Vec2 m_center;

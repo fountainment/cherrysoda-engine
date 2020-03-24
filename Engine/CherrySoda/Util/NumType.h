@@ -10,6 +10,7 @@ namespace type {
 	typedef std::uint8_t  UInt8;
 	typedef std::uint16_t UInt16;
 	typedef std::uint32_t UInt32;
+	typedef std::uint64_t UInt64;
 
 } // type
 

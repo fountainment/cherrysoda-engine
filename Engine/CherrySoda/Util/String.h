@@ -7,8 +7,9 @@
 #include <string>
 
 #define CHERRYSODA_FORMAT cherrysoda::StringUtil::Format
-#define CHERRYSODA_DEBUG_FORMAT(format, ...) CHERRYSODA_DEBUG(CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
-#define CHERRYSODA_LOG_FORMAT(format, ...) CHERRYSODA_LOG(CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
+#define CHERRYSODA_DEBUG_FORMAT(format,...)            CHERRYSODA_DEBUG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
+#define CHERRYSODA_LOG_FORMAT(format,...)              CHERRYSODA_LOG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
+#define CHERRYSODA_ASSERT_FORMAT(condition,format,...) CHERRYSODA_ASSERT(condition,CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 
 namespace cherrysoda {
 

@@ -12,9 +12,9 @@ class Texture
 public:
 	static Texture FromFile(const String& filename);
 
-protected:
-	friend class Graphics;
+	inline Graphics::TextureHandle GetHandle() const { return m_texture; }
 
+protected:
 	Graphics::TextureHandle m_texture = Graphics::InvalidHandle;
 };
 

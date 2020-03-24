@@ -90,18 +90,18 @@ void ChunkGraphicsComponent::AddQuad(const Math::Vec3& pos, float size, const Co
 	const auto cU32 = color.U32ABGR();
 	if (positive) {
 		GetMesh()->AddQuad(
-			VertexType::MakeVertex(pos + pVecV, cU32, normal),
-			VertexType::MakeVertex(pos,         cU32, normal),
-			VertexType::MakeVertex(pos + pVec,  cU32, normal),
-			VertexType::MakeVertex(pos + pVecH, cU32, normal)
+			MK_VERT(pos + pVecV, cU32, normal),
+			MK_VERT(pos,         cU32, normal),
+			MK_VERT(pos + pVec,  cU32, normal),
+			MK_VERT(pos + pVecH, cU32, normal)
 		);
 	}
 	else {
 		GetMesh()->AddQuad(
-			VertexType::MakeVertex(pos + pVec,  cU32, normal),
-			VertexType::MakeVertex(pos + pVecH, cU32, normal),
-			VertexType::MakeVertex(pos + pVecV, cU32, normal),
-			VertexType::MakeVertex(pos,         cU32, normal)
+			MK_VERT(pos + pVec,  cU32, normal),
+			MK_VERT(pos + pVecH, cU32, normal),
+			MK_VERT(pos + pVecV, cU32, normal),
+			MK_VERT(pos,         cU32, normal)
 		);
 	}
 }

@@ -5,6 +5,7 @@
 #include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
@@ -16,6 +17,7 @@
 using cherrysoda::Engine;
 
 using cherrysoda::Color;
+using cherrysoda::Draw;
 using cherrysoda::Graphics;
 using cherrysoda::MInput;
 using cherrysoda::Scene;
@@ -111,6 +113,7 @@ void Engine::Initialize()
 	MInput::Initialize();
 	Graphics::Initialize();
 	Graphics::UpdateView();
+	Draw::Initialize();
 	m_graphicsDevice = Graphics::Instance();
 	m_initialized = true;
 }

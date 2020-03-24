@@ -1,5 +1,6 @@
 #include <CherrySoda/Graphics/MTexture.h>
 
+#include <CherrySoda/Graphics/SpriteBatch.h>
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
@@ -9,6 +10,7 @@ using cherrysoda::MTexture;
 
 using cherrysoda::Color;
 using cherrysoda::Math;
+using cherrysoda::SpriteEffects;
 using cherrysoda::String;
 using cherrysoda::Texture2D;
 
@@ -32,7 +34,7 @@ MTexture::MTexture(const MTexture& parent, int x, int y, int width, int height)
 {
 	m_texture = parent.Texture();
 	ClipRect(parent.GetRelativeRect(x, y, width, height));
-	DrawOffset(Math::IVec2(-Math_Min(x - parent.DrawOffset().x, 0), -Math_Min(y - parent.DrawOffset().y, 0)));
+	DrawOffset(Math::Vec2(-Math_Min(x - parent.DrawOffset().x, 0.f), -Math_Min(y - parent.DrawOffset().y, 0.f)));
 	Width(ClipRect().Width());
 	Height(ClipRect().Height());
 	SetUtil();
@@ -66,9 +68,9 @@ MTexture MTexture::GetSubtexture(const Math::IRectangle& rect)
 	return MTexture(Texture(), rect);
 }
 
-void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, const Color& color, const Math::Vec3& scale, float zRotation)
+void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, const Color& color, const Math::Vec3& scale, float zRotation, SpriteEffects flip)
 {
-	// TODO: Draw::GetSpriteBatch()->Draw();
+	Draw::GetSpriteBatch()->Draw(Texture(), Math::Vec2(renderPosition), ClipRect(), color, zRotation, Math::Vec2(origin) - DrawOffset(), Math::Vec2(scale), flip, 0.f);
 }
 
 void MTexture::SetUtil()
