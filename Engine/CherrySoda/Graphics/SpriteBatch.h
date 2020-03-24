@@ -58,6 +58,7 @@ public:
 			Graphics::SetTexture(&m_previousTexture);
 			Graphics::SetTransformMatrix(Math_Identity<Math::Mat4>());
 			Graphics::SetMesh(this);
+			Graphics::SetStateDefault();
 			Graphics::SubmitOnCurrentRenderPass();
 		}
 		else {
