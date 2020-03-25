@@ -60,9 +60,22 @@ public:
 		Math::Vec2 m_right;
 	};
 
+	struct GamePadTriggers
+	{
+		GamePadTriggers(float left, float right)
+		: m_left(left)
+		, m_right(right)
+		{
+		}
+
+		float m_left;
+		float m_right;
+	};
+
 	struct GamePadState
 	{
 		GamePadThumbSticks m_thumbSticks = GamePadThumbSticks(Vec2_Zero, Vec2_Zero);
+		GamePadTriggers m_triggers = GamePadTriggers(0.f, 0.f);
 		bool m_connected = false;
 	};
 
@@ -140,6 +153,46 @@ public:
 				ret = Vec2_Zero;
 			}
 			return ret;
+		}
+
+		float GetLeftTrigger()
+		{
+			return m_currentState.m_triggers.m_left;
+		}
+
+		float GetRightTrigger()
+		{
+			return m_currentState.m_triggers.m_right;
+		}
+
+		bool LeftTriggerCheck(float threshold)
+		{
+			return m_currentState.m_triggers.m_left >= threshold;
+		}
+
+		bool LeftTriggerPressed(float threshold)
+		{
+			return m_currentState.m_triggers.m_left >= threshold && m_previousState.m_triggers.m_left < threshold;
+		}
+
+		bool LeftTriggerReleased(float threshold)
+		{
+			return m_currentState.m_triggers.m_left < threshold && m_previousState.m_triggers.m_left >= threshold;
+		}
+
+		bool RightTriggerCheck(float threshold)
+		{
+			return m_currentState.m_triggers.m_right >= threshold;
+		}
+
+		bool RightTriggerPressed(float threshold)
+		{
+			return m_currentState.m_triggers.m_right >= threshold && m_previousState.m_triggers.m_right < threshold;
+		}
+
+		bool RightTriggerReleased(float threshold)
+		{
+			return m_currentState.m_triggers.m_right < threshold && m_previousState.m_triggers.m_right >= threshold;
 		}
 
 	private:

@@ -53,6 +53,10 @@ public:
 		Move(FacingDirection() * xy.y);
 		Move(LeftDirection() * -xy.x);
 	}
+	inline void MoveZ(float z)
+	{
+		Move(UpDirection() * z);
+	}
 	inline void RotateXY(const cherrysoda::Math::Vec2& xy)
 	{
 		m_leftDirection = Math_RotateVector(LeftDirection(), xy.x, UpDirection());

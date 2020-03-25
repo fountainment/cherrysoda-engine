@@ -134,15 +134,37 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 		) / -32767.0f
 	);
 
+	// Triggers
+	float triggerLeft = (float)SDL_GameControllerGetAxis(
+		device,
+		SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT
+	) / 32767.0f;
+	float triggerRight = (float)SDL_GameControllerGetAxis(
+		device,
+		SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT
+	) / 32767.0f;
+
 	GamePadState builtState;
 	builtState.m_thumbSticks = GamePadThumbSticks(stickLeft, stickRight);
+	builtState.m_triggers = GamePadTriggers(triggerLeft, triggerRight);
 	builtState.m_connected = true;
 	return builtState;
 }
 
 bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 {
-	// TODO: Implement MInput::SetGamePadVibration
+	SDL_GameController* device = (SDL_GameController*)ms_internalDevices[index];
+	if (device == nullptr)
+	{
+		return false;
+	}
+
+	return SDL_GameControllerRumble(
+		device,
+		(type::UInt16)((Math_Clamp(leftMotor, 0.0f, 1.0f) * 0xFFFF)),
+		(type::UInt16)((Math_Clamp(rightMotor, 0.0f, 1.0f) * 0xFFFF)),
+		0
+	) == 0;
 	return true;
 }
 
