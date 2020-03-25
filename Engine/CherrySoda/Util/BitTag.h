@@ -25,13 +25,13 @@ public:
 		m_name = name.GetStr();
 
 		CHERRYSODA_ASSERT(ms_totalTags < TagBitsAmount, "Maximum tag limit exceeded!\n");
-		CHERRYSODA_ASSERT(!STL::Contains(ms_byName, name.GetID()), "Two tags defined with the same name: '" + m_name + "'!\n");
+		CHERRYSODA_ASSERT(!STL::Contains(GetNameMap(), name.GetID()), "Two tags defined with the same name: '" + m_name + "'!\n");
 #endif
 		m_id = ms_totalTags;
 		m_value = 1 << ms_totalTags;
 
 		ms_byID[m_id] = *this;
-		ms_byName[name] = *this;
+		GetNameMap()[name] = *this;
 
 		ms_totalTags++;
 	}
@@ -41,9 +41,9 @@ public:
 	static BitTag Get(const StringID& name)
 	{
 #ifndef NDEBUG // Debug
-		CHERRYSODA_ASSERT(STL::Contains(ms_byName, name.GetID()), "No tag with the name '" + name.GetStr() + "' has been defined!\n");
+		CHERRYSODA_ASSERT(STL::Contains(GetNameMap(), name.GetID()), "No tag with the name '" + name.GetStr() + "' has been defined!\n");
 #endif
-		return ms_byName[name];
+		return GetNameMap()[name];
 	}
 
 private:
@@ -55,7 +55,12 @@ private:
 	static int ms_totalTags;
 
 	static BitTag ms_byID[TagBitsAmount];
-	static STL::Map<int,BitTag> ms_byName;
+
+	static inline STL::Map<int,BitTag>& GetNameMap()
+	{
+		static STL::Map<int,BitTag> s_byName;
+		return s_byName;
+	}
 };
 
 } // namespace cherrysoda

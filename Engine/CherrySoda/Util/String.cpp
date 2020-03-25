@@ -18,7 +18,3 @@ const String StringUtil::Format(const char* format, ...)
 	va_end(args);
 	return String(buffer);
 }
-
-#ifndef NDEBUG // Debug
-STL::Map<int,String> StringID::ms_hashCollisionCheckMap;
-#endif // NDEBUG

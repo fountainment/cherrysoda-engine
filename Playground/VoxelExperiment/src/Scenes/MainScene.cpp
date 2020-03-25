@@ -54,9 +54,6 @@ void MainScene::Begin()
 	Graphics::UseRenderPass(1)->SetClearDiscard();
 	Graphics::UseRenderPass(2)->SetClearDiscard();
 
-	ms_skyboxTag = BitTag("skybox");
-	ms_voxelTag = BitTag("voxel");
-
 	m_skyboxRenderer = new SkyboxRenderer(ms_skyboxTag);
 	m_skyboxRenderer->RenderPass(1);
 	m_skyboxRenderer->GetCamera()->Width(1);
@@ -153,5 +150,5 @@ void MainScene::Update()
 	base::Update();
 }
 
-BitTag MainScene::ms_skyboxTag;
-BitTag MainScene::ms_voxelTag;
+BitTag MainScene::ms_skyboxTag("skybox");
+BitTag MainScene::ms_voxelTag("voxel");

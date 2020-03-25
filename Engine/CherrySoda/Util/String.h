@@ -44,15 +44,16 @@ public:
 	: m_id(GetHashBKDR(str))
 	, m_str(String(str))
 	{
-		auto it = STL::Find(ms_hashCollisionCheckMap, m_id);
-		if (it != ms_hashCollisionCheckMap.end()) {
+		static STL::Map<int,String> s_hashCollisionCheckMap;
+		auto it = STL::Find(s_hashCollisionCheckMap, m_id);
+		if (it != s_hashCollisionCheckMap.end()) {
 			if (it->second != m_str) {
 				CHERRYSODA_DEBUG_FORMAT( \
 					"StringID Hash Collision: \"%s\" collide with \"%s\" at %d!", \
 					m_str.c_str(), it->second.c_str(), m_id);
 			}
 		}
-		ms_hashCollisionCheckMap[m_id] = m_str;
+		s_hashCollisionCheckMap[m_id] = m_str;
 	}
 
 	inline String GetStr() const { return m_str; }
@@ -69,10 +70,9 @@ public:
 
 private:
 	int m_id;
+
 #ifndef NDEBUG
 	String m_str;
-
-	static STL::Map<int,String> ms_hashCollisionCheckMap;
 #endif
 };
 
