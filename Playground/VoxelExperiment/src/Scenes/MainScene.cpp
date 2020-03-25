@@ -129,12 +129,13 @@ void MainScene::Update()
 	Math::Vec3 pos = camera->Position();
 	Math::Vec3 direction = camera->Direction();
 	if (Math_RaycastAABB(pos, direction, m_voxelWorld->GetAABB(), &t)) {
-		MInput::GamePads(0)->Rumble(1.0f, 1.0f);
 		for (;;) {
 			pos = pos + direction * (t + 0.1f);
 			auto index = m_voxelWorld->GetIndexOfBlockAt(pos);
 			auto block = m_voxelWorld->GetBlock(index);
-			m_voxelWorld->SetBlockType(index, Block::Type::None);
+			if (m_voxelWorld->SetBlockType(index, Block::Type::None)) {
+				MInput::GamePads(0)->Rumble(0.1f, 0.01f);
+			}
 			if (!block || !Math_RaycastAABB(pos, direction, m_voxelWorld->GetBlockAABB(index), nullptr, &t)) {
 				break;
 			}

@@ -54,7 +54,7 @@ public:
 		return chunk ? chunk->GetBlock(v % Chunk::Size()) : nullptr;
 	}
 
-	void SetBlockType(const cherrysoda::Math::IVec3& v, Block::Type type)
+	bool SetBlockType(const cherrysoda::Math::IVec3& v, Block::Type type)
 	{
 		Chunk* chunk = nullptr;
 		Block* block = GetBlock(v, &chunk);
@@ -62,7 +62,9 @@ public:
 		{
 			block->m_type = type;
 			chunk->SetChanged(v % Chunk::Size());
-		}	
+			return true;
+		}
+		return false;
 	}
 
 	cherrysoda::Math::IVec3 GetIndexOfBlockAt(const cherrysoda::Math::Vec3& v)
