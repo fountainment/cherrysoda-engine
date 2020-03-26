@@ -14,43 +14,46 @@ enum class PlayerIndex
 	Four = 3
 };
 
+enum class Buttons
+{
+	None = 0,
+	DPadUp = 1,
+	DPadDown = 2,
+	DPadLeft = 4,
+	DPadRight = 8,
+	Start = 16,
+	Back = 32,
+	LeftStick = 64,
+	RightStick = 128,
+	LeftShoulder = 256,
+	RightShoulder = 512,
+	BigButton = 2048,
+	A = 4096,
+	B = 8192,
+	X = 16384,
+	Y = 32768,
+	LeftThumbstickLeft = 2097152,
+	RightTrigger = 4194304,
+	LeftTrigger = 8388608,
+	RightThumbstickUp = 16777216,
+	RightThumbstickDown = 33554432,
+	RightThumbstickRight = 67108864,
+	RightThumbstickLeft = 134217728,
+	LeftThumbstickUp = 268435456,
+	LeftThumbstickDown = 536870912,
+	LeftThumbstickRight = 1073741824
+};
+
+DECLARE_ENUM_FLAG(Buttons);
+
 class MInput
 {
 public:
 	friend class Engine;
 
-	enum class Buttons
-	{
-		DPadUp = 1,
-		DPadDown = 2,
-		DPadLeft = 4,
-		DPadRight = 8,
-		Start = 16,
-		Back = 32,
-		LeftStick = 64,
-		RightStick = 128,
-		LeftShoulder = 256,
-		RightShoulder = 512,
-		BigButton = 2048,
-		A = 4096,
-		B = 8192,
-		X = 16384,
-		Y = 32768,
-		LeftThumbstickLeft = 2097152,
-		RightTrigger = 4194304,
-		LeftTrigger = 8388608,
-		RightThumbstickUp = 16777216,
-		RightThumbstickDown = 33554432,
-		RightThumbstickRight = 67108864,
-		RightThumbstickLeft = 134217728,
-		LeftThumbstickUp = 268435456,
-		LeftThumbstickDown = 536870912,
-		LeftThumbstickRight = 1073741824
-	};
-
 	struct GamePadThumbSticks
 	{
-		GamePadThumbSticks(const Math::Vec2& leftThumbstick, const Math::Vec2& rightThumbStick)
+		inline GamePadThumbSticks(const Math::Vec2& leftThumbstick, const Math::Vec2& rightThumbStick)
 		: m_left(leftThumbstick)
 		, m_right(rightThumbStick)
 		{
@@ -62,7 +65,7 @@ public:
 
 	struct GamePadTriggers
 	{
-		GamePadTriggers(float left, float right)
+		inline GamePadTriggers(float left, float right)
 		: m_left(left)
 		, m_right(right)
 		{
@@ -72,10 +75,31 @@ public:
 		float m_right;
 	};
 
+	struct GamePadButtons
+	{
+		inline GamePadButtons(Buttons buttons)
+		: m_buttons(buttons)
+		{
+		}
+
+		Buttons m_buttons;
+	};
+
 	struct GamePadState
 	{
+		inline bool IsButtonDown(Buttons buttons) const
+		{
+			return (m_buttons.m_buttons & buttons) == buttons;
+		}
+
+		inline bool IsButtonUp(Buttons buttons) const
+		{
+			return (m_buttons.m_buttons & buttons) != buttons;
+		}
+
 		GamePadThumbSticks m_thumbSticks = GamePadThumbSticks(Vec2_Zero, Vec2_Zero);
 		GamePadTriggers m_triggers = GamePadTriggers(0.f, 0.f);
+		GamePadButtons m_buttons = GamePadButtons(Buttons::None);
 		bool m_connected = false;
 	};
 
@@ -92,9 +116,9 @@ public:
 
 		// Buttons
 		// TODO: Implement gamepad button stuff
-		inline bool Check(Buttons button) const { return false; }
-		inline bool Pressed(Buttons button) const { return false; }
-		inline bool Released(Buttons button) const { return false; }
+		inline bool Check(Buttons button) const { return m_currentState.IsButtonDown(button); }
+		inline bool Pressed(Buttons button) const { return m_currentState.IsButtonDown(button) && m_previousState.IsButtonUp(button); }
+		inline bool Released(Buttons button) const { return m_currentState.IsButtonUp(button) && m_previousState.IsButtonDown(button); }
 
 		inline bool Check(Buttons buttonA, Buttons buttonB) const
 		{

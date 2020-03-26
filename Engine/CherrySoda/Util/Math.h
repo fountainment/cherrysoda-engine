@@ -6,6 +6,9 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <type_traits>
+
+
 #define CHERRYSODA_NONE_OP ((void)0)
 
 #define CHERRYSODA_GETTER_SETTER(NAME,VALUE) \
@@ -29,6 +32,30 @@
 	inline const Math::Vec3 NAME() const { EXTRA_GET_OP; return VALUE; } \
 	inline void NAME(const Math::Vec3& v3) { EXTRA_SET_OP; VALUE = v3; } \
 	inline void NAME(const Math::Vec2& v2) { NAME(Math::Vec3(v2, NAME()[2])); }
+
+
+#define DECLARE_ENUM_FLAG(ENUM_T) \
+inline ENUM_T operator | (ENUM_T lhs, ENUM_T rhs) \
+{ \
+    using T = std::underlying_type_t<ENUM_T>; \
+    return static_cast<ENUM_T>(static_cast<T>(lhs) | static_cast<T>(rhs)); \
+} \
+inline ENUM_T& operator |= (ENUM_T& lhs, ENUM_T rhs) \
+{ \
+    lhs = lhs | rhs; \
+    return lhs; \
+} \
+inline ENUM_T operator & (ENUM_T lhs, ENUM_T rhs) \
+{ \
+    using T = std::underlying_type_t<ENUM_T>; \
+    return static_cast<ENUM_T>(static_cast<T>(lhs) & static_cast<T>(rhs)); \
+} \
+inline ENUM_T& operator &= (ENUM_T& lhs, ENUM_T rhs) \
+{ \
+    lhs = lhs & rhs; \
+    return lhs; \
+}
+
 
 #define Vec2_Zero       cherrysoda::Math::Vec2(0.f)
 #define Vec2_One        cherrysoda::Math::Vec2(1.f)
@@ -77,6 +104,7 @@
 #define Math_RotateVector         cherrysoda::Math::RotateVector_
 #define Math_GetOrientationMatrix cherrysoda::Math::GetOrientationMatrix_
 #define Math_RaycastAABB          cherrysoda::Math::RaycastAABB_
+
 
 namespace cherrysoda {
 

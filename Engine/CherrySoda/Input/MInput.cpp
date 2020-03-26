@@ -144,9 +144,46 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 		SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT
 	) / 32767.0f;
 
+	// Buttons
+	Buttons buttonState = Buttons::None;
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A) != 0) {
+		buttonState |= Buttons::A;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B) != 0) {
+		buttonState |= Buttons::B;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X) != 0) {
+		buttonState |= Buttons::X;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y) != 0) {
+		buttonState |= Buttons::Y;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK) != 0) {
+		buttonState |= Buttons::Back;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_GUIDE) != 0) {
+		buttonState |= Buttons::BigButton;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START) != 0) {
+		buttonState |= Buttons::Start;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSTICK) != 0) {
+		buttonState |= Buttons::LeftStick;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSTICK) != 0) {
+		buttonState |= Buttons::RightStick;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER) != 0) {
+		buttonState |= Buttons::LeftShoulder;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) != 0) {
+		buttonState |= Buttons::RightShoulder;
+	}
+
 	GamePadState builtState;
 	builtState.m_thumbSticks = GamePadThumbSticks(stickLeft, stickRight);
 	builtState.m_triggers = GamePadTriggers(triggerLeft, triggerRight);
+	builtState.m_buttons = GamePadButtons(buttonState);
 	builtState.m_connected = true;
 	return builtState;
 }

@@ -15,6 +15,8 @@ enum class SpriteEffects
 	FlipVertically = 2
 };
 
+DECLARE_ENUM_FLAG(SpriteEffects);
+
 class SpriteBatch : Mesh<Graphics::PosColorTexCoord0Vertex>
 {
 public:
@@ -36,18 +38,23 @@ public:
 		float rightUV  = (float)rect.Right()  / (float)tex.Width();
 		float bottomUV = (float)rect.Bottom() / (float)tex.Height();
 		float topUV    = (float)rect.Top()    / (float)tex.Height();
-		if ((int)effects & (int)SpriteEffects::FlipVertically) {
+		if ((effects & SpriteEffects::FlipVertically) == SpriteEffects::FlipVertically) {
 			STL::Swap(bottomUV, topUV);
 		}
-		if ((int)effects & (int)SpriteEffects::FlipHorizontally) {
+		if ((effects & SpriteEffects::FlipHorizontally) == SpriteEffects::FlipVertically) {
 			STL::Swap(leftUV, rightUV);
 		}
-		AddQuad(
-			MK_VERT(Math::Vec3((pos - origin + Math::Vec2(rect.Width(), 0.f) ) * scale, 0.f), color, Math::Vec2(rightUV, bottomUV)),
-			MK_VERT(Math::Vec3((pos - origin + Math::Vec2(rect.Size())       ) * scale, 0.f), color, Math::Vec2(rightUV, topUV)),
-			MK_VERT(Math::Vec3((pos - origin                                 ) * scale, 0.f), color, Math::Vec2(leftUV,  bottomUV)),
-			MK_VERT(Math::Vec3((pos - origin + Math::Vec2(0.f, rect.Height())) * scale, 0.f), color, Math::Vec2(leftUV,  topUV))
-		);
+		if (scale == Vec2_One && rotation == 0.f) {
+			AddQuad(
+				MK_VERT(Math::Vec3((pos - origin + Math::Vec2(rect.Width(), 0.f) ) * scale, 0.f), color, Math::Vec2(rightUV, bottomUV)),
+				MK_VERT(Math::Vec3((pos - origin + Math::Vec2(rect.Size())       ) * scale, 0.f), color, Math::Vec2(rightUV, topUV)),
+				MK_VERT(Math::Vec3((pos - origin                                 ) * scale, 0.f), color, Math::Vec2(leftUV,  bottomUV)),
+				MK_VERT(Math::Vec3((pos - origin + Math::Vec2(0.f, rect.Height())) * scale, 0.f), color, Math::Vec2(leftUV,  topUV))
+			);
+		}
+		else {
+			// TODO: TransformMatrix
+		}
 		m_previousTexture = tex;
 	}
 

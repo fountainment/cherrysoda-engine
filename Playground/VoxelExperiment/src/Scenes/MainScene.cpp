@@ -73,23 +73,23 @@ void MainScene::Begin()
 
 	Math::Vec3 worldBasePosition(-World::Size() * Chunk::Size() / 2.0f);
 	m_voxelWorld = new World(worldBasePosition);
-	Chunk* chunks = m_voxelWorld->LoadChunks();
-	for (int i = 0; i < World::ChunkAmount(); ++i) {
+	m_voxelWorld->LoadChunks();
+	for (auto& chunk : *m_voxelWorld) {
 		for (int z = 0; z < Chunk::Size(); ++z) {
 			for (int y = 0; y < Chunk::Size(); ++y) {
 				for (int x = 0; x < Chunk::Size(); ++x) {
 					Math::IVec3 blockIndex(x, y, z);
 					if ((x + y + z) % 2 == 0) {
-						chunks[i].SetBlockType(blockIndex, Block::Type::White);
+						chunk.SetBlockType(blockIndex, Block::Type::White);
 					}
 					else {
-						chunks[i].SetBlockType(blockIndex, Block::Type::Black);
+						chunk.SetBlockType(blockIndex, Block::Type::Black);
 					}
 				}
 			}
 		}
-		chunks[i].AddTag(ms_voxelTag);
-		Add(chunks + i);
+		chunk.AddTag(ms_voxelTag);
+		Add(&chunk);
 	}
 
 	// Graphics::SetUniformMaterial(Math::Vec3(0.95f, 0.93f, 0.88f), 1.f, 0.f, 0.f); // Silver
@@ -128,6 +128,7 @@ void MainScene::Update()
 	float t;
 	Math::Vec3 pos = camera->Position();
 	Math::Vec3 direction = camera->Direction();
+	if (MInput::GamePads(0)->Check(Buttons::LeftShoulder))
 	if (Math_RaycastAABB(pos, direction, m_voxelWorld->GetAABB(), &t)) {
 		for (;;) {
 			pos = pos + direction * (t + 0.1f);
