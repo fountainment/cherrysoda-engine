@@ -63,32 +63,8 @@
 					"shell_cmd": "make -j8 rebuild_cache"
 				},
 				{
-					"name": "bimg",
-					"shell_cmd": "make -j8 bimg"
-				},
-				{
-					"name": "bx",
-					"shell_cmd": "make -j8 bx"
-				},
-				{
-					"name": "bimg_decode",
-					"shell_cmd": "make -j8 bimg_decode"
-				},
-				{
-					"name": "bgfx",
-					"shell_cmd": "make -j8 bgfx"
-				},
-				{
-					"name": "glm_static",
-					"shell_cmd": "make -j8 glm_static"
-				},
-				{
 					"name": "CherrySoda",
 					"shell_cmd": "make -j8 CherrySoda"
-				},
-				{
-					"name": "VoxelExperiment",
-					"shell_cmd": "make -j8 VoxelExperiment"
 				},
 				{
 					"name": "FirstTriangle",
@@ -97,6 +73,30 @@
 				{
 					"name": "Minimal",
 					"shell_cmd": "make -j8 Minimal"
+				},
+				{
+					"name": "VoxelExperiment",
+					"shell_cmd": "make -j8 VoxelExperiment"
+				},
+				{
+					"name": "bgfx",
+					"shell_cmd": "make -j8 bgfx"
+				},
+				{
+					"name": "bimg",
+					"shell_cmd": "make -j8 bimg"
+				},
+				{
+					"name": "bimg_decode",
+					"shell_cmd": "make -j8 bimg_decode"
+				},
+				{
+					"name": "bx",
+					"shell_cmd": "make -j8 bx"
+				},
+				{
+					"name": "glm_static",
+					"shell_cmd": "make -j8 glm_static"
 				}
 			],
 			"working_dir": "${project_path}/build"
