@@ -480,7 +480,7 @@ void Graphics::Submit()
 	bgfx::submit(RenderPass(), { CurrentShader() });
 }
 
-void Graphics::Submit(Effect* effect)
+void Graphics::Submit(const Effect* effect)
 {
 	bgfx::submit(RenderPass(), { effect->m_program });
 }
@@ -490,7 +490,7 @@ void Graphics::Submit(cherrysoda::type::UInt16 renderPass)
 	bgfx::submit(renderPass, { CurrentShader() });
 }
 
-void Graphics::Submit(cherrysoda::type::UInt16 renderPass, Effect* effect)
+void Graphics::Submit(cherrysoda::type::UInt16 renderPass, const Effect* effect)
 {
 	bgfx::submit(renderPass, { effect->m_program });
 }
@@ -500,7 +500,7 @@ void Graphics::SubmitOnCurrentRenderPass()
 	bgfx::submit(CurrentRenderPass(), { CurrentShader() });
 }
 
-void Graphics::SubmitOnCurrentRenderPass(Effect* effect)
+void Graphics::SubmitOnCurrentRenderPass(const Effect* effect)
 {
 	bgfx::submit(CurrentRenderPass(), { effect->m_program });
 }

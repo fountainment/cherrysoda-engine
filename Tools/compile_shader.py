@@ -2,6 +2,10 @@ import lib.cherrysoda as cherry
 import re
 import sys
 
+
+# TODO: Support shader in folder
+
+
 def compile_shader_program(shader_dir, shader_name):
     print('Compiling shader ' + shader_name + '...')
     vert_shader = cherry.join_path(shader_dir, 'shaders/vs_' + shader_name + '.sc')
@@ -42,9 +46,12 @@ def compile_shader_program(shader_dir, shader_name):
         cherry.compile_shader(vert_shader, vert_out % folder, platform, 'vertex',   include_dir, profile[0], opt_level)
         cherry.compile_shader(frag_shader, frag_out % folder, platform, 'fragment', include_dir, profile[1], opt_level)
 
+
 def main():
-    if len(sys.argv) < 2:
-        print('compile_shader.py needs at least 2 args')
+    if len(sys.argv) < 3:
+        print('Usage: python compile_shader.py <shader_dir> <shader_name>')
+        print('       python compile_shader.py <shader_dir> --file-list <shader_file_list>')
+        return
     shader_dir = sys.argv[1]
     if len(sys.argv) == 3:
         shader_name = sys.argv[2]
@@ -55,6 +62,7 @@ def main():
         shader_names = p.findall(shader_src) 
         for shader_name in shader_names:
             compile_shader_program(shader_dir, shader_name)
+
 
 if __name__ == '__main__':
     main()

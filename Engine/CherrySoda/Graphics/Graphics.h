@@ -144,11 +144,11 @@ public:
 	static void SetStateDefault();
 	static void SetStateNoDepth();
 	void Submit();
-	void Submit(Effect* effect);
+	void Submit(const Effect* effect);
 	static void Submit(type::UInt16 renderPass);
-	static void Submit(type::UInt16 renderPass, Effect* effect);
+	static void Submit(type::UInt16 renderPass, const Effect* effect);
 	static void SubmitOnCurrentRenderPass();
-	static void SubmitOnCurrentRenderPass(Effect* effect);
+	static void SubmitOnCurrentRenderPass(const Effect* effect);
 
 	static void Discard();
 
