@@ -128,17 +128,25 @@ void MainScene::Update()
 	float t;
 	Math::Vec3 pos = camera->Position();
 	Math::Vec3 direction = camera->Direction();
-	if (MInput::GamePads(0)->Check(Buttons::LeftShoulder))
-	if (Math_RaycastAABB(pos, direction, m_voxelWorld->GetAABB(), &t)) {
-		for (;;) {
-			pos = pos + direction * (t + 0.1f);
-			auto index = m_voxelWorld->GetIndexOfBlockAt(pos);
-			auto block = m_voxelWorld->GetBlock(index);
-			if (m_voxelWorld->SetBlockType(index, Block::Type::None)) {
-				MInput::GamePads(0)->Rumble(0.1f, 0.01f);
-			}
-			if (!block || !Math_RaycastAABB(pos, direction, m_voxelWorld->GetBlockAABB(index), nullptr, &t)) {
-				break;
+	if (MInput::GamePads(0)->Check(Buttons::LeftShoulder, Buttons::RightShoulder)) {
+		if (Math_RaycastAABB(pos, direction, m_voxelWorld->GetAABB(), &t)) {
+			for (;;) {
+				pos = pos + direction * (t + 0.1f);
+				auto index = m_voxelWorld->GetIndexOfBlockAt(pos);
+				auto block = m_voxelWorld->GetBlock(index);
+				if (MInput::GamePads(0)->Check(Buttons::LeftShoulder)) {
+					if (m_voxelWorld->SetBlockType(index, Block::Type::None)) {
+						MInput::GamePads(0)->Rumble(0.1f, 0.01f);
+					}
+				}
+				if (MInput::GamePads(0)->Check(Buttons::RightShoulder)) {
+					if (m_voxelWorld->SetBlockType(index, Block::Type::White)) {
+						MInput::GamePads(0)->Rumble(0.1f, 0.01f);
+					}
+				}
+				if (!block || !Math_RaycastAABB(pos, direction, m_voxelWorld->GetBlockAABB(index), nullptr, &t)) {
+					break;
+				}
 			}
 		}
 	}
