@@ -17,6 +17,8 @@ Chunk::Chunk()
 {
 	STL::Resize(m_blocks, BlockAmount());
 	STL::Fill(m_blocks, Block());
+	STL::Resize(m_blockSurrounding, BlockAmount());
+	STL::Fill(m_blockSurrounding, 0x3F);
 
 	m_chunkGraphicsComponent = new ChunkGraphicsComponent;
 	Add(m_chunkGraphicsComponent);
@@ -26,30 +28,36 @@ void Chunk::SetBlockType(const Math::IVec3& v, Block::Type type)
 {
 	Block* block = GetBlock(v);
 	if (block && block->m_type != type) {
+		auto oldType = block->m_type;
 		block->m_type = type;
-		SetChanged(v);
+		SetChanged();
+		if (oldType == Block::Type::None || type == Block::Type::None) {
+			NotifyChanged(v, type);
+		}
 	}
 }
 
 void Chunk::FillAllBlocks(Block::Type type)
 {
 	bool changed = false;
+	cherrysoda::type::UInt8 blockSurrounding = type == Block::Type::None ? 0x3F : 0x00;
 	for (int i = 0; i < BlockAmount(); ++i)
 	{
 		if (GetBlocks()[i].m_type != type) {
 			GetBlocks()[i].m_type = type;
+			m_blockSurrounding[i] = blockSurrounding;
 			changed = true;
 		}
-		
 	}
 	if (changed) {
 		SetChanged();
+		NotifyChanged();
 	}
 }
 
-int Chunk::GetBlockSurrounding(const Math::IVec3& v)
+cherrysoda::type::UInt8 Chunk::GetBlockSurrounding(const Math::IVec3& v)
 {
-	int result = 0;
+	cherrysoda::type::UInt8 result = 0;
 	for (int i = 0; i < 6; ++i) {
 		if (GetBlockType(v + s_offset[i]) == Block::Type::None) {
 			result |= 1 << i;
@@ -58,11 +66,19 @@ int Chunk::GetBlockSurrounding(const Math::IVec3& v)
 	return result;
 }
 
+cherrysoda::type::UInt8 Chunk::GetBlockSurroundingFast(int index)
+{
+	CHERRYSODA_ASSERT(index >= 0 && index < BlockAmount(), "Block index out of range!\n");
+	return m_blockSurrounding[index];
+}
 
 void Chunk::SetChanged()
 {
 	m_changed = true;
+}
 
+void Chunk::NotifyChanged()
+{
 	if (m_world) {
 		for (int i = 0; i < 6; ++i) {
 			Chunk* chunk = m_world->GetChunk(m_chunkIndex + s_offset[i]);
@@ -73,11 +89,8 @@ void Chunk::SetChanged()
 	}
 }
 
-
-void Chunk::SetChanged(const Math::IVec3& v)
+void Chunk::NotifyChanged(const Math::IVec3& v, Block::Type type)
 {
-	m_changed = true;
-
 	if (m_world) {
 		Chunk* chunks[6];
 		for (int i = 0; i < 3; ++i) {
@@ -85,8 +98,28 @@ void Chunk::SetChanged(const Math::IVec3& v)
 			chunks[(i << 1) | 1] = (v[i] == 0)          ? m_world->GetChunk(m_chunkIndex + s_offset[(i << 1) | 1]) : nullptr;
 		}
 		for (int i = 0; i < 6; ++i) {
+			int ii = i - (i & 1) + ((i & 1) ^ 1);
 			if (chunks[i]) {
 				chunks[i]->m_changed = true;
+				Math::IVec3 loc = ((v + s_offset[i]) + Chunk::Size()) % Chunk::Size();
+				int index = GetBlockIndexFast(loc);
+				if (type == Block::Type::None) {
+					chunks[i]->m_blockSurrounding[index] |= 1 << ii;
+				}
+				else {
+					chunks[i]->m_blockSurrounding[index] &= ~(1 << ii);
+				}
+			}
+			else {
+				int index = GetBlockIndex(v + s_offset[i]);
+				if (index >= 0) {
+					if (type == Block::Type::None) {
+						m_blockSurrounding[index] |= 1 << ii;
+					}
+					else {
+						m_blockSurrounding[index] &= ~(1 << ii);
+					}
+				}
 			}
 		}
 	}

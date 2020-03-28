@@ -39,39 +39,50 @@ void ChunkGraphicsComponent::RebuildMesh()
 	STL::Vector<STL::Action> pendingActions;
 
 	int overallQuadAmount = 0;
-	for (int i = 0; i < chunkSize; ++i) {
-		for (int j = 0; j < chunkSize; ++j) {
-			for (int k = 0; k < chunkSize; ++k) {
-				if (overallQuadAmount * 4 + 8 > UINT16_MAX) {
-					break;
-				}
-				Block::Type blockType = chunk->GetBlockType(Math::IVec3(i, j, k));
-				if (blockType != Block::Type::None) {
-					Color color;
-					switch (blockType) {
-					case Block::Type::White:
-						color = Color::White;
+	{
+		CHERRYSODA_PROFILE("CalculateChunkMesh");
+		for (int i = 0; i < chunkSize; ++i) {
+			for (int j = 0; j < chunkSize; ++j) {
+				for (int k = 0; k < chunkSize; ++k) {
+					if (overallQuadAmount * 4 + 8 > UINT16_MAX) {
 						break;
-					case Block::Type::Black:
-						color = Color::Black;
-						break;
-					default:
-						color = Color::Black;
-					};
-					int planeMask = chunk->GetBlockSurrounding(Math::IVec3(i, j, k));
-					if (planeMask > 0) {
-						overallQuadAmount += Math_BitCount(planeMask);
-						STL::Add(pendingActions, [planeMask, i, j, k, color, this]() { AddCube(Math::Vec3(i, j, k), 1.f, color, planeMask); });
+					}
+					int index = chunk->GetBlockIndexFast(Math::IVec3(i, j, k));
+					Block::Type blockType = chunk->GetBlocks()[index].m_type;
+					if (blockType != Block::Type::None) {
+						Color color;
+						switch (blockType) {
+						case Block::Type::White:
+							color = Color::White;
+							break;
+						case Block::Type::Black:
+							color = Color::Black;
+							break;
+						default:
+							color = Color::Black;
+						};
+						auto planeMask = chunk->GetBlockSurroundingFast(index);
+						if (planeMask > 0) {
+							overallQuadAmount += Math_BitCount(planeMask);
+							STL::Add(pendingActions, [planeMask, i, j, k, color, this]() { AddCube(Math::Vec3(i, j, k), 1.f, color, planeMask); });
+						}
 					}
 				}
 			}
 		}
 	}
-	GetMesh()->ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
-	for (auto action : pendingActions) {
-		action();
+	{
+		CHERRYSODA_PROFILE("UpdateChunkMesh");
+		GetMesh()->ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
+		for (auto action : pendingActions) {
+			action();
+		}
 	}
-	GetMesh()->SubmitBuffer();
+	{
+		CHERRYSODA_PROFILE("SubmitBuffer");
+
+		GetMesh()->SubmitBuffer();
+	}
 }
 
 void ChunkGraphicsComponent::Render()

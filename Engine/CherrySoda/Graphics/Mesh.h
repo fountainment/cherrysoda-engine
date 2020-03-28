@@ -9,8 +9,6 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-#include <CherrySoda/Profile.h>
-
 #define MK_VERT VertexType::MakeVertex
 
 namespace cherrysoda {
@@ -144,8 +142,6 @@ public:
 
 	void SubmitBuffer()
 	{
-		CHERRYSODA_PROFILE_FUNCTION();
-
 		switch (GetBufferType()) {
 		case BufferType::Static:
 			DestroyBuffer();

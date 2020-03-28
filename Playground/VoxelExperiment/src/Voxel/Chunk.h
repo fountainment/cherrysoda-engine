@@ -37,10 +37,12 @@ public:
 
 	void RemoveBlock(const cherrysoda::Math::IVec3& v) { SetBlockType(v, Block::Type::None); }
 	void FillAllBlocks(Block::Type type);
-	int GetBlockSurrounding(const cherrysoda::Math::IVec3& v);
+	cherrysoda::type::UInt8 GetBlockSurrounding(const cherrysoda::Math::IVec3& v);
+	cherrysoda::type::UInt8 GetBlockSurroundingFast(int index);
 
 	void SetChanged();
-	void SetChanged(const cherrysoda::Math::IVec3& v);
+	void NotifyChanged();
+	void NotifyChanged(const cherrysoda::Math::IVec3& v, Block::Type type);
 
 	Block* GetBlocks() { return m_blocks.data(); }
 	Block* GetBlock(const cherrysoda::Math::IVec3& v);
@@ -48,6 +50,11 @@ public:
 	{
 		int index = static_cast<int>(block - GetBlocks());
 		return (index < 0 || index >= BlockAmount()) ? -1 : index;
+	}
+	static inline int GetBlockIndexFast(const cherrysoda::Math::IVec3& v)
+	{
+		CHERRYSODA_ASSERT(!(v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()), "Block Index Out of Range!\n");
+		return v.z * Size() * Size() + v.y * Size() + v.x;
 	}
 
 	inline cherrysoda::Math::AABB GetAABB() const { return { Position(), Position() + cherrysoda::Math::Vec3(static_cast<float>(Size())) }; }
@@ -59,6 +66,7 @@ public:
 
 private:
 	cherrysoda::STL::Vector<Block> m_blocks;
+	cherrysoda::STL::Vector<cherrysoda::type::UInt8> m_blockSurrounding;
 	cherrysoda::Math::IVec3 m_chunkIndex = IVec3_Zero;
 
 	ChunkGraphicsComponent* m_chunkGraphicsComponent;

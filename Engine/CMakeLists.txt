@@ -60,7 +60,6 @@ set(ENGINE_SRC
 # Tracy Profiler
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
   set(ENGINE_SRC ${ENGINE_SRC} tracy/TracyClient.cpp tracy/Tracy.hpp)
-  add_definitions(-DCHERRYSODA_USE_TRACY_PROFILER)
 endif()
 
 if(WINDOWS)
@@ -89,4 +88,7 @@ else()
 endif()
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
 target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
+  target_compile_definitions(CherrySoda PUBLIC CHERRYSODA_USE_TRACY_PROFILER)
+endif()
 set_target_properties(CherrySoda PROPERTIES FOLDER Engine)

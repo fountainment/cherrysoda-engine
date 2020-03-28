@@ -60,8 +60,12 @@ public:
 		Block* block = GetBlock(v, &chunk);
 		if (block && block->m_type != type)
 		{
+			auto oldType = block->m_type;
 			block->m_type = type;
-			chunk->SetChanged(v % Chunk::Size());
+			chunk->SetChanged();
+			if (oldType == Block::Type::None || type == Block::Type::None) {
+				chunk->NotifyChanged(v % Chunk::Size(), type);
+			}
 			return true;
 		}
 		return false;
