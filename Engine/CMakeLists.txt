@@ -60,6 +60,7 @@ set(ENGINE_SRC
 # Tracy Profiler
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
   set(ENGINE_SRC ${ENGINE_SRC} tracy/TracyClient.cpp tracy/Tracy.hpp)
+  add_definitions(-DCHERRYSODA_USE_TRACY_PROFILER)
 endif()
 
 if(WINDOWS)

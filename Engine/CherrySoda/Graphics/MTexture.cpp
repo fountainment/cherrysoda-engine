@@ -47,8 +47,8 @@ MTexture::MTexture(const MTexture& parent, const Math::IRectangle& clipRect)
 
 Math::IRectangle MTexture::GetRelativeRect(int x, int y, int width, int height) const
 {
-	int atX = ClipRect().X() - DrawOffset().x + x;
-	int atY = ClipRect().Y() - DrawOffset().y + y;
+	int atX = ClipRect().X() - static_cast<int>(DrawOffset().x) + x;
+	int atY = ClipRect().Y() - static_cast<int>(DrawOffset().y) + y;
 
 	int rX = Math_Clamp(atX, ClipRect().Left(), ClipRect().Right());
 	int rY = Math_Clamp(atY, ClipRect().Bottom(), ClipRect().Top());

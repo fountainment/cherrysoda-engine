@@ -2,7 +2,7 @@
 #define _CHERRYSODA_PROILE_H_
 
 
-#if defined(CHERRYSODA_ENABLE_PROFILE) && defined(TRACY_ENABLE)
+#if defined(CHERRYSODA_ENABLE_PROFILE) && defined(CHERRYSODA_USE_TRACY_PROFILER)
 #include <tracy/Tracy.hpp>
 #	define CHERRYSODA_PROFILE(NAME)        ZoneScopedN(NAME)
 #	define CHERRYSODA_PROFILE_FRAME_MARK() FrameMark
