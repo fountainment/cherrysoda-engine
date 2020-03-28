@@ -6,6 +6,8 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/Util/Math.h>
 
+#include <CherrySoda/Profile.h>
+
 using cherrysoda::Entity;
 
 using cherrysoda::Camera;
@@ -40,11 +42,15 @@ void Entity::Awake(Scene* scene)
 
 void Entity::Update()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	m_components->Update();
 }
 
 void Entity::Render()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	m_components->Render();
 }
 

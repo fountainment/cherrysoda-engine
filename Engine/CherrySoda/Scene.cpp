@@ -8,6 +8,8 @@
 #include <CherrySoda/Renderers/EverythingRenderer.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <CherrySoda/Profile.h>
+
 using cherrysoda::Scene;
 
 using cherrysoda::Engine;
@@ -42,6 +44,8 @@ void Scene::End()
 
 void Scene::BeforeUpdate()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	if (!m_paused) {
 		m_timeActive += Engine::Instance()->DeltaTime();
 	}
@@ -54,6 +58,8 @@ void Scene::BeforeUpdate()
 
 void Scene::Update()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	if (!m_paused) {
 		m_entities->Update();
 		m_rendererList->Update();
@@ -62,6 +68,8 @@ void Scene::Update()
 
 void Scene::AfterUpdate()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	if (STL::Count(m_onEndOfFrame) > 0) {
 		for (auto func : m_onEndOfFrame) {
 			func();
@@ -72,16 +80,22 @@ void Scene::AfterUpdate()
 
 void Scene::BeforeRender()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	m_rendererList->BeforeRender();
 }
 
 void Scene::Render()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	m_rendererList->Render();
 }
 
 void Scene::AfterRender()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	m_rendererList->AfterRender();
 }
 

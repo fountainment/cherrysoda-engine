@@ -11,6 +11,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <CherrySoda/Profile.h>
+
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
 #include <bx/file.h>
@@ -352,7 +354,7 @@ void Graphics::Initialize()
 
 	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
-#ifdef CHERRYSODA_PROFILE
+#ifdef CHERRYSODA_ENABLE_PROFILE
 	ms_vsyncEnabled = false;
 #endif
 
@@ -376,6 +378,8 @@ void Graphics::Terminate()
 
 void Graphics::RenderFrame()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	/*
 	bgfx::dbgTextClear();
 	bgfx::dbgTextPrintf(1, 1, 0x0f, "API: %s", bgfx::getRendererName(bgfx::getRendererType()));

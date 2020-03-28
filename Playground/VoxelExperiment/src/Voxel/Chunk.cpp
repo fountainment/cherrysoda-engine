@@ -5,6 +5,7 @@
 #include "ChunkGraphicsComponent.h"
 
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Math;

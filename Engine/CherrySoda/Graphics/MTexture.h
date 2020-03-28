@@ -3,12 +3,13 @@
 
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Draw.h>
 
 namespace cherrysoda {
 
-enum class SpriteEffects;
+enum class SpriteEffects : type::UInt8;
 
 class MTexture
 {

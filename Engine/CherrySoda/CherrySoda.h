@@ -5,6 +5,8 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Scene.h>
 
+#include <CherrySoda/Profile.h>
+
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Image.h>

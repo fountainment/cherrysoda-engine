@@ -10,6 +10,8 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
 
+#include <CherrySoda/Profile.h>
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif // __EMSCRIPTEN__
@@ -73,6 +75,8 @@ void Engine::Run()
 	emscripten_set_main_loop(&Engine::MainLoop, -1, 1);
 #else
 	while (!m_shouldExit) {
+		CHERRYSODA_PROFILE_FRAME_MARK();
+		CHERRYSODA_PROFILE("MainLoop");
 		m_window->PollEvents();
 		Update();
 		Draw();
@@ -124,6 +128,8 @@ void Engine::LoadContent()
 
 void Engine::RenderCore()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	if (m_scene) {
 		m_scene->BeforeRender();
 	}
@@ -148,6 +154,8 @@ void Engine::OnSceneTransition(Scene* from, Scene* to)
 
 void Engine::Update()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	m_window->PollEvents();
 
 	m_currentTime = Time::GetSystemTime();
@@ -182,6 +190,8 @@ void Engine::Update()
 
 void Engine::Draw()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	RenderCore();
 	m_graphicsDevice->RenderFrame();
 
@@ -189,7 +199,7 @@ void Engine::Draw()
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.0) {
-#if !defined(NDEBUG) || defined(CHERRYSODA_PROFILE)
+#if !defined(NDEBUG) || defined(CHERRYSODA_ENABLE_PROFILE)
 		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 #endif
 		m_FPS = m_fpsCounter;

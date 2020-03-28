@@ -9,6 +9,8 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <CherrySoda/Profile.h>
+
 namespace crsd = cherrysoda;
 using crsd::Engine;
 using crsd::Entity;
@@ -26,6 +28,8 @@ void ChunkGraphicsComponent::EntityAwake()
 
 void ChunkGraphicsComponent::RebuildMesh()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	constexpr int chunkSize = Chunk::Size();
 	constexpr float halfChunkSize = chunkSize * 0.5f;
 

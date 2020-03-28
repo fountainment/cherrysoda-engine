@@ -6,6 +6,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/NumType.h>
 
+#include <CherrySoda/Profile.h>
+
 #include "Voxel/Block.h"
 
 class World;

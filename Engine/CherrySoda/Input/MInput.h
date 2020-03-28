@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
 
 namespace cherrysoda {
 
@@ -14,7 +15,7 @@ enum class PlayerIndex
 	Four = 3
 };
 
-enum class Buttons
+enum class Buttons : type::UInt32
 {
 	None = 0,
 	DPadUp = 1,
@@ -179,48 +180,48 @@ public:
 			return ret;
 		}
 
-		float GetLeftTrigger()
+		inline float GetLeftTrigger() const
 		{
 			return m_currentState.m_triggers.m_left;
 		}
 
-		float GetRightTrigger()
+		inline float GetRightTrigger() const
 		{
 			return m_currentState.m_triggers.m_right;
 		}
 
-		bool LeftTriggerCheck(float threshold)
+		inline bool LeftTriggerCheck(float threshold) const
 		{
 			return m_currentState.m_triggers.m_left >= threshold;
 		}
 
-		bool LeftTriggerPressed(float threshold)
+		inline bool LeftTriggerPressed(float threshold) const
 		{
 			return m_currentState.m_triggers.m_left >= threshold && m_previousState.m_triggers.m_left < threshold;
 		}
 
-		bool LeftTriggerReleased(float threshold)
+		inline bool LeftTriggerReleased(float threshold) const
 		{
 			return m_currentState.m_triggers.m_left < threshold && m_previousState.m_triggers.m_left >= threshold;
 		}
 
-		bool RightTriggerCheck(float threshold)
+		inline bool RightTriggerCheck(float threshold) const
 		{
 			return m_currentState.m_triggers.m_right >= threshold;
 		}
 
-		bool RightTriggerPressed(float threshold)
+		inline bool RightTriggerPressed(float threshold) const
 		{
 			return m_currentState.m_triggers.m_right >= threshold && m_previousState.m_triggers.m_right < threshold;
 		}
 
-		bool RightTriggerReleased(float threshold)
+		inline bool RightTriggerReleased(float threshold) const
 		{
 			return m_currentState.m_triggers.m_right < threshold && m_previousState.m_triggers.m_right >= threshold;
 		}
 
 	private:
-		GamePadData(PlayerIndex playerIndex)
+		inline GamePadData(PlayerIndex playerIndex)
 		: m_playerIndex(playerIndex)
 		{
 		}

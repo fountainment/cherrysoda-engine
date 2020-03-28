@@ -4,6 +4,8 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/String.h>
 
+#include <CherrySoda/Profile.h>
+
 #include <SDL2/SDL.h>
 
 using cherrysoda::MInput;
@@ -83,6 +85,8 @@ void MInput::Initialize()
 
 void MInput::Update()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
+
 	// TODO: Use gamepad event to detect gamepad connection
 	if (ms_internalDevices[0] == nullptr && SDL_NumJoysticks() > 0) {
 		ms_internalDevices[0] = (void*)SDL_GameControllerOpen(0);

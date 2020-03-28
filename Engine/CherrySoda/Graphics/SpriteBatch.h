@@ -4,11 +4,12 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Graphics/Mesh.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
-enum class SpriteEffects
+enum class SpriteEffects : type::UInt8
 {
 	None = 0,
 	FlipHorizontally = 1,

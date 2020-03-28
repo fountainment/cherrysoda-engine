@@ -5,6 +5,7 @@ set(ENGINE_SRC
   CherrySoda/Entity.h
   CherrySoda/Scene.cpp
   CherrySoda/Scene.h
+  CherrySoda/Profile.h
   CherrySoda/Components/Component.cpp
   CherrySoda/Components/Component.h
   CherrySoda/Components/Graphics/GraphicsComponent.cpp
@@ -55,6 +56,11 @@ set(ENGINE_SRC
   CherrySoda/Util/Time.cpp
   CherrySoda/Util/Time.h
 )
+
+# Tracy Profiler
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
+  set(ENGINE_SRC ${ENGINE_SRC} tracy/TracyClient.cpp tracy/Tracy.hpp)
+endif()
 
 if(WINDOWS)
   include_directories(../External/bgfx/bx/include/compat/msvc)
