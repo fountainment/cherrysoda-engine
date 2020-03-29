@@ -184,10 +184,35 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 		buttonState |= Buttons::RightShoulder;
 	}
 
-	GamePadState builtState;
-	builtState.m_thumbSticks = GamePadThumbSticks(stickLeft, stickRight);
-	builtState.m_triggers = GamePadTriggers(triggerLeft, triggerRight);
-	builtState.m_buttons = GamePadButtons(buttonState);
+	// DPad
+	ButtonState dpadUp = ButtonState::Released;
+	ButtonState dpadDown = ButtonState::Released;
+	ButtonState dpadLeft = ButtonState::Released;
+	ButtonState dpadRight = ButtonState::Released;
+
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP) != 0) {
+		buttonState |= Buttons::DPadUp;
+		dpadUp = ButtonState::Pressed;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN) != 0) {
+		buttonState |= Buttons::DPadDown;
+		dpadDown = ButtonState::Pressed;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT) != 0) {
+		buttonState |= Buttons::DPadLeft;
+		dpadLeft = ButtonState::Pressed;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT) != 0) {
+		buttonState |= Buttons::DPadRight;
+		dpadRight = ButtonState::Pressed;
+	}
+
+	GamePadState builtState(
+		GamePadThumbSticks(stickLeft, stickRight),
+		GamePadTriggers(triggerLeft, triggerRight),
+		GamePadButtons(buttonState),
+		GamePadDPad(dpadUp, dpadDown, dpadLeft, dpadRight)
+	);
 	builtState.m_connected = true;
 	return builtState;
 }
