@@ -2,9 +2,8 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/String.h>
-
-#include <CherrySoda/Profile.h>
 
 #include <SDL2/SDL.h>
 

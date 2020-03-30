@@ -6,9 +6,8 @@
 #include <CherrySoda/InternalUtilities/RendererList.h>
 #include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Renderers/EverythingRenderer.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
-
-#include <CherrySoda/Profile.h>
 
 using cherrysoda::Scene;
 

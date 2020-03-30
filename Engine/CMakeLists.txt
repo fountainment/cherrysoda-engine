@@ -5,7 +5,6 @@ set(ENGINE_SRC
   CherrySoda/Entity.h
   CherrySoda/Scene.cpp
   CherrySoda/Scene.h
-  CherrySoda/Profile.h
   CherrySoda/Components/Component.cpp
   CherrySoda/Components/Component.h
   CherrySoda/Components/Graphics/GraphicsComponent.cpp
@@ -50,17 +49,14 @@ set(ENGINE_SRC
   CherrySoda/Util/Math.cpp
   CherrySoda/Util/Math.h
   CherrySoda/Util/NumType.h
+  CherrySoda/Util/Profile.cpp
+  CherrySoda/Util/Profile.h
   CherrySoda/Util/STL.h
   CherrySoda/Util/String.cpp
   CherrySoda/Util/String.h
   CherrySoda/Util/Time.cpp
   CherrySoda/Util/Time.h
 )
-
-# Tracy Profiler
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
-  set(ENGINE_SRC ${ENGINE_SRC} tracy/TracyClient.cpp tracy/Tracy.hpp)
-endif()
 
 if(WINDOWS)
   include_directories(../External/bgfx/bx/include/compat/msvc)
@@ -87,8 +83,13 @@ else()
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} dl GL pthread X11)
 endif()
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
-target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)
+if(MSVC)
+  target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
+# Tracy Profiler
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
   target_compile_definitions(CherrySoda PUBLIC CHERRYSODA_USE_TRACY_PROFILER)
 endif()
+
 set_target_properties(CherrySoda PROPERTIES FOLDER Engine)

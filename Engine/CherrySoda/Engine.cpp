@@ -7,10 +7,9 @@
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
-
-#include <CherrySoda/Profile.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -199,7 +198,7 @@ void Engine::Draw()
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.0) {
-#if !defined(NDEBUG) || defined(CHERRYSODA_ENABLE_PROFILE)
+#if !defined(NDEBUG)
 		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 #endif
 		m_FPS = m_fpsCounter;

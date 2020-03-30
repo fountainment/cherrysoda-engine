@@ -3,10 +3,9 @@
 
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/NumType.h>
-
-#include <CherrySoda/Profile.h>
 
 #include "Voxel/Block.h"
 

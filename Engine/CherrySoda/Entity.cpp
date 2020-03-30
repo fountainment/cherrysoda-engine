@@ -4,9 +4,8 @@
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/Math.h>
-
-#include <CherrySoda/Profile.h>
 
 using cherrysoda::Entity;
 

@@ -8,10 +8,9 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
-
-#include <CherrySoda/Profile.h>
 
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
@@ -107,7 +106,6 @@ void setCurrentDir(const char* _dir)
 {
 	s_currentDir.set(_dir);
 }
-
 
 void init()
 {
@@ -353,10 +351,6 @@ void Graphics::Initialize()
 	Graphics::PosColorTexCoord0Vertex::Init();
 
 	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
-
-#ifdef CHERRYSODA_ENABLE_PROFILE
-	ms_vsyncEnabled = false;
-#endif
 
 	ms_samplerTex        = CreateUniformSampler("s_tex");
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
