@@ -44,16 +44,16 @@ private:
 	inline const Texture2D& Texture() const { return m_texture; }
 
 	Texture2D m_texture;
-	Math::IRectangle m_clipRect;
-	String m_atlasPath;
-	Math::Vec2 m_drawOffset;
-	int m_width;
-	int m_height;
-	Math::Vec2 m_center;
-	float m_leftUV;
-	float m_rightUV;
-	float m_topUV;
-	float m_bottomUV;
+	Math::IRectangle m_clipRect = { IVec2_Zero, IVec2_Zero };
+	String m_atlasPath = "";
+	Math::Vec2 m_drawOffset = Vec2_Zero;
+	int m_width = 0;
+	int m_height = 0;
+	Math::Vec2 m_center = Vec2_Zero;
+	float m_leftUV = 0.f;
+	float m_rightUV = 0.f;
+	float m_topUV = 0.f;
+	float m_bottomUV = 0.f;
 };
 
 } // namespace cherrysoda
