@@ -5,6 +5,8 @@
 #include <functional>
 #include <list>
 #include <map>
+#include <set>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -19,6 +21,9 @@ class STL
 public:
 	using Action = std::function<void()>;
 
+	template <typename T, typename U>
+	using HashMap = std::unordered_map<T,U>;
+
 	template <typename T>
 	using HashSet = std::unordered_set<T>;
 
@@ -27,6 +32,9 @@ public:
 
 	template <typename T, typename U>
 	using Map = std::map<T,U>;
+
+	template <typename T>
+	using Set = std::set<T>;
 
 	template <typename T>
 	using Vector = std::vector<T>;

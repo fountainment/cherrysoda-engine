@@ -22,8 +22,8 @@ public:
 
 	void Update() override;
 
-	static cherrysoda::BitTag ms_skyboxTag;
-	static cherrysoda::BitTag ms_voxelTag;
+	static const cherrysoda::BitTag ms_skyboxTag;
+	static const cherrysoda::BitTag ms_voxelTag;
 
 private:
 	cherrysoda::SingleTagRenderer* m_voxelRenderer = nullptr;

@@ -10,6 +10,9 @@ struct Block
 		None   = 0,
 		White  = 1,
 		Black  = 2,
+		Red    = 3,
+		Green  = 4,
+		Blue   = 5
 	};
 
 	Type m_type = Type::None;

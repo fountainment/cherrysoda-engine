@@ -161,5 +161,5 @@ void MainScene::Update()
 	base::Update();
 }
 
-BitTag MainScene::ms_skyboxTag("skybox");
-BitTag MainScene::ms_voxelTag("voxel");
+const BitTag MainScene::ms_skyboxTag("skybox");
+const BitTag MainScene::ms_voxelTag("voxel");

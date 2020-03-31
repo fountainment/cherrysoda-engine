@@ -29,6 +29,14 @@ void ChunkGraphicsComponent::RebuildMesh()
 {
 	CHERRYSODA_PROFILE_FUNCTION();
 
+	static STL::HashMap<Block::Type, Color> blockTypeColorMap = {
+		{ Block::Type::White, Color::White },
+		{ Block::Type::Black, Color::Black },
+		{ Block::Type::Red,   Color::Red },
+		{ Block::Type::Green, Color::Green },
+		{ Block::Type::Blue,  Color::Blue }
+	};
+
 	constexpr int chunkSize = Chunk::Size();
 	constexpr float halfChunkSize = chunkSize * 0.5f;
 
@@ -40,6 +48,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	int overallQuadAmount = 0;
 	{
 		CHERRYSODA_PROFILE("CalculateChunkMesh");
+
 		for (int i = 0; i < chunkSize; ++i) {
 			for (int j = 0; j < chunkSize; ++j) {
 				for (int k = 0; k < chunkSize; ++k) {
@@ -49,17 +58,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 					int index = chunk->GetBlockIndexFast(Math::IVec3(i, j, k));
 					Block::Type blockType = chunk->GetBlocks()[index].m_type;
 					if (blockType != Block::Type::None) {
-						Color color;
-						switch (blockType) {
-						case Block::Type::White:
-							color = Color::White;
-							break;
-						case Block::Type::Black:
-							color = Color::Black;
-							break;
-						default:
-							color = Color::Black;
-						};
+						Color color = blockTypeColorMap[blockType];
 						auto planeMask = chunk->GetBlockSurroundingFast(index);
 						if (planeMask > 0) {
 							overallQuadAmount += Math_BitCount(planeMask);
@@ -72,6 +71,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	}
 	{
 		CHERRYSODA_PROFILE("UpdateChunkMesh");
+
 		GetMesh()->ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
 		for (auto action : pendingActions) {
 			action();

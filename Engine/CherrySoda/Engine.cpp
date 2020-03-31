@@ -95,7 +95,7 @@ void Engine::SetScene(Scene* scene)
 
 void Engine::OnClientSizeChanged(int width, int height)
 {
-	if (!m_resizing) {
+	if (width > 0 && height > 0 && !m_resizing) {
 		m_resizing = true;
 		SetWindowSize(width, height);
 		SetViewSize(width, height);
@@ -198,7 +198,7 @@ void Engine::Draw()
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.0) {
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) || defined(CHERRYSODA_ENABLE_PROFILE)
 		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 #endif
 		m_FPS = m_fpsCounter;
