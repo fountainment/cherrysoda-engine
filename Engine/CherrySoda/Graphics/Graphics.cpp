@@ -615,7 +615,7 @@ Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics:
 	if (info != nullptr) {
 		*info = { bInfo.width, bInfo.height, bInfo.cubeMap };
 	}
-	CHERRYSODA_ASSERT_FORMAT(tex != Graphics::InvalidHandle, "Texture: %s load failed!\n", texture.c_str());
+	CHERRYSODA_ASSERT_FORMAT(tex != Graphics::InvalidHandle, "Texture: \"%s\" loading failed!\n", texture.c_str());
 	return tex;
 }
 
