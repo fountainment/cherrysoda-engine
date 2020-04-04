@@ -129,6 +129,12 @@ public:
 	}
 
 	template<typename T>
+	static inline auto Find(const Set<T>& container, const T& element)
+	{
+		return container.find(element);
+	}
+
+	template<typename T>
 	static inline auto Find(const HashSet<T>& container, const T& element)
 	{
 		return container.find(element);
@@ -136,6 +142,12 @@ public:
 
 	template<typename T, typename U>
 	static inline auto Find(const Map<T,U>& container, const T& key)
+	{
+		return container.find(key);
+	}
+
+	template<typename T, typename U>
+	static inline auto Find(const HashMap<T,U>& container, const T& key)
 	{
 		return container.find(key);
 	}
