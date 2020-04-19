@@ -96,8 +96,7 @@ public:
 						Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
 						Math::IVec2(sub["x"].GetInt(), sub["y"].GetInt()),
 					};
-					// TODO: Add name storage
-					atlas.m_textures[name] = MTexture(mTexture, clipRect);
+					atlas.m_textures[name] = MTexture(mTexture, name, clipRect);
 				}
 			}
 			break;

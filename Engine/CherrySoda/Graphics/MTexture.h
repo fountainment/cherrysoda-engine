@@ -20,6 +20,7 @@ public:
 	MTexture(const Texture2D& texture);
 	MTexture(const MTexture& parent, int x, int y, int width, int height);
 	MTexture(const MTexture& parent, const Math::IRectangle& clipRect);
+	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect);
 
 	Math::IRectangle GetRelativeRect(int x, int y, int width, int height) const;
 	Math::IRectangle GetRelativeRect(const Math::IRectangle& rect) const;

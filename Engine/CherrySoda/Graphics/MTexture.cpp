@@ -45,6 +45,12 @@ MTexture::MTexture(const MTexture& parent, const Math::IRectangle& clipRect)
 {
 }
 
+MTexture::MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect)
+: MTexture(parent, clipRect)
+{
+	m_atlasPath = atlasPath;
+}
+
 Math::IRectangle MTexture::GetRelativeRect(int x, int y, int width, int height) const
 {
 	int atX = ClipRect().X() - static_cast<int>(DrawOffset().x) + x;
