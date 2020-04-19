@@ -156,7 +156,7 @@ public:
 
 	static bool RaycastAABB_(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr, float* t2 = nullptr);
 
-	template<typename T>
+	template <typename T>
 	static inline int BitCount_(T x)
 	{
 		int ret = 0;

@@ -98,7 +98,7 @@ void Scene::AfterRender()
 	m_rendererList->AfterRender();
 }
 
-void Scene::OnEndOfFrame(STL::Action func)
+void Scene::OnEndOfFrame(STL::Action<> func)
 {
 	STL::Add(m_onEndOfFrame, func);
 }

@@ -37,7 +37,7 @@ public:
 
 	EntityList* Entities() { return m_entities; }
 
-	void OnEndOfFrame(STL::Action func);
+	void OnEndOfFrame(STL::Action<> func);
 
 private:
 	EntityList* m_entities = nullptr;
@@ -49,7 +49,7 @@ private:
 	bool m_focused = false;
 	bool m_paused = false;
 
-	STL::Vector<STL::Action> m_onEndOfFrame;
+	STL::Vector<STL::Action<>> m_onEndOfFrame;
 };
 
 } // namespace cherrysoda

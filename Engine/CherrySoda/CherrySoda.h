@@ -9,7 +9,9 @@
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Image.h>
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
+#include <CherrySoda/Components/Graphics/Sprite.h>
 
+#include <CherrySoda/Graphics/Atlas.h>
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Mesh.h>
@@ -26,6 +28,8 @@
 
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Camera.h>
+#include <CherrySoda/Util/ChoiceSet.h>
+#include <CherrySoda/Util/Chooser.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Literals.h>
 #include <CherrySoda/Util/Log.h>

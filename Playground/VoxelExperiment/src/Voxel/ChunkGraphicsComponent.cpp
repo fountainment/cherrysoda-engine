@@ -43,7 +43,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	GetMesh()->Clear();
 	Chunk* chunk = (Chunk*)GetEntity();
 	if (chunk == nullptr) return;
-	STL::Vector<STL::Action> pendingActions;
+	STL::Vector<STL::Action<>> pendingActions;
 
 	int overallQuadAmount = 0;
 	{

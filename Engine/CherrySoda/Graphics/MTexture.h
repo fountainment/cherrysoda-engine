@@ -36,6 +36,8 @@ public:
 
 	void SetUtil();
 
+	inline bool IsValid() const { return Texture().IsValid(); }
+
 private:
 	inline void ClipRect(const Math::IRectangle& rect) { m_clipRect = rect; }
 	inline void DrawOffset(const Math::Vec2& drawOffset) { m_drawOffset = drawOffset; }

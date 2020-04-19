@@ -13,6 +13,7 @@ public:
 	static Texture FromFile(const String& filename);
 
 	inline Graphics::TextureHandle GetHandle() const { return m_texture; }
+	inline bool IsValid() const { return m_texture != Graphics::InvalidHandle; }
 
 protected:
 	Graphics::TextureHandle m_texture = Graphics::InvalidHandle;

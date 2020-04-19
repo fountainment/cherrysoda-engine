@@ -2,6 +2,7 @@
 #define _CHERRYSODA_UTIL_STRING_H_
 
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
 #include <string>
@@ -15,10 +16,10 @@ namespace cherrysoda {
 
 typedef std::string String;
 
-constexpr int GetHashBKDR(const char* str)
+constexpr type::Int32 GetHashBKDR(const char* str)
 {
-	int seed = 131;
-	int hash = 0;
+	type::Int32 seed = 131;
+	type::Int32 hash = 0;
 	for (int i = 0; str[i]; ++i) {
 		hash = hash * seed + str[i];
 	}
@@ -34,18 +35,21 @@ public:
 class StringID
 {
 public:
+	inline StringID(const String& str) : StringID(str.c_str()) {}
+
 #ifdef NDEBUG
 	constexpr StringID(const char* str)
 	: m_id(GetHashBKDR(str))
-	{
-	}
+	{}
+
+	inline String GetStr() const { return ""; }
 #else
 	StringID(const char* str)
 	: m_id(GetHashBKDR(str))
 	, m_str(String(str))
 	{
-		static STL::Map<int,String> s_hashCollisionCheckMap;
-		auto it = STL::Find(s_hashCollisionCheckMap, m_id);
+		static STL::Map<type::Int32,String> s_hashCollisionCheckMap;
+		auto it = STL::FindKey(s_hashCollisionCheckMap, m_id);
 		if (it != s_hashCollisionCheckMap.end()) {
 			if (it->second != m_str) {
 				CHERRYSODA_DEBUG_FORMAT( \
@@ -59,17 +63,18 @@ public:
 	inline String GetStr() const { return m_str; }
 #endif
 
-	inline int GetID() const { return m_id; }
+	inline type::Int32 GetID() const { return m_id; }
 
 	bool operator = (const StringID& strID)
 	{
 		return GetID() == strID.GetID();
 	}
 
-	operator int() const { return GetID(); }
+	operator type::Int32() const { return GetID(); }
+	bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }
 
 private:
-	int m_id;
+	type::Int32 m_id;
 
 #ifndef NDEBUG
 	String m_str;
@@ -77,5 +82,7 @@ private:
 };
 
 } // namespace cherrysoda
+
+CHERRYSODA_HASHABLE(cherrysoda::StringID, GetID);
 
 #endif // _CHERRYSODA_UTILITY_STRING_H_

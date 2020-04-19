@@ -21,6 +21,8 @@ void EverythingRenderer::Render(Scene* scene)
 	Draw::GetSpriteBatch()->Begin();
 	scene->Entities()->Render();
 	// TODO: Add DebugRender
+	// if (Engine::Instance()->ConsoleOpened())
+	// 	scene->Entities()->DebugRender(GetCamera());
 	Draw::GetSpriteBatch()->End();
 	Graphics::SetEffect(nullptr);
 	Graphics::EndRenderPass(RenderPass());

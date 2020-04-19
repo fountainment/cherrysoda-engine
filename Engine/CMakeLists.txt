@@ -11,6 +11,9 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/GraphicsComponent.h
   CherrySoda/Components/Graphics/Image.h
   CherrySoda/Components/Graphics/MeshGraphicsComponent.h
+  CherrySoda/Components/Graphics/Sprite.cpp
+  CherrySoda/Components/Graphics/Sprite.h
+  CherrySoda/Graphics/Atlas.h
   CherrySoda/Graphics/Effect.h
   CherrySoda/Graphics/Graphics.cpp
   CherrySoda/Graphics/Graphics.h
@@ -39,6 +42,8 @@ set(ENGINE_SRC
   CherrySoda/Util/BitTag.h
   CherrySoda/Util/Camera.cpp
   CherrySoda/Util/Camera.h
+  CherrySoda/Util/ChoiceSet.h
+  CherrySoda/Util/Chooser.h
   CherrySoda/Util/Color.cpp
   CherrySoda/Util/Color.h
   CherrySoda/Util/Draw.cpp
@@ -51,6 +56,7 @@ set(ENGINE_SRC
   CherrySoda/Util/NumType.h
   CherrySoda/Util/Profile.cpp
   CherrySoda/Util/Profile.h
+  CherrySoda/Util/Json.h
   CherrySoda/Util/STL.h
   CherrySoda/Util/String.cpp
   CherrySoda/Util/String.h
@@ -75,7 +81,7 @@ else()
   find_package(SDL2 REQUIRED)
 endif()
 
-target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.7 ${SDL2_INCLUDE_DIRS})
+target_include_directories(CherrySoda PUBLIC . ../External/glm-0.9.9.7 ${SDL2_INCLUDE_DIRS} ../External/rapidjson/include)
 set(CHERRYSODA_COMMON_LIBS bgfx bimg bimg_decode bx glm_static ${SDL2_LIBRARIES})
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} gdi32 kernel32 psapi)
