@@ -34,10 +34,24 @@ public:
 
 	void AddLoop(const String& id, const String& path, float delay = 0.f)
 	{
-		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>() };
+		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
 	}
 
 	// TODO: void Add(const String& id, const String& path)
+
+	void Play(StringID id, bool restart = false, bool randomizeFrame = false);
+
+	bool Has(StringID id)
+	{
+		return STL::ContainsKey(m_animations, id);
+	}
+
+	void Stop()
+	{
+		m_animating = false;
+		m_currentAnimation = nullptr;
+		m_currentAnimationID = "";
+	}
 
 	inline float Rate() const { return m_rate; }
 
@@ -47,7 +61,6 @@ private:
 		float m_delay;
 		STL::Vector<MTexture> m_frames;
 		Chooser<StringID> m_goto;
-
 	};
 
 	float m_rate = 1.f;
@@ -56,7 +69,7 @@ private:
 	STL::Action<StringID> m_onLoop;
 	STL::Action<StringID> m_onFrameChange;
 	STL::Action<StringID> m_onLastFrame;
-	STL::Action<StringID,StringID> m_onChage;
+	STL::Action<StringID,StringID> m_onChange;
 
 	Atlas m_atlas;
 	String m_path;
