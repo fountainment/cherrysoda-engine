@@ -188,6 +188,12 @@ public:
 	{
 		std::swap(a, b);
 	}
+
+	template <typename T>
+	static inline Vector<typename T::value_type> ToVector(T& container)
+	{
+		return Vector<typename T::value_type>(std::begin(container), std::end(container));
+	}
 };
 
 } // namespace cherrysoda

@@ -31,6 +31,8 @@ public:
 		m_texture.Draw(RenderPosition(), Origin(), GetColor(), Scale(), ZRotation(), Effects());
 	}
 
+	inline const MTexture& Texture() const { return m_texture; }
+	inline void Texture(const MTexture& texture) { m_texture = texture; }
 	inline float Width() const { return static_cast<float>(m_texture.Width()); }
 	inline float Height() const { return static_cast<float>(m_texture.Height()); }
 	inline const Math::Vec2 Size() const { return Math::Vec2(Width(), Height()); } 

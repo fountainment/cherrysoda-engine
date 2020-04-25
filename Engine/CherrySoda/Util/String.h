@@ -35,6 +35,8 @@ public:
 class StringID
 {
 public:
+	inline StringID() : StringID("") {}
+
 	inline StringID(const String& str) : StringID(str.c_str()) {}
 
 #ifdef NDEBUG
@@ -64,11 +66,6 @@ public:
 #endif
 
 	inline type::Int32 GetID() const { return m_id; }
-
-	bool operator = (const StringID& strID)
-	{
-		return GetID() == strID.GetID();
-	}
 
 	operator type::Int32() const { return GetID(); }
 	bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }

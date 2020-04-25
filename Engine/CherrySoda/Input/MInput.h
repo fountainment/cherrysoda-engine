@@ -214,8 +214,7 @@ public:
 	private:
 		inline GamePadData(PlayerIndex playerIndex)
 		: m_playerIndex(playerIndex)
-		{
-		}
+		{}
 
 		PlayerIndex m_playerIndex;
 		GamePadState m_currentState;

@@ -38,6 +38,8 @@ public:
 	void SetUtil();
 
 	inline bool IsValid() const { return Texture().IsValid(); }
+	// TODO: Finish MTexture::operator ==
+	bool operator ==(const MTexture& texture) const { if (Texture().GetHandle() != texture.Texture().GetHandle()) return false; return true; } 
 
 private:
 	inline void ClipRect(const Math::IRectangle& rect) { m_clipRect = rect; }

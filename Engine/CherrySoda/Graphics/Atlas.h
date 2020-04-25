@@ -27,8 +27,6 @@ public:
 	Atlas()
 	{}
 
-
-
 	const STL::List<MTexture> GetAtlasSubtextures(const String& key, int startIndex = 0, int keyLength = 4)
 	{
 		STL::List<MTexture> list;
@@ -84,8 +82,8 @@ public:
 			const auto& at = doc["textures"];
 			CHERRYSODA_ASSERT_FORMAT(at.IsArray(), "Atlas json parse failed: \"textures\" scope is not an array in \"%s\"!\n");
 			for (const auto& tex : at.GetArray()) {
-				String texturePath = tex["name"].GetString();
-				auto texture = Texture2D::FromFile(texturePath + ".png");
+				String texturePath = path.substr(0, path.find_last_of("/\\") + 1) + tex["name"].GetString() + ".png";
+				auto texture = Texture2D::FromFile(texturePath);
 				auto mTexture = MTexture(texture);
 				STL::Add(atlas.m_sources, texture);
 				const auto& img = tex["images"];

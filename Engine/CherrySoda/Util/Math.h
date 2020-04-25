@@ -91,6 +91,7 @@ inline ENUM_T& operator &= (ENUM_T& lhs, ENUM_T rhs) \
 #define Math_Normalize  glm::normalize
 #define Math_Rotate     glm::rotate
 #define Math_Radians    glm::radians
+#define Math_Sign       glm::sign
 #define Math_Sin        glm::sin
 
 #define Math_Identity     glm::identity

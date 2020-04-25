@@ -10,12 +10,48 @@
 
 namespace cherrysoda {
 
-class Sprite : Image
+class Sprite : public Image
 {
 public:
-	void Update() override {}
+	typedef Image base;
+
+	Sprite() : base(MTexture(), true) {}
+
+	Sprite(const String& atlasPath, const String& path = "") : Sprite()
+	{
+		m_atlas = Atlas::FromAtlas(atlasPath);
+		m_path = path;
+	}
+
+	void Update() override;
+	void SetFrame(MTexture texture);
+
+
+	STL::Vector<MTexture> GetFrames(const String& path)
+	{
+		return STL::ToVector(m_atlas.GetAtlasSubtextures(m_path + path, 1));
+	}
+
+	void AddLoop(const String& id, const String& path, float delay = 0.f)
+	{
+		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>() };
+	}
+
+	// TODO: void Add(const String& id, const String& path)
+
+	inline float Rate() const { return m_rate; }
 
 private:
+	struct Animation
+	{
+		float m_delay;
+		STL::Vector<MTexture> m_frames;
+		Chooser<StringID> m_goto;
+
+	};
+
+	float m_rate = 1.f;
+	bool m_useRawDeltaTime = false;
 	STL::Action<StringID> m_onFinish;
 	STL::Action<StringID> m_onLoop;
 	STL::Action<StringID> m_onFrameChange;
@@ -24,19 +60,17 @@ private:
 
 	Atlas m_atlas;
 	String m_path;
+	STL::HashMap<StringID,Animation> m_animations;
+	Animation* m_currentAnimation = nullptr;
+	float m_animationTimer = 0.f;
+	int m_width = 0;
+	int m_height = 0;
 
-	// TODO: void Update() override;
-	// TODO: void AddLoop(const String& id, const String& path, float delay)
-	// TODO: void Add(const String& id, const String& path)
-
-	class Animation
-	{
-	public:
-		float m_delay;
-		STL::Vector<MTexture> m_frames;
-		Chooser<StringID> m_goto;
-
-	};
+	bool m_animating = false;
+	StringID m_currentAnimationID;
+	StringID m_lastAnimationID;
+	int m_currentAnimationFrame = 0;
+	int m_currentAnimationTotalFrame = 0;
 };
 
 } // namespace cherrysoda
