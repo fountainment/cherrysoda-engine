@@ -84,6 +84,6 @@ void MTexture::SetUtil()
 	m_center = Math::Vec2(Width(), Height()) * 0.5f;
 	m_leftUV = ClipRect().Left() / (float)Texture().Width();
 	m_rightUV = ClipRect().Right() / (float)Texture().Width();
-	m_bottomUV = ClipRect().Bottom() / (float)Texture().Height();
-	m_topUV = ClipRect().Top() / (float)Texture().Height();
+	m_bottomUV = ClipRect().Top() / (float)Texture().Height();
+	m_topUV = ClipRect().Bottom() / (float)Texture().Height();
 }

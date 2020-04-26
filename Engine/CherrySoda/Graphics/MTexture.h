@@ -34,6 +34,7 @@ public:
 	inline Math::Vec2 DrawOffset() const { return m_drawOffset; }
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
+	inline Math::IVec2 Size() const { return Math::IVec2(m_width, m_height); }
 
 	void SetUtil();
 

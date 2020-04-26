@@ -37,8 +37,8 @@ public:
 		}
 		float leftUV   = (float)rect.Left()   / (float)tex.Width();
 		float rightUV  = (float)rect.Right()  / (float)tex.Width();
-		float bottomUV = (float)rect.Bottom() / (float)tex.Height();
-		float topUV    = (float)rect.Top()    / (float)tex.Height();
+		float bottomUV = (float)rect.Top()    / (float)tex.Height();
+		float topUV    = (float)rect.Bottom() / (float)tex.Height();
 		if ((effects & SpriteEffects::FlipVertically) == SpriteEffects::FlipVertically) {
 			STL::Swap(bottomUV, topUV);
 		}

@@ -82,6 +82,7 @@ void Sprite::Update()
 void Sprite::SetFrame(MTexture texture)
 {
 	Texture(texture);
+	Origin(Math::Vec2(Texture().Size()) * m_justify);
 	if (m_onFrameChange) {
 		m_onFrameChange(m_currentAnimationID);
 	}

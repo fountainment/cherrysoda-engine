@@ -5,6 +5,7 @@
 #include <CherrySoda/Graphics/Atlas.h>
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Util/Chooser.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
@@ -54,6 +55,8 @@ public:
 
 	inline float Rate() const { return m_rate; }
 
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(Math::Vec2, Justify, m_justify);
+
 private:
 	struct Animation
 	{
@@ -63,6 +66,7 @@ private:
 	};
 
 	float m_rate = 1.f;
+	Math::Vec2 m_justify = Math::Vec2(.5f);
 	bool m_useRawDeltaTime = false;
 	STL::Action<StringID> m_onFinish;
 	STL::Action<StringID> m_onLoop;
