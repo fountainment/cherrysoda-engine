@@ -77,6 +77,7 @@ public:
 	{
 		switch (format) {
 		case AtlasDataFormat::CrunchJson:
+		{
 			json::Document doc;
 			JsonUtil::ReadJsonFile(doc, path);
 			const auto& at = doc["textures"];
@@ -97,6 +98,10 @@ public:
 					atlas.m_textures[name] = MTexture(mTexture, name, clipRect);
 				}
 			}
+			break;
+		}
+		default:
+			CHERRYSODA_DEBUG("Atlas data format unsupported for now!\n");
 			break;
 		}
 	}
