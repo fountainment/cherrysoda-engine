@@ -26,13 +26,12 @@ public:
 	void Update() override;
 	void SetFrame(MTexture texture);
 
-
 	STL::Vector<MTexture> GetFrames(const String& path)
 	{
 		return STL::ToVector(m_atlas.GetAtlasSubtextures(m_path + path, 1));
 	}
 
-	void AddLoop(const String& id, const String& path, float delay = 0.f)
+	void AddLoop(const String& id, const String& path, float delay = 1.f / 15.f)
 	{
 		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
 	}
@@ -83,7 +82,7 @@ private:
 	StringID m_currentAnimationID;
 	StringID m_lastAnimationID;
 	int m_currentAnimationFrame = 0;
-	int m_currentAnimationTotalFrame = 0;
+	// int m_currentAnimationTotalFrame = 0;
 };
 
 } // namespace cherrysoda

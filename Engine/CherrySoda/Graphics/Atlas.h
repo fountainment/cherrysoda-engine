@@ -91,8 +91,8 @@ public:
 				for (const auto& sub : img.GetArray()) {
 					const char* name = sub["n"].GetString();
 					auto clipRect = Math::IRectangle{
-						Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
 						Math::IVec2(sub["x"].GetInt(), sub["y"].GetInt()),
+						Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
 					};
 					atlas.m_textures[name] = MTexture(mTexture, name, clipRect);
 				}

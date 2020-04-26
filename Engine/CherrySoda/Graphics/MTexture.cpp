@@ -58,8 +58,8 @@ Math::IRectangle MTexture::GetRelativeRect(int x, int y, int width, int height) 
 
 	int rX = Math_Clamp(atX, ClipRect().Left(), ClipRect().Right());
 	int rY = Math_Clamp(atY, ClipRect().Bottom(), ClipRect().Top());
-	int rW = Math_Max(0, Math_Min(atX + Width(), ClipRect().Right()) - rX);
-	int rH = Math_Max(0, Math_Min(atY + Height(), ClipRect().Top()) - rY);
+	int rW = Math_Max(0, Math_Min(atX + width, ClipRect().Right()) - rX);
+	int rH = Math_Max(0, Math_Min(atY + height, ClipRect().Top()) - rY);
 
 	return { Math::IVec2(rX, rY), Math::IVec2(rW, rH) };
 }

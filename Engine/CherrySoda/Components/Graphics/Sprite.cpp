@@ -24,7 +24,7 @@ void Sprite::Update()
 			m_animationTimer -= Math_Sign(m_animationTimer) * m_currentAnimation->m_delay;
 
 			// End of Animation
-			if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= m_currentAnimationTotalFrame) {
+			if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= STL::Count(m_currentAnimation->m_frames)) {
 				auto was = m_currentAnimationID;
 				if (m_onLastFrame) {
 					m_onLastFrame(m_currentAnimationID);
@@ -70,10 +70,10 @@ void Sprite::Update()
 
 					}
 				}
-				else {
-					// Continue Animation
-					SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
-				}
+			}
+			else {
+				// Continue Animation
+				SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
 			}
 		}
 	}	
@@ -81,9 +81,6 @@ void Sprite::Update()
 
 void Sprite::SetFrame(MTexture texture)
 {
-	if (texture == Texture()) {
-		return;
-	}
 	Texture(texture);
 	if (m_onFrameChange) {
 		m_onFrameChange(m_currentAnimationID);
