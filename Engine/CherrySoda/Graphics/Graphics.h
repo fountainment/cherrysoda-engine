@@ -35,9 +35,9 @@ class Graphics
 public:
 	static constexpr type::UInt32 EncodeNormalU32(const Math::Vec3& v)
 	{
-		type::UInt32 a = static_cast<type::UInt32>((v[0] + 1.0f) * 0.5f * 255.f + 0.5f);
-		type::UInt32 b = static_cast<type::UInt32>((v[1] + 1.0f) * 0.5f * 255.f + 0.5f);
-		type::UInt32 c = static_cast<type::UInt32>((v[2] + 1.0f) * 0.5f * 255.f + 0.5f);
+		type::UInt32 a = static_cast<type::UInt32>((v.x + 1.0f) * 0.5f * 255.f + 0.5f);
+		type::UInt32 b = static_cast<type::UInt32>((v.y + 1.0f) * 0.5f * 255.f + 0.5f);
+		type::UInt32 c = static_cast<type::UInt32>((v.z + 1.0f) * 0.5f * 255.f + 0.5f);
 		return a | b << 8 | c << 16;
 	}
 

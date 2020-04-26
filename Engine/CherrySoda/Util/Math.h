@@ -1,6 +1,8 @@
 #ifndef _CHERRYSODA_UTIL_MATH_H_
 #define _CHERRYSODA_UTIL_MATH_H_
 
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#define GLM_FORCE_INTRINSICS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>

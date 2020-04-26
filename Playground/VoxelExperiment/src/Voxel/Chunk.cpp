@@ -11,7 +11,7 @@
 using cherrysoda::Math;
 using cherrysoda::STL;
 
-static constexpr Math::IVec3 s_offset[6] = { IVec3_XUp, -IVec3_XUp, IVec3_YUp, -IVec3_YUp, IVec3_ZUp, -IVec3_ZUp };
+static const Math::IVec3 s_offset[6] = { IVec3_XUp, -IVec3_XUp, IVec3_YUp, -IVec3_YUp, IVec3_ZUp, -IVec3_ZUp };
 
 Chunk::Chunk()
 {
