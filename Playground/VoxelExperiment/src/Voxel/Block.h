@@ -13,14 +13,11 @@ struct Block
 		Black  = 2,
 		Red    = 3,
 		Green  = 4,
-		Blue   = 5
+		Blue   = 5,
+		Count  = 6
 	};
-
-	inline int GetHash() const { return static_cast<int>(m_type); }
 
 	Type m_type = Type::None;
 };
-
-CHERRYSODA_HASHABLE(Block,GetHash);
 
 #endif // _VOXELEXPERIMENT_VOXEL_BLOCK_H_

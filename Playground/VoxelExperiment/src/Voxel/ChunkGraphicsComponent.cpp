@@ -29,12 +29,13 @@ void ChunkGraphicsComponent::RebuildMesh()
 {
 	CHERRYSODA_PROFILE_FUNCTION();
 
-	static STL::HashMap<Block::Type, Color> blockTypeColorMap = {
-		{ Block::Type::White, Color::White },
-		{ Block::Type::Black, Color::Black },
-		{ Block::Type::Red,   Color::Red },
-		{ Block::Type::Green, Color::Green },
-		{ Block::Type::Blue,  Color::Blue }
+	static Color blockTypeColorMap[(int)Block::Type::Count] = {
+		Color::White,
+		Color::White,
+		Color::Black,
+		Color::Red,
+		Color::Green,
+		Color::Blue
 	};
 
 	constexpr int chunkSize = Chunk::Size();
@@ -58,7 +59,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 					int index = chunk->GetBlockIndexFast(Math::IVec3(i, j, k));
 					Block::Type blockType = chunk->GetBlocks()[index].m_type;
 					if (blockType != Block::Type::None) {
-						Color color = blockTypeColorMap[blockType];
+						Color color = blockTypeColorMap[(int)blockType];
 						auto planeMask = chunk->GetBlockSurroundingFast(index);
 						if (planeMask > 0) {
 							overallQuadAmount += Math_BitCount(planeMask);
