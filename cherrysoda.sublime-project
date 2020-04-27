@@ -67,6 +67,10 @@
 					"shell_cmd": "make -j8 CherrySoda"
 				},
 				{
+					"name": "FirstSprite",
+					"shell_cmd": "make -j8 FirstSprite"
+				},
+				{
 					"name": "FirstTriangle",
 					"shell_cmd": "make -j8 FirstTriangle"
 				},
