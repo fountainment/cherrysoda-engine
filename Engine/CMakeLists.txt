@@ -13,6 +13,7 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/MeshGraphicsComponent.h
   CherrySoda/Components/Graphics/Sprite.cpp
   CherrySoda/Components/Graphics/Sprite.h
+  CherrySoda/Graphics/Atlas.cpp
   CherrySoda/Graphics/Atlas.h
   CherrySoda/Graphics/Effect.h
   CherrySoda/Graphics/Graphics.cpp
