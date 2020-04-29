@@ -1,11 +1,16 @@
 #include <CherrySoda/Components/Graphics/Sprite.h>
 
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Graphics/MTexture.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/String.h>
 
 using cherrysoda::Sprite;
 
 using cherrysoda::Engine;
+using cherrysoda::MTexture;
+using cherrysoda::StringID;
 
 void Sprite::Update()
 {
