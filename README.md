@@ -29,6 +29,9 @@ cmake ..
 ## Current Status
 
 - Finished the integration of bgfx and SDL2
-- Replicated the the simple ECS of Monocle engine
+- Replicated the simple ECS of Monocle engine
 - Did some test on the bgfx shader, added a python script for shader compilation
 - Added emscripten support
+- Integrated tracy profiler
+- Integrated rapidjson
+- Replicated the sprite animation system of Monocle engine
