@@ -2,12 +2,15 @@
 
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Texture.h>
+#include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::SpriteBatch;
 
+using cherrysoda::Color;
 using cherrysoda::Graphics;
 using cherrysoda::Math;
+using cherrysoda::SpriteEffects;
 using cherrysoda::STL;
 using cherrysoda::Texture2D;
 
