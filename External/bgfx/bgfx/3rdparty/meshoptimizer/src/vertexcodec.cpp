@@ -4,48 +4,64 @@
 #include <assert.h>
 #include <string.h>
 
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
-#define SIMD_NEON
-#endif
+// The block below auto-detects SIMD ISA that can be used on the target platform
+#ifndef MESHOPTIMIZER_NO_SIMD
 
+// The SIMD implementation requires SSSE3, which can be enabled unconditionally through compiler settings
 #if defined(__AVX__) || defined(__SSSE3__)
 #define SIMD_SSE
 #endif
 
+// An experimental implementation using AVX512 instructions; it's only enabled when AVX512 is enabled through compiler settings
 #if defined(__AVX512VBMI2__) && defined(__AVX512VBMI__) && defined(__AVX512VL__) && defined(__POPCNT__)
 #undef SIMD_SSE
 #define SIMD_AVX
 #endif
 
+// MSVC supports compiling SSSE3 code regardless of compile options; we use a cpuid-based scalar fallback
 #if !defined(SIMD_SSE) && !defined(SIMD_AVX) && defined(_MSC_VER) && !defined(__clang__) && (defined(_M_IX86) || defined(_M_X64))
 #define SIMD_SSE
 #define SIMD_FALLBACK
-#include <intrin.h> // __cpuid
 #endif
 
-// GCC 4.9+ and clang 3.8+ support targeting SIMD instruction sets from individual functions
+// GCC 4.9+ and clang 3.8+ support targeting SIMD ISA from individual functions; we use a cpuid-based scalar fallback
 #if !defined(SIMD_SSE) && !defined(SIMD_AVX) && ((defined(__clang__) && __clang_major__ * 100 + __clang_minor__ >= 308) || (defined(__GNUC__) && __GNUC__ * 100 + __GNUC_MINOR__ >= 409)) && (defined(__i386__) || defined(__x86_64__))
 #define SIMD_SSE
 #define SIMD_FALLBACK
 #define SIMD_TARGET __attribute__((target("ssse3")))
-#include <cpuid.h> // __cpuid
 #endif
 
+// GCC/clang define these when NEON support is available
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#define SIMD_NEON
+#endif
+
+// On MSVC, we assume that ARM builds always target NEON-capable devices
 #if !defined(SIMD_NEON) && defined(_MSC_VER) && (defined(_M_ARM) || defined(_M_ARM64))
 #define SIMD_NEON
 #endif
 
+// When targeting Wasm SIMD we can't use runtime cpuid checks so we unconditionally enable SIMD
 #if defined(__wasm_simd128__)
 #define SIMD_WASM
-#define SIMD_TARGET __attribute__((target("unimplemented-simd128")))
 #endif
 
 #ifndef SIMD_TARGET
 #define SIMD_TARGET
 #endif
 
+#endif // !MESHOPTIMIZER_NO_SIMD
+
 #ifdef SIMD_SSE
 #include <tmmintrin.h>
+#endif
+
+#if defined(SIMD_SSE) && defined(SIMD_FALLBACK)
+#ifdef _MSC_VER
+#include <intrin.h> // __cpuid
+#else
+#include <cpuid.h> // __cpuid
+#endif
 #endif
 
 #ifdef SIMD_AVX
@@ -82,23 +98,17 @@
 #define wasmx_unpackhi_v64x2(a, b) wasm_v64x2_shuffle(a, b, 1, 3)
 #endif
 
-#if defined(SIMD_WASM)
-// v128_t wasm_v8x16_swizzle(v128_t a, v128_t b)
-SIMD_TARGET
-static __inline__ v128_t __DEFAULT_FN_ATTRS wasm_v8x16_swizzle(v128_t a, v128_t b)
-{
-	return (v128_t)__builtin_wasm_swizzle_v8x16((__i8x16)a, (__i8x16)b);
-}
-#endif
-
 namespace meshopt
 {
 
 const unsigned char kVertexHeader = 0xa0;
 
+static int gEncodeVertexVersion = 0;
+
 const size_t kVertexBlockSizeBytes = 8192;
 const size_t kVertexBlockMaxSize = 256;
 const size_t kByteGroupSize = 16;
+const size_t kByteGroupDecodeLimit = 24;
 const size_t kTailMaxSize = 32;
 
 static size_t getVertexBlockSize(size_t vertex_size)
@@ -229,7 +239,7 @@ static unsigned char* encodeBytes(unsigned char* data, unsigned char* data_end, 
 
 	for (size_t i = 0; i < buffer_size; i += kByteGroupSize)
 	{
-		if (size_t(data_end - data) < kTailMaxSize)
+		if (size_t(data_end - data) < kByteGroupDecodeLimit)
 			return 0;
 
 		int best_bits = 8;
@@ -382,7 +392,7 @@ static const unsigned char* decodeBytes(const unsigned char* data, const unsigne
 
 	for (size_t i = 0; i < buffer_size; i += kByteGroupSize)
 	{
-		if (size_t(data_end - data) < kTailMaxSize)
+		if (size_t(data_end - data) < kByteGroupDecodeLimit)
 			return 0;
 
 		size_t header_offset = i / kByteGroupSize;
@@ -748,6 +758,7 @@ static void wasmMoveMask(v128_t mask, unsigned char& mask0, unsigned char& mask1
 	uint64_t mask_1a = wasm_i64x2_extract_lane(mask_0, 0) & 0x0804020108040201ull;
 	uint64_t mask_1b = wasm_i64x2_extract_lane(mask_0, 1) & 0x8040201080402010ull;
 
+	// TODO: This can use v8x16_bitmask in the future
 	uint64_t mask_2 = mask_1a | mask_1b;
 	uint64_t mask_4 = mask_2 | (mask_2 >> 16);
 	uint64_t mask_8 = mask_4 | (mask_4 >> 8);
@@ -932,8 +943,8 @@ static const unsigned char* decodeBytesSimd(const unsigned char* data, const uns
 
 	size_t i = 0;
 
-	// fast-path: process 4 groups at a time, do a shared bounds check - each group reads <=32b
-	for (; i + kByteGroupSize * 4 <= buffer_size && size_t(data_end - data) >= kTailMaxSize * 4; i += kByteGroupSize * 4)
+	// fast-path: process 4 groups at a time, do a shared bounds check - each group reads <=24b
+	for (; i + kByteGroupSize * 4 <= buffer_size && size_t(data_end - data) >= kByteGroupDecodeLimit * 4; i += kByteGroupSize * 4)
 	{
 		size_t header_offset = i / kByteGroupSize;
 		unsigned char header_byte = header[header_offset / 4];
@@ -947,7 +958,7 @@ static const unsigned char* decodeBytesSimd(const unsigned char* data, const uns
 	// slow-path: process remaining groups
 	for (; i < buffer_size; i += kByteGroupSize)
 	{
-		if (size_t(data_end - data) < kTailMaxSize)
+		if (size_t(data_end - data) < kByteGroupDecodeLimit)
 			return 0;
 
 		size_t header_offset = i / kByteGroupSize;
@@ -1063,7 +1074,7 @@ static const unsigned char* decodeVertexBlockSimd(const unsigned char* data, con
 static unsigned int getCpuFeatures()
 {
 	int cpuinfo[4] = {};
-#if defined(_MSC_VER) && !defined(__clang__)
+#ifdef _MSC_VER
 	__cpuid(cpuinfo, 1);
 #else
 	__cpuid(1, cpuinfo[0], cpuinfo[1], cpuinfo[2], cpuinfo[3]);
@@ -1095,7 +1106,9 @@ size_t meshopt_encodeVertexBuffer(unsigned char* buffer, size_t buffer_size, con
 	if (size_t(data_end - data) < 1 + vertex_size)
 		return 0;
 
-	*data++ = kVertexHeader;
+	int version = gEncodeVertexVersion;
+
+	*data++ = (unsigned char)(kVertexHeader | version);
 
 	unsigned char first_vertex[256] = {};
 	if (vertex_count > 0)
@@ -1180,6 +1193,13 @@ size_t meshopt_encodeVertexBufferBound(size_t vertex_count, size_t vertex_size)
 	return 1 + vertex_block_count * vertex_size * (vertex_block_header_size + vertex_block_data_size) + tail_size;
 }
 
+void meshopt_encodeVertexVersion(int version)
+{
+	assert(unsigned(version) <= 0);
+
+	meshopt::gEncodeVertexVersion = version;
+}
+
 int meshopt_decodeVertexBuffer(void* destination, size_t vertex_count, size_t vertex_size, const unsigned char* buffer, size_t buffer_size)
 {
 	using namespace meshopt;
@@ -1210,7 +1230,13 @@ int meshopt_decodeVertexBuffer(void* destination, size_t vertex_count, size_t ve
 	if (size_t(data_end - data) < 1 + vertex_size)
 		return -2;
 
-	if (*data++ != kVertexHeader)
+	unsigned char data_header = *data++;
+
+	if ((data_header & 0xf0) != kVertexHeader)
+		return -1;
+
+	int version = data_header & 0x0f;
+	if (version > 0)
 		return -1;
 
 	unsigned char last_vertex[256];

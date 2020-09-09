@@ -1,4 +1,6 @@
-// Copyright (c) 2015-2016 The Khronos Group Inc.
+// Copyright (c) 2015-2020 The Khronos Group Inc.
+// Modifications Copyright (C) 2020 Advanced Micro Devices, Inc. All rights
+// reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,8 +48,8 @@ extern "C" {
 
 #define SPV_BIT(shift) (1 << (shift))
 
-#define SPV_FORCE_16_BIT_ENUM(name) _##name = 0x7fff
-#define SPV_FORCE_32_BIT_ENUM(name) _##name = 0x7fffffff
+#define SPV_FORCE_16_BIT_ENUM(name) SPV_FORCE_16BIT_##name = 0x7fff
+#define SPV_FORCE_32_BIT_ENUM(name) SPV_FORCE_32BIT_##name = 0x7fffffff
 
 // Enumerations
 
@@ -165,6 +167,12 @@ typedef enum spv_operand_type_t {
   SPV_OPERAND_TYPE_KERNEL_ENQ_FLAGS,              // SPIR-V Sec 3.29
   SPV_OPERAND_TYPE_KERNEL_PROFILING_INFO,         // SPIR-V Sec 3.30
   SPV_OPERAND_TYPE_CAPABILITY,                    // SPIR-V Sec 3.31
+  SPV_OPERAND_TYPE_RAY_FLAGS,                     // SPIR-V Sec 3.RF
+  SPV_OPERAND_TYPE_RAY_QUERY_INTERSECTION,        // SPIR-V Sec 3.RQIntersection
+  SPV_OPERAND_TYPE_RAY_QUERY_COMMITTED_INTERSECTION_TYPE,  // SPIR-V Sec
+                                                           // 3.RQCommitted
+  SPV_OPERAND_TYPE_RAY_QUERY_CANDIDATE_INTERSECTION_TYPE,  // SPIR-V Sec
+                                                           // 3.RQCandidate
 
   // Set 5:  Operands that are a single word bitmask.
   // Sometimes a set bit indicates the instruction requires still more operands.
@@ -181,8 +189,17 @@ typedef enum spv_operand_type_t {
 //    Variable : expands to 0, 1 or many operands or pairs of operands.
 //               This is similar to * in regular expressions.
 
+// NOTE: These FIRST_* and LAST_* enum values are DEPRECATED.
+// The concept of "optional" and "variable" operand types are only intended
+// for use as an implementation detail of parsing SPIR-V, either in text or
+// binary form.  Instead of using enum ranges, use characteristic function
+// spvOperandIsConcrete.
+// The use of enum value ranges in a public API makes it difficult to insert
+// new values into a range without also breaking binary compatibility.
+//
 // Macros for defining bounds on optional and variable operand types.
 // Any variable operand type is also optional.
+// TODO(dneto): Remove SPV_OPERAND_TYPE_FIRST_* and SPV_OPERAND_TYPE_LAST_*
 #define FIRST_OPTIONAL(ENUM) ENUM, SPV_OPERAND_TYPE_FIRST_OPTIONAL_TYPE = ENUM
 #define FIRST_VARIABLE(ENUM) ENUM, SPV_OPERAND_TYPE_FIRST_VARIABLE_TYPE = ENUM
 #define LAST_VARIABLE(ENUM)                         \
@@ -232,6 +249,7 @@ typedef enum spv_operand_type_t {
   SPV_OPERAND_TYPE_DEBUG_COMPOSITE_TYPE,                // DebugInfo Sec 3.4
   SPV_OPERAND_TYPE_DEBUG_TYPE_QUALIFIER,                // DebugInfo Sec 3.5
   SPV_OPERAND_TYPE_DEBUG_OPERATION,                     // DebugInfo Sec 3.6
+  SPV_OPERAND_TYPE_DEBUG_IMPORTED_ENTITY,
 
   // The following are concrete enum types from the OpenCL.DebugInfo.100
   // extended instruction set.
@@ -249,6 +267,12 @@ typedef enum spv_operand_type_t {
   SPV_FORCE_32_BIT_ENUM(spv_operand_type_t)
 } spv_operand_type_t;
 
+// Returns true if the given type is concrete.
+bool spvOperandIsConcrete(spv_operand_type_t type);
+
+// Returns true if the given type is concrete and also a mask.
+bool spvOperandIsConcreteMask(spv_operand_type_t type);
+
 typedef enum spv_ext_inst_type_t {
   SPV_EXT_INST_TYPE_NONE = 0,
   SPV_EXT_INST_TYPE_GLSL_STD_450,
@@ -259,6 +283,7 @@ typedef enum spv_ext_inst_type_t {
   SPV_EXT_INST_TYPE_SPV_AMD_SHADER_BALLOT,
   SPV_EXT_INST_TYPE_DEBUGINFO,
   SPV_EXT_INST_TYPE_OPENCL_DEBUGINFO_100,
+  SPV_EXT_INST_TYPE_NONSEMANTIC_CLSPVREFLECTION,
 
   // Multiple distinct extended instruction set types could return this
   // value, if they are prefixed with NonSemantic. and are otherwise
@@ -668,6 +693,12 @@ SPIRV_TOOLS_EXPORT void spvFuzzerOptionsEnableReplayValidation(
 SPIRV_TOOLS_EXPORT void spvFuzzerOptionsSetRandomSeed(
     spv_fuzzer_options options, uint32_t seed);
 
+// Sets the range of transformations that should be applied during replay: 0
+// means all transformations, +N means the first N transformations, -N means all
+// except the final N transformations.
+SPIRV_TOOLS_EXPORT void spvFuzzerOptionsSetReplayRange(
+    spv_fuzzer_options options, int32_t replay_range);
+
 // Sets the maximum number of steps that the shrinker should take before giving
 // up.
 SPIRV_TOOLS_EXPORT void spvFuzzerOptionsSetShrinkerStepLimit(
@@ -765,6 +796,9 @@ SPIRV_TOOLS_EXPORT void spvDiagnosticDestroy(spv_diagnostic diagnostic);
 // Prints the diagnostic to stderr.
 SPIRV_TOOLS_EXPORT spv_result_t
 spvDiagnosticPrint(const spv_diagnostic diagnostic);
+
+// Gets the name of an instruction, without the "Op" prefix.
+SPIRV_TOOLS_EXPORT const char* spvOpcodeString(const uint32_t opcode);
 
 // The binary parser interface.
 

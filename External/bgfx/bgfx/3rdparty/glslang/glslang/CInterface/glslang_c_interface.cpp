@@ -32,9 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "glslang/Include/glslang_c_interface.h"
 
-#include "SPIRV/GlslangToSpv.h"
-#include "SPIRV/Logger.h"
-#include "SPIRV/SpvTools.h"
 #include "StandAlone/DirStackFileIncluder.h"
 #include "StandAlone/ResourceLimits.h"
 #include "glslang/Include/ShHandle.h"
@@ -54,6 +51,8 @@ static_assert(int(GLSLANG_TEX_SAMP_TRANS_COUNT) == EShTexSampTransCount, "");
 static_assert(int(GLSLANG_MSG_COUNT) == EShMsgCount, "");
 static_assert(int(GLSLANG_REFLECTION_COUNT) == EShReflectionCount, "");
 static_assert(int(GLSLANG_PROFILE_COUNT) == EProfileCount, "");
+static_assert(sizeof(glslang_limits_t) == sizeof(TLimits), "");
+static_assert(sizeof(glslang_resource_t) == sizeof(TBuiltInResource), "");
 
 typedef struct glslang_shader_s {
     glslang::TShader* shader;
@@ -161,9 +160,9 @@ private:
     void* context;
 };
 
-int glslang_initialize_process() { return static_cast<int>(glslang::InitializeProcess()); }
+GLSLANG_EXPORT int glslang_initialize_process() { return static_cast<int>(glslang::InitializeProcess()); }
 
-void glslang_finalize_process() { glslang::FinalizeProcess(); }
+GLSLANG_EXPORT void glslang_finalize_process() { glslang::FinalizeProcess(); }
 
 static EShLanguage c_shader_stage(glslang_stage_t stage)
 {
@@ -181,17 +180,17 @@ static EShLanguage c_shader_stage(glslang_stage_t stage)
     case GLSLANG_STAGE_COMPUTE:
         return EShLangCompute;
     case GLSLANG_STAGE_RAYGEN_NV:
-        return EShLangRayGenNV;
+        return EShLangRayGen;
     case GLSLANG_STAGE_INTERSECT_NV:
-        return EShLangIntersectNV;
+        return EShLangIntersect;
     case GLSLANG_STAGE_ANYHIT_NV:
-        return EShLangAnyHitNV;
+        return EShLangAnyHit;
     case GLSLANG_STAGE_CLOSESTHIT_NV:
-        return EShLangClosestHitNV;
+        return EShLangClosestHit;
     case GLSLANG_STAGE_MISS_NV:
-        return EShLangMissNV;
+        return EShLangMiss;
     case GLSLANG_STAGE_CALLABLE_NV:
-        return EShLangCallableNV;
+        return EShLangCallable;
     case GLSLANG_STAGE_TASK_NV:
         return EShLangTaskNV;
     case GLSLANG_STAGE_MESH_NV:
@@ -321,7 +320,7 @@ static EProfile c_shader_profile(glslang_profile_t profile)
     return EProfile();
 }
 
-glslang_shader_t* glslang_shader_create(const glslang_input_t* input)
+GLSLANG_EXPORT glslang_shader_t* glslang_shader_create(const glslang_input_t* input)
 {
     if (!input || !input->code) {
         printf("Error creating shader: null input(%p)/input->code\n", input);
@@ -345,39 +344,45 @@ glslang_shader_t* glslang_shader_create(const glslang_input_t* input)
     return shader;
 }
 
-const char* glslang_shader_get_preprocessed_code(glslang_shader_t* shader)
+GLSLANG_EXPORT const char* glslang_shader_get_preprocessed_code(glslang_shader_t* shader)
 {
     return shader->preprocessedGLSL.c_str();
 }
 
-int glslang_shader_preprocess(glslang_shader_t* shader, const glslang_input_t* i)
+GLSLANG_EXPORT int glslang_shader_preprocess(glslang_shader_t* shader, const glslang_input_t* input)
 {
     DirStackFileIncluder Includer;
     /* TODO: use custom callbacks if they are available in 'i->callbacks' */
     return shader->shader->preprocess(
-        /* No user-defined resources limit */
-        &glslang::DefaultTBuiltInResource, i->default_version, c_shader_profile(i->default_profile),
-        i->force_default_version_and_profile != 0, i->forward_compatible != 0,
-        (EShMessages)c_shader_messages(i->messages), &shader->preprocessedGLSL, Includer
+        reinterpret_cast<const TBuiltInResource*>(input->resource),
+        input->default_version,
+        c_shader_profile(input->default_profile),
+        input->force_default_version_and_profile != 0,
+        input->forward_compatible != 0,
+        (EShMessages)c_shader_messages(input->messages),
+        &shader->preprocessedGLSL,
+        Includer
     );
 }
 
-int glslang_shader_parse(glslang_shader_t* shader, const glslang_input_t* input)
+GLSLANG_EXPORT int glslang_shader_parse(glslang_shader_t* shader, const glslang_input_t* input)
 {
     const char* preprocessedCStr = shader->preprocessedGLSL.c_str();
     shader->shader->setStrings(&preprocessedCStr, 1);
 
     return shader->shader->parse(
-        /* No user-defined resource limits for now */
-        &glslang::DefaultTBuiltInResource, input->default_version, input->forward_compatible != 0,
-        (EShMessages)c_shader_messages(input->messages));
+        reinterpret_cast<const TBuiltInResource*>(input->resource),
+        input->default_version,
+        input->forward_compatible != 0,
+        (EShMessages)c_shader_messages(input->messages)
+    );
 }
 
-const char* glslang_shader_get_info_log(glslang_shader_t* shader) { return shader->shader->getInfoLog(); }
+GLSLANG_EXPORT const char* glslang_shader_get_info_log(glslang_shader_t* shader) { return shader->shader->getInfoLog(); }
 
-const char* glslang_shader_get_info_debug_log(glslang_shader_t* shader) { return shader->shader->getInfoDebugLog(); }
+GLSLANG_EXPORT const char* glslang_shader_get_info_debug_log(glslang_shader_t* shader) { return shader->shader->getInfoDebugLog(); }
 
-void glslang_shader_delete(glslang_shader_t* shader)
+GLSLANG_EXPORT void glslang_shader_delete(glslang_shader_t* shader)
 {
     if (!shader)
         return;
@@ -386,44 +391,14 @@ void glslang_shader_delete(glslang_shader_t* shader)
     delete (shader);
 }
 
-glslang_program_t* glslang_program_create()
+GLSLANG_EXPORT glslang_program_t* glslang_program_create()
 {
     glslang_program_t* p = new glslang_program_t();
     p->program = new glslang::TProgram();
     return p;
 }
 
-void glslang_program_SPIRV_generate(glslang_program_t* program, glslang_stage_t stage)
-{
-    spv::SpvBuildLogger logger;
-    glslang::SpvOptions spvOptions;
-    spvOptions.validate = true;
-
-    const glslang::TIntermediate* intermediate = program->program->getIntermediate(c_shader_stage(stage));
-
-    glslang::GlslangToSpv(*intermediate, program->spirv, &logger, &spvOptions);
-
-    program->loggerMessages = logger.getAllMessages();
-}
-
-size_t glslang_program_SPIRV_get_size(glslang_program_t* program) { return program->spirv.size(); }
-
-void glslang_program_SPIRV_get(glslang_program_t* program, unsigned int* out)
-{
-    memcpy(out, program->spirv.data(), program->spirv.size() * sizeof(unsigned int));
-}
-
-unsigned int* glslang_program_SPIRV_get_ptr(glslang_program_t* program)
-{
-    return program->spirv.data();
-}
-
-const char* glslang_program_SPIRV_get_messages(glslang_program_t* program)
-{
-    return program->loggerMessages.empty() ? nullptr : program->loggerMessages.c_str();
-}
-
-void glslang_program_delete(glslang_program_t* program)
+GLSLANG_EXPORT void glslang_program_delete(glslang_program_t* program)
 {
     if (!program)
         return;
@@ -432,22 +407,22 @@ void glslang_program_delete(glslang_program_t* program)
     delete (program);
 }
 
-void glslang_program_add_shader(glslang_program_t* program, glslang_shader_t* shader)
+GLSLANG_EXPORT void glslang_program_add_shader(glslang_program_t* program, glslang_shader_t* shader)
 {
     program->program->addShader(shader->shader);
 }
 
-int glslang_program_link(glslang_program_t* program, int messages)
+GLSLANG_EXPORT int glslang_program_link(glslang_program_t* program, int messages)
 {
     return (int)program->program->link((EShMessages)messages);
 }
 
-const char* glslang_program_get_info_log(glslang_program_t* program)
+GLSLANG_EXPORT const char* glslang_program_get_info_log(glslang_program_t* program)
 {
     return program->program->getInfoLog();
 }
 
-const char* glslang_program_get_info_debug_log(glslang_program_t* program)
+GLSLANG_EXPORT const char* glslang_program_get_info_debug_log(glslang_program_t* program)
 {
     return program->program->getInfoDebugLog();
 }

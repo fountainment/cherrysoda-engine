@@ -62,6 +62,15 @@ spv_result_t ValidatePhi(ValidationState_t& _, const Instruction* inst) {
     }
   }
 
+  if (!_.options()->before_hlsl_legalization) {
+    if (type_opcode == SpvOpTypeSampledImage ||
+        (_.HasCapability(SpvCapabilityShader) &&
+         (type_opcode == SpvOpTypeImage || type_opcode == SpvOpTypeSampler))) {
+      return _.diag(SPV_ERROR_INVALID_ID, inst)
+             << "Result type cannot be Op" << spvOpcodeString(type_opcode);
+    }
+  }
+
   // Create a uniqued vector of predecessor ids for comparison against
   // incoming values. OpBranchConditional %cond %label %label produces two
   // predecessors in the CFG.
@@ -1053,7 +1062,7 @@ spv_result_t CfgPass(ValidationState_t& _, const Instruction* inst) {
       uint32_t target = inst->GetOperandAs<uint32_t>(0);
       CFG_ASSERT(FirstBlockAssert, target);
 
-      _.current_function().RegisterBlockEnd({target}, opcode);
+      _.current_function().RegisterBlockEnd({target});
     } break;
     case SpvOpBranchConditional: {
       uint32_t tlabel = inst->GetOperandAs<uint32_t>(1);
@@ -1061,7 +1070,7 @@ spv_result_t CfgPass(ValidationState_t& _, const Instruction* inst) {
       CFG_ASSERT(FirstBlockAssert, tlabel);
       CFG_ASSERT(FirstBlockAssert, flabel);
 
-      _.current_function().RegisterBlockEnd({tlabel, flabel}, opcode);
+      _.current_function().RegisterBlockEnd({tlabel, flabel});
     } break;
 
     case SpvOpSwitch: {
@@ -1071,7 +1080,7 @@ spv_result_t CfgPass(ValidationState_t& _, const Instruction* inst) {
         CFG_ASSERT(FirstBlockAssert, target);
         cases.push_back(target);
       }
-      _.current_function().RegisterBlockEnd({cases}, opcode);
+      _.current_function().RegisterBlockEnd({cases});
     } break;
     case SpvOpReturn: {
       const uint32_t return_type = _.current_function().GetResultTypeId();
@@ -1081,22 +1090,50 @@ spv_result_t CfgPass(ValidationState_t& _, const Instruction* inst) {
         return _.diag(SPV_ERROR_INVALID_CFG, inst)
                << "OpReturn can only be called from a function with void "
                << "return type.";
+      _.current_function().RegisterBlockEnd(std::vector<uint32_t>());
+      break;
     }
-    // Fallthrough.
     case SpvOpKill:
     case SpvOpReturnValue:
     case SpvOpUnreachable:
-      _.current_function().RegisterBlockEnd(std::vector<uint32_t>(), opcode);
+    case SpvOpTerminateInvocation:
+      _.current_function().RegisterBlockEnd(std::vector<uint32_t>());
       if (opcode == SpvOpKill) {
         _.current_function().RegisterExecutionModelLimitation(
             SpvExecutionModelFragment,
             "OpKill requires Fragment execution model");
+      }
+      if (opcode == SpvOpTerminateInvocation) {
+        _.current_function().RegisterExecutionModelLimitation(
+            SpvExecutionModelFragment,
+            "OpTerminateInvocation requires Fragment execution model");
       }
       break;
     default:
       break;
   }
   return SPV_SUCCESS;
+}
+
+void ReachabilityPass(ValidationState_t& _) {
+  for (auto& f : _.functions()) {
+    std::vector<BasicBlock*> stack;
+    auto entry = f.first_block();
+    // Skip function declarations.
+    if (entry) stack.push_back(entry);
+
+    while (!stack.empty()) {
+      auto block = stack.back();
+      stack.pop_back();
+
+      if (block->reachable()) continue;
+
+      block->set_reachable(true);
+      for (auto succ : *block->successors()) {
+        stack.push_back(succ);
+      }
+    }
+  }
 }
 
 spv_result_t ControlFlowPass(ValidationState_t& _, const Instruction* inst) {
