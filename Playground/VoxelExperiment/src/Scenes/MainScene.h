@@ -31,7 +31,7 @@ private:
 	World* m_voxelWorld = nullptr;
 	cherrysoda::Entity* m_player = nullptr;
 	cherrysoda::Entity* m_skybox = nullptr;
-	cherrysoda::Graphics::UniformHandle m_uniformMtx;
+	cherrysoda::Graphics::UniformHandle m_uniformMtx = cherrysoda::Graphics::InvalidHandle;
 };
 
 #endif // _SCENES_MAINSCENE_H_
