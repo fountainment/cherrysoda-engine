@@ -29,6 +29,9 @@ public:
 	template <typename ...T>
 	using Action = std::function<void(T...)>;
 
+	template <typename T>
+	using Func = std::function<T()>;
+
 	template <typename T, typename U>
 	using HashMap = std::unordered_map<T,U>;
 
