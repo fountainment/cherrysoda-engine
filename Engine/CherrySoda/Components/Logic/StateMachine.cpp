@@ -15,7 +15,7 @@ void StateMachine::Added(Entity* entity)
 	base::Added(entity);
 
 	if (entity->GetScene() != nullptr && m_state == -1) {
-		SetState(0);
+		State(0);
 	}
 }
 
@@ -24,15 +24,15 @@ void StateMachine::EntityAdded(Scene* scene)
 	base::EntityAdded(scene);
 
 	if (m_state == -1) {
-		SetState(0);
+		State(0);
 	}
 }
 
-void StateMachine::SetState(int state)
+void StateMachine::State(int state)
 {
 #ifndef NDEBUG
 	if (state > STL::Count(m_updates) || state < 0) {
-		CHERRYSODA_ASSERT(false, "StateMachine state out of range");
+		CHERRYSODA_ASSERT(false, "StateMachine state out of range\n");
 	}
 #endif
 
@@ -67,7 +67,7 @@ void StateMachine::Update()
 
 	if (m_updates[m_state] != nullptr) {
 		// TODO: Log
-		SetState(m_updates[m_state]());
+		State(m_updates[m_state]());
 	}
 	// TODO: Add coroutine
 }

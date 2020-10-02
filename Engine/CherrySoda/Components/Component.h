@@ -1,6 +1,8 @@
 #ifndef _CHERRYSODA_COMPONENTS_COMPONENT_H_
 #define _CHERRYSODA_COMPONENTS_COMPONENT_H_
 
+#include <CherrySoda/Util/Math.h>
+
 namespace cherrysoda {
 
 class Camera;
@@ -42,6 +44,9 @@ public:
 	inline Entity* GetEntity() { return m_entity; };
 	inline const Entity* GetEntity() const { return m_entity; };
 	Scene* GetScene();
+
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Active, m_active);
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Visible, m_visible);
 
 private:
 	Entity* m_entity = nullptr;

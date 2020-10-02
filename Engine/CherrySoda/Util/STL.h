@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -46,6 +47,9 @@ public:
 
 	template <typename T>
 	using Set = std::set<T>;
+
+	template <typename T>
+	using Stack = std::stack<T>;
 
 	template <typename T>
 	using Vector = std::vector<T>;
@@ -90,6 +94,20 @@ public:
 	static inline void AddRange(T& container, const U& iterable)
 	{
 		container.insert(std::end(container), std::begin(iterable), std::end(iterable));
+	}
+
+	template <typename T>
+	static inline auto Pop(T& container)
+	{
+		auto element = container.top();
+		container.pop();
+		return element;
+	}
+
+	template <typename T, typename U>
+	static inline void Push(T& container, const U& element)
+	{
+		container.push(element);
 	}
 
 	template <typename T, typename U>
