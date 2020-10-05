@@ -1,5 +1,5 @@
 add_subdirectory(bgfx)
-add_subdirectory(glm-0.9.9.7)
+add_subdirectory(glm)
 add_subdirectory(imgui)
 add_subdirectory(rapidjson)
 
