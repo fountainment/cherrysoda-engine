@@ -1597,6 +1597,7 @@ namespace bgfx
 				, s_capsFlags[ii].m_str
 				);
 		}
+		BX_UNUSED(s_capsFlags);
 
 		BX_TRACE("");
 		BX_TRACE("Limits:");
@@ -1869,7 +1870,7 @@ namespace bgfx
 		frameNoRenderWait();
 
 		m_encoderHandle = bx::createHandleAlloc(g_allocator, _init.limits.maxEncoders);
-		m_encoder       = (EncoderImpl*)BX_ALIGNED_ALLOC(g_allocator, sizeof(EncoderImpl)*_init.limits.maxEncoders, 16);
+		m_encoder       = (EncoderImpl*)BX_ALIGNED_ALLOC(g_allocator, sizeof(EncoderImpl)*_init.limits.maxEncoders, BX_ALIGNOF(EncoderImpl) );
 		m_encoderStats  = (EncoderStats*)BX_ALLOC(g_allocator, sizeof(EncoderStats)*_init.limits.maxEncoders);
 		for (uint32_t ii = 0, num = _init.limits.maxEncoders; ii < num; ++ii)
 		{
@@ -1975,7 +1976,8 @@ namespace bgfx
 		{
 			m_encoder[ii].~EncoderImpl();
 		}
-		BX_ALIGNED_FREE(g_allocator, m_encoder, 16);
+
+		BX_ALIGNED_FREE(g_allocator, m_encoder, BX_ALIGNOF(EncoderImpl) );
 		BX_FREE(g_allocator, m_encoderStats);
 
 		m_dynVertexBufferAllocator.compact();
