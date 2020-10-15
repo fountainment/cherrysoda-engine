@@ -35,10 +35,9 @@ BX_PRAGMA_DIAGNOSTIC_POP()
 
 using cherrysoda::Color;
 using cherrysoda::Graphics;
-using cherrysoda::String;
-using cherrysoda::MInput;
 using cherrysoda::Keys;
-using cherrysoda::MouseCursor;
+using cherrysoda::MInput;
+using cherrysoda::String;
 using cherrysoda::STL;
 
 static STL::List<Keys> s_keyboardKeys;
