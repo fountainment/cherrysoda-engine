@@ -128,7 +128,8 @@ void MainScene::Update()
 	float t;
 	Math::Vec3 pos = camera->Position();
 	Math::Vec3 direction = camera->Direction();
-	if (MInput::GamePads(0)->Check(Buttons::LeftShoulder, Buttons::RightShoulder)) {
+	if (MInput::GamePads(0)->Check(Buttons::LeftShoulder, Buttons::RightShoulder) ||
+		MInput::Keyboard()->Check(Keys::R, Keys::F)) {
 		if (Math_RaycastAABB(pos, direction, m_voxelWorld->GetAABB(), &t)) {
 			for (;;) {
 				pos = pos + direction * (t + 0.1f);
@@ -139,10 +140,16 @@ void MainScene::Update()
 						MInput::GamePads(0)->Rumble(0.1f, 0.01f);
 					}
 				}
+				else if (MInput::Keyboard()->Check(Keys::R)) {
+					m_voxelWorld->SetBlockType(index, Block::Type::None);
+				}
 				if (MInput::GamePads(0)->Check(Buttons::RightShoulder)) {
 					if (m_voxelWorld->SetBlockType(index, Block::Type::White)) {
 						MInput::GamePads(0)->Rumble(0.1f, 0.01f);
 					}
+				}
+				else if (MInput::Keyboard()->Check(Keys::F)) {
+					m_voxelWorld->SetBlockType(index, Block::Type::White);
 				}
 				if (!block || !Math_RaycastAABB(pos, direction, m_voxelWorld->GetBlockAABB(index), nullptr, &t)) {
 					break;

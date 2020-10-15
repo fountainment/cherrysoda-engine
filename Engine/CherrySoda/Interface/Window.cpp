@@ -2,8 +2,10 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/STL.h>
 
 
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
@@ -34,6 +36,136 @@ BX_PRAGMA_DIAGNOSTIC_POP()
 using cherrysoda::Color;
 using cherrysoda::Graphics;
 using cherrysoda::String;
+using cherrysoda::MInput;
+using cherrysoda::Keys;
+using cherrysoda::MouseCursor;
+using cherrysoda::STL;
+
+static STL::List<Keys> s_keyboardKeys;
+static STL::Map<int, Keys> s_toKeys = {
+	{ (int)SDLK_a, Keys::A },
+	{ (int)SDLK_b, Keys::B },
+	{ (int)SDLK_c, Keys::C },
+	{ (int)SDLK_d, Keys::D },
+	{ (int)SDLK_e, Keys::E },
+	{ (int)SDLK_f, Keys::F },
+	{ (int)SDLK_g, Keys::G },
+	{ (int)SDLK_h, Keys::H },
+	{ (int)SDLK_i, Keys::I },
+	{ (int)SDLK_j, Keys::J },
+	{ (int)SDLK_k, Keys::K },
+	{ (int)SDLK_l, Keys::L },
+	{ (int)SDLK_m, Keys::M },
+	{ (int)SDLK_n, Keys::N },
+	{ (int)SDLK_o, Keys::O },
+	{ (int)SDLK_p, Keys::P },
+	{ (int)SDLK_q, Keys::Q },
+	{ (int)SDLK_r, Keys::R },
+	{ (int)SDLK_s, Keys::S },
+	{ (int)SDLK_t, Keys::T },
+	{ (int)SDLK_u, Keys::U },
+	{ (int)SDLK_v, Keys::V },
+	{ (int)SDLK_w, Keys::W },
+	{ (int)SDLK_x, Keys::X },
+	{ (int)SDLK_y, Keys::Y },
+	{ (int)SDLK_z, Keys::Z },
+	{ (int)SDLK_0, Keys::D0 },
+	{ (int)SDLK_1, Keys::D1 },
+	{ (int)SDLK_2, Keys::D2 },
+	{ (int)SDLK_3, Keys::D3 },
+	{ (int)SDLK_4, Keys::D4 },
+	{ (int)SDLK_5, Keys::D5 },
+	{ (int)SDLK_6, Keys::D6 },
+	{ (int)SDLK_7, Keys::D7 },
+	{ (int)SDLK_8, Keys::D8 },
+	{ (int)SDLK_9, Keys::D9 },
+	{ (int)SDLK_KP_0, Keys::NumPad0 },
+	{ (int)SDLK_KP_1, Keys::NumPad1 },
+	{ (int)SDLK_KP_2, Keys::NumPad2 },
+	{ (int)SDLK_KP_3, Keys::NumPad3 },
+	{ (int)SDLK_KP_4, Keys::NumPad4 },
+	{ (int)SDLK_KP_5, Keys::NumPad5 },
+	{ (int)SDLK_KP_6, Keys::NumPad6 },
+	{ (int)SDLK_KP_7, Keys::NumPad7 },
+	{ (int)SDLK_KP_8, Keys::NumPad8 },
+	{ (int)SDLK_KP_9, Keys::NumPad9 },
+	{ (int)SDLK_KP_CLEAR, Keys::OemClear },
+	{ (int)SDLK_KP_DECIMAL, Keys::Decimal },
+	{ (int)SDLK_KP_DIVIDE, Keys::Divide },
+	{ (int)SDLK_KP_ENTER, Keys::Enter },
+	{ (int)SDLK_KP_MINUS, Keys::Subtract },
+	{ (int)SDLK_KP_MULTIPLY, Keys::Multiply },
+	{ (int)SDLK_KP_PERIOD, Keys::OemPeriod },
+	{ (int)SDLK_KP_PLUS, Keys::Add },
+	{ (int)SDLK_F1, Keys::F1 },
+	{ (int)SDLK_F2, Keys::F2 },
+	{ (int)SDLK_F3, Keys::F3 },
+	{ (int)SDLK_F4, Keys::F4 },
+	{ (int)SDLK_F5, Keys::F5 },
+	{ (int)SDLK_F6, Keys::F6 },
+	{ (int)SDLK_F7, Keys::F7 },
+	{ (int)SDLK_F8, Keys::F8 },
+	{ (int)SDLK_F9, Keys::F9 },
+	{ (int)SDLK_F10, Keys::F10 },
+	{ (int)SDLK_F11, Keys::F11 },
+	{ (int)SDLK_F12, Keys::F12 },
+	{ (int)SDLK_F13, Keys::F13 },
+	{ (int)SDLK_F14, Keys::F14 },
+	{ (int)SDLK_F15, Keys::F15 },
+	{ (int)SDLK_F16, Keys::F16 },
+	{ (int)SDLK_F17, Keys::F17 },
+	{ (int)SDLK_F18, Keys::F18 },
+	{ (int)SDLK_F19, Keys::F19 },
+	{ (int)SDLK_F20, Keys::F20 },
+	{ (int)SDLK_F21, Keys::F21 },
+	{ (int)SDLK_F22, Keys::F22 },
+	{ (int)SDLK_F23, Keys::F23 },
+	{ (int)SDLK_F24, Keys::F24 },
+	{ (int)SDLK_SPACE, Keys::Space },
+	{ (int)SDLK_UP, Keys::Up },
+	{ (int)SDLK_DOWN, Keys::Down },
+	{ (int)SDLK_LEFT, Keys::Left },
+	{ (int)SDLK_RIGHT, Keys::Right },
+	{ (int)SDLK_LALT, Keys::LeftAlt },
+	{ (int)SDLK_RALT, Keys::RightAlt },
+	{ (int)SDLK_LCTRL, Keys::LeftControl },
+	{ (int)SDLK_RCTRL, Keys::RightControl },
+	{ (int)SDLK_LGUI, Keys::LeftWindows },
+	{ (int)SDLK_RGUI, Keys::RightWindows },
+	{ (int)SDLK_LSHIFT, Keys::LeftShift },
+	{ (int)SDLK_RSHIFT, Keys::RightShift },
+	{ (int)SDLK_APPLICATION, Keys::Apps },
+	{ (int)SDLK_SLASH, Keys::OemQuestion },
+	{ (int)SDLK_BACKSLASH, Keys::OemBackslash },
+	{ (int)SDLK_LEFTBRACKET, Keys::OemOpenBrackets },
+	{ (int)SDLK_RIGHTBRACKET, Keys::OemCloseBrackets },
+	{ (int)SDLK_CAPSLOCK, Keys::CapsLock },
+	{ (int)SDLK_COMMA, Keys::OemComma },
+	{ (int)SDLK_DELETE, Keys::Delete },
+	{ (int)SDLK_END, Keys::End },
+	{ (int)SDLK_BACKSPACE, Keys::Back },
+	{ (int)SDLK_RETURN, Keys::Enter },
+	{ (int)SDLK_ESCAPE, Keys::Escape },
+	{ (int)SDLK_HOME, Keys::Home },
+	{ (int)SDLK_INSERT, Keys::Insert },
+	{ (int)SDLK_MINUS, Keys::OemMinus },
+	{ (int)SDLK_NUMLOCKCLEAR, Keys::NumLock },
+	{ (int)SDLK_PAGEUP, Keys::PageUp },
+	{ (int)SDLK_PAGEDOWN, Keys::PageDown },
+	{ (int)SDLK_PAUSE, Keys::Pause },
+	{ (int)SDLK_PERIOD, Keys::OemPeriod },
+	{ (int)SDLK_EQUALS, Keys::OemPlus },
+	{ (int)SDLK_PRINTSCREEN, Keys::PrintScreen },
+	{ (int)SDLK_QUOTE, Keys::OemQuotes },
+	{ (int)SDLK_SCROLLLOCK, Keys::Scroll },
+	{ (int)SDLK_SEMICOLON, Keys::OemSemicolon },
+	{ (int)SDLK_SLEEP, Keys::Sleep },
+	{ (int)SDLK_TAB, Keys::Tab },
+	{ (int)SDLK_BACKQUOTE, Keys::OemTilde },
+	{ (int)SDLK_VOLUMEUP, Keys::VolumeUp },
+	{ (int)SDLK_VOLUMEDOWN, Keys::VolumeDown },
+	{ (int)SDLK_UNKNOWN, Keys::None }
+};
 
 namespace entry {
 #ifdef __EMSCRIPTEN__
@@ -184,6 +316,7 @@ void cherrysoda::Window::Show()
 void cherrysoda::Window::PollEvents()
 {
 	SDL_Event event;
+	Keys key;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 		case SDL_QUIT:
@@ -197,6 +330,16 @@ void cherrysoda::Window::PollEvents()
 			case SDLK_F11:
 				ToggleFullscreen();
 				break;
+			}
+			if (STL::TryGetValue(s_toKeys, (int)event.key.keysym.sym, key)) {
+				if (!STL::Contains(s_keyboardKeys, key)) {
+					STL::Add(s_keyboardKeys, key);
+				}
+			}
+			break;
+		case SDL_KEYUP:
+			if (STL::TryGetValue(s_toKeys, (int)event.key.keysym.sym, key)) {
+				STL::Remove(s_keyboardKeys, key);
 			}
 			break;
 		case SDL_WINDOWEVENT:
@@ -214,6 +357,7 @@ void cherrysoda::Window::PollEvents()
 		break;
 		}
 	}
+	MInput::SetKeyboardKeys(s_keyboardKeys);
 }
 
 bool cherrysoda::Window::Initialize()

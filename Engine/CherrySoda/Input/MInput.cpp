@@ -3,12 +3,17 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Profile.h>
+#include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
 #include <SDL2/SDL.h>
 
 using cherrysoda::MInput;
 
+using cherrysoda::Buttons;
+using cherrysoda::ButtonState;
+using cherrysoda::Keys;
+using cherrysoda::STL;
 using cherrysoda::StringUtil;
 
 void MInput::GamePadData::Update()
@@ -54,6 +59,39 @@ void MInput::GamePadData::StopRumble()
 	m_rumbleTime = 0.f;
 }
 
+bool MInput::KeyboardState::InternalGetKey(Keys key)
+{
+	type::UInt32 mask = (type::UInt32) 1 << ((int)key & 0x1f);
+	type::UInt32 element;
+	switch (((int)key) >> 5) {
+		case 0: element = keys0; break;
+		case 1: element = keys1; break;
+		case 2: element = keys2; break;
+		case 3: element = keys3; break;
+		case 4: element = keys4; break;
+		case 5: element = keys5; break;
+		case 6: element = keys6; break;
+		case 7: element = keys7; break;
+		default: element = 0; break;
+	};
+	return (element & mask) != 0;
+}
+
+void MInput::KeyboardState::InternalSetKey(Keys key)
+{
+	type::UInt32 mask = (type::UInt32) 1 << ((int)key & 0x1f);
+	switch (((int)key) >> 5) {
+		case 0: keys0 |= mask; break;
+		case 1: keys1 |= mask; break;
+		case 2: keys2 |= mask; break;
+		case 3: keys3 |= mask; break;
+		case 4: keys4 |= mask; break;
+		case 5: keys5 |= mask; break;
+		case 6: keys6 |= mask; break;
+		case 7: keys7 |= mask; break;
+	}
+}
+
 void MInput::Initialize()
 {
 	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
@@ -75,11 +113,12 @@ void MInput::Initialize()
 		}
 	}
 
+	ms_keyboard = new KeyboardData();
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i] = new GamePadData((PlayerIndex)i);
 	}
 
-	// TODO: Keyboard, Mouse, VirtualInputs
+	// TODO: Mouse, VirtualInputs
 }
 
 void MInput::Update()
@@ -91,19 +130,26 @@ void MInput::Update()
 		ms_internalDevices[0] = (void*)SDL_GameControllerOpen(0);
 	}
 
+	ms_keyboard->Update();
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->Update();
 	}
 	// TODO: UpdateNull when !IsActive
-	// TODO: Keyboard, Mouse, VirtualInputs
+	// TODO: Mouse, VirtualInputs
 }
 
 void MInput::UpdateNull()
 {
+	ms_keyboard->UpdateNull();
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->UpdateNull();
-	}	
-	// TODO: Keyboard, Mouse, VirtualInputs
+	}
+	// TODO: Mouse, VirtualInputs
+}
+
+const MInput::KeyboardState MInput::GetKeyboardState()
+{
+	return MInput::KeyboardState(ms_keyboardKeys);
 }
 
 const MInput::GamePadState MInput::GetGamePadState(int index)
@@ -235,5 +281,7 @@ bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 	return true;
 }
 
+STL::List<Keys> MInput::ms_keyboardKeys;
+MInput::KeyboardData* MInput::ms_keyboard = nullptr;
 MInput::GamePadData* MInput::ms_gamePads[4] = { nullptr, nullptr, nullptr, nullptr };
 void* MInput::ms_internalDevices[4] = { nullptr, nullptr, nullptr, nullptr };

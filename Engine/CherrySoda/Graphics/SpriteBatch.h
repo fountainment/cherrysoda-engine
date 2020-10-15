@@ -15,7 +15,7 @@ enum class SpriteEffects : type::UInt8
 	FlipVertically = 2
 };
 
-DECLARE_ENUM_FLAG(SpriteEffects);
+CHERRYSODA_DECLARE_ENUM_FLAG(SpriteEffects);
 
 class SpriteBatch : Mesh<Graphics::PosColorTexCoord0Vertex>
 {

@@ -36,7 +36,7 @@
 	inline void NAME(const Math::Vec2& v2) { NAME(Math::Vec3(v2, NAME()[2])); }
 
 
-#define DECLARE_ENUM_FLAG(ENUM_T) \
+#define CHERRYSODA_DECLARE_ENUM_FLAG(ENUM_T) \
 inline ENUM_T operator | (ENUM_T lhs, ENUM_T rhs) \
 { \
     using T = std::underlying_type_t<ENUM_T>; \
