@@ -307,6 +307,16 @@ void cherrysoda::Window::ToggleFullscreen()
 	SetFullscreen(!(Engine::Instance()->m_fullscreen));
 }
 
+void cherrysoda::Window::GetPosition(int* x, int* y)
+{
+	SDL_GetWindowPosition(m_mainWindow, x, y);
+}
+
+void cherrysoda::Window::SetMousePosition(int x, int y)
+{
+	SDL_WarpMouseInWindow(m_mainWindow, x, y);
+}
+
 void cherrysoda::Window::Show()
 {
 	SDL_ShowWindow(m_mainWindow);
@@ -340,6 +350,9 @@ void cherrysoda::Window::PollEvents()
 			if (STL::TryGetValue(s_toKeys, (int)event.key.keysym.sym, key)) {
 				STL::Remove(s_keyboardKeys, key);
 			}
+			break;
+		case SDL_MOUSEWHEEL:
+			MInput::ms_internalMouseWheel += event.wheel.y * 120;
 			break;
 		case SDL_WINDOWEVENT:
 		{

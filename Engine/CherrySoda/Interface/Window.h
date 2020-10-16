@@ -21,6 +21,9 @@ private:
 	void SetFullscreen(bool fullscreen);
 	void ToggleFullscreen();
 
+	void GetPosition(int* x, int* y);
+	void SetMousePosition(int x, int y);
+
 	void CreateWindow();
 	void DestroyWindow();
 

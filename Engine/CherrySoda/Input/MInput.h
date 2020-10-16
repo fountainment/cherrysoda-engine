@@ -279,9 +279,9 @@ public:
 		, m_right(dpadRight)
 		{}
 
-		ButtonState m_up    = ButtonState::Released;
-		ButtonState m_down  = ButtonState::Released;
-		ButtonState m_left  = ButtonState::Released;
+		ButtonState m_up = ButtonState::Released;
+		ButtonState m_down = ButtonState::Released;
+		ButtonState m_left = ButtonState::Released;
 		ButtonState m_right = ButtonState::Released;
 	};
 
@@ -325,15 +325,16 @@ public:
 		void StopRumble();
 
 		// Buttons
-		inline bool Check(Buttons button)    const { return m_currentState.IsButtonDown(button); }
-		inline bool Pressed(Buttons button)  const { return m_currentState.IsButtonDown(button) && m_previousState.IsButtonUp(button); }
+		inline bool Check(Buttons button) const { return m_currentState.IsButtonDown(button); }
+		inline bool Pressed(Buttons button) const { return m_currentState.IsButtonDown(button) && m_previousState.IsButtonUp(button); }
 		inline bool Released(Buttons button) const { return m_currentState.IsButtonUp(button) && m_previousState.IsButtonDown(button); }
 
-		inline bool Check(Buttons buttonA, Buttons buttonB)    const { return Check(buttonA) || Check(buttonB); }
-		inline bool Pressed(Buttons buttonA, Buttons buttonB)  const { return Pressed(buttonA) || Pressed(buttonB); }
+		inline bool Check(Buttons buttonA, Buttons buttonB) const { return Check(buttonA) || Check(buttonB); }
+		inline bool Pressed(Buttons buttonA, Buttons buttonB) const { return Pressed(buttonA) || Pressed(buttonB); }
 		inline bool Released(Buttons buttonA, Buttons buttonB) const { return Released(buttonA) || Released(buttonB); }
-		inline bool Check(Buttons buttonA, Buttons buttonB, Buttons buttonC)    const { return Check(buttonA) || Check(buttonB) || Check(buttonC); }
-		inline bool Pressed(Buttons buttonA, Buttons buttonB, Buttons buttonC)  const { return Pressed(buttonA) || Pressed(buttonB) || Pressed(buttonC); }
+
+		inline bool Check(Buttons buttonA, Buttons buttonB, Buttons buttonC) const { return Check(buttonA) || Check(buttonB) || Check(buttonC); }
+		inline bool Pressed(Buttons buttonA, Buttons buttonB, Buttons buttonC) const { return Pressed(buttonA) || Pressed(buttonB) || Pressed(buttonC); }
 		inline bool Released(Buttons buttonA, Buttons buttonB, Buttons buttonC) const { return Released(buttonA) || Released(buttonB) || Released(buttonC); }
 
 		// Sticks
@@ -358,30 +359,36 @@ public:
 		}
 
 		// Triggers
-		inline float GetLeftTrigger()  const { return m_currentState.m_triggers.m_left; }
+		inline float GetLeftTrigger() const { return m_currentState.m_triggers.m_left; }
 		inline float GetRightTrigger() const { return m_currentState.m_triggers.m_right; }
-		inline bool LeftTriggerCheck(float threshold)    const { return m_currentState.m_triggers.m_left >= threshold; }
-		inline bool LeftTriggerPressed(float threshold)  const { return m_currentState.m_triggers.m_left >= threshold && m_previousState.m_triggers.m_left < threshold; }
+
+		inline bool LeftTriggerCheck(float threshold) const { return m_currentState.m_triggers.m_left >= threshold; }
+		inline bool LeftTriggerPressed(float threshold) const { return m_currentState.m_triggers.m_left >= threshold && m_previousState.m_triggers.m_left < threshold; }
 		inline bool LeftTriggerReleased(float threshold) const { return m_currentState.m_triggers.m_left < threshold && m_previousState.m_triggers.m_left >= threshold; }
-		inline bool RightTriggerCheck(float threshold)    const { return m_currentState.m_triggers.m_right >= threshold; }
-		inline bool RightTriggerPressed(float threshold)  const { return m_currentState.m_triggers.m_right >= threshold && m_previousState.m_triggers.m_right < threshold; }
+
+		inline bool RightTriggerCheck(float threshold) const { return m_currentState.m_triggers.m_right >= threshold; }
+		inline bool RightTriggerPressed(float threshold) const { return m_currentState.m_triggers.m_right >= threshold && m_previousState.m_triggers.m_right < threshold; }
 		inline bool RightTriggerReleased(float threshold) const { return m_currentState.m_triggers.m_right < threshold && m_previousState.m_triggers.m_right >= threshold; }
 
 		// DPad
 		inline float DPadHorizontal() const { return m_currentState.m_dpad.m_right == ButtonState::Pressed ? 1.f : (m_currentState.m_dpad.m_left == ButtonState::Pressed ? -1.f : 0.f); }
-		inline float DPadVertical()   const { return m_currentState.m_dpad.m_up == ButtonState::Pressed ? 1.f : (m_currentState.m_dpad.m_down == ButtonState::Pressed ? -1.f : 0.f); }
+		inline float DPadVertical() const { return m_currentState.m_dpad.m_up == ButtonState::Pressed ? 1.f : (m_currentState.m_dpad.m_down == ButtonState::Pressed ? -1.f : 0.f); }
 		inline Math::Vec2 DPad() const { return Math::Vec2(DPadHorizontal(), DPadVertical()); }
-		inline bool DPadLeftCheck()    const { return m_currentState.m_dpad.m_left == ButtonState::Pressed; }
-		inline bool DPadLeftPressed()  const { return m_currentState.m_dpad.m_left == ButtonState::Pressed && m_previousState.m_dpad.m_left == ButtonState::Released; }
+
+		inline bool DPadLeftCheck() const { return m_currentState.m_dpad.m_left == ButtonState::Pressed; }
+		inline bool DPadLeftPressed() const { return m_currentState.m_dpad.m_left == ButtonState::Pressed && m_previousState.m_dpad.m_left == ButtonState::Released; }
 		inline bool DPadLeftReleased() const { return m_currentState.m_dpad.m_left == ButtonState::Released && m_previousState.m_dpad.m_left == ButtonState::Pressed; }
-		inline bool DPadRightCheck()    const { return m_currentState.m_dpad.m_right == ButtonState::Pressed; }
-		inline bool DPadRightPressed()  const { return m_currentState.m_dpad.m_right == ButtonState::Pressed && m_previousState.m_dpad.m_right == ButtonState::Released; }
+
+		inline bool DPadRightCheck() const { return m_currentState.m_dpad.m_right == ButtonState::Pressed; }
+		inline bool DPadRightPressed() const { return m_currentState.m_dpad.m_right == ButtonState::Pressed && m_previousState.m_dpad.m_right == ButtonState::Released; }
 		inline bool DPadRightReleased() const { return m_currentState.m_dpad.m_right == ButtonState::Released && m_previousState.m_dpad.m_right == ButtonState::Pressed; }
-		inline bool DPadUpCheck()    const { return m_currentState.m_dpad.m_up == ButtonState::Pressed; }
-		inline bool DPadUpPressed()  const { return m_currentState.m_dpad.m_up == ButtonState::Pressed && m_previousState.m_dpad.m_up == ButtonState::Released; }
+
+		inline bool DPadUpCheck() const { return m_currentState.m_dpad.m_up == ButtonState::Pressed; }
+		inline bool DPadUpPressed() const { return m_currentState.m_dpad.m_up == ButtonState::Pressed && m_previousState.m_dpad.m_up == ButtonState::Released; }
 		inline bool DPadUpReleased() const { return m_currentState.m_dpad.m_up == ButtonState::Released && m_previousState.m_dpad.m_up == ButtonState::Pressed; }
-		inline bool DPadDownCheck()    const { return m_currentState.m_dpad.m_down == ButtonState::Pressed; }
-		inline bool DPadDownPressed()  const { return m_currentState.m_dpad.m_down == ButtonState::Pressed && m_previousState.m_dpad.m_down == ButtonState::Released; }
+
+		inline bool DPadDownCheck() const { return m_currentState.m_dpad.m_down == ButtonState::Pressed; }
+		inline bool DPadDownPressed() const { return m_currentState.m_dpad.m_down == ButtonState::Pressed && m_previousState.m_dpad.m_down == ButtonState::Released; }
 		inline bool DPadDownReleased() const { return m_currentState.m_dpad.m_down == ButtonState::Released && m_previousState.m_dpad.m_down == ButtonState::Pressed; }
 
 	private:
@@ -407,7 +414,6 @@ public:
 	// Keyboard
 	struct KeyboardState
 	{
-	public:
 		KeyboardState() = default;
 		KeyboardState(const STL::Vector<Keys>& keys)
 		{
@@ -418,12 +424,11 @@ public:
 			for (Keys key : keys) InternalSetKey(key);
 		}
 
-		bool IsKeyDown(Keys key) { return InternalGetKey(key); }
+		bool IsKeyDown(Keys key) const { return InternalGetKey(key); }
 
-		int GetHashCode() { return (int)(keys0 ^ keys1 ^ keys2 ^ keys3 ^ keys4 ^ keys5 ^ keys6 ^ keys7); }
+		int GetHashCode() const { return (int)(keys0 ^ keys1 ^ keys2 ^ keys3 ^ keys4 ^ keys5 ^ keys6 ^ keys7); }
 
-	private:
-		bool InternalGetKey(Keys key);
+		bool InternalGetKey(Keys key) const;
 		void InternalSetKey(Keys key);
 
 		type::UInt32 keys0 = 0, keys1 = 0, keys2 = 0, keys3 = 0;
@@ -447,19 +452,19 @@ public:
 			m_currentState = KeyboardState();	
 		}
 
-		bool Check(Keys key) { return m_currentState.IsKeyDown(key); }
-		bool Pressed(Keys key) { return m_currentState.IsKeyDown(key) && !m_previousState.IsKeyDown(key); }
-		bool Released(Keys key) { return !m_currentState.IsKeyDown(key) && m_previousState.IsKeyDown(key); }
+		bool Check(Keys key) const { return m_currentState.IsKeyDown(key); }
+		bool Pressed(Keys key) const { return m_currentState.IsKeyDown(key) && !m_previousState.IsKeyDown(key); }
+		bool Released(Keys key) const { return !m_currentState.IsKeyDown(key) && m_previousState.IsKeyDown(key); }
 
-		bool Check(Keys keyA, Keys keyB) { return Check(keyA) || Check(keyB); }
-		bool Pressed(Keys keyA, Keys keyB) { return Pressed(keyA) || Pressed(keyB); }
-		bool Released(Keys keyA, Keys keyB) { return Released(keyA) || Released(keyB); }
+		bool Check(Keys keyA, Keys keyB) const { return Check(keyA) || Check(keyB); }
+		bool Pressed(Keys keyA, Keys keyB) const { return Pressed(keyA) || Pressed(keyB); }
+		bool Released(Keys keyA, Keys keyB) const { return Released(keyA) || Released(keyB); }
 
-		bool Check(Keys keyA, Keys keyB, Keys keyC) { return Check(keyA) || Check(keyB) || Check(keyC); }
-		bool Pressed(Keys keyA, Keys keyB, Keys keyC) { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC); }
-		bool Released(Keys keyA, Keys keyB, Keys keyC) { return Released(keyA) || Released(keyB) || Released(keyC); }
+		bool Check(Keys keyA, Keys keyB, Keys keyC) const { return Check(keyA) || Check(keyB) || Check(keyC); }
+		bool Pressed(Keys keyA, Keys keyB, Keys keyC) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC); }
+		bool Released(Keys keyA, Keys keyB, Keys keyC) const { return Released(keyA) || Released(keyB) || Released(keyC); }
 
-		int AxisCheck(Keys negative, Keys positive)
+		int AxisCheck(Keys negative, Keys positive) const
 		{
 			if (Check(negative)) {
 				if (Check(positive))
@@ -473,12 +478,12 @@ public:
 				return 0;
 		}
 
-		Math::IVec2 GetAxis(Keys left, Keys right, Keys down, Keys up)
+		Math::IVec2 GetAxis(Keys left, Keys right, Keys down, Keys up) const
 		{
 			return Math::IVec2(AxisCheck(left, right), AxisCheck(down, up));
 		}
 
-		int AxisCheck(Keys negative, Keys positive, int both)
+		int AxisCheck(Keys negative, Keys positive, int both) const
 		{
 			if (Check(negative)) {
 				if (Check(positive))
@@ -492,7 +497,7 @@ public:
 				return 0;
 		}
 
-		int GetHashCode() { return m_currentState.GetHashCode(); }
+		int GetHashCode() const { return m_currentState.GetHashCode(); }
 
 	private:
 		KeyboardState m_currentState;
@@ -500,6 +505,86 @@ public:
 	};
 
 	static KeyboardData* Keyboard() { return ms_keyboard; }
+
+	// Mouse
+	struct MouseState
+	{
+		MouseState() = default;
+		MouseState(int x, int y, int scrollWheel,
+			ButtonState leftButton, ButtonState middleButton, ButtonState rightButton,
+			ButtonState xButton1, ButtonState xButton2)
+		: m_x(x)
+		, m_y(y)
+		, m_scrollWheelValue(scrollWheel)
+		, m_leftButton(leftButton)
+		, m_middleButton(middleButton)
+		, m_rightButton(rightButton)
+		, m_xButton1(xButton1)
+		, m_xButton2(xButton2)
+		{}
+
+		int m_x = 0;
+		int m_y = 0;
+		ButtonState m_leftButton = ButtonState::Released;
+		ButtonState m_middleButton = ButtonState::Released;
+		ButtonState m_rightButton = ButtonState::Released;
+		int m_scrollWheelValue = 0;
+		ButtonState m_xButton1 = ButtonState::Released;
+		ButtonState m_xButton2 = ButtonState::Released;
+	};
+
+	class MouseData
+	{
+	public:
+		MouseData() = default;
+
+		void Update()
+		{
+			m_previousState = m_currentState;
+			m_currentState = GetMouseState();
+		}
+
+		void UpdateNull()
+		{
+			m_previousState = m_currentState;
+			m_currentState = MouseState();
+		}
+
+		bool CheckLeftButton() const { return m_currentState.m_leftButton == ButtonState::Pressed; }
+		bool CheckRightButton() const { return m_currentState.m_rightButton == ButtonState::Pressed; }
+		bool CheckMiddleButton() const { return m_currentState.m_middleButton == ButtonState::Pressed; }
+	
+		bool PressedLeftButton() const { return m_currentState.m_leftButton == ButtonState::Pressed && m_previousState.m_leftButton == ButtonState::Released; }
+		bool PressedRightButton() const { return m_currentState.m_rightButton == ButtonState::Pressed && m_previousState.m_rightButton == ButtonState::Released; }
+		bool PressedMiddleButton() const { return m_currentState.m_middleButton == ButtonState::Pressed && m_previousState.m_middleButton == ButtonState::Released; }
+
+		bool RleasedLeftButton() const { return m_currentState.m_leftButton == ButtonState::Released && m_previousState.m_leftButton == ButtonState::Pressed; }
+		bool RleasedRightButton() const { return m_currentState.m_rightButton == ButtonState::Released && m_previousState.m_rightButton == ButtonState::Pressed; }
+		bool RleasedMiddleButton() const { return m_currentState.m_middleButton == ButtonState::Released && m_previousState.m_middleButton == ButtonState::Pressed; }
+
+		int Wheel() const { return m_currentState.m_scrollWheelValue; }
+		int WheelDelta() const { return m_currentState.m_scrollWheelValue - m_previousState.m_scrollWheelValue; }
+
+		bool WasMoved() const { return m_currentState.m_x != m_previousState.m_x || m_currentState.m_y != m_previousState.m_y; }
+
+		// const Math::IVec2 Position() const;
+		// void Position(const Math::IVec2& pos);
+
+		// int X() const { return Position().x; }
+		// int Y() const { return Position().y; }
+
+		const Math::IVec2 RawPosition() const { return Math::IVec2(m_currentState.m_x, m_currentState.m_y); }
+		void RawPosition(const Math::IVec2& pos) { SetMousePosition(pos); }
+
+		int RawX() const { return RawPosition().x; }
+		int RawY() const { return RawPosition().y; }
+
+	private:
+		MouseState m_currentState;
+		MouseState m_previousState;
+	};
+
+	static MouseData* Mouse() { return ms_mouse; }
 
 	static void Initialize();
 
@@ -511,13 +596,21 @@ private:
 	static void SetKeyboardKeys(const STL::List<Keys>& keys) { ms_keyboardKeys = keys; }
 
 	static const KeyboardState GetKeyboardState();
+	static const MouseState GetMouseState();
 	static const GamePadState GetGamePadState(int index);
+
+	static bool GetRelativeMouseMode();
+	static void SetMousePosition(const Math::IVec2& pos);
 	static bool SetGamePadVibration(int index, float leftMotor, float rightMotor);
 
 	static STL::List<Keys> ms_keyboardKeys;
 	static KeyboardData* ms_keyboard;
+	static MouseData* ms_mouse;
 	static GamePadData* ms_gamePads[4];
 	static void* ms_internalDevices[4];
+
+	static int ms_internalMouseWheel; 
+	static bool ms_supportsGlobalMouse;
 };
 
 } // namespace cherrysoda

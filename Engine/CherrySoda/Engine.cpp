@@ -20,6 +20,7 @@ using cherrysoda::Engine;
 using cherrysoda::Color;
 using cherrysoda::Draw;
 using cherrysoda::Graphics;
+using cherrysoda::Math;
 using cherrysoda::MInput;
 using cherrysoda::Scene;
 using cherrysoda::String;
@@ -58,6 +59,22 @@ void Engine::SetClearColor(const Color& color)
 	m_clearColor = color;
 	if (auto gfxInstance = Graphics::Instance()) {
 		gfxInstance->SetClearColor(color);
+	}
+}
+
+Math::IVec2 Engine::GetWindowPosition()
+{
+	int x = 0, y = 0;
+	if (m_window) {
+		m_window->GetPosition(&x, &y);
+	}
+	return Math::IVec2(x, y);
+}
+
+void Engine::SetMousePosition(const Math::IVec2& pos)
+{
+	if (m_window) {
+		m_window->SetMousePosition(pos.x, pos.y);
 	}
 }
 

@@ -43,6 +43,8 @@ public:
 	void SetTitle(const String& title);
 	inline const Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
+	Math::IVec2 GetWindowPosition();
+	void SetMousePosition(const Math::IVec2& pos);
 
 	inline float RawDeltaTime() const { return static_cast<float>(m_rawDeltaTime); }
 	inline float DeltaTime() const { return static_cast<float>(m_deltaTime); }
@@ -84,8 +86,8 @@ private:
 	int m_windowHeight;
 	String m_title;
 	Color m_clearColor = Color::Black;
-	bool m_fullscreen = false;
 	Window* m_window = nullptr;
+	bool m_fullscreen = false;
 	bool m_shouldExit = false;
 	bool m_initialized = false;
 	bool m_resizing = false;

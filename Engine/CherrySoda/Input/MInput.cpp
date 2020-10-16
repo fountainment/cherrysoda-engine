@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
@@ -12,9 +13,12 @@ using cherrysoda::MInput;
 
 using cherrysoda::Buttons;
 using cherrysoda::ButtonState;
+using cherrysoda::Engine;
 using cherrysoda::Keys;
 using cherrysoda::STL;
 using cherrysoda::StringUtil;
+
+namespace type = cherrysoda::type;
 
 void MInput::GamePadData::Update()
 {
@@ -59,7 +63,7 @@ void MInput::GamePadData::StopRumble()
 	m_rumbleTime = 0.f;
 }
 
-bool MInput::KeyboardState::InternalGetKey(Keys key)
+bool MInput::KeyboardState::InternalGetKey(Keys key) const
 {
 	type::UInt32 mask = (type::UInt32) 1 << ((int)key & 0x1f);
 	type::UInt32 element;
@@ -114,11 +118,25 @@ void MInput::Initialize()
 	}
 
 	ms_keyboard = new KeyboardData();
+	ms_mouse = new MouseData();
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i] = new GamePadData((PlayerIndex)i);
 	}
 
-	// TODO: Mouse, VirtualInputs
+	StringID platform = SDL_GetPlatform();
+	if (platform == StringID("Windows") ||
+		platform == StringID("Mac OS X") ||
+		platform == StringID("Linux") ||
+		platform == StringID("OpenBSD") ||
+		platform == StringID("FreeBSD") ||
+		platform == StringID("NetBSD")) {
+		ms_supportsGlobalMouse = true;
+	}
+	else {
+		ms_supportsGlobalMouse = false;
+	}
+
+	// TODO: VirtualInputs
 }
 
 void MInput::Update()
@@ -131,25 +149,53 @@ void MInput::Update()
 	}
 
 	ms_keyboard->Update();
+	ms_mouse->Update();
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->Update();
 	}
 	// TODO: UpdateNull when !IsActive
-	// TODO: Mouse, VirtualInputs
+	// TODO: VirtualInputs
 }
 
 void MInput::UpdateNull()
 {
 	ms_keyboard->UpdateNull();
+	ms_mouse->UpdateNull();
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->UpdateNull();
 	}
-	// TODO: Mouse, VirtualInputs
+	// TODO: VirtualInputs
 }
 
 const MInput::KeyboardState MInput::GetKeyboardState()
 {
 	return MInput::KeyboardState(ms_keyboardKeys);
+}
+
+const MInput::MouseState MInput::GetMouseState()
+{
+	int x = 0, y = 0;
+	ButtonState left, middle, right;
+	ButtonState x1, x2;
+	type::UInt32 flags = 0;
+	if (GetRelativeMouseMode()) {
+		flags = SDL_GetRelativeMouseState(&x, &y);	
+	}
+	else if (ms_supportsGlobalMouse) {
+		flags = SDL_GetGlobalMouseState(&x, &y);
+		auto pos = Engine::Instance()->GetWindowPosition();
+		x -= pos.x;
+		y -= pos.y;
+	}
+	else {
+		flags = SDL_GetMouseState(&x, &y);	
+	}
+	left = (ButtonState)(flags & SDL_BUTTON_LMASK);
+	middle = (ButtonState)((flags & SDL_BUTTON_MMASK) >> 1);
+	right = (ButtonState)((flags & SDL_BUTTON_RMASK) >> 2);
+	x1 = (ButtonState)((flags & SDL_BUTTON_X1MASK) >> 3);
+	x2 = (ButtonState)((flags & SDL_BUTTON_X2MASK) >> 4);
+	return MInput::MouseState(x, y, ms_internalMouseWheel, left, middle, right, x1, x2);
 }
 
 const MInput::GamePadState MInput::GetGamePadState(int index)
@@ -262,6 +308,16 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 	return builtState;
 }
 
+bool MInput::GetRelativeMouseMode()
+{
+	return SDL_GetRelativeMouseMode() == SDL_TRUE;	
+}
+
+void MInput::SetMousePosition(const Math::IVec2& pos)
+{
+	Engine::Instance()->SetMousePosition(pos);	
+}
+
 bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 {
 	SDL_GameController* device = (SDL_GameController*)ms_internalDevices[index];
@@ -283,5 +339,9 @@ bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 
 STL::List<Keys> MInput::ms_keyboardKeys;
 MInput::KeyboardData* MInput::ms_keyboard = nullptr;
+MInput::MouseData* MInput::ms_mouse = nullptr;
 MInput::GamePadData* MInput::ms_gamePads[4] = { nullptr, nullptr, nullptr, nullptr };
 void* MInput::ms_internalDevices[4] = { nullptr, nullptr, nullptr, nullptr };
+
+int MInput::ms_internalMouseWheel = 0;
+bool MInput::ms_supportsGlobalMouse = true;
