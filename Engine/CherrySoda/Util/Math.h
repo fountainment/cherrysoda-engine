@@ -32,8 +32,8 @@
 
 #define CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
 	inline const Math::Vec3 NAME() const { EXTRA_GET_OP; return VALUE; } \
-	inline void NAME(const Math::Vec3& v3) { EXTRA_SET_OP; VALUE = v3; } \
-	inline void NAME(const Math::Vec2& v2) { NAME(Math::Vec3(v2, NAME()[2])); }
+	inline void NAME(const Math::Vec3& v) { EXTRA_SET_OP; VALUE = v; } \
+	inline void NAME(const Math::Vec2& v) { NAME(Math::Vec3(v, NAME()[2])); }
 
 
 #define CHERRYSODA_DECLARE_ENUM_FLAG(ENUM_T) \

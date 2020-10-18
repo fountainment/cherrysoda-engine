@@ -11,8 +11,8 @@ public:
 	Camera();
 	Camera(int width, int height);
 
-	inline cherrysoda::Math::Vec2 GetSize() { return cherrysoda::Math::Vec2(m_width, m_height); }
-	inline void SetSize(const cherrysoda::Math::Vec2& size) { Width(size[0]); Height(size[1]); }
+	inline Math::Vec2 GetSize() { return Math::Vec2(m_width, m_height); }
+	inline void SetSize(const Math::Vec2& size) { Width(size[0]); Height(size[1]); }
 
 	void UpdateMatrices();
 
@@ -28,9 +28,17 @@ public:
 	inline const Math::Vec3 GetFrontVector() { return m_direction; }
 	inline const Math::Vec3 GetBackVector() { return -m_direction; }
 
+	void CenterOrigin() { Origin(Math::Vec2(m_width * 0.5f, m_height * 0.5f)); }
+	void RoundPosition() { Position(Math_Round(Position())); }
+
+	void Approach(const Math::Vec2& pos, float ease);
+	void Approach(const Math::Vec2& pos, float ease, float maxDistance);
+	void Approach(const Math::Vec3& pos, float ease);
+	void Approach(const Math::Vec3& pos, float ease, float maxDistance);
+
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Position, m_position, CHERRYSODA_NONE_OP, m_changed = true);
-	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Scale, m_zoom, CHERRYSODA_NONE_OP, m_changed = true);
-	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Origin, m_origin, CHERRYSODA_NONE_OP, m_changed = true);
+	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Scale, m_zoom, CHERRYSODA_NONE_OP, if (m_zoom == v) return; m_changed = true);
+	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Origin, m_origin, CHERRYSODA_NONE_OP, if (m_origin == v) return; m_changed = true);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Direction, m_direction, CHERRYSODA_NONE_OP, m_changed = true);
 
 	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, ZRotation, m_zAngle, CHERRYSODA_NONE_OP, if (m_zAngle == v) return; m_changed = true);

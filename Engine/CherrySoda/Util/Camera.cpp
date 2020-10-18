@@ -32,3 +32,30 @@ void Camera::UpdateMatrices()
 		m_changed = false;
 	}
 }
+
+void Camera::Approach(const Math::Vec2& pos, float ease)
+{
+	Approach(Math::Vec3(pos, Position().z), ease);
+}
+
+void Camera::Approach(const Math::Vec2& pos, float ease, float maxDistance)
+{
+	Approach(Math::Vec3(pos, Position().z), ease, maxDistance);
+}
+
+void Camera::Approach(const Math::Vec3& pos, float ease)
+{
+	Position(Position() + (pos - Position()) * ease);
+}
+
+void Camera::Approach(const Math::Vec3& pos, float ease, float maxDistance)
+{
+
+	Math::Vec3 move = (pos - Position()) * ease;
+	if (Math_Length(move) > maxDistance) {
+		Position(Position() + Math_Normalize(move) * maxDistance);
+	}
+	else {
+		Position(Position() + move);	
+	}
+}
