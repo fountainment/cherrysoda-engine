@@ -41,7 +41,7 @@ using cherrysoda::String;
 using cherrysoda::STL;
 
 static STL::List<Keys> s_keyboardKeys;
-static STL::Map<int, Keys> s_toKeys = {
+static STL::Map<int, Keys> s_keycodeToKeys = {
 	{ (int)SDLK_a, Keys::A },
 	{ (int)SDLK_b, Keys::B },
 	{ (int)SDLK_c, Keys::C },
@@ -164,6 +164,131 @@ static STL::Map<int, Keys> s_toKeys = {
 	{ (int)SDLK_VOLUMEUP, Keys::VolumeUp },
 	{ (int)SDLK_VOLUMEDOWN, Keys::VolumeDown },
 	{ (int)SDLK_UNKNOWN, Keys::None }
+};
+
+static STL::Map<int, Keys> s_scancodeToKeys = {
+	{ (int)SDL_SCANCODE_A, Keys::A },
+	{ (int)SDL_SCANCODE_B, Keys::B },
+	{ (int)SDL_SCANCODE_C, Keys::C },
+	{ (int)SDL_SCANCODE_D, Keys::D },
+	{ (int)SDL_SCANCODE_E, Keys::E },
+	{ (int)SDL_SCANCODE_F, Keys::F },
+	{ (int)SDL_SCANCODE_G, Keys::G },
+	{ (int)SDL_SCANCODE_H, Keys::H },
+	{ (int)SDL_SCANCODE_I, Keys::I },
+	{ (int)SDL_SCANCODE_J, Keys::J },
+	{ (int)SDL_SCANCODE_K, Keys::K },
+	{ (int)SDL_SCANCODE_L, Keys::L },
+	{ (int)SDL_SCANCODE_M, Keys::M },
+	{ (int)SDL_SCANCODE_N, Keys::N },
+	{ (int)SDL_SCANCODE_O, Keys::O },
+	{ (int)SDL_SCANCODE_P, Keys::P },
+	{ (int)SDL_SCANCODE_Q, Keys::Q },
+	{ (int)SDL_SCANCODE_R, Keys::R },
+	{ (int)SDL_SCANCODE_S, Keys::S },
+	{ (int)SDL_SCANCODE_T, Keys::T },
+	{ (int)SDL_SCANCODE_U, Keys::U },
+	{ (int)SDL_SCANCODE_V, Keys::V },
+	{ (int)SDL_SCANCODE_W, Keys::W },
+	{ (int)SDL_SCANCODE_X, Keys::X },
+	{ (int)SDL_SCANCODE_Y, Keys::Y },
+	{ (int)SDL_SCANCODE_Z, Keys::Z },
+	{ (int)SDL_SCANCODE_0, Keys::D0 },
+	{ (int)SDL_SCANCODE_1, Keys::D1 },
+	{ (int)SDL_SCANCODE_2, Keys::D2 },
+	{ (int)SDL_SCANCODE_3, Keys::D3 },
+	{ (int)SDL_SCANCODE_4, Keys::D4 },
+	{ (int)SDL_SCANCODE_5, Keys::D5 },
+	{ (int)SDL_SCANCODE_6, Keys::D6 },
+	{ (int)SDL_SCANCODE_7, Keys::D7 },
+	{ (int)SDL_SCANCODE_8, Keys::D8 },
+	{ (int)SDL_SCANCODE_9, Keys::D9 },
+	{ (int)SDL_SCANCODE_KP_0, Keys::NumPad0 },
+	{ (int)SDL_SCANCODE_KP_1, Keys::NumPad1 },
+	{ (int)SDL_SCANCODE_KP_2, Keys::NumPad2 },
+	{ (int)SDL_SCANCODE_KP_3, Keys::NumPad3 },
+	{ (int)SDL_SCANCODE_KP_4, Keys::NumPad4 },
+	{ (int)SDL_SCANCODE_KP_5, Keys::NumPad5 },
+	{ (int)SDL_SCANCODE_KP_6, Keys::NumPad6 },
+	{ (int)SDL_SCANCODE_KP_7, Keys::NumPad7 },
+	{ (int)SDL_SCANCODE_KP_8, Keys::NumPad8 },
+	{ (int)SDL_SCANCODE_KP_9, Keys::NumPad9 },
+	{ (int)SDL_SCANCODE_KP_CLEAR, Keys::OemClear },
+	{ (int)SDL_SCANCODE_KP_DECIMAL, Keys::Decimal },
+	{ (int)SDL_SCANCODE_KP_DIVIDE, Keys::Divide },
+	{ (int)SDL_SCANCODE_KP_ENTER, Keys::Enter },
+	{ (int)SDL_SCANCODE_KP_MINUS, Keys::Subtract },
+	{ (int)SDL_SCANCODE_KP_MULTIPLY, Keys::Multiply },
+	{ (int)SDL_SCANCODE_KP_PERIOD, Keys::OemPeriod },
+	{ (int)SDL_SCANCODE_KP_PLUS, Keys::Add },
+	{ (int)SDL_SCANCODE_F1, Keys::F1 },
+	{ (int)SDL_SCANCODE_F2, Keys::F2 },
+	{ (int)SDL_SCANCODE_F3, Keys::F3 },
+	{ (int)SDL_SCANCODE_F4, Keys::F4 },
+	{ (int)SDL_SCANCODE_F5, Keys::F5 },
+	{ (int)SDL_SCANCODE_F6, Keys::F6 },
+	{ (int)SDL_SCANCODE_F7, Keys::F7 },
+	{ (int)SDL_SCANCODE_F8, Keys::F8 },
+	{ (int)SDL_SCANCODE_F9, Keys::F9 },
+	{ (int)SDL_SCANCODE_F10, Keys::F10 },
+	{ (int)SDL_SCANCODE_F11, Keys::F11 },
+	{ (int)SDL_SCANCODE_F12, Keys::F12 },
+	{ (int)SDL_SCANCODE_F13, Keys::F13 },
+	{ (int)SDL_SCANCODE_F14, Keys::F14 },
+	{ (int)SDL_SCANCODE_F15, Keys::F15 },
+	{ (int)SDL_SCANCODE_F16, Keys::F16 },
+	{ (int)SDL_SCANCODE_F17, Keys::F17 },
+	{ (int)SDL_SCANCODE_F18, Keys::F18 },
+	{ (int)SDL_SCANCODE_F19, Keys::F19 },
+	{ (int)SDL_SCANCODE_F20, Keys::F20 },
+	{ (int)SDL_SCANCODE_F21, Keys::F21 },
+	{ (int)SDL_SCANCODE_F22, Keys::F22 },
+	{ (int)SDL_SCANCODE_F23, Keys::F23 },
+	{ (int)SDL_SCANCODE_F24, Keys::F24 },
+	{ (int)SDL_SCANCODE_SPACE, Keys::Space },
+	{ (int)SDL_SCANCODE_UP, Keys::Up },
+	{ (int)SDL_SCANCODE_DOWN, Keys::Down },
+	{ (int)SDL_SCANCODE_LEFT, Keys::Left },
+	{ (int)SDL_SCANCODE_RIGHT, Keys::Right },
+	{ (int)SDL_SCANCODE_LALT, Keys::LeftAlt },
+	{ (int)SDL_SCANCODE_RALT, Keys::RightAlt },
+	{ (int)SDL_SCANCODE_LCTRL, Keys::LeftControl },
+	{ (int)SDL_SCANCODE_RCTRL, Keys::RightControl },
+	{ (int)SDL_SCANCODE_LGUI, Keys::LeftWindows },
+	{ (int)SDL_SCANCODE_RGUI, Keys::RightWindows },
+	{ (int)SDL_SCANCODE_LSHIFT, Keys::LeftShift },
+	{ (int)SDL_SCANCODE_RSHIFT, Keys::RightShift },
+	{ (int)SDL_SCANCODE_APPLICATION, Keys::Apps },
+	{ (int)SDL_SCANCODE_SLASH, Keys::OemQuestion },
+	{ (int)SDL_SCANCODE_BACKSLASH, Keys::OemBackslash },
+	{ (int)SDL_SCANCODE_LEFTBRACKET, Keys::OemOpenBrackets },
+	{ (int)SDL_SCANCODE_RIGHTBRACKET, Keys::OemCloseBrackets },
+	{ (int)SDL_SCANCODE_CAPSLOCK, Keys::CapsLock },
+	{ (int)SDL_SCANCODE_COMMA, Keys::OemComma },
+	{ (int)SDL_SCANCODE_DELETE, Keys::Delete },
+	{ (int)SDL_SCANCODE_END, Keys::End },
+	{ (int)SDL_SCANCODE_BACKSPACE, Keys::Back },
+	{ (int)SDL_SCANCODE_RETURN, Keys::Enter },
+	{ (int)SDL_SCANCODE_ESCAPE, Keys::Escape },
+	{ (int)SDL_SCANCODE_HOME, Keys::Home },
+	{ (int)SDL_SCANCODE_INSERT, Keys::Insert },
+	{ (int)SDL_SCANCODE_MINUS, Keys::OemMinus },
+	{ (int)SDL_SCANCODE_NUMLOCKCLEAR, Keys::NumLock },
+	{ (int)SDL_SCANCODE_PAGEUP, Keys::PageUp },
+	{ (int)SDL_SCANCODE_PAGEDOWN, Keys::PageDown },
+	{ (int)SDL_SCANCODE_PAUSE, Keys::Pause },
+	{ (int)SDL_SCANCODE_PERIOD, Keys::OemPeriod },
+	{ (int)SDL_SCANCODE_EQUALS, Keys::OemPlus },
+	{ (int)SDL_SCANCODE_PRINTSCREEN, Keys::PrintScreen },
+	{ (int)SDL_SCANCODE_APOSTROPHE, Keys::OemQuotes },
+	{ (int)SDL_SCANCODE_SCROLLLOCK, Keys::Scroll },
+	{ (int)SDL_SCANCODE_SEMICOLON, Keys::OemSemicolon },
+	{ (int)SDL_SCANCODE_SLEEP, Keys::Sleep },
+	{ (int)SDL_SCANCODE_TAB, Keys::Tab },
+	{ (int)SDL_SCANCODE_GRAVE, Keys::OemTilde },
+	{ (int)SDL_SCANCODE_VOLUMEUP, Keys::VolumeUp },
+	{ (int)SDL_SCANCODE_VOLUMEDOWN, Keys::VolumeDown },
+	{ (int)SDL_SCANCODE_UNKNOWN, Keys::None }
 };
 
 namespace entry {
@@ -340,14 +465,14 @@ void cherrysoda::Window::PollEvents()
 				ToggleFullscreen();
 				break;
 			}
-			if (STL::TryGetValue(s_toKeys, (int)event.key.keysym.sym, key)) {
+			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.keysym.scancode, key)) {
 				if (!STL::Contains(s_keyboardKeys, key)) {
 					STL::Add(s_keyboardKeys, key);
 				}
 			}
 			break;
 		case SDL_KEYUP:
-			if (STL::TryGetValue(s_toKeys, (int)event.key.keysym.sym, key)) {
+			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.keysym.scancode, key)) {
 				STL::Remove(s_keyboardKeys, key);
 			}
 			break;
