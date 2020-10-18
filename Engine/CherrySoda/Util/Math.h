@@ -91,6 +91,7 @@ inline ENUM_T& operator &= (ENUM_T& lhs, ENUM_T rhs) \
 #define Math_Min        glm::min 
 #define Math_Max        glm::max 
 #define Math_Normalize  glm::normalize
+#define Math_Round      glm::round
 #define Math_Rotate     glm::rotate
 #define Math_Radians    glm::radians
 #define Math_Sign       glm::sign
@@ -99,6 +100,7 @@ inline ENUM_T& operator &= (ENUM_T& lhs, ENUM_T rhs) \
 #define Math_Identity     glm::identity
 #define Math_Inverse      glm::inverse
 #define Math_LookAt       glm::lookAt
+#define Math_Ortho        glm::ortho
 #define Math_Perspective  glm::perspective
 #define Math_Scale        glm::scale
 #define Math_Translate    glm::translate
