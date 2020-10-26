@@ -184,7 +184,7 @@ public:
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
 	static TransientIndexBufferHandle CreateTransientIndexBuffer(const STL::Vector<type::UInt16>& indices);
-	static TransientIndexBufferHandle CreateTransientIndexBuffer(const type::UInt16* indices, int indexAmount);
+	static TransientIndexBufferHandle CreateTransientIndexBuffer(const type::UInt16* indices, type::UInt32 indexAmount);
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
@@ -260,7 +260,7 @@ public:
 	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
 	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, const STL::Vector<VERTEX_T>& vertices); \
 	static TransientVertexBufferHandle CreateTransientVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
-	static TransientVertexBufferHandle CreateTransientVertexBuffer(const VERTEX_T* vertices, int count);
+	static TransientVertexBufferHandle CreateTransientVertexBuffer(const VERTEX_T* vertices, type::UInt32 vertexAmount);
 
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);

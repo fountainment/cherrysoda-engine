@@ -29,7 +29,7 @@ void Sprite::Update()
 			m_animationTimer -= Math_Sign(m_animationTimer) * m_currentAnimation->m_delay;
 
 			// End of Animation
-			if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= STL::Count(m_currentAnimation->m_frames)) {
+			if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation->m_frames))) {
 				auto was = m_currentAnimationID;
 				if (m_onLastFrame) {
 					m_onLastFrame(m_currentAnimationID);

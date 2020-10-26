@@ -527,10 +527,10 @@ public:
 
 		int m_x = 0;
 		int m_y = 0;
+		int m_scrollWheelValue = 0;
 		ButtonState m_leftButton = ButtonState::Released;
 		ButtonState m_middleButton = ButtonState::Released;
 		ButtonState m_rightButton = ButtonState::Released;
-		int m_scrollWheelValue = 0;
 		ButtonState m_xButton1 = ButtonState::Released;
 		ButtonState m_xButton2 = ButtonState::Released;
 	};

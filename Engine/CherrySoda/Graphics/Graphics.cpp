@@ -654,7 +654,7 @@ Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const 
 	return Graphics::InvalidHandle;
 }
 
-Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const type::UInt16* indices, int indexAmount)
+Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const type::UInt16* indices, type::UInt32 indexAmount)
 {
 	if (!indexAmount) return Graphics::InvalidHandle;
 	if (indexAmount == bgfx::getAvailTransientIndexBuffer(indexAmount)) {
@@ -883,7 +883,7 @@ Graphics::TransientVertexBufferHandle Graphics::CreateTransientVertexBuffer(cons
 	} \
 	return Graphics::InvalidHandle; \
 } \
-Graphics::TransientVertexBufferHandle Graphics::CreateTransientVertexBuffer(const VERTEX_D::VertexType* vertices, int vertexAmount) \
+Graphics::TransientVertexBufferHandle Graphics::CreateTransientVertexBuffer(const VERTEX_D::VertexType* vertices, type::UInt32 vertexAmount) \
 { \
 	if (!vertexAmount) return Graphics::InvalidHandle; \
 	if (vertexAmount == bgfx::getAvailTransientVertexBuffer(vertexAmount, VERTEX_D::s_layout)) { \

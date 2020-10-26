@@ -167,7 +167,7 @@ void GUI::Render()
 					Graphics::SetTexture((Texture*)cmd->TextureId);
 				}
 				Graphics::SetTransientVertexBuffer(vb);
-				Graphics::SetTransientIndexBuffer(vb, cmd->IdxOffset, cmd->ElemCount);
+				Graphics::SetTransientIndexBuffer(ib, cmd->IdxOffset, cmd->ElemCount);
 				Graphics::SetStateNoDepth(BlendFunction::Alpha);
 				Graphics::SubmitOnCurrentRenderPass(&ms_guiEffect);
 			}

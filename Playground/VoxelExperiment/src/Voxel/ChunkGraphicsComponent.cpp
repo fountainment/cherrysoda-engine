@@ -39,7 +39,6 @@ void ChunkGraphicsComponent::RebuildMesh()
 	};
 
 	constexpr int chunkSize = Chunk::Size();
-	constexpr float halfChunkSize = chunkSize * 0.5f;
 
 	GetMesh()->Clear();
 	Chunk* chunk = (Chunk*)GetEntity();
