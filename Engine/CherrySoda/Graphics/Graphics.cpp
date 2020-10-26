@@ -24,6 +24,7 @@
 
 using cherrysoda::Graphics;
 
+using cherrysoda::BlendFunction;
 using cherrysoda::Camera;
 using cherrysoda::Color;
 using cherrysoda::Effect;
@@ -36,6 +37,8 @@ using cherrysoda::TextureCube;
 using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
+
+namespace type = cherrysoda::type;
 
 class PosColorDefinition
 {
@@ -58,9 +61,20 @@ public:
 	static bgfx::VertexLayout s_layout;
 };
 
+class ImGuiVertexDefinition
+{
+public:
+	typedef Graphics::ImGuiVertex VertexType;
+	static bgfx::VertexLayout s_layout;
+};
+
 bgfx::VertexLayout PosColorDefinition::s_layout;
 bgfx::VertexLayout PosColorNormalDefinition::s_layout;
 bgfx::VertexLayout PosColorTexCoord0Definition::s_layout;
+bgfx::VertexLayout ImGuiVertexDefinition::s_layout;
+
+STL::Vector<bgfx::TransientIndexBuffer> s_transientIndexBufferStack;
+STL::Vector<bgfx::TransientVertexBuffer> s_transientVertexBufferStack;
 
 namespace entry {
 
@@ -156,6 +170,16 @@ void Graphics::PosColorTexCoord0Vertex::Init()
 		.add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
 		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+		.end();
+}
+
+void Graphics::ImGuiVertex::Init()
+{
+	ImGuiVertexDefinition::s_layout
+		.begin()
+		.add(bgfx::Attrib::Position,  2, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
 		.end();
 }
 
@@ -346,9 +370,20 @@ void Graphics::Initialize()
 	bgfx::init(init);
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
-	Graphics::PosColorVertex::Init();
-	Graphics::PosColorNormalVertex::Init();
-	Graphics::PosColorTexCoord0Vertex::Init();
+	ms_blendFunction[(int)BlendFunction::Default]  = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	ms_blendFunction[(int)BlendFunction::Alpha]    = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	ms_blendFunction[(int)BlendFunction::Add]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE);
+	ms_blendFunction[(int)BlendFunction::Max]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE) | BGFX_STATE_BLEND_EQUATION(BGFX_STATE_BLEND_EQUATION_MAX);
+	ms_blendFunction[(int)BlendFunction::Min]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE) | BGFX_STATE_BLEND_EQUATION(BGFX_STATE_BLEND_EQUATION_MIN);
+	ms_blendFunction[(int)BlendFunction::Multiply] = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_DST_COLOR, BGFX_STATE_BLEND_ZERO) ;
+
+	PosColorVertex::Init();
+	PosColorNormalVertex::Init();
+	PosColorTexCoord0Vertex::Init();
+	ImGuiVertex::Init();
+
+	// Default GUI renderpass
+	bgfx::setViewMode(MaxRenderPassCount() - 1, bgfx::ViewMode::Sequential);
 
 	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
 
@@ -382,6 +417,9 @@ void Graphics::RenderFrame()
 	*/
 
 	bgfx::frame();
+
+	STL::Clear(s_transientVertexBufferStack);
+	STL::Clear(s_transientIndexBufferStack);
 }
 
 void Graphics::UpdateView()
@@ -404,7 +442,7 @@ void Graphics::SetClearDiscard()
 	bgfx::setViewClear(RenderPass(), BGFX_CLEAR_DISCARD_DEPTH | BGFX_CLEAR_DISCARD_STENCIL);
 }
 
-void Graphics::SetRenderPassOrder(STL::Vector<cherrysoda::type::UInt16> renderPassOrder)
+void Graphics::SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder)
 {
 	bgfx::setViewOrder(0, static_cast<uint16_t>(STL::Count(renderPassOrder)), STL::Data(renderPassOrder));
 }
@@ -433,6 +471,11 @@ void Graphics::SetCamera(Camera* camera)
 	bgfx::setViewTransform(RenderPass(), &camera->m_viewMatrix, &camera->m_projMatrix);
 }
 
+void Graphics::SetViewProjectionMatrix(const Math::Mat4& viewMatrix, const Math::Mat4& projMatrix)
+{
+	bgfx::setViewTransform(RenderPass(), &viewMatrix, &projMatrix);
+}
+
 void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 {
 	bgfx::setTransform(&transformMatrix);
@@ -453,24 +496,38 @@ void Graphics::SetIndexBuffer(Graphics::IndexBufferHandle indexBuffer)
 	bgfx::setIndexBuffer(bgfx::IndexBufferHandle{indexBuffer});
 }
 
-void Graphics::SetDynamicVertexBuffer(Graphics::VertexBufferHandle vertexBuffer, size_t vertexAmount)
+void Graphics::SetDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount)
 {
 	bgfx::setVertexBuffer(0, bgfx::DynamicVertexBufferHandle{vertexBuffer}, 0, static_cast<type::UInt32>(vertexAmount));
 }
 
-void Graphics::SetDynamicIndexBuffer(Graphics::IndexBufferHandle indexBuffer, size_t indexAmount)
+void Graphics::SetDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle indexBuffer, size_t indexAmount)
 {
 	bgfx::setIndexBuffer(bgfx::DynamicIndexBufferHandle{indexBuffer}, 0, static_cast<type::UInt32>(indexAmount));
 }
 
-void Graphics::SetStateDefault()
+void Graphics::SetTransientVertexBuffer(Graphics::TransientVertexBufferHandle vertexBuffer)
 {
-	bgfx::setState(BGFX_STATE_DEFAULT);
+	auto i = static_cast<size_t>(vertexBuffer);
+	CHERRYSODA_ASSERT(i < STL::Count(s_transientVertexBufferStack), "Transient vertex buffer handle is invalid!\n");
+	bgfx::setVertexBuffer(0, STL::Data(s_transientVertexBufferStack) + i);
 }
 
-void Graphics::SetStateNoDepth()
+void Graphics::SetTransientIndexBuffer(Graphics::TransientIndexBufferHandle indexBuffer, size_t startIndex, size_t indexAmount)
 {
-	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
+	auto i = static_cast<size_t>(indexBuffer);
+	CHERRYSODA_ASSERT(i < STL::Count(s_transientIndexBufferStack), "Transient index buffer handle is invalid!\n");
+	bgfx::setIndexBuffer(STL::Data(s_transientIndexBufferStack) + i, startIndex, indexAmount);
+}
+
+void Graphics::SetStateDefault(BlendFunction blendFunc/* = BlendFunction::Normal*/)
+{
+	bgfx::setState(BGFX_STATE_DEFAULT | ms_blendFunction[(int)blendFunc]);
+}
+
+void Graphics::SetStateNoDepth(BlendFunction blendFunc/* = BlendFunction::Normal*/)
+{
+	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA | ms_blendFunction[(int)blendFunc]);
 }
 
 void Graphics::Submit()
@@ -483,12 +540,12 @@ void Graphics::Submit(const Effect* effect)
 	bgfx::submit(RenderPass(), { effect->m_program });
 }
 
-void Graphics::Submit(cherrysoda::type::UInt16 renderPass)
+void Graphics::Submit(type::UInt16 renderPass)
 {
 	bgfx::submit(renderPass, { CurrentShader() });
 }
 
-void Graphics::Submit(cherrysoda::type::UInt16 renderPass, const Effect* effect)
+void Graphics::Submit(type::UInt16 renderPass, const Effect* effect)
 {
 	bgfx::submit(renderPass, { effect->m_program });
 }
@@ -567,14 +624,14 @@ void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _
 }
 
 
-Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
+Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<type::UInt16>& indices)
 {
 	return bgfx::createIndexBuffer(
 		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices)))
 	).idx;
 }
 
-Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vector<cherrysoda::type::UInt16>& indices)
+Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices)
 {
 	return bgfx::createDynamicIndexBuffer(
 		bgfx::makeRef(STL::Data(indices), static_cast<uint32_t>(STL::ByteSize(indices))),
@@ -582,20 +639,36 @@ Graphics::DynamicIndexBufferHandle Graphics::CreateDynamicIndexBuffer(STL::Vecto
 	).idx;
 }
 
-void Graphics::SetTransientIndexBuffer(const STL::Vector<cherrysoda::type::UInt16>& indices)
+Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const STL::Vector<type::UInt16>& indices)
 {
-	auto indexAmount = static_cast<cherrysoda::type::UInt32>(STL::Count(indices));
-	if (!indexAmount) return;
+	auto indexAmount = static_cast<type::UInt32>(STL::Count(indices));
+	if (!indexAmount) return Graphics::InvalidHandle;
 	if (indexAmount == bgfx::getAvailTransientIndexBuffer(indexAmount)) {
 		bgfx::TransientIndexBuffer ib;
 		bgfx::allocTransientIndexBuffer(&ib, indexAmount);
 		auto index = (type::UInt16*)ib.data;
 		bx::memCopy((void*)index, (void*)STL::Data(indices), STL::ByteSize(indices));
-		bgfx::setIndexBuffer(&ib);
+		STL::Add(s_transientIndexBufferStack, ib);
+		return Graphics::TransientIndexBufferHandle(STL::Count(s_transientIndexBufferStack) - 1);
 	}
+	return Graphics::InvalidHandle;
 }
 
-void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handle, int index, const STL::Vector<cherrysoda::type::UInt16>& indices)
+Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const type::UInt16* indices, int indexAmount)
+{
+	if (!indexAmount) return Graphics::InvalidHandle;
+	if (indexAmount == bgfx::getAvailTransientIndexBuffer(indexAmount)) {
+		bgfx::TransientIndexBuffer ib;
+		bgfx::allocTransientIndexBuffer(&ib, indexAmount);
+		auto index = (type::UInt16*)ib.data;
+		bx::memCopy((void*)index, (void*)indices, indexAmount << 1);
+		STL::Add(s_transientIndexBufferStack, ib);
+		return Graphics::TransientIndexBufferHandle(STL::Count(s_transientIndexBufferStack) - 1);
+	}
+	return Graphics::InvalidHandle;
+}
+
+void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handle, int index, const STL::Vector<type::UInt16>& indices)
 {
 	bgfx::DynamicIndexBufferHandle hdl = { handle };
 	bgfx::update(
@@ -619,7 +692,12 @@ Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics:
 	return tex;
 }
 
-Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, cherrysoda::type::UInt16 num)
+Graphics::TextureHandle Graphics::CreateTexture2DFromRGBA(void* data, int width, int height)
+{
+	return bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::Enum::RGBA8, 0, bgfx::copy(data, width * height * 4)).idx;
+}
+
+Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, type::UInt16 num)
 {
 	return bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Vec4, num).idx;
 }
@@ -676,6 +754,11 @@ void Graphics::DestroyUniform(UniformHandle handle)
 	bgfx::destroy(hdl);
 }
 
+void Graphics::SetScissor(int x, int y, int w, int h)
+{
+	bgfx::setScissor(x, y, w, h);
+}
+
 void Graphics::SetEffect(const Effect* effect)
 {
 	SetShader(effect != nullptr ? effect->GetShader() : Graphics::InvalidHandle);
@@ -686,7 +769,7 @@ void Graphics::SetTexture(Graphics::UniformHandle uniform, Graphics::TextureHand
 	bgfx::setTexture(0, { uniform }, { texture });
 }
 
-void Graphics::SetTexture(cherrysoda::type::UInt8 stage, Graphics::UniformHandle uniform, Graphics::TextureHandle texture)
+void Graphics::SetTexture(type::UInt8 stage, Graphics::UniformHandle uniform, Graphics::TextureHandle texture)
 {
 	bgfx::setTexture(stage, { uniform }, { texture });
 }
@@ -696,7 +779,7 @@ void Graphics::SetTexture(const Texture* texture)
 	SetTexture(ms_samplerTex, texture->GetHandle());
 }
 
-void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, cherrysoda::type::UInt16 size/* = 1U*/)
+void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, type::UInt16 size/* = 1U*/)
 {
 	bgfx::setUniform({ uniform }, value, size);
 }
@@ -739,6 +822,8 @@ void Graphics::SetTextureCubeIrr(const TextureCube* texture)
 	SetTexture(1, ms_samplerTexCubeIrr, texture->GetHandle());	
 }
 
+type::UInt64 Graphics::ms_blendFunction[(int)BlendFunction::Count];
+type::UInt16 Graphics::ms_maxRenderPassCount = BGFX_CONFIG_MAX_VIEWS;
 bool Graphics::ms_vsyncEnabled = true;
 
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
@@ -783,26 +868,42 @@ void Graphics::UpdateDynamicVertexBuffer(Graphics::DynamicVertexBufferHandle han
 	); \
 }
 
-#define CHERRYSODA_SET_TRANSIENT_VERTEX_BUFFER(VERTEX_D) \
-void Graphics::SetTransientVertexBuffer(const STL::Vector<VERTEX_D::VertexType>& vertices) \
+#define CHERRYSODA_CREATE_TRANSIENT_VERTEX_BUFFER(VERTEX_D) \
+Graphics::TransientVertexBufferHandle Graphics::CreateTransientVertexBuffer(const STL::Vector<VERTEX_D::VertexType>& vertices) \
 { \
-	auto vertexAmount = static_cast<cherrysoda::type::UInt32>(STL::Count(vertices)); \
-	if (!vertexAmount) return; \
+	auto vertexAmount = static_cast<type::UInt32>(STL::Count(vertices)); \
+	if (!vertexAmount) return Graphics::InvalidHandle; \
 	if (vertexAmount == bgfx::getAvailTransientVertexBuffer(vertexAmount, VERTEX_D::s_layout)) { \
 		bgfx::TransientVertexBuffer vb; \
 		bgfx::allocTransientVertexBuffer(&vb, vertexAmount, VERTEX_D::s_layout); \
 		auto vertex = (VERTEX_D::VertexType*)vb.data; \
 		bx::memCopy((void*)vertex, (void*)STL::Data(vertices), STL::ByteSize(vertices)); \
-		bgfx::setVertexBuffer(0, &vb); \
+		STL::Add(s_transientVertexBufferStack, vb); \
+		return (Graphics::TransientVertexBufferHandle)(STL::Count(s_transientVertexBufferStack) - 1); \
 	} \
+	return Graphics::InvalidHandle; \
+} \
+Graphics::TransientVertexBufferHandle Graphics::CreateTransientVertexBuffer(const VERTEX_D::VertexType* vertices, int vertexAmount) \
+{ \
+	if (!vertexAmount) return Graphics::InvalidHandle; \
+	if (vertexAmount == bgfx::getAvailTransientVertexBuffer(vertexAmount, VERTEX_D::s_layout)) { \
+		bgfx::TransientVertexBuffer vb; \
+		bgfx::allocTransientVertexBuffer(&vb, vertexAmount, VERTEX_D::s_layout); \
+		auto vertex = (VERTEX_D::VertexType*)vb.data; \
+		bx::memCopy((void*)vertex, (void*)vertices, sizeof(VERTEX_D::VertexType) * vertexAmount); \
+		STL::Add(s_transientVertexBufferStack, vb); \
+		return (Graphics::TransientVertexBufferHandle)(STL::Count(s_transientVertexBufferStack) - 1); \
+	} \
+	return Graphics::InvalidHandle; \
 }
 
 #define CHERRYSODA_VERTEX_IMPLEMENTATION(VERTEX_D) \
 CHERRYSODA_CREATE_VERTEX_BUFFER(VERTEX_D); \
 CHERRYSODA_CREATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D); \
 CHERRYSODA_UPDATE_DYNAMIC_VERTEX_BUFFER(VERTEX_D); \
-CHERRYSODA_SET_TRANSIENT_VERTEX_BUFFER(VERTEX_D);
+CHERRYSODA_CREATE_TRANSIENT_VERTEX_BUFFER(VERTEX_D);
 
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorDefinition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalDefinition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorTexCoord0Definition);
+CHERRYSODA_VERTEX_IMPLEMENTATION(ImGuiVertexDefinition);

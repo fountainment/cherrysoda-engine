@@ -438,7 +438,7 @@ public:
 	class KeyboardData
 	{
 	public:
-		KeyboardData() = default;
+		friend class MInput;
 
 		void Update()
 		{
@@ -500,6 +500,8 @@ public:
 		int GetHashCode() const { return m_currentState.GetHashCode(); }
 
 	private:
+		KeyboardData() = default;
+
 		KeyboardState m_currentState;
 		KeyboardState m_previousState;
 	};
@@ -536,7 +538,7 @@ public:
 	class MouseData
 	{
 	public:
-		MouseData() = default;
+		friend class MInput;
 
 		void Update()
 		{
@@ -580,11 +582,16 @@ public:
 		int RawY() const { return RawPosition().y; }
 
 	private:
+		MouseData() = default;
+
 		MouseState m_currentState;
 		MouseState m_previousState;
 	};
 
 	static MouseData* Mouse() { return ms_mouse; }
+
+	// For GUI
+	static const STL::List<Keys>& GetCurrentKeyboardKeys() { return ms_keyboardKeys; }
 
 	static void Initialize();
 

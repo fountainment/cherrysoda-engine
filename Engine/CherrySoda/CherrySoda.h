@@ -10,6 +10,8 @@
 #include <CherrySoda/Components/Graphics/Image.h>
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Sprite.h>
+#include <CherrySoda/Components/Logic/Alarm.h>
+#include <CherrySoda/Components/Logic/StateMachine.h>
 
 #include <CherrySoda/Graphics/Atlas.h>
 #include <CherrySoda/Graphics/Effect.h>
@@ -31,6 +33,9 @@
 #include <CherrySoda/Util/ChoiceSet.h>
 #include <CherrySoda/Util/Chooser.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Draw.h>
+#include <CherrySoda/Util/GUI.h>
+#include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/Literals.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>

@@ -30,6 +30,17 @@ class Texture;
 class Texture2D;
 class TextureCube;
 
+enum class BlendFunction : type::UInt32
+{
+	Default = 0, // support premultiplied-alpha
+	Alpha,
+	Add,
+	Max,
+	Min,
+	Multiply,
+	Count
+};
+
 class Graphics
 {
 public:
@@ -91,6 +102,15 @@ public:
 		}
 	};
 
+	struct ImGuiVertex
+	{
+		float m_x, m_y;
+		float m_u, m_v;
+		type::UInt32 m_abgr;
+
+		static void Init();
+	};
+
 	struct TextureInfo
 	{
 		int m_width;
@@ -107,6 +127,8 @@ public:
 	using ShaderHandle = HandleType;
 	using UniformHandle = HandleType;
 	using TextureHandle = HandleType;
+	using TransientIndexBufferHandle = HandleType;
+	using TransientVertexBufferHandle = HandleType;
 	static constexpr HandleType InvalidHandle = UINT16_MAX;
 
 	static void SetPlatformData(void* platformData);
@@ -126,6 +148,7 @@ public:
 	static inline type::UInt16 CurrentRenderPass() { return Instance()->m_renderPassId; }
 	static inline Graphics* UseRenderPass(type::UInt16 renderPassId) { ms_renderPassHelperInstance->RenderPass(renderPassId); return ms_renderPassHelperInstance; }
 	static inline Graphics* UseCurrentRenderPass() { return Instance(); }
+	static inline type::UInt16 MaxRenderPassCount() { return ms_maxRenderPassCount; }
 
 	static void UpdateView();
 	void SetClearColor(const Color& color);
@@ -135,14 +158,18 @@ public:
 	static void SetVsyncEnabled(bool vsyncEnabled);
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
+	void SetViewProjectionMatrix(const Math::Mat4& viewMatrix, const Math::Mat4& projMatrix);
 	static void SetTransformMatrix(const Math::Mat4& transformMatrix);
 	static void SetMesh(const MeshInterface* mesh);
 	static void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	static void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	static void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
 	static void SetDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer, size_t indexAmount);
-	static void SetStateDefault();
-	static void SetStateNoDepth();
+	static void SetTransientVertexBuffer(TransientVertexBufferHandle vertexBuffer);
+	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer);
+	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer, size_t startIndex, size_t indexAmount);
+	static void SetStateDefault(BlendFunction blendFunc = BlendFunction::Default);
+	static void SetStateNoDepth(BlendFunction blendFunc = BlendFunction::Default);
 	void Submit();
 	void Submit(const Effect* effect);
 	static void Submit(type::UInt16 renderPass);
@@ -156,10 +183,12 @@ public:
 
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
-	static void SetTransientIndexBuffer(const STL::Vector<type::UInt16>& indices);
+	static TransientIndexBufferHandle CreateTransientIndexBuffer(const STL::Vector<type::UInt16>& indices);
+	static TransientIndexBufferHandle CreateTransientIndexBuffer(const type::UInt16* indices, int indexAmount);
 
 	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
+	static TextureHandle CreateTexture2DFromRGBA(void* data, int width, int height);
 
 	static UniformHandle CreateUniformVec4(const String& uniform, type::UInt16 num = 1U);
 	static UniformHandle CreateUniformMat4(const String& uniform);
@@ -175,6 +204,7 @@ public:
 	static void DestroyTexture(TextureHandle texture);
 	static void DestroyUniform(UniformHandle uniform);
 
+	static void SetScissor(int x, int y, int w, int h);
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
 	static void SetTexture(UniformHandle uniform, TextureHandle texture);
 	static void SetTexture(type::UInt8 stage, UniformHandle uniform, TextureHandle texture);
@@ -203,8 +233,10 @@ private:
 
 	static inline Graphics* Instance() { return ms_instance; }
 
-	type::UInt16 m_renderPassId = 0;	
+	type::UInt16 m_renderPassId = 0;
 
+	static type::UInt64 ms_blendFunction[(int)BlendFunction::Count];
+	static type::UInt16 ms_maxRenderPassCount;
 	static bool ms_vsyncEnabled;
 
 	static ShaderHandle ms_defaultShader;
@@ -227,11 +259,13 @@ public:
 	static VertexBufferHandle CreateVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
 	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
 	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, const STL::Vector<VERTEX_T>& vertices); \
-	static void SetTransientVertexBuffer(const STL::Vector<VERTEX_T>& vertices);
+	static TransientVertexBufferHandle CreateTransientVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
+	static TransientVertexBufferHandle CreateTransientVertexBuffer(const VERTEX_T* vertices, int count);
 
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorTexCoord0Vertex);
+	CHERRYSODA_VERTEX_DECLARATION(ImGuiVertex);
 
 	#undef CHERRYSODA_VERTEX_DECLARATION
 };

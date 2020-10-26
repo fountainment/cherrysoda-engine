@@ -6,6 +6,7 @@
 #include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Draw.h>
+#include <CherrySoda/Util/GUI.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/String.h>
@@ -20,6 +21,7 @@ using cherrysoda::Engine;
 using cherrysoda::Color;
 using cherrysoda::Draw;
 using cherrysoda::Graphics;
+using cherrysoda::GUI;
 using cherrysoda::Math;
 using cherrysoda::MInput;
 using cherrysoda::Scene;
@@ -134,6 +136,7 @@ void Engine::Initialize()
 	Graphics::Initialize();
 	Graphics::UpdateView();
 	Draw::Initialize();
+	GUI::Initialize();
 	m_graphicsDevice = Graphics::Instance();
 	m_initialized = true;
 }
@@ -161,6 +164,8 @@ void Engine::RenderCore()
 		m_scene->Render();
 		m_scene->AfterRender();
 	}
+
+	GUI::Render();
 }
 
 void Engine::OnSceneTransition(Scene* from, Scene* to)
@@ -181,6 +186,9 @@ void Engine::Update()
 
 	// Update input
 	MInput::Update();
+
+	// Update GUI
+	GUI::Update();
 
 	// Update current scene
 	if (m_scene != nullptr) {

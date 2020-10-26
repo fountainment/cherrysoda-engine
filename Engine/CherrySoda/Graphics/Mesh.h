@@ -196,10 +196,14 @@ public:
 			Graphics::SetDynamicIndexBuffer(GetIndexBuffer(), IndexBufferSize());
 			break;
 		case MeshInterface::BufferType::Transient:
-			Graphics::SetTransientVertexBuffer(m_verticesFront);
-			Graphics::SetTransientIndexBuffer(m_indicesFront);
+			{
+				auto vb = Graphics::CreateTransientVertexBuffer(m_verticesFront);
+				auto ib = Graphics::CreateTransientIndexBuffer(m_indicesFront);
+				Graphics::SetTransientVertexBuffer(vb);
+				Graphics::SetTransientIndexBuffer(ib, 0, IndexBufferSize());
+			}
 			break;
-		}	
+		}
 	}
 
 private:

@@ -29,6 +29,15 @@ Texture2D Texture2D::FromFile(const String& filename)
 	return result;
 }
 
+Texture2D Texture2D::FromRGBA(void* data, int width, int height)
+{
+	Texture2D result;
+	result.m_texture = Graphics::CreateTexture2DFromRGBA(data, width, height);
+	result.m_width = width;
+	result.m_height = height;
+	return result;
+}
+
 TextureCube TextureCube::FromFile(const String& filename)
 {
 	TextureCube result;

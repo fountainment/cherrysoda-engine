@@ -54,6 +54,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Color.h
   CherrySoda/Util/Draw.cpp
   CherrySoda/Util/Draw.h
+  CherrySoda/Util/GUI.cpp
+  CherrySoda/Util/GUI.h
   CherrySoda/Util/Literals.h
   CherrySoda/Util/Log.cpp
   CherrySoda/Util/Log.h
