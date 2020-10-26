@@ -64,7 +64,6 @@ void GUI::Initialize()
 	io.KeyMap[ImGuiKey_Y] = (int)Keys::Y;
 	io.KeyMap[ImGuiKey_Z] = (int)Keys::Z;
 
-	io.DeltaTime = 1.f / 60.f;
 
 	// Font texture 
 	unsigned char* data;
@@ -120,6 +119,9 @@ void GUI::Update()
 
 	// GamePad
 	// TODO
+
+	// Delta time
+	io.DeltaTime = Engine::Instance()->RawDeltaTime();
 
 	ImGui::NewFrame();
 }
