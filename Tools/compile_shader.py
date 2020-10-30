@@ -1,13 +1,14 @@
 import lib.cherrysoda as cherry
 import re
 import sys
+import argparse
 
 
 # TODO: Support shader in folder
 
 
 def compile_shader_program(shader_dir, shader_name):
-    print('Compiling shader ' + shader_name + '...')
+    print('Compiling shader "' + shader_name + '" ...')
     vert_shader = cherry.join_path(shader_dir, 'shaders/vs_' + shader_name + '.sc')
     frag_shader = cherry.join_path(shader_dir, 'shaders/fs_' + shader_name + '.sc')
     vert_out    = cherry.join_path(shader_dir, '%s/vs_' + shader_name + '.bin')
