@@ -39,8 +39,8 @@ void VoxelExperiment::LoadContent()
 	ms_texCube = TextureCube::FromFile("assets/textures/bolonga_lod.dds");
 	ms_texCubeIrr = TextureCube::FromFile("assets/textures/bolonga_irr.dds");
 
-	ms_voxelShader.Load("mypbr");
-	ms_skyboxShader.Load("skybox");
+	ms_voxelShader.LoadFromFile("mypbr");
+	ms_skyboxShader.LoadFromFile("skybox");
 }
 
 TextureCube VoxelExperiment::ms_texCube;

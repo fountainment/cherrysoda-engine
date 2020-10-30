@@ -30,11 +30,17 @@ def get_file_path(f):
     return os.path.dirname(f)
 
 
+def get_file_name(f):
+    return os.path.basename(f)
+
+
 executable_suffix = ('', '.exe')[is_windows_system()]
 
-engine_path   = abspath(join_path(get_file_path(__file__), '../..'))
-tool_path     = join_path(engine_path, 'Tools')
-external_path = join_path(engine_path, 'External')
+project_path  = abspath(join_path(get_file_path(__file__), '../..'))
+engine_path   = join_path(project_path, 'Engine')
+tool_path     = join_path(project_path, 'Tools')
+external_path = join_path(project_path, 'External')
+tmp_path      = join_path(project_path, 'Tmp')
 bgfx_src_path = join_path(external_path, 'bgfx/bgfx/src')
 
 shaderc = join_path(tool_path, 'bin/shaderc' + executable_suffix)
@@ -50,7 +56,7 @@ def execute_command(command):
     subprocess.run(command)
 
 
-def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None):
+def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None, bin2c_array=None):
     command = [shaderc, '-f', shader_source, '-o', output, '--platform', platform, '--type', shader_type]
     if include_path:
         command += ['-i', include_path]
@@ -58,6 +64,8 @@ def compile_shader(shader_source, output, platform, shader_type, include_path=No
         command += ['--profile', profile]
     if opt_level:
         command += ['-O', str(opt_level)]
+    if bin2c_array:
+        command += ['--bin2c', bin2c_array]
     make_sure_folder_exist(output)
     execute_command(command)
 
@@ -108,7 +116,15 @@ def set_environment_variable(env_var, value):
     command = ['setx', env_var, value]
     execute_command(command)
 
+
 def write_str_file(str, dest):
     f = open(dest, 'w')
     f.write(str)
     f.close()
+
+
+def read_file(file):
+    f = open(file, 'r')
+    ret = f.read()
+    f.close()
+    return ret

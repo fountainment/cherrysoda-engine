@@ -28,7 +28,7 @@ void FirstSprite::Initialize()
 	scene->Add(entity);
 	
 	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 200.f));
-	renderer->SetEffect(Effect::LoadEffect("sprite"));
+	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	scene->Add(renderer);
 
 	SetScene(scene);

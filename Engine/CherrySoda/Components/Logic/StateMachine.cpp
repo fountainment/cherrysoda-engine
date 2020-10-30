@@ -31,7 +31,7 @@ void StateMachine::EntityAdded(Scene* scene)
 void StateMachine::State(int state)
 {
 #ifndef NDEBUG
-	if (state > STL::Count(m_updates) || state < 0) {
+	if (state > static_cast<int>(STL::Count(m_updates)) || state < 0) {
 		CHERRYSODA_ASSERT(false, "StateMachine state out of range\n");
 	}
 #endif

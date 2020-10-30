@@ -141,8 +141,7 @@ public:
 	static inline void BeginRenderPass(type::UInt16 renderPassId) { Instance()->RenderPass(renderPassId); }
 	static inline void EndRenderPass(type::UInt16 renderPassId)
 	{
-		CHERRYSODA_ASSERT(Instance()->RenderPass() == renderPassId, \
-			CHERRYSODA_FORMAT("Current RenderPass %u != %u!\n", Instance()->RenderPass(), renderPassId));
+		CHERRYSODA_ASSERT_FORMAT(Instance()->RenderPass() == renderPassId, "Current RenderPass %u != %u!\n", Instance()->RenderPass(), renderPassId);
 		Instance()->RenderPass(0);
 	}
 	static inline type::UInt16 CurrentRenderPass() { return Instance()->m_renderPassId; }
@@ -186,7 +185,11 @@ public:
 	static TransientIndexBufferHandle CreateTransientIndexBuffer(const STL::Vector<type::UInt16>& indices);
 	static TransientIndexBufferHandle CreateTransientIndexBuffer(const type::UInt16* indices, type::UInt32 indexAmount);
 
-	static ShaderHandle CreateShaderProgram(const String& vs, const String& fs);
+	static ShaderHandle CreateShaderProgramFromFile(const String& vs, const String& fs);
+	static ShaderHandle CreateShaderProgramFromEmbedded(const String& vs, const String& fs);
+
+	static const Effect GetEmbeddedEffect(StringID name);
+
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
 	static TextureHandle CreateTexture2DFromRGBA(void* data, int width, int height);
 

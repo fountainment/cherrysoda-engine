@@ -9,27 +9,40 @@ namespace cherrysoda {
 class Effect
 {
 public:
-	void Load(const String& name)
+	Effect() = default;
+
+	Effect(Graphics::ShaderHandle shader)
 	{
-		Load("vs_" + name, "fs_" + name);
+		m_program = shader;
 	}
 
-	static const Effect LoadEffect(const String& name)
+	void LoadFromFile(const String& name)
+	{
+		m_program = Graphics::CreateShaderProgramFromFile("vs_" + name, "fs_" + name);
+	}
+
+	void LoadFromEmbedded(const String& name)
+	{
+		m_program = Graphics::CreateShaderProgramFromEmbedded("vs_" + name, "fs_" + name);
+	}
+
+	static const Effect LoadEffectFromFile(const String& name)
 	{
 		Effect effect;
-		effect.Load(name);
+		effect.LoadFromFile(name);
 		return effect;
 	}
 
-private:
-	friend class Graphics;
-
-	void Load(const String& vs, const String& fs)
+	static const Effect LoadEffectFromEmbedded(const String& name)
 	{
-		m_program = Graphics::CreateShaderProgram(vs, fs);
+		Effect effect;
+		effect.LoadFromEmbedded(name);
+		return effect;
 	}
 
 	inline Graphics::ShaderHandle GetShader() const { return m_program; }
+private:
+	friend class Graphics;
 
 	Graphics::ShaderHandle m_program = Graphics::InvalidHandle;
 };

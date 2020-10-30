@@ -72,12 +72,36 @@ set(ENGINE_SRC
   CherrySoda/Util/Time.h
 )
 
+set(EMBEDDED_SHADER_SRC
+  CherrySoda/Graphics/shaders/varying.def.sc
+  CherrySoda/Graphics/shaders/vs_basic.sc
+  CherrySoda/Graphics/shaders/fs_basic.sc
+  CherrySoda/Graphics/shaders/vs_sprite.sc
+  CherrySoda/Graphics/shaders/fs_sprite.sc
+)
+
+# Embedded shader compilation
+set(SHADER_COMPILE_STAMP "")
+if(NOT "${EMBEDDED_SHADER_SRC}" STREQUAL "")
+  if(WINDOWS OR LINUX OR EMSCRIPTEN)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+      set(SHADER_COMPILE_STAMP ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
+      add_custom_command(OUTPUT ${SHADER_COMPILE_STAMP}
+                         COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
+                         COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
+                         DEPENDS ${EMBEDDED_SHADER_SRC}
+                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
+  endif()
+endif()
+
+
 if(WINDOWS)
   include_directories(../External/bgfx/bx/include/compat/msvc)
 endif()
 
-add_library(CherrySoda STATIC ${ENGINE_SRC})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC})
+add_library(CherrySoda STATIC ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC} ${SHADER_COMPILE_STAMP})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC})
 
 if(EMSCRIPTEN)
   set(SDL2_INCLUDE_DIRS)
@@ -100,6 +124,7 @@ target_compile_features(CherrySoda PUBLIC cxx_std_14)
 if(MSVC)
   target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)
 endif()
+
 
 # Tracy Profiler
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)

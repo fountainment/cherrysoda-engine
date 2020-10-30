@@ -13,6 +13,7 @@
 #include <CherrySoda/Util/String.h>
 
 #include <bgfx/bgfx.h>
+#include <bgfx/embedded_shader.h>
 #include <bx/bx.h>
 #include <bx/file.h>
 #include <bx/allocator.h>
@@ -21,6 +22,8 @@
 
 #include <sstream>
 #include <fstream>
+
+#include "embedded_shaders.h"
 
 using cherrysoda::Graphics;
 
@@ -36,9 +39,22 @@ using cherrysoda::Texture2D;
 using cherrysoda::TextureCube;
 using cherrysoda::STL;
 using cherrysoda::String;
+using cherrysoda::StringID;
 using cherrysoda::StringUtil;
 
 namespace type = cherrysoda::type;
+
+static const bgfx::EmbeddedShader s_embeddedShaders[] =
+{
+	BGFX_EMBEDDED_SHADER(vs_basic),
+	BGFX_EMBEDDED_SHADER(fs_basic),
+	BGFX_EMBEDDED_SHADER(vs_sprite),
+	BGFX_EMBEDDED_SHADER(fs_sprite),
+
+	BGFX_EMBEDDED_SHADER_END()
+};
+
+static STL::HashMap<StringID,Effect> s_embeddedEffects;
 
 class PosColorDefinition
 {
@@ -210,12 +226,23 @@ bgfx::ShaderHandle loadShader(const String& name) {
 	return { bgfx::kInvalidHandle };
 }
 
+bgfx::ShaderHandle loadEmbeddedShader(const String& name)
+{
+	bgfx::RendererType::Enum type = bgfx::getRendererType();
+	bgfx::ShaderHandle handle = bgfx::createEmbeddedShader(s_embeddedShaders, type, name.c_str());
+	bgfx::setName(handle, name.c_str());
+	return handle;
+}
+
 bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 {
 	String path_prefix = "assets/shaders/" CHERRYSODA_SHADER_PLATFORM "/";
-	bgfx::ShaderHandle vsh = loadShader(path_prefix + vs + ".bin");
-	bgfx::ShaderHandle fsh = loadShader(path_prefix + fs + ".bin");
-	return bgfx::createProgram(vsh, fsh, true);
+	return bgfx::createProgram(loadShader(path_prefix + vs + ".bin"), loadShader(path_prefix + fs + ".bin"), true);
+}
+
+bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
+{
+	return bgfx::createProgram(loadEmbeddedShader(vs), loadEmbeddedShader(fs), true);
 }
 
 void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
@@ -385,7 +412,9 @@ void Graphics::Initialize()
 	// Default GUI renderpass
 	bgfx::setViewMode(MaxRenderPassCount() - 1, bgfx::ViewMode::Sequential);
 
-	// ms_defaultShader = Graphics::CreateShaderProgram("vs_mypbr", "fs_mypbr");
+	ms_defaultShader = Graphics::CreateShaderProgramFromEmbedded("vs_basic", "fs_basic");
+	s_embeddedEffects["basic"]  = Effect(ms_defaultShader);
+	s_embeddedEffects["sprite"] = Effect::LoadEffectFromEmbedded("sprite");
 
 	ms_samplerTex        = CreateUniformSampler("s_tex");
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
@@ -676,9 +705,20 @@ void Graphics::UpdateDynamicIndexBuffer(Graphics::DynamicIndexBufferHandle handl
 	);
 }
 
-Graphics::ShaderHandle Graphics::CreateShaderProgram(const String& vs, const String& fs)
+Graphics::ShaderHandle Graphics::CreateShaderProgramFromEmbedded(const String& vs, const String& fs)
+{
+	return loadEmbeddedProgram(vs, fs).idx;
+}
+
+Graphics::ShaderHandle Graphics::CreateShaderProgramFromFile(const String& vs, const String& fs)
 {
 	return loadProgram(vs, fs).idx;
+}
+
+const Effect Graphics::GetEmbeddedEffect(const StringID name)
+{
+	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(s_embeddedEffects, name), "Didn't find \"%s\" in embedded shaders\n", name.GetStr().c_str());
+	return s_embeddedEffects[name];
 }
 
 Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics::TextureInfo* info/* = nullptr */)

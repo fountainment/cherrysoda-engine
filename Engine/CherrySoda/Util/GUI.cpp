@@ -78,6 +78,9 @@ void GUI::Initialize()
 	// style.WindowBorderSize = 2.0f;
 	// style.FrameBorderSize = 2.0f;
 	// style.ScaleAllSizes(2.0f);
+
+	// Shader
+	ms_guiEffect = Graphics::GetEmbeddedEffect("sprite");
 }
 
 void GUI::Update()
@@ -175,4 +178,5 @@ void GUI::Render()
 			}
 		}
 	}
+	Graphics::EndRenderPass(ms_guiRenderPass);
 }

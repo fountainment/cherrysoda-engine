@@ -48,7 +48,6 @@ void FirstTriangle::Initialize()
 	scene->Add(entity);
 	
 	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 4.f));
-	renderer->SetEffect(Effect::LoadEffect("basic"));
 	scene->Add(renderer);
 
 	SetScene(scene);
