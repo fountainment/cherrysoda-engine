@@ -54,8 +54,8 @@ def compile_embedded_shader_program(shader_dir, shader_name):
     frag_shader = cherry.join_path(shader_dir, 'shaders/fs_' + shader_name + '.sc')
     vert_out    = cherry.join_path(shader_dir, 'embedded_shaders/vs_' + shader_name + '.bin.h')
     frag_out    = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '.bin.h')
-    dx_vert_out = cherry.join_path(shader_dir, 'embedded_shaders/vs_' + shader_name + '_dx.bin.h')
-    dx_frag_out = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '_dx.bin.h')
+    dx_vert_out = cherry.join_path(shader_dir, 'embedded_shaders/vs_' + shader_name + '.dx.bin.h')
+    dx_frag_out = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '.dx.bin.h')
     include_dir = cherry.bgfx_src_path
     shader_tmp  = cherry.join_path(cherry.tmp_path, 'shader.tmp')
 
@@ -130,6 +130,7 @@ def generate_embedded_shader_header(shader_dir):
     shader_src = ' '.join(list(map(cherry.get_file_name, file_list)))
     p = re.compile('fs_([A-Za-z0-9_]*)\.bin.h')
     shader_names = p.findall(shader_src)
+    shader_names.sort()
     header_file = open(cherry.join_path(shader_dir, 'embedded_shaders.h'), 'w')
     header_file.write('#ifndef _CHERRYSODA_EMBEDDED_SHADERS_H_\n') 
     header_file.write('#define _CHERRYSODA_EMBEDDED_SHADERS_H_\n') 
@@ -139,8 +140,8 @@ def generate_embedded_shader_header(shader_dir):
         header_file.write(f'#include "embedded_shaders/fs_{shader}.bin.h"\n')
     header_file.write('#ifdef _WIN32\n') 
     for shader in shader_names:
-        header_file.write(f'#include "embedded_shaders/vs_{shader}_dx.bin.h"\n')
-        header_file.write(f'#include "embedded_shaders/fs_{shader}_dx.bin.h"\n')
+        header_file.write(f'#include "embedded_shaders/vs_{shader}.dx.bin.h"\n')
+        header_file.write(f'#include "embedded_shaders/fs_{shader}.dx.bin.h"\n')
     header_file.write('#endif // _WIN32\n') 
     header_file.write('\n')
     header_file.write('#endif // _CHERRYSODA_EMBEDDED_SHADERS_H_\n') 
