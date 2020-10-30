@@ -15,10 +15,6 @@ include(cmake/SysDetect.cmake)
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
 if(EMSCRIPTEN)
-  set(EMSCRIPTEN_FILE_FLAG --preload-file assets)
-  if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/assets AND NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
-    set(EMSCRIPTEN_FILE_FLAG -s FILESYSTEM=0)
-  endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 \
                                           -s WASM=1 \
                                           -s NO_EXIT_RUNTIME=1 \
@@ -27,7 +23,7 @@ if(EMSCRIPTEN)
                                           -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
                                           -s OFFSCREENCANVAS_SUPPORT=1 \
                                           -s TOTAL_MEMORY=512MB \
-                                          ${EMSCRIPTEN_FILE_FLAG}")
+                                          --preload-file assets")
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g4 -s ASSERTIONS=2 -s GL_ASSERTIONS=2")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 --closure 1") 
   # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
@@ -83,6 +79,10 @@ function(add_cherrysoda_executable executable_name)
     file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   endif()
   if(EMSCRIPTEN)
+    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/assets AND NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/shaders)
+      file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/assets)
+      file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/assets/placeholder)
+    endif() 
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/index.html)
       file(COPY index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/index.html)
     else()
