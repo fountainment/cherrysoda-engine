@@ -51,6 +51,7 @@ public:
 		}
 
 		// float roll = ;
+		// TODO: Add random module and finish this method
 		return m_defaultChoice.m_value;
 	}
 

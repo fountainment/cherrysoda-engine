@@ -120,8 +120,10 @@ void GUI::Update()
 	io.MouseDown[2] = MInput::Mouse()->CheckMiddleButton();
 	io.MouseWheel += MInput::Mouse()->WheelDelta() / 120;
 
+	// TODO: Add mouse cursor control support
+
 	// GamePad
-	// TODO
+	// TODO: Add GamePad support
 
 	// Delta time
 	io.DeltaTime = Engine::Instance()->RawDeltaTime();
@@ -131,7 +133,7 @@ void GUI::Update()
 
 void GUI::Render()
 {
-	ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow(); // TODO: Remove temporary code
 
 	ImGui::Render();
 

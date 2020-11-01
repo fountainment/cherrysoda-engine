@@ -4,9 +4,6 @@ import sys
 import argparse
 
 
-# TODO: Support shader in folder
-
-
 def compile_shader_program(shader_dir, shader_name):
     print('Compiling shader "' + shader_name + '" ...')
     vert_shader = cherry.join_path(shader_dir, 'shaders/vs_' + shader_name + '.sc')

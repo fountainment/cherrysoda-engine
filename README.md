@@ -35,3 +35,5 @@ cmake ..
 - Integrated tracy profiler
 - Integrated rapidjson
 - Replicated the sprite animation system of Monocle engine
+- Integrated ImGui
+- Added bgfx embedded shader support
