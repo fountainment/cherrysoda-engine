@@ -133,8 +133,6 @@ void GUI::Update()
 
 void GUI::Render()
 {
-	ImGui::ShowDemoWindow(); // TODO: Remove temporary code
-
 	ImGui::Render();
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -170,9 +168,7 @@ void GUI::Render()
 				clipRect.z = (cmd->ClipRect.z - clipOff.x) * clipScale.x;
 				clipRect.w = (cmd->ClipRect.w - clipOff.y) * clipScale.y;
 				Graphics::SetScissor((int)clipRect.x, (int)(clipRect.y), (int)(clipRect.z - clipRect.x), (int)(clipRect.w - clipRect.y));
-				if (NULL != cmd->TextureId) {
-					Graphics::SetTexture((Texture*)cmd->TextureId);
-				}
+				Graphics::SetTexture((Texture*)cmd->TextureId);
 				Graphics::SetTransientVertexBuffer(vb);
 				Graphics::SetTransientIndexBuffer(ib, cmd->IdxOffset, cmd->ElemCount);
 				Graphics::SetStateNoDepth(BlendFunction::Alpha);

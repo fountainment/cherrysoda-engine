@@ -816,7 +816,7 @@ void Graphics::SetTexture(type::UInt8 stage, Graphics::UniformHandle uniform, Gr
 
 void Graphics::SetTexture(const Texture* texture)
 {
-	SetTexture(ms_samplerTex, texture->GetHandle());
+	SetTexture(ms_samplerTex, texture != nullptr ? texture->GetHandle() : Graphics::InvalidHandle);
 }
 
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, type::UInt16 size/* = 1U*/)
