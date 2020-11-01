@@ -140,13 +140,13 @@ void GUI::Render()
 	ImGuiIO& io = ImGui::GetIO();
 	auto drawData = ImGui::GetDrawData();
 
-    int fbWidth = (int)(drawData->DisplaySize.x * drawData->FramebufferScale.x);
-    int fbHeight = (int)(drawData->DisplaySize.y * drawData->FramebufferScale.y);
-    if (fbWidth <= 0 || fbHeight <= 0)
-        return;
+	int fbWidth = (int)(drawData->DisplaySize.x * drawData->FramebufferScale.x);
+	int fbHeight = (int)(drawData->DisplaySize.y * drawData->FramebufferScale.y);
+	if (fbWidth <= 0 || fbHeight <= 0)
+		return;
 
-    ImVec2 clipOff = drawData->DisplayPos;
-    ImVec2 clipScale = drawData->FramebufferScale;
+	ImVec2 clipOff = drawData->DisplayPos;
+	ImVec2 clipScale = drawData->FramebufferScale;
 
 	CHERRYSODA_ASSERT(sizeof(ImDrawIdx) == 2, "ImGui graphics index type is not type::UInt16\n");
 
