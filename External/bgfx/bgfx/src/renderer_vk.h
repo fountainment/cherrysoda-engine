@@ -42,6 +42,7 @@
 			VK_IMPORT_FUNC(false, vkGetDeviceProcAddr);                    \
 			VK_IMPORT_FUNC(false, vkEnumerateInstanceExtensionProperties); \
 			VK_IMPORT_FUNC(false, vkEnumerateInstanceLayerProperties);     \
+			VK_IMPORT_FUNC(false, vkEnumerateInstanceVersion);             \
 
 #define VK_IMPORT_INSTANCE_ANDROID \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateAndroidSurfaceKHR);
@@ -518,6 +519,67 @@ VK_DESTROY
 
 		uint32_t m_descriptorSetLayoutHash;
 		VkPipelineLayout m_pipelineLayout;
+	};
+
+	struct TimerQueryVK
+	{
+		TimerQueryVK()
+			: m_control(BX_COUNTOF(m_query) )
+		{
+		}
+
+		void init()
+		{
+		}
+
+		void shutdown()
+		{
+		}
+
+		uint32_t begin(uint32_t _resultIdx)
+		{
+			BX_UNUSED(_resultIdx);
+			return 0;
+		}
+
+		void end(uint32_t _idx)
+		{
+			BX_UNUSED(_idx);
+		}
+
+		bool update()
+		{
+			return false;
+		}
+
+		struct Result
+		{
+			void reset()
+			{
+				m_begin   = 0;
+				m_end     = 0;
+				m_pending = 0;
+			}
+
+			uint64_t m_begin;
+			uint64_t m_end;
+			uint32_t m_pending;
+		};
+
+		struct Query
+		{
+			uint32_t m_begin;
+			uint32_t m_end;
+			uint32_t m_resultIdx;
+			bool     m_ready;
+		};
+
+		uint64_t m_frequency;
+
+		Result m_result[BGFX_CONFIG_MAX_VIEWS+1];
+
+		Query m_query[BGFX_CONFIG_MAX_VIEWS*4];
+		bx::RingBufferControl m_control;
 	};
 
 	struct TextureVK

@@ -620,6 +620,10 @@ typedef uint64_t GLuint64;
 #	define GL_MAX_SAMPLES 0x8D57
 #endif // GL_MAX_SAMPLES
 
+#ifndef GL_MAX_SAMPLES_IMG 
+#   define GL_MAX_SAMPLES_IMG 0x9135
+#endif // GL_MAX_SAMPLES_IMG
+
 #ifndef GL_MAX_COLOR_ATTACHMENTS
 #	define GL_MAX_COLOR_ATTACHMENTS 0x8CDF
 #endif // GL_MAX_COLOR_ATTACHMENTS
@@ -1447,7 +1451,6 @@ namespace bgfx { namespace gl
 		uint16_t destroy();
 		void resolve();
 		void discard(uint16_t _flags);
-		void set();
 
 		SwapChainGL* m_swapChain;
 		GLuint m_fbo[2];
