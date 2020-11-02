@@ -2,6 +2,10 @@ import lib.cherrysoda as cherry
 
 
 def main():
+    if not cherry.is_windows_system():
+        print('This script is for X86/Windows.')
+        print('On Linux, please use package manager to install libSDL2.')
+        return
     sdl2_zip_filename = cherry.join_path(cherry.tool_path, 'config\\SDL2-devel-2.0.10-VC.zip')
     cherry.extract_zip_to(sdl2_zip_filename, cherry.external_path)
     sdl2_dir = cherry.join_path(cherry.external_path, 'SDL2-2.0.10')
