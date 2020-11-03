@@ -46,6 +46,8 @@ set(ENGINE_SRC
   CherrySoda/Renderers/SingleTagRenderer.h
   CherrySoda/Util/BitTag.cpp
   CherrySoda/Util/BitTag.h
+  CherrySoda/Util/Calc.cpp
+  CherrySoda/Util/Calc.h
   CherrySoda/Util/Camera.cpp
   CherrySoda/Util/Camera.h
   CherrySoda/Util/ChoiceSet.h

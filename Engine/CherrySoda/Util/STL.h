@@ -5,6 +5,7 @@
 #include <functional>
 #include <list>
 #include <map>
+#include <random>
 #include <set>
 #include <stack>
 #include <unordered_map>
@@ -15,7 +16,11 @@
 auto begin(){return iterable.begin();} \
 auto end(){return iterable.end();} \
 auto cbegin()const{return iterable.cbegin();} \
-auto cend()const{return iterable.cend();}
+auto cend()const{return iterable.cend();} \
+auto rbegin(){return iterable.rbegin();} \
+auto rend(){return iterable.rend();} \
+auto crbegin()const{return iterable.crbegin();} \
+auto crend()const{return iterable.crend();}
 
 #define CHERRYSODA_HASHABLE(hashable,method) \
 namespace std{template<>struct hash<hashable> \
@@ -27,12 +32,20 @@ namespace cherrysoda {
 class STL
 {
 public:
+	// Util
 	template <typename ...T>
 	using Action = std::function<void(T...)>;
 
 	template <typename T>
 	using Func = std::function<T()>;
 
+	template <typename T>
+	static inline void Swap(T& a, T& b)
+	{
+		std::swap(a, b);
+	}
+
+	// Container
 	template <typename T, typename U>
 	using HashMap = std::unordered_map<T,U>;
 
@@ -108,6 +121,18 @@ public:
 	static inline void Push(T& container, const U& element)
 	{
 		container.push(element);
+	}
+
+	template <typename T>
+	static inline auto Top(T& container)
+	{
+		return container.top();
+	}
+
+	template <typename T>
+	static inline auto& TopRef(T& container)
+	{
+		return container.top();
 	}
 
 	template <typename T, typename U>
@@ -199,21 +224,33 @@ public:
 	}
 
 	template <typename T>
+	static inline Vector<typename T::value_type> ToVector(T& container)
+	{
+		return Vector<typename T::value_type>(std::begin(container), std::end(container));
+	}
+
+	// Random
+	using Random = std::mt19937;
+	using TrueRandom = std::random_device;
+	template <typename T>
+	static inline auto RandomNext(T& random) { return random() - random.min(); }
+	template <typename T>
+	static inline auto RandomMax(T& random) { return random.max() - random.min(); }
+	template <typename T>
+	static inline auto RandomMin(T& random) { return 0; }
+	template <typename T>
+	static inline void RandomSeed(T& random, Random::result_type seed) { return random.seed(seed); }
+
+	template <typename T>
 	static inline void Shuffle(T& container)
 	{
 		std::random_shuffle(container.begin(), container.end());
 	}
 
-	template <typename T>
-	static inline void Swap(T& a, T& b)
+	template <typename T, typename U>
+	static inline void Shuffle(T& container, U& random)
 	{
-		std::swap(a, b);
-	}
-
-	template <typename T>
-	static inline Vector<typename T::value_type> ToVector(T& container)
-	{
-		return Vector<typename T::value_type>(std::begin(container), std::end(container));
+		std::random_shuffle(container.begin(), container.end(), random);
 	}
 };
 

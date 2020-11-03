@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_UTIL_CHOOSER_H_
 #define _CHERRYSODA_UTIL_CHOOSER_H_
 
+#include <CherrySoda/Util/Calc.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -41,7 +42,7 @@ public:
 
 	}
 
-	const T& Choose()
+	const T& Choose() const
 	{
 		if (m_totalWeight <= 0.f) {
 			return m_defaultChoice.m_value;
@@ -50,12 +51,22 @@ public:
 			return m_choices[0].m_value;
 		}
 
-		// float roll = ;
-		// TODO: Add random module and finish this method
+		float roll = Calc::GetRandom().NextDouble() * m_totalWeight;
+		float check = 0;
+		for (int i = 0; i < static_cast<int>(STL::Count(m_choices)) - 1; ++i) {
+			check += m_choices[i].m_weight;
+			if (roll < check) {
+				return m_choices[i].m_value;
+			}
+		}
+
 		return m_defaultChoice.m_value;
 	}
 
-	inline bool IsEmpty() { return STL::Count(m_choices) == 0; }
+	inline bool CanChoose() const { return m_totalWeight > 0; }
+
+
+	inline bool IsEmpty() const { return STL::Count(m_choices) == 0; }
 
 	STL::Vector<Choice> m_choices;
 	Choice m_defaultChoice;

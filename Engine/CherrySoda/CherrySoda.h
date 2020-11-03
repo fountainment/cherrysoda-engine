@@ -29,6 +29,7 @@
 #include <CherrySoda/Renderers/SingleTagRenderer.h>
 
 #include <CherrySoda/Util/BitTag.h>
+#include <CherrySoda/Util/Calc.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/ChoiceSet.h>
 #include <CherrySoda/Util/Chooser.h>
