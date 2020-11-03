@@ -16,6 +16,8 @@ private:
 	friend class Engine;
 
 	static void Initialize();
+	static void Terminate();
+
 	static void Update();
 	static void Render();
 

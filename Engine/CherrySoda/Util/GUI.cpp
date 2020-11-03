@@ -83,6 +83,11 @@ void GUI::Initialize()
 	ms_guiEffect = Graphics::GetEmbeddedEffect("sprite");
 }
 
+void GUI::Terminate()
+{
+	Graphics::DestroyTexture(ms_fontTexture.GetHandle());
+}
+
 void GUI::Update()
 {
 	ImGuiIO& io = ImGui::GetIO();

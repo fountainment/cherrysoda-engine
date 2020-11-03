@@ -410,6 +410,7 @@ void Graphics::Initialize()
 	ImGuiVertex::Init();
 
 	// Default GUI renderpass
+	// TODO: Move it to GUI::Initialize
 	bgfx::setViewMode(MaxRenderPassCount() - 1, bgfx::ViewMode::Sequential);
 
 	ms_defaultShader = Graphics::CreateShaderProgramFromEmbedded("vs_basic", "fs_basic");
@@ -431,6 +432,20 @@ void Graphics::Initialize()
 
 void Graphics::Terminate()
 {
+	DestroyUniform(ms_samplerTex);
+	DestroyUniform(ms_samplerTexCube);
+	DestroyUniform(ms_samplerTexCubeIrr);
+
+	DestroyUniform(ms_uniformCamPos);
+	DestroyUniform(ms_uniformMaterial);
+	DestroyUniform(ms_uniformLights);
+	DestroyUniform(ms_uniformParams);
+
+	for (auto& embeddedEffect : s_embeddedEffects) {
+		DestroyShader(embeddedEffect.second.GetShader());
+	}
+	STL::Clear(s_embeddedEffects);
+
 	bgfx::shutdown();
 }
 
@@ -778,7 +793,7 @@ void Graphics::DestroyDynamicIndexBuffer(DynamicIndexBufferHandle handle)
 
 void Graphics::DestroyShader(ShaderHandle handle)
 {
-	bgfx::ShaderHandle hdl = { handle };
+	bgfx::ProgramHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 

@@ -101,6 +101,7 @@ void Engine::Run()
 	}	
 #endif // __EMSCRIPTEN__ 
 
+	GUI::Terminate();
 	Graphics::Terminate();
 
 	m_window->DestroyWindow();
