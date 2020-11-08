@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import glob
 import os
 import pathlib
@@ -100,10 +103,28 @@ def get_file_list_from_wildcard(wildcard):
     return glob.glob(wildcard)
 
 
+def get_file_list_of_path(path):
+    walkList = os.walk(path)
+    file_list = []
+    for i in walkList:
+        root, dirs, files = i
+        for f in files:
+            file_list.append(os.path.join(root, f))
+    return file_list
+
+
+def exists(path):
+    return os.path.exists(path)
+
+
 def copy(src, dest):
     src_list = get_file_list_from_wildcard(src)
     for source in src_list:
         shutil.copy(source, dest)
+
+
+def copytree(src, dest):
+    shutil.copytree(src, dest)
 
 
 def move(src, dest):
@@ -117,9 +138,9 @@ def set_environment_variable(env_var, value):
     execute_command(command)
 
 
-def write_str_file(str, dest):
+def write_str_file(s, dest):
     f = open(dest, 'w')
-    f.write(str)
+    f.write(s)
     f.close()
 
 
@@ -128,3 +149,20 @@ def read_file(file):
     ret = f.read()
     f.close()
     return ret
+
+
+def replace_file_str(file, replace_list):
+    s = read_file(file)
+    for i in replace_list:
+        find, rep = i
+        s = s.replace(find, rep)
+    write_str_file(s, file)
+
+
+def replace_file_name(file, replace_list):
+    s = file
+    for i in replace_list:
+        find, rep = i
+        s = s.replace(find, rep)
+    if file != s:
+        move(file, s)

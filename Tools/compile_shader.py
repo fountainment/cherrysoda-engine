@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import lib.cherrysoda as cherry
 import re
 import sys
