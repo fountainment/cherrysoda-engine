@@ -31,11 +31,12 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 	if ((effects & SpriteEffects::FlipHorizontally) == SpriteEffects::FlipVertically) {
 		STL::Swap(leftUV, rightUV);
 	}
+	Math::Mat4 rotationMat = rotation == 0 ? Math_Identity<Math::Mat4>() : Math_Rotate(Math_Identity<Math::Mat4>(), rotation, Vec3_ZUp);
 	AddQuad(
-		MK_VERT(Math_RotateVector(Math::Vec3((pos - origin + Math::Vec2(rect.Width(), 0.f) ) * scale, 0.f), rotation, Vec3_ZUp), color, Math::Vec2(rightUV, bottomUV)),
-		MK_VERT(Math_RotateVector(Math::Vec3((pos - origin + Math::Vec2(rect.Size())       ) * scale, 0.f), rotation, Vec3_ZUp), color, Math::Vec2(rightUV, topUV)),
-		MK_VERT(Math_RotateVector(Math::Vec3((pos - origin                                 ) * scale, 0.f), rotation, Vec3_ZUp), color, Math::Vec2(leftUV,  bottomUV)),
-		MK_VERT(Math_RotateVector(Math::Vec3((pos - origin + Math::Vec2(0.f, rect.Height())) * scale, 0.f), rotation, Vec3_ZUp), color, Math::Vec2(leftUV,  topUV))
+		MK_VERT(Math::Vec3(rotationMat * Math::Vec4((pos - origin + Math::Vec2(rect.Width(), 0.f) ) * scale, 0.f, 1.f)), color, Math::Vec2(rightUV, bottomUV)),
+		MK_VERT(Math::Vec3(rotationMat * Math::Vec4((pos - origin + Math::Vec2(rect.Size())       ) * scale, 0.f, 1.f)), color, Math::Vec2(rightUV, topUV)),
+		MK_VERT(Math::Vec3(rotationMat * Math::Vec4((pos - origin                                 ) * scale, 0.f, 1.f)), color, Math::Vec2(leftUV,  bottomUV)),
+		MK_VERT(Math::Vec3(rotationMat * Math::Vec4((pos - origin + Math::Vec2(0.f, rect.Height())) * scale, 0.f, 1.f)), color, Math::Vec2(leftUV,  topUV))
 	);
 	m_previousTexture = tex;	
 }

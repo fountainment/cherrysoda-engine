@@ -6,6 +6,8 @@ using noise::Noise;
 
 using namespace cherrysoda;
 
+static STL::Action<> s_updateAction;
+
 Noise::Noise()
 	: base()
 {
@@ -16,6 +18,8 @@ Noise::Noise()
 void Noise::Update()
 {
 	base::Update();
+
+	s_updateAction();
 }
 
 void Noise::Initialize()
@@ -35,6 +39,8 @@ void Noise::Initialize()
 	auto entity = new Entity();
 	auto scene = new Scene();
 	auto renderer = new EverythingRenderer();
+
+	s_updateAction = [image](){ image->RotateOnZ(Engine::Instance()->DeltaTime()); };
 
 	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 200.f));
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
