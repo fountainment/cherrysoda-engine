@@ -95,7 +95,6 @@ void Engine::Run()
 	while (!m_shouldExit) {
 		CHERRYSODA_PROFILE_FRAME_MARK();
 		CHERRYSODA_PROFILE("MainLoop");
-		m_window->PollEvents();
 		Update();
 		Draw();
 	}	
