@@ -2,12 +2,14 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/MTexture.h>
+#include <CherrySoda/Util/Calc.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
 using cherrysoda::Sprite;
 
+using cherrysoda::Calc;
 using cherrysoda::Engine;
 using cherrysoda::MTexture;
 using cherrysoda::StringID;
@@ -105,7 +107,8 @@ void Sprite::Play(StringID id, bool restart/* = false*/, bool randomizeFrame/* =
 		m_currentAnimation = &m_animations[id];
 		m_animating = m_currentAnimation->m_delay > 0;
 		if (randomizeFrame) {
-			// TODO: Randomize Frame
+			m_animationTimer = Calc::GetRandom().NextFloat(m_currentAnimation->m_delay);
+			m_currentAnimationFrame = Calc::GetRandom().Next(STL::Count(m_currentAnimation->m_frames));
 		}
 		else {
 			m_animationTimer = 0.f;
