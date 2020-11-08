@@ -31,8 +31,8 @@
 *.app
 
 # Build
-build
-build_*
+build/
+build_*/
 
 # Local
 *.sublime-workspace
