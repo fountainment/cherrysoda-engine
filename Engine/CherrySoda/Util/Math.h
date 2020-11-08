@@ -152,9 +152,9 @@ public:
 		inline int Bottom() const { return Y(); }
 	};
 
-	static inline const Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis)
+	static inline Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis)
 	{
-		return Vec3(Vec4(v3, 1.f) * Math_Rotate(Math_Identity<Mat4>(), angle, axis));
+		return Vec3(Math_Rotate(Math_Identity<Mat4>(), angle, axis) * Vec4(v3, 1.f));
 	}
 
 	static const Mat4 GetOrientationMatrix_(const Mat4& matrix);

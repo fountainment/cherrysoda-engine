@@ -46,4 +46,6 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
 
+#include <imgui.h>
+
 #endif // _CHERRYSODA_CHERRYSODA_H_

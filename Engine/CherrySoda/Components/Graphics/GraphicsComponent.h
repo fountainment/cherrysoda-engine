@@ -21,6 +21,8 @@ public:
 
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, ZRotation, m_zRotation);
 
+	inline void RotateOnZ(float rotation) { ZRotation(ZRotation() + rotation); }
+
 	inline void RenderPosition(Math::Vec3 pos3d) { Position(pos3d - EntityPos()); }
 	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
 

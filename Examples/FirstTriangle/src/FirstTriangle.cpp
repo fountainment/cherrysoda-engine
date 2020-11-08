@@ -24,7 +24,7 @@ public:
 
 	void Update() override
 	{
-		ZRotation(ZRotation() + Engine::Instance()->DeltaTime());
+		RotateOnZ(Engine::Instance()->DeltaTime());
 	}
 };
 
