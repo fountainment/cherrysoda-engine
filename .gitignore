@@ -45,5 +45,5 @@ __pycache__
 *.log
 
 # Download
-SDL2-2.0.10
+SDL2-*/
 tracy
