@@ -79,6 +79,10 @@
 					"shell_cmd": "make -j8 Minimal"
 				},
 				{
+					"name": "Noise",
+					"shell_cmd": "make -j8 Noise"
+				},
+				{
 					"name": "VoxelExperiment",
 					"shell_cmd": "make -j8 VoxelExperiment"
 				},
@@ -95,8 +99,16 @@
 					"shell_cmd": "make -j8 bimg_decode"
 				},
 				{
+					"name": "bimg_encode",
+					"shell_cmd": "make -j8 bimg_encode"
+				},
+				{
 					"name": "bx",
 					"shell_cmd": "make -j8 bx"
+				},
+				{
+					"name": "crunch",
+					"shell_cmd": "make -j8 crunch"
 				},
 				{
 					"name": "glm_static",
@@ -105,6 +117,10 @@
 				{
 					"name": "imgui",
 					"shell_cmd": "make -j8 imgui"
+				},
+				{
+					"name": "libcrunch",
+					"shell_cmd": "make -j8 libcrunch"
 				}
 			],
 			"working_dir": "${project_path}/build"

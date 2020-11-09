@@ -51,7 +51,7 @@ public:
 	inline void MoveXY(const cherrysoda::Math::Vec2& xy)
 	{
 		Move(FacingDirection() * xy.y);
-		Move(LeftDirection() * -xy.x);
+		Move(RightDirection() * xy.x);
 	}
 	inline void MoveZ(float z)
 	{
@@ -59,16 +59,18 @@ public:
 	}
 	inline void RotateXY(const cherrysoda::Math::Vec2& xy)
 	{
-		m_leftDirection = Math_RotateVector(LeftDirection(), xy.x, UpDirection());
-		m_direction = Math_RotateVector(FacingDirection(), xy.x, UpDirection());
-		auto newDirection = Math_RotateVector(FacingDirection(), xy.y, LeftDirection());
+		m_leftDirection = Math_RotateVector(LeftDirection(), xy.x, DownDirection());
+		m_direction = Math_RotateVector(FacingDirection(), xy.x, DownDirection());
+		auto newDirection = Math_RotateVector(FacingDirection(), xy.y, RightDirection());
 		if (Math_Dot(Math_Normalize(Math_Cross(newDirection, LeftDirection())), UpDirection()) > 0.f) {
 			m_direction = newDirection;
 		}
 	}
 	inline cherrysoda::Math::Vec3 FacingDirection() const { return m_direction; }
 	inline cherrysoda::Math::Vec3 LeftDirection() const { return m_leftDirection; }
+	inline cherrysoda::Math::Vec3 RightDirection() const { return -LeftDirection(); }
 	inline cherrysoda::Math::Vec3 UpDirection() const { return m_upDirection; }
+	inline cherrysoda::Math::Vec3 DownDirection() const { return -UpDirection(); }
 
 private:
 	cherrysoda::Math::Vec3 m_direction = -Vec3_ZUp;
