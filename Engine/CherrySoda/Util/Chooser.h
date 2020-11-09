@@ -44,7 +44,7 @@ public:
 
 	const T& Choose() const
 	{
-		if (m_totalWeight <= 0.f) {
+		if (m_totalWeight <= 0) {
 			return m_defaultChoice.m_value;
 		}
 		else if (STL::Count(m_choices) == 1) {
@@ -64,7 +64,6 @@ public:
 	}
 
 	inline bool CanChoose() const { return m_totalWeight > 0; }
-
 
 	inline bool IsEmpty() const { return STL::Count(m_choices) == 0; }
 

@@ -111,6 +111,7 @@ function(add_cherrysoda_executable executable_name)
 endfunction(add_cherrysoda_executable)
 
 add_subdirectory(External)
+add_subdirectory(Tools)
 add_subdirectory(Engine)
 add_subdirectory(Playground)
 add_subdirectory(Examples)

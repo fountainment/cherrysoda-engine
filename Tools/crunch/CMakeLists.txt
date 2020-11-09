@@ -1,0 +1,9 @@
+file(GLOB LIBCRUNCH_SRC crunch/*.cpp crunch/*.h crunch/*.hpp)
+list(REMOVE_ITEM LIBCRUNCH_SRC ${CMAKE_CURRENT_SOURCE_DIR}/crunch/main.cpp)
+add_library(libcrunch STATIC ${LIBCRUNCH_SRC})
+target_include_directories(libcrunch PUBLIC .)
+target_compile_features(libcrunch PUBLIC cxx_std_14)
+
+add_executable(crunch crunch/main.cpp)
+target_link_libraries(crunch libcrunch)
+
