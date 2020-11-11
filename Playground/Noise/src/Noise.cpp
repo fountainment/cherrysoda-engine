@@ -19,22 +19,25 @@ void Noise::Update()
 {
 	base::Update();
 
-	s_updateAction();
+	if (s_updateAction) {
+		s_updateAction();
+	}
 }
 
 void Noise::Initialize()
 {
 	base::Initialize();
 
-	unsigned char data[200 * 200 * 4] = {0xFF};
+	unsigned char* data = new unsigned char[200 * 200 * 4];
 	std::memset(data, 0xFF, 200 * 200 * 4);
 	for (int i = 0; i < 200 * 200; ++i) {
 		data[i * 4    ] = Calc::GetRandom().Next(256);
 		data[i * 4 + 1] = Calc::GetRandom().Next(256);
 		data[i * 4 + 2] = Calc::GetRandom().Next(256);
 	}
-
 	auto texture = Texture2D::FromRGBA(data, 200, 200);
+	delete [] data;
+
 	auto image = new Image(texture);
 	auto entity = new Entity();
 	auto scene = new Scene();

@@ -10,7 +10,7 @@ def main():
         print('On Linux, please use package manager to install libSDL2.')
         return
     if cherry.exists(cherry.sdl2_path):
-        print('"%s" already exists!\n' % (cherry.sdl2_path,))
+        print('"%s" already exists!' % (cherry.sdl2_path,))
         return
     sdl2_zip_filename = cherry.join_path(cherry.tool_path, 'res\\SDL2\\SDL2-devel-' + cherry.sdl2_version + '-VC.zip')
     cherry.extract_zip_to(sdl2_zip_filename, cherry.external_path)
