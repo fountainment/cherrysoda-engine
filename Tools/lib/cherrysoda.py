@@ -48,6 +48,9 @@ bgfx_src_path = join_path(external_path, 'bgfx/bgfx/src')
 
 shaderc = join_path(tool_path, 'bin/shaderc' + executable_suffix)
 
+sdl2_version = '2.0.12'
+sdl2_path = join_path(external_path, 'SDL2-' + sdl2_version)
+
 
 def make_sure_folder_exist(f):
     p = os.path.dirname(f)
