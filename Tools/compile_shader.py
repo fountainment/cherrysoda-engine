@@ -24,8 +24,8 @@ def compile_shader_program(shader_dir, shader_name):
             ['windows', ['vs_5_0', 'ps_5_0'], 3, 'dx11']
         ]
     compile_info += [
-        ['nacl',    [None,    None   ], None, 'elsl'],
-        ['android', [None,    None   ], None, 'elsl_a'],
+        ['nacl',    [None,    None   ], None, 'essl'],
+        ['android', [None,    None   ], None, 'essl_a'],
         ['linux',   ['120',   '120'  ], None, 'glsl'],
         ['osx',     ['metal', 'metal'], None, 'metal'],
 #       ['orbis',   ['pssl',  'pssl' ], None, 'pssl'],
