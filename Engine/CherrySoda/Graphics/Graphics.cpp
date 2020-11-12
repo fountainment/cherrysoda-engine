@@ -236,7 +236,30 @@ bgfx::ShaderHandle loadEmbeddedShader(const String& name)
 
 bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 {
-	String path_prefix = "assets/shaders/" CHERRYSODA_SHADER_PLATFORM "/";
+	String shaderPath = "???";
+	switch (bgfx::getRendererType())
+	{
+	case bgfx::RendererType::Noop:
+	case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
+	case bgfx::RendererType::Direct3D11:
+	case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
+	case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
+	case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
+	case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;
+	case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
+#if defined(__ANDROID__)
+	case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl_a/";break;
+#else
+	case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
+#endif
+	case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
+	case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
+
+	case bgfx::RendererType::Count:
+		CHERRYSODA_ASSERT(false, "You should not be here!");
+		break;
+	}
+	String path_prefix = "assets/" + shaderPath;
 	return bgfx::createProgram(loadShader(path_prefix + vs + ".bin"), loadShader(path_prefix + fs + ".bin"), true);
 }
 

@@ -20,30 +20,21 @@ def compile_shader_program(shader_dir, shader_name):
     compile_info = []
     if cherry.is_windows_system():
         compile_info += [
-            {
-                'platform': 'windows',
-                'profile': ['vs_4_0', 'ps_4_0'],
-                'opt_level': 3
-            }
+            ['windows', ['vs_3_0', 'ps_3_0'], 3, 'dx9'],
+            ['windows', ['vs_5_0', 'ps_5_0'], 3, 'dx11'],
+            ['orbis',   ['pssl',  'pssl' ], None, 'pssl']
         ]
     compile_info += [
-        {
-            'platform': 'linux',
-            'profile': ['120', '120']
-        },
-        {
-            'platform': 'nacl' 
-        },
-        {
-            'platform': 'android'
-        }
+        ['nacl',    [None,    None   ], None, 'elsl'],
+        ['android', [None,    None   ], None, 'elsl_a'],
+        ['linux',   ['120',   '120'  ], None, 'glsl'],
+        ['osx',     ['metal', 'metal'], None, 'metal'],
+        ['linux',   ['spirv', 'spirv'], None, 'spirv']
     ]
 
-    for info_dict in compile_info:
-        platform  = info_dict.get('platform')
-        profile   = info_dict.get('profile', [None, None])
-        opt_level = info_dict.get('opt_level')
-        folder    = cherry.join_path(shader_out_dir, platform)
+    for info_arr in compile_info:
+        platform, profile, opt_level, shader_id = info_arr
+        folder    = cherry.join_path(shader_out_dir, shader_id)
         cherry.compile_shader(vert_shader, vert_out % folder, platform, 'vertex',   include_dir, profile[0], opt_level)
         cherry.compile_shader(frag_shader, frag_out % folder, platform, 'fragment', include_dir, profile[1], opt_level)
 

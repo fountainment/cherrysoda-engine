@@ -9,17 +9,6 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-#if defined(CHERRYSODA_PLATFORM_EMSCRIPTEN)
-#	define CHERRYSODA_SHADER_PLATFORM "nacl"
-#elif defined(_WIN32)
-#	define CHERRYSODA_SHADER_PLATFORM "windows"
-#elif defined(__ANDROID__)
-#	define CHERRYSODA_SHADER_PLATFORM "android"
-#elif defined(__arm__)
-#	define CHERRYSODA_SHADER_PLATFORM "nacl"
-#else
-#	define CHERRYSODA_SHADER_PLATFORM "linux"
-#endif
 
 namespace cherrysoda {
 
