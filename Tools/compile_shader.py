@@ -21,14 +21,14 @@ def compile_shader_program(shader_dir, shader_name):
     if cherry.is_windows_system():
         compile_info += [
             ['windows', ['vs_3_0', 'ps_3_0'], 3, 'dx9'],
-            ['windows', ['vs_5_0', 'ps_5_0'], 3, 'dx11'],
-            ['orbis',   ['pssl',  'pssl' ], None, 'pssl']
+            ['windows', ['vs_5_0', 'ps_5_0'], 3, 'dx11']
         ]
     compile_info += [
         ['nacl',    [None,    None   ], None, 'elsl'],
         ['android', [None,    None   ], None, 'elsl_a'],
         ['linux',   ['120',   '120'  ], None, 'glsl'],
         ['osx',     ['metal', 'metal'], None, 'metal'],
+#       ['orbis',   ['pssl',  'pssl' ], None, 'pssl'],
         ['linux',   ['spirv', 'spirv'], None, 'spirv']
     ]
 
