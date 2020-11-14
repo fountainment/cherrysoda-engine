@@ -8,8 +8,15 @@ def generate_simple_index_file(executable_name, index_file_path):
     <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body style="margin:0;padding:0;">
-        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
         <script src="${EXECUTABLE_NAME}.js"></script>
+        <script type='text/javascript'>
+            window.onload = focuswindow;
+            window.onmousedown = focuswindow;
+            function focuswindow() {
+                window.focus();
+            }
+        </script>
     </body>
 </html>
 '''
