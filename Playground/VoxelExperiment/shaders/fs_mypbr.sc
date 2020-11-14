@@ -20,13 +20,13 @@ void main()
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
     vec3 V = normalize(u_camPos.xyz - v_worldPos.xyz);
     vec3 N = normalize(v_normal.xyz);
-    float specular = 1.0 - u_roughness;
+    float specular = 1.001 - u_roughness;
     float m = specular * 1000.0;
     vec3 RF0 = u_albedo;
     vec3 RF90 = vec3_splat(1.0);
     float CosThetaI = max(dot(V, N), 0.0);
     vec3 RF = RF0 + (RF90 - RF0) * pow((1.0 - CosThetaI), 5.0);
-    vec3 R = reflect(-V, N);
+    vec3 R = CosThetaI * 2.0 * N - V;
     vec3 diffTex = pow(textureCube(s_texCubeIrr, N).xyz * v_color0.xyz, vec3_splat(gamma));
     vec3 specTex = pow(textureCubeLod(s_texCube, R, u_roughness * maxLod).xyz, vec3_splat(gamma));
     vec3 Cdiff = diffTex * v_color0.xyz * (1.0 - u_metallic);
