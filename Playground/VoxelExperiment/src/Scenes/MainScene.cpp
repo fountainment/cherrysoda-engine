@@ -158,8 +158,47 @@ void MainScene::Update()
 		}
 	}
 
+	static float albedo[] = { 0.08f, 0.08f, 0.08f };
+	static float metallic = 0.3f;
+	static float roughness = 0.1f;
+	static float ao = 0;
+	static float color[] = { 1.0f, 1.0f, 1.0f };
+	ImGui::Begin("VoxelExperiment");
+	static bool firstFrame = true;
+	if (firstFrame) {
+		ImGui::SetWindowPos(ImVec2(15, 15));
+		ImGui::SetWindowSize(ImVec2(260, 345));
+		firstFrame = false;
+	}
+	ImGui::BeginTabBar("Tab");
+	if (ImGui::BeginTabItem("Info")) {
+		ImGui::Text("WASD: Movement");
+		ImGui::Text("Arrow: Camera direction");
+		ImGui::Text("R: Remove voxel");
+		ImGui::Text("F: Set white voxel");
+		ImGui::Text("X: Move down");
+		ImGui::Text("C: Move up");
+		ImGui::Text("F11: Fullscreen");
+		ImGui::EndTabItem();
+	}
+	if (ImGui::BeginTabItem("Voxel Matertial")) {
+		ImGui::ColorPicker3("Albedo", albedo);
+		ImGui::SliderFloat("Metallic", &metallic, 0, 1.f);
+		ImGui::SliderFloat("Roughness", &roughness, 0, 1.f);
+		ImGui::SliderFloat("AO", &ao, 0, 1.f);
+		ImGui::EndTabItem();
+	}
+	if (ImGui::BeginTabItem("Light Color")) {
+		ImGui::ColorPicker3("Central", color);
+		ImGui::EndTabItem();
+	}
+	ImGui::EndTabBar();
+	ImGui::End();
+
 	static float s_t = 0.f;
 	s_t += Engine::Instance()->DeltaTime();
+	Graphics::SetUniformMaterial(Math::Vec3(albedo[0], albedo[1], albedo[2]), metallic, roughness, ao);
+	Graphics::SetUniformLight(0, Math::Vec3(0.f, 68.f, 0.f), Math::Vec3(color[0], color[1], color[2]) * 5.f, false);
 	Graphics::SetUniformLight(1, Math::Vec3(Math_Cos(s_t) * 30.0f, 68.f, Math_Sin(s_t) * 30.0f), Vec3_XUp * 5.f, false);
 	Graphics::SetUniformLight(2, Math::Vec3(Math_Cos(s_t + Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t + Math::Pi2 / 3.f) * 30.0f), Vec3_YUp * 5.f, false);
 	Graphics::SetUniformLight(3, Math::Vec3(Math_Cos(s_t - Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t - Math::Pi2 / 3.f) * 30.0f), Vec3_ZUp * 5.f, false);

@@ -19,11 +19,9 @@ A C++ game engine based on bgfx and SDL2 (currently at early stage)
 ```sh
 git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
-# For Windows
-# python Tools/setup_sdl2_for_windows.py
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 ```
 
 ## Current Status
@@ -37,3 +35,9 @@ cmake ..
 - Replicated the sprite animation system of Monocle engine
 - Integrated ImGui
 - Added bgfx embedded shader support
+
+## Demo
+
+WebGL version of Playground/VoxelExperiment:
+
+https://shenyiwen.itch.io/demo
