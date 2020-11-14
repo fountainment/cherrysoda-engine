@@ -114,6 +114,7 @@ void Engine::SetScene(Scene* scene)
 
 void Engine::OnClientSizeChanged(int width, int height)
 {
+	CHERRYSODA_DEBUG_FORMAT("cherrysoda::Engine::OnClientSizeChanged(%d, %d)\n", width, height);
 	if (width > 0 && height > 0 && !m_resizing) {
 		m_resizing = true;
 		SetWindowSize(width, height);

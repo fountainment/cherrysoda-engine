@@ -427,9 +427,14 @@ void cherrysoda::Window::SetFullscreen(bool fullscreen)
 	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }
 
+bool cherrysoda::Window::IsFullscreen()
+{
+	return SDL_GetWindowFlags(m_mainWindow) & SDL_WINDOW_FULLSCREEN;
+}
+
 void cherrysoda::Window::ToggleFullscreen()
 {
-	SetFullscreen(!(Engine::Instance()->m_fullscreen));
+	SetFullscreen(!IsFullscreen());
 }
 
 void cherrysoda::Window::GetPosition(int* x, int* y)
