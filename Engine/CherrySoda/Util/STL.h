@@ -36,8 +36,8 @@ public:
 	template <typename ...T>
 	using Action = std::function<void(T...)>;
 
-	template <typename T>
-	using Func = std::function<T()>;
+	template <typename T, typename ...U>
+	using Func = std::function<T(U...)>;
 
 	template <typename T>
 	static inline void Swap(T& a, T& b)
