@@ -67,6 +67,10 @@
 					"shell_cmd": "make -j8 CherrySoda"
 				},
 				{
+					"name": "EaseFunction",
+					"shell_cmd": "make -j8 EaseFunction"
+				},
+				{
 					"name": "FirstSprite",
 					"shell_cmd": "make -j8 FirstSprite"
 				},

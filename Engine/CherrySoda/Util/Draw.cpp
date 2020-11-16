@@ -11,3 +11,8 @@ void Draw::Initialize()
 {
 	ms_spriteBatch = new SpriteBatch();
 }
+
+void Draw::Terminate()
+{
+	delete ms_spriteBatch;
+}

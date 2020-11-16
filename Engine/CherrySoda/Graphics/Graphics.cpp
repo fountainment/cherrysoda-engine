@@ -27,7 +27,6 @@
 
 using cherrysoda::Graphics;
 
-using cherrysoda::BlendFunction;
 using cherrysoda::Camera;
 using cherrysoda::Color;
 using cherrysoda::Effect;
@@ -420,12 +419,16 @@ void Graphics::Initialize()
 	bgfx::init(init);
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 
-	ms_blendFunction[(int)BlendFunction::Default]  = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-	ms_blendFunction[(int)BlendFunction::Alpha]    = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-	ms_blendFunction[(int)BlendFunction::Add]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE);
-	ms_blendFunction[(int)BlendFunction::Max]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE) | BGFX_STATE_BLEND_EQUATION(BGFX_STATE_BLEND_EQUATION_MAX);
-	ms_blendFunction[(int)BlendFunction::Min]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE) | BGFX_STATE_BLEND_EQUATION(BGFX_STATE_BLEND_EQUATION_MIN);
-	ms_blendFunction[(int)BlendFunction::Multiply] = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_DST_COLOR, BGFX_STATE_BLEND_ZERO) ;
+	ms_blendFunctions[(int)Graphics::BlendFunction::Default]  = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	ms_blendFunctions[(int)Graphics::BlendFunction::Alpha]    = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	ms_blendFunctions[(int)Graphics::BlendFunction::Add]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE);
+	ms_blendFunctions[(int)Graphics::BlendFunction::Max]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE) | BGFX_STATE_BLEND_EQUATION(BGFX_STATE_BLEND_EQUATION_MAX);
+	ms_blendFunctions[(int)Graphics::BlendFunction::Min]      = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE) | BGFX_STATE_BLEND_EQUATION(BGFX_STATE_BLEND_EQUATION_MIN);
+	ms_blendFunctions[(int)Graphics::BlendFunction::Multiply] = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_DST_COLOR, BGFX_STATE_BLEND_ZERO) ;
+
+	ms_primitiveTypes[(int)Graphics::PrimitiveType::Triangles] = BGFX_STATE_NONE;
+	ms_primitiveTypes[(int)Graphics::PrimitiveType::Lines]     = BGFX_STATE_PT_LINES;
+	ms_primitiveTypes[(int)Graphics::PrimitiveType::Points]    = BGFX_STATE_PT_POINTS;
 
 	PosColorVertex::Init();
 	PosColorNormalVertex::Init();
@@ -550,7 +553,35 @@ void Graphics::SetTransformMatrix(const Math::Mat4& transformMatrix)
 
 void Graphics::SetMesh(const MeshInterface* mesh)
 {
-	mesh->SetBuffer();
+	switch (mesh->GetBufferType()) {
+	case Graphics::BufferType::Static:
+		SetVertexBuffer(mesh->GetVertexBuffer());
+		SetIndexBuffer(mesh->GetIndexBuffer());
+		break;
+	case Graphics::BufferType::Dynamic:
+		SetDynamicVertexBuffer(mesh->GetVertexBuffer(), mesh->VertexBufferSize());
+		SetDynamicIndexBuffer(mesh->GetIndexBuffer(), mesh->IndexBufferSize());
+		break;
+	case Graphics::BufferType::Transient:
+		{
+			auto vb = mesh->CreateTransientVertexBuffer();
+			auto ib = mesh->CreateTransientIndexBuffer();
+			SetTransientVertexBuffer(vb);
+			SetTransientIndexBuffer(ib, 0, mesh->IndexBufferSize());
+		}
+		break;
+	}
+}
+
+void Graphics::SubmitMesh(const MeshInterface* mesh)
+{
+	if (mesh->VertexBufferSize() == 0) {
+		Discard();
+		return;
+	}
+	SetMesh(mesh);
+	SetStateDefault(Graphics::BlendFunction::Default, mesh->GetPrimitiveType());
+	SubmitOnCurrentRenderPass();
 }
 
 void Graphics::SetVertexBuffer(Graphics::VertexBufferHandle vertexBuffer)
@@ -587,14 +618,14 @@ void Graphics::SetTransientIndexBuffer(Graphics::TransientIndexBufferHandle inde
 	bgfx::setIndexBuffer(STL::Data(s_transientIndexBufferStack) + i, startIndex, indexAmount);
 }
 
-void Graphics::SetStateDefault(BlendFunction blendFunc/* = BlendFunction::Normal*/)
+void Graphics::SetStateDefault(Graphics::BlendFunction blendFunc/* = Graphics::BlendFunction::Normal*/, Graphics::PrimitiveType primType/* = Graphics::PimitiveType::Triangles*/)
 {
-	bgfx::setState(BGFX_STATE_DEFAULT | ms_blendFunction[(int)blendFunc]);
+	bgfx::setState(BGFX_STATE_DEFAULT | ms_blendFunctions[(int)blendFunc] | ms_primitiveTypes[(int)primType]);
 }
 
-void Graphics::SetStateNoDepth(BlendFunction blendFunc/* = BlendFunction::Normal*/)
+void Graphics::SetStateNoDepth(Graphics::BlendFunction blendFunc/* = Graphics::BlendFunction::Normal*/, Graphics::PrimitiveType primType/* = Graphics::PimitiveType::Triangles*/)
 {
-	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA | ms_blendFunction[(int)blendFunc]);
+	bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA | ms_blendFunctions[(int)blendFunc] | ms_primitiveTypes[(int)primType]);
 }
 
 void Graphics::Submit()
@@ -900,7 +931,8 @@ void Graphics::SetTextureCubeIrr(const TextureCube* texture)
 	SetTexture(1, ms_samplerTexCubeIrr, texture->GetHandle());	
 }
 
-type::UInt64 Graphics::ms_blendFunction[(int)BlendFunction::Count];
+type::UInt64 Graphics::ms_blendFunctions[(int)BlendFunction::Count];
+type::UInt64 Graphics::ms_primitiveTypes[(int)PrimitiveType::Count];
 type::UInt16 Graphics::ms_maxRenderPassCount = BGFX_CONFIG_MAX_VIEWS;
 bool Graphics::ms_vsyncEnabled = true;
 

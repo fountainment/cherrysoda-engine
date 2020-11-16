@@ -21,7 +21,7 @@ using crsd::STL;
 
 void ChunkGraphicsComponent::EntityAwake()
 {
-	GetMesh()->SetBufferType(MeshInterface::BufferType::Dynamic);
+	GetMesh()->SetBufferType(Graphics::BufferType::Dynamic);
 	RebuildMesh();
 }
 

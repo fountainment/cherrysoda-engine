@@ -13,7 +13,6 @@
 
 using cherrysoda::GUI;
 
-using cherrysoda::BlendFunction;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Graphics;
@@ -176,7 +175,7 @@ void GUI::Render()
 				Graphics::SetTexture((Texture*)cmd->TextureId);
 				Graphics::SetTransientVertexBuffer(vb);
 				Graphics::SetTransientIndexBuffer(ib, cmd->IdxOffset, cmd->ElemCount);
-				Graphics::SetStateNoDepth(BlendFunction::Alpha);
+				Graphics::SetStateNoDepth(Graphics::BlendFunction::Alpha);
 				Graphics::SubmitOnCurrentRenderPass(&ms_guiEffect);
 			}
 		}

@@ -19,20 +19,35 @@ class Texture;
 class Texture2D;
 class TextureCube;
 
-enum class BlendFunction : type::UInt32
-{
-	Default = 0, // support premultiplied-alpha
-	Alpha,
-	Add,
-	Max,
-	Min,
-	Multiply,
-	Count
-};
-
 class Graphics
 {
 public:
+	enum class BlendFunction : type::UInt8
+	{
+		Default = 0, // support premultiplied-alpha
+		Alpha,
+		Add,
+		Max,
+		Min,
+		Multiply,
+		Count
+	};
+
+	enum class PrimitiveType : type::UInt8
+	{
+		Triangles,
+		Lines,
+		Points,
+		Count
+	};
+
+	enum class BufferType : type::UInt8
+	{
+		Static,
+		Dynamic,
+		Transient
+	};
+
 	static constexpr type::UInt32 EncodeNormalU32(const Math::Vec3& v)
 	{
 		type::UInt32 a = static_cast<type::UInt32>((v.x + 1.0f) * 0.5f * 255.f + 0.5f);
@@ -51,7 +66,7 @@ public:
 		{
 			return { p[0], p[1], p[2], c };
 		}
-		static const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c)
+		static const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c = Color::White)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR() };
 		}
@@ -149,6 +164,7 @@ public:
 	void SetViewProjectionMatrix(const Math::Mat4& viewMatrix, const Math::Mat4& projMatrix);
 	static void SetTransformMatrix(const Math::Mat4& transformMatrix);
 	static void SetMesh(const MeshInterface* mesh);
+	static void SubmitMesh(const MeshInterface* mesh);
 	static void SetVertexBuffer(VertexBufferHandle vertexBuffer);
 	static void SetIndexBuffer(IndexBufferHandle indexBuffer);
 	static void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
@@ -156,8 +172,8 @@ public:
 	static void SetTransientVertexBuffer(TransientVertexBufferHandle vertexBuffer);
 	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer);
 	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer, size_t startIndex, size_t indexAmount);
-	static void SetStateDefault(BlendFunction blendFunc = BlendFunction::Default);
-	static void SetStateNoDepth(BlendFunction blendFunc = BlendFunction::Default);
+	static void SetStateDefault(BlendFunction blendFunc = BlendFunction::Default, PrimitiveType = PrimitiveType::Triangles);
+	static void SetStateNoDepth(BlendFunction blendFunc = BlendFunction::Default, PrimitiveType = PrimitiveType::Triangles);
 	void Submit();
 	void Submit(const Effect* effect);
 	static void Submit(type::UInt16 renderPass);
@@ -227,7 +243,8 @@ private:
 
 	type::UInt16 m_renderPassId = 0;
 
-	static type::UInt64 ms_blendFunction[(int)BlendFunction::Count];
+	static type::UInt64 ms_blendFunctions[(int)BlendFunction::Count];
+	static type::UInt64 ms_primitiveTypes[(int)PrimitiveType::Count];
 	static type::UInt16 ms_maxRenderPassCount;
 	static bool ms_vsyncEnabled;
 
@@ -260,6 +277,22 @@ public:
 	CHERRYSODA_VERTEX_DECLARATION(ImGuiVertex);
 
 	#undef CHERRYSODA_VERTEX_DECLARATION
+};
+
+class MeshInterface
+{
+public:
+	virtual void SetBufferType(Graphics::BufferType bufferType) = 0;
+	virtual Graphics::BufferType GetBufferType() const = 0;
+	virtual void SetPrimitiveType(Graphics::PrimitiveType primitiveType) = 0;
+	virtual Graphics::PrimitiveType GetPrimitiveType() const = 0;
+
+	virtual size_t VertexBufferSize() const = 0;
+	virtual size_t IndexBufferSize() const = 0;
+	virtual Graphics::BufferHandle GetVertexBuffer() const = 0;
+	virtual Graphics::BufferHandle GetIndexBuffer() const = 0;
+	virtual Graphics::TransientVertexBufferHandle CreateTransientVertexBuffer() const = 0;
+	virtual Graphics::TransientIndexBufferHandle CreateTransientIndexBuffer() const = 0;
 };
 
 } // namespace cherrysoda

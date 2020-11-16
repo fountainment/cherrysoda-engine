@@ -47,9 +47,7 @@ void SpriteBatch::End()
 		SubmitBuffer();
 		Graphics::SetTexture(&m_previousTexture);
 		Graphics::SetTransformMatrix(Math_Identity<Math::Mat4>());
-		Graphics::SetMesh(this);
-		Graphics::SetStateDefault();
-		Graphics::SubmitOnCurrentRenderPass();
+		Graphics::SubmitMesh(this);
 	}
 	else {
 		Graphics::Discard();

@@ -50,12 +50,12 @@ public:
 
 	static inline Easer Invert(Easer easer)
 	{
-		return [&easer](float t){ return 1.f - easer(1.f - t); };
+		return [easer](float t){ return 1.f - easer(1.f - t); };
 	}
 
 	static inline Easer Follow(Easer first, Easer second)
 	{
-		return [&first, &second](float t){ return (t <= 0.5f) ? first(t * 2.f) * 0.5f : second(t * 2.f - 1.f) * 0.5f + 0.5f; };
+		return [first, second](float t){ return (t <= 0.5f) ? first(t * 2.f) * 0.5f : second(t * 2.f - 1.f) * 0.5f + 0.5f; };
 	}
 
 	static inline float UpDown(float eased)

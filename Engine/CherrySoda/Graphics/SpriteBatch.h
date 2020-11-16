@@ -20,7 +20,7 @@ CHERRYSODA_DECLARE_ENUM_FLAG(SpriteEffects);
 class SpriteBatch : Mesh<Graphics::PosColorTexCoord0Vertex>
 {
 public:
-	SpriteBatch() { SetBufferType(BufferType::Transient); }
+	SpriteBatch() { SetBufferType(Graphics::BufferType::Transient); }
 
 	void Begin() { Clear(); }
 

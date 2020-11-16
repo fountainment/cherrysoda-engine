@@ -9,9 +9,9 @@ using cherrysoda::Math;
 
 const Easer Ease::Linear = [](float t){ return t; };
 
-const Easer Ease::SineIn = [](float t){ return -static_cast<float>(Math_Cos(Math::Pi2 * t) + 1.f); };
-const Easer Ease::SineOut = [](float t){ return static_cast<float>(Math_Sin(Math::Pi2 * t)); };
-const Easer Ease::SineInOut = Follow(SineIn, SineOut);
+const Easer Ease::SineIn = [](float t){ return -static_cast<float>(Math_Cos(Math::PiHalf * t)) + 1.f; };
+const Easer Ease::SineOut = [](float t){ return static_cast<float>(Math_Sin(Math::PiHalf * t)); };
+const Easer Ease::SineInOut = [](float t){ return -static_cast<float>(Math_Cos(Math::Pi * t)) * .5f + .5f; };
 
 const Easer Ease::QuadIn = [](float t){ return t * t; };
 const Easer Ease::QuadOut = Invert(QuadIn);

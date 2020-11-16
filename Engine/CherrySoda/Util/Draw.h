@@ -10,6 +10,7 @@ class Draw
 {
 public:
 	static void Initialize();
+	static void Terminate();
 
 	static inline Renderer* GetRenderer() { return ms_renderer; }
 	static inline void SetRenderer(Renderer* renderer) { ms_renderer = renderer; } 

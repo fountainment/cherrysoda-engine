@@ -19,9 +19,7 @@ public:
 	void Render() override
 	{
 		cherrysoda::Graphics::SetTransformMatrix(GetTransformMatrix());
-		cherrysoda::Graphics::SetMesh(GetMesh());
-		cherrysoda::Graphics::SetStateDefault();
-		cherrysoda::Graphics::SubmitOnCurrentRenderPass();
+		cherrysoda::Graphics::SubmitMesh(GetMesh());
 	}
 
 	cherrysoda::Mesh<VERTEX_T>* GetMesh() { return &m_mesh; }
