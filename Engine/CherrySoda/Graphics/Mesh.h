@@ -82,7 +82,6 @@ public:
 	inline void AddTriangleNoIndex(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 3 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
-		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
 		STL::AddRange(m_vertices, { v1, v2, v3 });
 	}
 	inline void AddQuad(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
