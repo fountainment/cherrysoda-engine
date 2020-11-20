@@ -364,7 +364,6 @@ namespace bgfx { namespace mtl
 			, m_rtMsaa(false)
 			, m_capture(NULL)
 			, m_captureSize(0)
-			, m_saveScreenshot(false)
 		{
 			bx::memSet(&m_windows, 0xff, sizeof(m_windows) );
 		}
@@ -479,6 +478,7 @@ namespace bgfx { namespace mtl
 			g_caps.supported |= (0
 				| BGFX_CAPS_ALPHA_TO_COVERAGE
 				| BGFX_CAPS_BLEND_INDEPENDENT
+				| BGFX_CAPS_COMPUTE
 				| BGFX_CAPS_FRAGMENT_DEPTH
 				| BGFX_CAPS_INDEX32
 				| BGFX_CAPS_INSTANCING
@@ -492,7 +492,7 @@ namespace bgfx { namespace mtl
 				| BGFX_CAPS_TEXTURE_READ_BACK
 				| BGFX_CAPS_VERTEX_ATTRIB_HALF
 				| BGFX_CAPS_VERTEX_ATTRIB_UINT10
-				| BGFX_CAPS_COMPUTE
+				| BGFX_CAPS_VERTEX_ID
 				);
 
 			if (BX_ENABLED(BX_PLATFORM_IOS) )
@@ -980,12 +980,6 @@ namespace bgfx { namespace mtl
 			BX_FREE(g_allocator, m_uniforms[_handle.idx]);
 			m_uniforms[_handle.idx] = NULL;
 			m_uniformReg.remove(_handle);
-		}
-
-		void requestScreenShotPre(const char* _filePath)
-		{
-			BX_UNUSED(_filePath);
-			m_saveScreenshot = true;
 		}
 
 		void requestScreenShot(FrameBufferHandle _handle, const char* _filePath) override
@@ -2390,7 +2384,6 @@ namespace bgfx { namespace mtl
 		SamplerDescriptor        m_samplerDescriptor;
 
 		// currently active objects data
-		bool                 m_saveScreenshot;
 		Texture              m_screenshotTarget;
 		ShaderMtl            m_screenshotBlitProgramVsh;
 		ShaderMtl            m_screenshotBlitProgramFsh;
@@ -3700,7 +3693,7 @@ namespace bgfx { namespace mtl
 
 		updateResolution(_render->m_resolution);
 
-		if (m_saveScreenshot
+		if (0 != _render->m_numScreenShots
 		||  NULL != m_capture)
 		{
 			if (m_screenshotTarget)
@@ -3740,8 +3733,6 @@ namespace bgfx { namespace mtl
 
 				m_screenshotTarget = m_device.newTextureWithDescriptor(m_textureDescriptor);
 			}
-
-			m_saveScreenshot = false;
 		}
 		else
 		{
@@ -4561,6 +4552,7 @@ namespace bgfx { namespace mtl
 				if (0 != currentState.m_streamMask)
 				{
 					uint32_t numVertices = draw.m_numVertices;
+
 					if (UINT32_MAX == numVertices)
 					{
 						const VertexBufferMtl& vb = m_vertexBuffers[currentState.m_stream[0].m_handle.idx];
@@ -4590,9 +4582,9 @@ namespace bgfx { namespace mtl
 							MTLIndexType indexType = 0 == (ib.m_flags & BGFX_BUFFER_INDEX32) ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32;
 
 							numDrawIndirect = UINT16_MAX == draw.m_numIndirect
-							? vb.m_size/BGFX_CONFIG_DRAW_INDIRECT_STRIDE
-							: draw.m_numIndirect
-							;
+								? vb.m_size/BGFX_CONFIG_DRAW_INDIRECT_STRIDE
+								: draw.m_numIndirect
+								;
 
 							for (uint32_t ii = 0; ii < numDrawIndirect; ++ii)
 							{
@@ -4602,9 +4594,10 @@ namespace bgfx { namespace mtl
 						else
 						{
 							numDrawIndirect = UINT16_MAX == draw.m_numIndirect
-							? vb.m_size/BGFX_CONFIG_DRAW_INDIRECT_STRIDE
-							: draw.m_numIndirect
-							;
+								? vb.m_size/BGFX_CONFIG_DRAW_INDIRECT_STRIDE
+								: draw.m_numIndirect
+								;
+
 							for (uint32_t ii = 0; ii < numDrawIndirect; ++ii)
 							{
 								rce.drawPrimitives(prim.m_type,vb.m_ptr, (draw.m_startIndirect + ii) * BGFX_CONFIG_DRAW_INDIRECT_STRIDE);
