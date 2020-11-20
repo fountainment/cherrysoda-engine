@@ -15,11 +15,10 @@ include(cmake/SysDetect.cmake)
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
 if(EMSCRIPTEN)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 \
                                           -s WASM=1 \
                                           -s NO_EXIT_RUNTIME=1 \
-                                          -s USE_WEBGL2=1 \
-                                          -s FULL_ES3=1 \
                                           -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
                                           -s OFFSCREENCANVAS_SUPPORT=1 \
                                           -s TOTAL_MEMORY=512MB \
