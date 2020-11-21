@@ -8,7 +8,7 @@ A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 - Python (>=3.6)
 
 ### Linux
-- GCC (>=5) or CLang (>=3.4)
+- GCC (>=5) or Clang (>=3.4)
 - libSDL2-dev
 
 ### Windows
