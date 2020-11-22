@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_UTIL_CALC_H_
 #define _CHERRYSODA_UTIL_CALC_H_
 
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -22,6 +23,7 @@ public:
 	inline float NextFloat(float max) { return NextFloat() * max; }
 	inline float NextFloat(float min, float max) { return min + NextFloat(max - min); }
 	inline double NextDouble() { return Next() / static_cast<double>(STL::RandomMax(m_random)); }
+	inline float NextAngle() { return NextFloat(Math::Pi2); }
 
 	static type::UInt32 TrueRandomNext();
 

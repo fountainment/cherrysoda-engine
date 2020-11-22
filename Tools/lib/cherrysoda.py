@@ -168,4 +168,7 @@ def replace_file_name(file, replace_list):
         find, rep = i
         s = s.replace(find, rep)
     if file != s:
+        if exists(s):
+            print('"%s" already exists!' % (s))
+            return
         move(file, s)

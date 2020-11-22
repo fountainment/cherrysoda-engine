@@ -53,7 +53,7 @@ const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index
 	return result;
 }
 
-void Atlas::ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat format)
+void Atlas::ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat format/* = AtlasDataFormat::CrunchJson*/)
 {
 	switch (format) {
 	case AtlasDataFormat::CrunchJson:
