@@ -35,6 +35,8 @@ public:
 	void Add(Renderer* renderer);
 	void Remove(Renderer* renderer);
 
+	void _SetActualDepth(Entity* entity);
+
 	EntityList* Entities() { return m_entities; }
 
 	void OnEndOfFrame(STL::Action<> func);
@@ -50,6 +52,7 @@ private:
 	bool m_paused = false;
 
 	STL::Vector<STL::Action<>> m_onEndOfFrame;
+	STL::HashMap<int,double> m_actualDepthLookup;
 };
 
 } // namespace cherrysoda

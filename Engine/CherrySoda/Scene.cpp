@@ -132,3 +132,26 @@ void Scene::Remove(Renderer* renderer)
 {
 	m_rendererList->Remove(renderer);
 }
+
+void Scene::_SetActualDepth(Entity* entity)
+{
+	double value = 0.0;
+	if (STL::TryGetValue(m_actualDepthLookup, entity->Depth(), value))
+	{
+		m_actualDepthLookup[entity->Depth()] += 9.9999999747524271E-07;
+	}
+	else
+	{
+		STL::Add(m_actualDepthLookup, STL::MakePair(entity->Depth(), 9.9999999747524271E-07));
+	}
+	entity->m_actualDepth = (double)entity->Depth() - value;
+	m_entities->MarkUnsorted();	
+	// TODO: Implement taglist
+	// for (int i = 0; i < BitTag::TotalTags(); ++i)
+	// {
+	// 	if (entity->TagCheck(1 << i))
+	// 	{
+	// 		m_tagLists->MarkUnsorted(i);
+	// 	}
+	// }
+}

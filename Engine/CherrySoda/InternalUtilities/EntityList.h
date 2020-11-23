@@ -22,6 +22,8 @@ public:
 	void Add(Entity* entity);
 	void Remove(Entity* entity);
 
+	inline void MarkUnsorted() { m_unsorted = true; }
+
 	void Render();
 	void RenderOnly(BitTagValueType matchTags);
 	void RenderOnlyFullMatch(BitTagValueType matchTags);

@@ -27,6 +27,7 @@ public:
 private:
 	cherrysoda::Tween* m_openUITween;
 	bool m_inGameProgress = false;
+	cherrysoda::EverythingRenderer* m_renderer;
 };
 
 } // namespace ld42_bulletjam

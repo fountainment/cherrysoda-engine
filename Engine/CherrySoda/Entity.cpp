@@ -73,6 +73,16 @@ void Entity::Remove(ComponentList::IterableComponents& components)
 	m_components->Remove(components);
 }
 
+void Entity::Depth(int depth)
+{
+	if (m_depth != depth) {
+		m_depth = depth;
+		if (m_scene != nullptr) {
+			m_scene->_SetActualDepth(this);
+		}
+	}
+}
+
 void Entity::DebugRender(Camera* camera)
 {
 	// TODO: collider debugrender
@@ -102,8 +112,7 @@ void Entity::Added(Scene* scene)
 	for (auto component : *m_components) {
 		component->EntityAdded(scene);
 	}
-	// TODO: implement Scene::SetActualDepth	
-	// m_scene->SetActualDepth(this);
+	m_scene->_SetActualDepth(this);
 }
 
 void Entity::Removed(Scene* scene)

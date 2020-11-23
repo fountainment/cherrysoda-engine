@@ -50,13 +50,19 @@ public:
 	void Add(ComponentList::IterableComponents& components); 
 	void Remove(ComponentList::IterableComponents& components);
 
+	void Depth(int depth);
+	inline int Depth() const { return m_depth; }
+
 	template<class T>
 	T* Get() { return m_components != nullptr ? m_components->Get<T>() : nullptr; }
 
 	inline Scene* GetScene() { return m_scene; }
 
+	static bool CompareDepth(Entity* a, Entity* b) { return a->m_actualDepth < b->m_actualDepth; }
+
 private:
 	friend class EntityList;
+	friend class Scene;
 
 	virtual void Added(Scene* scene);
 	virtual void Removed(Scene* scene);

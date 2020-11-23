@@ -10,13 +10,13 @@ using ld42_bulletjam::BulletJamScene;
 void BulletJamScene::Begin()
 {
 	// Renderer
-	auto renderer = new EverythingRenderer();
-	Add(renderer);
+	m_renderer = new EverythingRenderer();
+	Add(m_renderer);
 	// Renderer effect
-	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
+	m_renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	// Renderer camera
 	auto halfViewSize = Math::Vec2(Engine::Instance()->GetViewSize()) * 0.5f;
-	auto camera = renderer->GetCamera();
+	auto camera = m_renderer->GetCamera();
 	camera->Position(Math::Vec3(halfViewSize, halfViewSize.y));
 	camera->FOV(90.f);
 
@@ -36,6 +36,7 @@ void BulletJamScene::Begin()
 	m_openUITween = Tween::Create(TweenMode::Oneshot, Ease::QuadInOut, 0.5f);
 	m_openUITween->OnUpdate([openUI, openUIHeight](Tween* t){ openUI->PositionY(t->Eased() * openUIHeight); });
 	openUI->Add(m_openUITween);
+	openUI->Depth(-999999);
 	Add(openUI);
 
 	base::Begin();
@@ -49,6 +50,8 @@ void BulletJamScene::Update()
 		Restart();
 		Start();
 	}
+
+	m_renderer->GetCamera()->SetSize(Engine::Instance()->GetViewSize());
 
 	base::Update();
 }

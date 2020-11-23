@@ -46,6 +46,8 @@ public:
 		return GetNameMap()[name];
 	}
 
+	static int TotalTags() { return ms_totalTags; }
+
 private:
 	int m_id = 0;
 	BitTagValueType m_value = 0;

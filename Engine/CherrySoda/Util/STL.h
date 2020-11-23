@@ -10,6 +10,7 @@
 #include <stack>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 #define CHERRYSODA_ITERABLE(iterable) \
@@ -58,6 +59,15 @@ public:
 	template <typename T, typename U>
 	using Map = std::map<T,U>;
 
+	template <typename T, typename U>
+	using Pair = std::pair<T,U>;
+
+	template <typename T, typename U>
+	static constexpr Pair<T,U> MakePair(T&& t, U&& u)
+	{
+		return std::make_pair(t, u);
+	}
+
 	template <typename T>
 	using Set = std::set<T>;
 
@@ -97,6 +107,18 @@ public:
 		container.emplace(element);
 	}
 
+	template <typename T, typename U>
+	static inline void Add(Map<T,U>& container, Pair<T,U>&& element)
+	{
+		container.emplace(element);
+	}
+
+	template <typename T, typename U>
+	static inline void Add(HashMap<T,U>& container, Pair<T,U>&& element)
+	{
+		container.emplace(element);
+	}
+
 	template <typename T>
 	static inline void AddRange(T& container, const T& iterable)
 	{
@@ -121,6 +143,30 @@ public:
 	static inline void Push(T& container, const U& element)
 	{
 		container.push(element);
+	}
+
+	template <typename T>
+	static inline void Sort(Vector<T>& container)
+	{
+		std::sort(container.begin(), container.end());
+	}
+
+	template <typename T, typename Compare>
+	static inline void Sort(Vector<T>& container, Compare comp)
+	{
+		std::sort(container.begin(), container.end(), comp);
+	}
+
+	template <typename T>
+	static inline void Sort(List<T>& container)
+	{
+		container.sort();
+	}
+
+	template <typename T, typename Compare>
+	static inline void Sort(List<T>& container, Compare comp)
+	{
+		container.sort(comp);
 	}
 
 	template <typename T>
