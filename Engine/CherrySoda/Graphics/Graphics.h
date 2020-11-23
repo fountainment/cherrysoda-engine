@@ -159,6 +159,7 @@ public:
 	static void SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder);
 	void Touch();
 	static void SetVsyncEnabled(bool vsyncEnabled);
+	static inline float TexelHalf() { return ms_texelHalf; }
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
 	void SetViewProjectionMatrix(const Math::Mat4& viewMatrix, const Math::Mat4& projMatrix);
@@ -247,6 +248,8 @@ private:
 	static type::UInt64 ms_primitiveTypes[(int)PrimitiveType::Count];
 	static type::UInt16 ms_maxRenderPassCount;
 	static bool ms_vsyncEnabled;
+
+	static float ms_texelHalf;
 
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;
