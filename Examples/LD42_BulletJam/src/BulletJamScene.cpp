@@ -16,7 +16,7 @@ void BulletJamScene::Begin()
 	// Renderer effect
 	m_renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	// Renderer camera
-	auto halfViewSize = Math::Vec2(Engine::Instance()->GetViewSize()) * 0.5f;
+	auto halfViewSize = Math::Vec2(300.f, 350.f);
 	auto camera = m_renderer->GetCamera();
 	camera->Position(Math::Vec3(halfViewSize, halfViewSize.y));
 	camera->FOV(90.f);
