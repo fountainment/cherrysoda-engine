@@ -27,6 +27,11 @@ public:
 	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
 
 	inline const Color GetColor() const { return m_color; }
+	inline const void SetColor(const Color& color) { m_color = color; }
+	inline const void SetColorR(float r) { m_color.R(r); }
+	inline const void SetColorG(float g) { m_color.G(g); }
+	inline const void SetColorB(float b) { m_color.B(b); }
+	inline const void SetColorA(float a) { m_color.A(a); }
 	virtual const Math::Mat4 GetTransformMatrix() const;
 
 private:

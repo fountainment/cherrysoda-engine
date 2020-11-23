@@ -5,6 +5,8 @@ set(CHERRYSODA_EXECUTABLE_SRC
   src/LD42_BulletJam.h
   src/BulletJamScene.cpp
   src/BulletJamScene.h
+  src/Player.cpp
+  src/Player.h
 )
 
 set(CHERRYSODA_SHADER_SRC
