@@ -120,6 +120,7 @@ public:
 	static constexpr float Pi     = 3.14159265357878323846f;
 	static constexpr float Pi2    = Pi * 2.0f;
 	static constexpr float PiHalf = Pi * 0.5f;
+	static constexpr float epsf   = 1E-06f;
 
 	using Vec2 = glm::vec2;
 	using Vec3 = glm::vec3;

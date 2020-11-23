@@ -10,14 +10,16 @@ using cherrysoda::Engine;
 using cherrysoda::Entity;
 using cherrysoda::STL;
 
+STL::Stack<Alarm*> Alarm::ms_cached;
+
 Alarm* Alarm::Create(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.f*/, bool start/* = false*/)
 {
 	Alarm* alarm = nullptr;
-	if (STL::Count(m_cached) == 0) {
+	if (STL::Count(ms_cached) == 0) {
 		alarm = new Alarm();
 	}
 	else {
-		alarm = STL::Pop(m_cached);
+		alarm = STL::Pop(ms_cached);
 	}
 	alarm->Init(mode, onComplete, duration, start);
 	return alarm;
@@ -72,7 +74,7 @@ void Alarm::Update()
 void Alarm::Removed(Entity* entity)
 {
 	base::Removed(entity);
-	STL::Push(m_cached, this);
+	STL::Push(ms_cached, this);
 }
 
 void Alarm::Start()

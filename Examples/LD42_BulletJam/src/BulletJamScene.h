@@ -8,6 +8,7 @@ namespace cherrysoda {
 class Entity;
 class EverythingRenderer;
 class SingleTagRenderer;
+class Tween;
 } // namespace cherrysoda
 
 namespace ld42_bulletjam {
@@ -19,6 +20,13 @@ public:
 
 	void Begin() override;
 	void Update() override;
+
+	void Start();
+	void Restart();
+
+private:
+	cherrysoda::Tween* m_openUITween;
+	bool m_inGameProgress = false;
 };
 
 } // namespace ld42_bulletjam

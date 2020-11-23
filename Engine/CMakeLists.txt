@@ -17,6 +17,8 @@ set(ENGINE_SRC
   CherrySoda/Components/Logic/Alarm.h
   CherrySoda/Components/Logic/StateMachine.cpp
   CherrySoda/Components/Logic/StateMachine.h
+  CherrySoda/Components/Logic/Tween.cpp
+  CherrySoda/Components/Logic/Tween.h
   CherrySoda/Graphics/Atlas.cpp
   CherrySoda/Graphics/Atlas.h
   CherrySoda/Graphics/Effect.h

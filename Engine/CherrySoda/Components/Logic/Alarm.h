@@ -40,7 +40,7 @@ private:
 
 	void Init(AlarmMode mode, STL::Action<> onComplete, float duration = 1.f, bool start = false);
 
-	static STL::Stack<Alarm*> m_cached;
+	static STL::Stack<Alarm*> ms_cached;
 
 	AlarmMode m_mode;
 	STL::Action<> m_onComplete;
