@@ -62,6 +62,6 @@ void Player::Update()
 	if (move != Vec2_Zero) {
 		move = Math_Normalize(move);
 	}
-	Position(Position() + 3.f * Math::Vec3(move, 0.f));
+	Position(Position() + Engine::Instance()->DeltaTime() * 180.f * Math::Vec3(move, 0.f));
 	Depth(Position().x - 700.0f);
 }
