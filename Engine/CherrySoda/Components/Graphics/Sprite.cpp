@@ -107,8 +107,8 @@ void Sprite::Play(StringID id, bool restart/* = false*/, bool randomizeFrame/* =
 		m_currentAnimation = &m_animations[id];
 		m_animating = m_currentAnimation->m_delay > 0;
 		if (randomizeFrame) {
-			m_animationTimer = Calc::GetRandom().NextFloat(m_currentAnimation->m_delay);
-			m_currentAnimationFrame = Calc::GetRandom().Next(STL::Count(m_currentAnimation->m_frames));
+			m_animationTimer = Calc::GetRandom()->NextFloat(m_currentAnimation->m_delay);
+			m_currentAnimationFrame = Calc::GetRandom()->Next(STL::Count(m_currentAnimation->m_frames));
 		}
 		else {
 			m_animationTimer = 0.f;

@@ -37,7 +37,7 @@ public:
 	static void PushRandom(type::UInt32 seed) { STL::Push(ms_randomStack, Random(seed)); }
 	static void PushRandom() { STL::Push(ms_randomStack, Random()); }
 	static void PopRandom() { STL::Pop(ms_randomStack); }
-	static Random& GetRandom() { return STL::TopRef(ms_randomStack); }
+	static Random* GetRandom() { return &STL::TopRef(ms_randomStack); }
 
 	static inline float Angle(const Math::Vec2& vec) { return Math_Atan2(vec.y, vec.x); }
 	static inline Math::Vec2 AngleToVector(float angleRadians, float length)

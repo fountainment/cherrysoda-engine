@@ -19,6 +19,7 @@ public:
 	void Update() override;
 
 	void Move(const cherrysoda::Math::Vec2& move);
+	void Shoot();
 
 	static Player* Instance();	
 
@@ -29,7 +30,7 @@ private:
 	cherrysoda::Alarm* m_bulletAlarm = nullptr;
 	cherrysoda::Sprite* m_playerFootSprite = nullptr;
 	cherrysoda::Sprite* m_playerSprite = nullptr;
-	bool m_canShoot = false;
+	bool m_canShoot = true;
 	int m_HP = 0;
 };
 

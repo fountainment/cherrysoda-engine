@@ -51,7 +51,7 @@ public:
 			return m_choices[0].m_value;
 		}
 
-		float roll = Calc::GetRandom().NextDouble() * m_totalWeight;
+		float roll = Calc::GetRandom()->NextDouble() * m_totalWeight;
 		float check = 0;
 		for (int i = 0; i < static_cast<int>(STL::Count(m_choices)) - 1; ++i) {
 			check += m_choices[i].m_weight;

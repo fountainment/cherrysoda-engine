@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include "Program.h"
+#include "Bullet.h"
 #include "Cursor.h"
 
 #include <CherrySoda/CherrySoda.h>
@@ -124,6 +125,11 @@ void Player::Update()
 	}
 	Move(move);
 	Depth(Position().x - 700.0f);
+
+	if (MInput::Mouse()->CheckLeftButton())
+	{
+		Shoot();
+	}
 }
 
 void Player::Move(const Math::Vec2& move)
@@ -144,5 +150,15 @@ void Player::Move(const Math::Vec2& move)
 	if (PositionX() > 520.f)
 	{
 		PositionX(520.f);
+	}
+}
+
+void Player::Shoot()
+{
+	if (m_canShoot)
+	{
+		GetScene()->Add(Bullet::Create(Position(), 600.f * Math_Normalize(Cursor::Instance()->Position() - Position())));
+		m_canShoot = false;
+		m_bulletAlarm->Start();
 	}
 }

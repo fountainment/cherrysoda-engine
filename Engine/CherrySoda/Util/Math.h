@@ -32,15 +32,25 @@
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
 	inline const Math::Vec3 NAME() const { EXTRA_GET_OP; return VALUE; } \
-	inline void NAME(const Math::Vec3& v) { EXTRA_SET_OP; VALUE = v; } \
-	inline void NAME(const Math::Vec2& v) { NAME(Math::Vec3(v, NAME().z)); } \
+	inline void NAME(const cherrysoda::Math::Vec3& v) { EXTRA_SET_OP; VALUE = v; } \
+	inline void NAME(const cherrysoda::Math::Vec2& v) { NAME(cherrysoda::Math::Vec3(v, NAME().z)); } \
 	inline float NAME##X() const { EXTRA_GET_OP; return VALUE.x; } \
 	inline float NAME##Y() const { EXTRA_GET_OP; return VALUE.y; } \
 	inline float NAME##Z() const { EXTRA_GET_OP; return VALUE.z; } \
-	inline void NAME##X(float x) { NAME(Math::Vec3(x, VALUE.y, VALUE.z)); } \
-	inline void NAME##Y(float y) { NAME(Math::Vec3(VALUE.x, y, VALUE.z)); } \
-	inline void NAME##Z(float z) { NAME(Math::Vec3(VALUE.x, VALUE.y, z)); }
+	inline void NAME##X(float x) { NAME(cherrysoda::Math::Vec3(x, VALUE.y, VALUE.z)); } \
+	inline void NAME##Y(float y) { NAME(cherrysoda::Math::Vec3(VALUE.x, y, VALUE.z)); } \
+	inline void NAME##Z(float z) { NAME(cherrysoda::Math::Vec3(VALUE.x, VALUE.y, z)); }
 
+#define CHERRYSODA_GETTER_SETTER_OF_VEC2(NAME,VALUE) \
+	CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(NAME,VALUE,CHERRYSODA_NONE_OP,CHERRYSODA_NONE_OP)
+
+#define CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
+	inline const cherrysoda::Math::Vec2 NAME() const { EXTRA_GET_OP; return VALUE; } \
+	inline void NAME(const cherrysoda::Math::Vec2& v) { EXTRA_SET_OP; VALUE = v; } \
+	inline float NAME##X() const { EXTRA_GET_OP; return VALUE.x; } \
+	inline float NAME##Y() const { EXTRA_GET_OP; return VALUE.y; } \
+	inline void NAME##X(float x) { NAME(cherrysoda::Math::Vec2(x, VALUE.y)); } \
+	inline void NAME##Y(float y) { NAME(cherrysoda::Math::Vec2(VALUE.x, y)); }
 
 #define CHERRYSODA_DECLARE_ENUM_FLAG(ENUM_T) \
 inline ENUM_T operator | (ENUM_T lhs, ENUM_T rhs) \
