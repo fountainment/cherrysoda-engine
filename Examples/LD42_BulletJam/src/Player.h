@@ -2,6 +2,7 @@
 #define _BULLETJAM_PLAYER_H_
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
 class Alarm;
@@ -16,6 +17,8 @@ public:
 	typedef cherrysoda::Entity base;
 
 	void Update() override;
+
+	void Move(const cherrysoda::Math::Vec2& move);
 
 	static Player* Instance();	
 

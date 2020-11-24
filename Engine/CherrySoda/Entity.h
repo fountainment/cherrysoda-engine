@@ -19,13 +19,6 @@ public:
 	Entity() : Entity(Math::Vec3(0.f)) {}
 	Entity(const Math::Vec3& position);
 	
-	inline void Position(Math::Vec3 pos3d) { m_position = pos3d; }
-	inline void Position(Math::Vec2 pos2d) { Position(Math::Vec3(pos2d, Position()[2])); }
-	inline void PositionX(float x) { m_position.x = x; }
-	inline void PositionY(float y) { m_position.y = y; }
-	inline void PositionZ(float z) { m_position.z = z; }
-	inline const Math::Vec3 Position() const { return m_position; }
-
 	virtual void SceneBegin(Scene* scene);
 	virtual void SceneEnd(Scene* scene);
 	virtual void Awake(Scene* scene);
@@ -59,6 +52,8 @@ public:
 	inline Scene* GetScene() { return m_scene; }
 
 	static bool CompareDepth(Entity* a, Entity* b) { return a->m_actualDepth < b->m_actualDepth; }
+
+	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 
 private:
 	friend class EntityList;

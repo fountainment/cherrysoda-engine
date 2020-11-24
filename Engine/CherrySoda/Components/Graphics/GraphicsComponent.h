@@ -15,9 +15,9 @@ public:
 
 	GraphicsComponent(bool active) : base(active, true) {}
 
-	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Position, m_position);
-	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Origin, m_origin);
-	CHERRYSODA_MATH_VEC3_GETTER_SETTER(Scale, m_scale);
+	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
+	CHERRYSODA_GETTER_SETTER_OF_VEC3(Origin, m_origin);
+	CHERRYSODA_GETTER_SETTER_OF_VEC3(Scale, m_scale);
 
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, ZRotation, m_zRotation);
 

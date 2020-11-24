@@ -122,6 +122,27 @@ void Player::Update()
 			m_playerFootSprite->FlipX(true);
 		}
 	}
-	Position(Position() + Engine::Instance()->DeltaTime() * 180.f * Math::Vec3(move, 0.f));
+	Move(move);
 	Depth(Position().x - 700.0f);
+}
+
+void Player::Move(const Math::Vec2& move)
+{
+	Position(Position() + Engine::Instance()->DeltaTime() * 180.f * Math::Vec3(move, 0.f));
+	if (PositionY() < 80.f)
+	{
+		PositionY(80.f);
+	}
+	if (PositionX() < 80.f)
+	{
+		PositionX(80.f);
+	}
+	if (PositionY() > 520.f)
+	{
+		PositionY(520.f);
+	}
+	if (PositionX() > 520.f)
+	{
+		PositionX(520.f);
+	}
 }
