@@ -26,8 +26,10 @@ Player* Player::Create()
 	player->Add(player->m_bulletAlarm);
 	player->m_playerFootImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("playerfoot/playerfoot1"));
 	player->m_playerFootImage->CenterOrigin();
+	player->m_playerFootImage->SetSpriteEffects(SpriteEffects::RoundRenderingPosition);
 	player->m_playerImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("player/player1"));
 	player->m_playerImage->CenterOrigin();
+	player->m_playerImage->SetSpriteEffects(SpriteEffects::RoundRenderingPosition);
 	player->Add(player->m_playerFootImage);
 	player->Add(player->m_playerImage);
 	// player->m_collider = new Circle(8f);

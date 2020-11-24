@@ -26,6 +26,8 @@ namespace type = cherrysoda::type;
 Effect GUI::ms_guiEffect;
 Texture2D GUI::ms_fontTexture;
 type::UInt16 GUI::ms_guiRenderPass = 0;
+bool GUI::ms_disable = false;
+bool GUI::ms_frameStarted = false;
 
 void GUI::Initialize()
 {
@@ -89,6 +91,8 @@ void GUI::Terminate()
 
 void GUI::Update()
 {
+	if (ms_disable) return;
+
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Window
@@ -133,10 +137,19 @@ void GUI::Update()
 	io.DeltaTime = Engine::Instance()->RawDeltaTime();
 
 	ImGui::NewFrame();
+
+	ms_frameStarted = true;
 }
 
 void GUI::Render()
 {
+	if (ms_frameStarted) {
+		ms_frameStarted = false;
+	}
+	else if (ms_disable) {
+		return;
+	}
+
 	ImGui::Render();
 
 	ImGuiIO& io = ImGui::GetIO();

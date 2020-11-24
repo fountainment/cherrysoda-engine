@@ -12,6 +12,9 @@ class GUI
 public:
 	static void SetEffect(const Effect& effect) { ms_guiEffect = effect; }
 
+	static void Disable() { ms_disable = true; }
+	static void Enable() { ms_disable = false; }
+
 private:
 	friend class Engine;
 
@@ -24,6 +27,8 @@ private:
 	static Effect ms_guiEffect;
 	static Texture2D ms_fontTexture;
 	static type::UInt16 ms_guiRenderPass;
+	static bool ms_disable;
+	static bool ms_frameStarted;
 };
 
 } // namespace cherrysoda

@@ -28,7 +28,7 @@ public:
 
 	void Render() override
 	{
-		m_texture.Draw(RenderPosition(), Origin(), GetColor(), Scale(), ZRotation(), Effects());
+		m_texture.Draw(RenderPosition(), Origin(), GetColor(), Scale(), ZRotation(), GetSpriteEffects());
 	}
 
 	inline const MTexture& Texture() const { return m_texture; }
@@ -37,8 +37,8 @@ public:
 	inline float Height() const { return static_cast<float>(m_texture.Height()); }
 	inline const Math::Vec2 Size() const { return Math::Vec2(Width(), Height()); } 
 	inline const Math::Vec2 HalfSize() const { return Size() * 0.5f; }
-	inline SpriteEffects Effects() { return m_effects; }
-	inline void Effects(SpriteEffects effects) { m_effects = effects; }
+	inline SpriteEffects GetSpriteEffects() { return m_effects; }
+	inline void SetSpriteEffects(SpriteEffects effects) { m_effects = effects; }
 
 	Image& SetOrigin(float x, float y)
 	{

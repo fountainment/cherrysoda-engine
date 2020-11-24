@@ -29,6 +29,7 @@ void LD42_BulletJam::Initialize()
 	base::Initialize();
 
 	// Initialize and set scene here
+	GUI::Disable(); // Disable ImGui to save some CPU
 	auto scene = new BulletJamScene();
 	SetScene(scene);
 }
