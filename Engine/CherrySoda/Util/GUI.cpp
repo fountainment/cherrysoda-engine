@@ -167,7 +167,9 @@ void GUI::Render()
 
 	Graphics::BeginRenderPass(ms_guiRenderPass);
 	Graphics::UseCurrentRenderPass()->SetViewport(0, 0, fbWidth, fbHeight);
-	Graphics::UseCurrentRenderPass()->SetViewProjectionMatrix(Math_Identity<Math::Mat4>(), Math_Ortho((float)0, io.DisplaySize.x, io.DisplaySize.y, (float)0, -1000.f, 1000.f));
+	// TexelHalf is a hack for d3d9's different pixel coordinate
+	// TODO: Consider moving this hack to camera
+	Graphics::UseCurrentRenderPass()->SetViewProjectionMatrix(Math_Identity<Math::Mat4>(), Math_Ortho(Graphics::TexelHalf(), io.DisplaySize.x + Graphics::TexelHalf(), io.DisplaySize.y + Graphics::TexelHalf(), Graphics::TexelHalf(), -1000.f, 1000.f));
 	for (int n = 0; n < drawData->CmdListsCount; ++n) {
 		const ImDrawList* drawList = drawData->CmdLists[n];
 		auto vb = Graphics::CreateTransientVertexBuffer(reinterpret_cast<Graphics::ImGuiVertex*>(drawList->VtxBuffer.Data), drawList->VtxBuffer.Size);
