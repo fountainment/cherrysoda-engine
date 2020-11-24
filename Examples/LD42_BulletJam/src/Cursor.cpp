@@ -37,6 +37,7 @@ void Cursor::Update()
 	pos.x /= scale;
 	pos.y /= scale;
 	pos.x += camera->Position().x - height * 0.5f * camera->Ratio();
+	pos.y -= camera->Position().y - height * 0.5f;
 	pos.y = height - pos.y;
 	Position(pos);
 }

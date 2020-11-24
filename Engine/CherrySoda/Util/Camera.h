@@ -42,6 +42,9 @@ public:
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Origin, m_origin, CHERRYSODA_NONE_OP, if (m_origin == v) return; m_changed = true);
 	CHERRYSODA_MATH_VEC3_GETTER_SETTER_EX(Direction, m_direction, CHERRYSODA_NONE_OP, m_changed = true);
 
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, PositionX, m_position.x, CHERRYSODA_NONE_OP, m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, PositionY, m_position.y, CHERRYSODA_NONE_OP, m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, PositionZ, m_position.z, CHERRYSODA_NONE_OP, m_changed = true);
 	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, ZRotation, m_zAngle, CHERRYSODA_NONE_OP, if (m_zAngle == v) return; m_changed = true);
 	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
 	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);

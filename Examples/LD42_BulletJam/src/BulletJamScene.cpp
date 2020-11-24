@@ -75,6 +75,14 @@ void BulletJamScene::Update()
 	}
 
 	m_renderer->GetCamera()->SetSize(Engine::Instance()->GetViewSize());
+	Math::IVec2 winSize = Engine::Instance()->GetWindowSize();
+	float ratio = winSize.x / (float)winSize.y;
+	if (ratio < 600.f / 700.f) {
+		m_renderer->GetCamera()->PositionZ(300.f / ratio);
+	}
+	else {
+		m_renderer->GetCamera()->PositionZ(350.f);
+	}
 
 	base::Update();
 }
