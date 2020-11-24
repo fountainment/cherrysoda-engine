@@ -68,7 +68,7 @@ void BulletJamScene::Begin()
 void BulletJamScene::Update()
 {
 	// Add scene update here
-	if (MInput::Keyboard()->Pressed(Keys::Space))
+	if (MInput::Keyboard()->Pressed(Keys::Space) || MInput::Mouse()->PressedLeftButton())
 	{
 		GameRestart();
 		GameStart();

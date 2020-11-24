@@ -20,7 +20,7 @@ public:
 
 	void Render(Scene* scene) override;
 
-	inline Camera* GetCamera() { return &m_camera; }
+	inline Camera* GetCamera() override { return &m_camera; }
 	inline Effect* GetEffect() { return &m_effect; }
 
 	inline void SetEffect(const Effect& effect) { *GetEffect() = effect; }
