@@ -30,7 +30,7 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 	if ((effects & SpriteEffects::FlipVertically) == SpriteEffects::FlipVertically) {
 		STL::Swap(bottomUV, topUV);
 	}
-	if ((effects & SpriteEffects::FlipHorizontally) == SpriteEffects::FlipVertically) {
+	if ((effects & SpriteEffects::FlipHorizontally) == SpriteEffects::FlipHorizontally) {
 		STL::Swap(leftUV, rightUV);
 	}
 	const Math::Vec2 rPos = ((effects & SpriteEffects::RoundRenderingPosition) == SpriteEffects::RoundRenderingPosition) ? Math_Round(pos - origin) : pos - origin;
