@@ -21,7 +21,7 @@ const STL::List<MTexture> Atlas::GetAtlasSubtextures(const String& key, int star
 	if (!STL::TryGetValue(m_orderedTexturesCache, key, list)) {
 		int index = startIndex;
 		for (;;) {
-			MTexture texture = GetAtlasSubtextureFromAtlasAt(key, index, keyLength);
+			MTexture texture = GetAtlasSubtextureFromAtlasAt(key, index, startIndex, keyLength);
 			if (texture.IsValid())
 				STL::Add(list, texture);
 			else
@@ -35,9 +35,9 @@ const STL::List<MTexture> Atlas::GetAtlasSubtextures(const String& key, int star
 	return list;		
 }
 
-const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index/* = 0*/, int keyLength/* = 4*/)
+const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index/* = 0*/, int startIndex/* = 0*/, int keyLength/* = 4*/)
 {
-	if (index == 0 && STL::ContainsKey(m_textures, key)) {
+	if (index == startIndex && STL::ContainsKey(m_textures, key)) {
 		return m_textures[key];
 	}
 

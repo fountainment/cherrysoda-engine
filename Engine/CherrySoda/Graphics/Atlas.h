@@ -24,7 +24,7 @@ public:
 	Atlas() = default;
 
 	const STL::List<MTexture> GetAtlasSubtextures(const String& key, int startIndex = 0, int keyLength = 4);
-	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index = 0, int keyLength = 4);
+	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index = 0, int startIndex = 0, int keyLength = 4);
 	static Atlas FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
 	{
 		Atlas atlas;

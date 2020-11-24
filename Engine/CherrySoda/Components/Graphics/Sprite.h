@@ -20,21 +20,37 @@ public:
 
 	Sprite(const String& atlasPath, const String& path = "") : Sprite()
 	{
-		m_atlas = Atlas::FromAtlas(atlasPath);
+		m_ownAtlas = true;
+		m_atlas = new Atlas;
+		*m_atlas = Atlas::FromAtlas(atlasPath);
 		m_path = path;
+	}
+
+	Sprite(Atlas* atlas, const String& path = "") : Sprite()
+	{
+		m_atlas = atlas;
+		m_path = path;
+	}
+
+	virtual ~Sprite()
+	{
+		if (m_ownAtlas && m_atlas != nullptr) {
+			delete m_atlas;
+			m_atlas = nullptr;
+		}
 	}
 
 	void Update() override;
 	void SetFrame(MTexture texture);
 
-	STL::Vector<MTexture> GetFrames(const String& path)
+	STL::Vector<MTexture> GetFrames(const String& path, int startIndex = 1, int indexLength = 4)
 	{
-		return STL::ToVector(m_atlas.GetAtlasSubtextures(m_path + path, 1));
+		return STL::ToVector(m_atlas->GetAtlasSubtextures(m_path + path, startIndex, indexLength));
 	}
 
-	void AddLoop(const String& id, const String& path, float delay = 1.f / 15.f)
+	void AddLoop(const String& id, const String& path, int startIndex = 1, int indexLength = 4, float delay = 1.f / 15.f)
 	{
-		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
+		m_animations[id] = { delay, GetFrames(path, startIndex, indexLength), Chooser<StringID>(id, 1.f) };
 	}
 
 	// TODO: void Add(const String& id, const String& path)
@@ -74,7 +90,7 @@ private:
 	STL::Action<StringID> m_onLastFrame;
 	STL::Action<StringID,StringID> m_onChange;
 
-	Atlas m_atlas;
+	Atlas* m_atlas = nullptr;
 	String m_path;
 	STL::HashMap<StringID,Animation> m_animations;
 	Animation* m_currentAnimation = nullptr;
@@ -83,6 +99,7 @@ private:
 	int m_height = 0;
 
 	bool m_animating = false;
+	bool m_ownAtlas = false;
 	StringID m_currentAnimationID;
 	StringID m_lastAnimationID;
 	int m_currentAnimationFrame = 0;

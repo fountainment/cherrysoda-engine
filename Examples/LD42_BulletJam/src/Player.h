@@ -5,7 +5,7 @@
 
 namespace cherrysoda {
 class Alarm;
-class Image;
+class Sprite;
 };
 
 namespace ld42_bulletjam {
@@ -23,11 +23,11 @@ private:
 	Player() {}
 	static Player* Create();
 
-	cherrysoda::Alarm* m_bulletAlarm;
-	cherrysoda::Image* m_playerFootImage;
-	cherrysoda::Image* m_playerImage;
+	cherrysoda::Alarm* m_bulletAlarm = nullptr;
+	cherrysoda::Sprite* m_playerFootSprite = nullptr;
+	cherrysoda::Sprite* m_playerSprite = nullptr;
 	bool m_canShoot = false;
-	int m_HP;
+	int m_HP = 0;
 };
 
 } // namespace ld42_bulletjam

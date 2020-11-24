@@ -56,6 +56,11 @@ inline ENUM_T& operator &= (ENUM_T& lhs, ENUM_T rhs) \
 { \
     lhs = lhs & rhs; \
     return lhs; \
+} \
+inline ENUM_T operator - (ENUM_T lhs, ENUM_T rhs) \
+{ \
+    using T = std::underlying_type_t<ENUM_T>; \
+    return static_cast<ENUM_T>(static_cast<T>(lhs) & ~static_cast<T>(rhs)); \
 }
 
 
@@ -81,11 +86,13 @@ inline ENUM_T& operator &= (ENUM_T& lhs, ENUM_T rhs) \
 #define IVec3_YUp       cherrysoda::Math::IVec3(0,1,0)
 #define IVec3_ZUp       cherrysoda::Math::IVec3(0,0,1)
 
+#define Math_Atan2      glm::atan
 #define Math_Abs        glm::abs
 #define Math_Cross      glm::cross
 #define Math_Cos        glm::cos
 #define Math_Clamp      glm::clamp
 #define Math_Dot        glm::dot
+#define Math_Floor      glm::floor
 #define Math_Length     glm::length
 #define Math_LengthSq   glm::length2
 #define Math_Min        glm::min 

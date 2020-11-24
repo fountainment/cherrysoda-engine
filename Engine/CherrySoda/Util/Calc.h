@@ -39,6 +39,19 @@ public:
 	static void PopRandom() { STL::Pop(ms_randomStack); }
 	static Random& GetRandom() { return STL::TopRef(ms_randomStack); }
 
+	static inline float Angle(const Math::Vec2& vec) { return Math_Atan2(vec.y, vec.x); }
+	static inline Math::Vec2 AngleToVector(float angleRadians, float length)
+	{
+		return Math::Vec2((float)Math_Cos(angleRadians) * length, (float)Math_Sin(angleRadians) * length);
+	}
+	static Math::Vec2 EightWayNormal(Math::Vec2 vec);
+
+	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec, const Math::Vec2& ifZero)
+	{
+		return (vec == Vec2_Zero) ? ifZero : Math_Normalize(vec);
+	}
+	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec) { return SafeNormalize(vec, Vec2_Zero); }
+
 private:
 	static STL::Stack<Random> ms_randomStack;
 };

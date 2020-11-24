@@ -64,6 +64,11 @@ public:
 		return *this;
 	}
 
+	inline bool FlipX() const { return (m_effects & SpriteEffects::FlipHorizontally) == SpriteEffects::FlipHorizontally; }
+	inline void FlipX(bool flipX) { m_effects = (flipX ? (m_effects | SpriteEffects::FlipHorizontally) : (m_effects - SpriteEffects::FlipHorizontally)); }
+	inline bool FlipY() const { return (m_effects & SpriteEffects::FlipVertically) == SpriteEffects::FlipVertically; }
+	inline void FlipY(bool flipY) { m_effects = (flipY ? (m_effects | SpriteEffects::FlipVertically) : (m_effects - SpriteEffects::FlipVertically)); }
+
 private:
 	MTexture m_texture;
 	SpriteEffects m_effects = SpriteEffects::None;

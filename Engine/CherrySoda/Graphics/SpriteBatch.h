@@ -13,7 +13,11 @@ enum class SpriteEffects : type::UInt8
 	None = 0,
 	FlipHorizontally = 1,
 	FlipVertically = 2,
-	RoundRenderingPosition = 4
+	FlipXY = 3,
+	RoundRenderingPosition = 4,
+	RoundFlipX = 5,
+	RoundFlipY = 6,
+	RoundFlipXY = 7
 };
 
 CHERRYSODA_DECLARE_ENUM_FLAG(SpriteEffects);
