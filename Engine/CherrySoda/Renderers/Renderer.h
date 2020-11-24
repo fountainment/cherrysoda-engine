@@ -3,6 +3,7 @@
 
 namespace cherrysoda {
 
+class Camera;
 class Scene;
 
 class Renderer
@@ -12,6 +13,8 @@ public:
 	virtual void BeforeRender(Scene* scene) {}
 	virtual void Render(Scene* scene) = 0;
 	virtual void AfterRender(Scene* scene) {}
+
+	virtual Camera* GetCamera() = 0;
 
 	inline bool Visible() { return m_visible; }
 	inline void Visible(bool v) { m_visible = v; }

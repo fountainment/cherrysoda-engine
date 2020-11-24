@@ -4,6 +4,7 @@
 
 #include "Program.h"
 #include "Player.h"
+#include "Cursor.h"
 
 using namespace cherrysoda;
 using namespace ld42_bulletjam;
@@ -88,6 +89,7 @@ void BulletJamScene::GameStart()
 		m_inGameProgress = true;
 
 		Add(Player::Instance());
+		Add(Cursor::Instance());
 		m_enemyTimer->Start();	
 		m_openUITween->Start();
 	}

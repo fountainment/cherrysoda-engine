@@ -18,10 +18,11 @@ public:
 	void Update() override;
 
 	static Player* Instance();	
-	static Player* Create();
-
 
 private:
+	Player() {}
+	static Player* Create();
+
 	cherrysoda::Alarm* m_bulletAlarm;
 	cherrysoda::Image* m_playerFootImage;
 	cherrysoda::Image* m_playerImage;

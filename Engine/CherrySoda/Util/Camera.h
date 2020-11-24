@@ -13,6 +13,7 @@ public:
 
 	inline Math::Vec2 GetSize() { return Math::Vec2(m_width, m_height); }
 	inline void SetSize(const Math::Vec2& size) { Width(size[0]); Height(size[1]); }
+	inline float Ratio() { return m_width / m_height; }
 
 	void UpdateMatrices();
 

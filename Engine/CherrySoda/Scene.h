@@ -14,6 +14,7 @@ class Scene
 {
 public:
 	Scene();
+	virtual ~Scene();
 
 	virtual void Begin();
 	virtual void End(); 
@@ -38,8 +39,10 @@ public:
 	void _SetActualDepth(Entity* entity);
 
 	EntityList* Entities() { return m_entities; }
+	RendererList* Renderers() { return m_rendererList; }
+	Renderer* FirstRenderer();
 
-	void OnEndOfFrame(STL::Action<> func);
+	void AddActionOnEndOfFrame(STL::Action<> func);
 
 private:
 	EntityList* m_entities = nullptr;

@@ -270,6 +270,17 @@ public:
 	}
 
 	template <typename T>
+	static inline bool TryGetFirst(const T& container, typename T::value_type& output)
+	{
+		auto it = container.begin();
+		if (it != container.end()) {
+			output = *it;
+			return true;
+		}
+		return false;
+	}
+
+	template <typename T>
 	static inline Vector<typename T::value_type> ToVector(T& container)
 	{
 		return Vector<typename T::value_type>(std::begin(container), std::end(container));

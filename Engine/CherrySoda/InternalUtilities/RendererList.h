@@ -19,6 +19,8 @@ public:
 	void Add(Renderer* renderer);
 	void Remove(Renderer* renderer);
 
+	Renderer* First();
+
 private:
 	RendererList(Scene* scene);
 

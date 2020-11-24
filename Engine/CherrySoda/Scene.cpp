@@ -25,6 +25,12 @@ Scene::Scene()
 	// TODO: finish Scene::Scene
 }
 
+Scene::~Scene()
+{
+	delete m_entities;
+	delete m_rendererList;
+}
+
 void Scene::Begin()
 {
 	m_focused = true;
@@ -98,7 +104,12 @@ void Scene::AfterRender()
 	m_rendererList->AfterRender();
 }
 
-void Scene::OnEndOfFrame(STL::Action<> func)
+Renderer* Scene::FirstRenderer()
+{
+	return Renderers()->First();	
+}
+
+void Scene::AddActionOnEndOfFrame(STL::Action<> func)
 {
 	STL::Add(m_onEndOfFrame, func);
 }

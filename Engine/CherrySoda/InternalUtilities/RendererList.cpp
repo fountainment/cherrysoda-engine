@@ -78,3 +78,10 @@ void RendererList::AfterRender()
 		renderer->AfterRender(m_scene);
 	}
 }
+
+Renderer* RendererList::First()
+{
+	Renderer* first = nullptr;
+	STL::TryGetFirst(m_renderers, first);
+	return first;
+}

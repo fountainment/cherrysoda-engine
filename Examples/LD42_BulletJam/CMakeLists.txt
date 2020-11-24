@@ -7,6 +7,8 @@ set(CHERRYSODA_EXECUTABLE_SRC
   src/BulletJamScene.h
   src/Player.cpp
   src/Player.h
+  src/Cursor.cpp
+  src/Cursor.h
 )
 
 set(CHERRYSODA_SHADER_SRC
