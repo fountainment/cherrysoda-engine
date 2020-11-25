@@ -27,7 +27,7 @@ class SpriteBatch : Mesh<Graphics::PosColorTexCoord0Vertex>
 public:
 	SpriteBatch() { SetBufferType(Graphics::BufferType::Transient); }
 
-	void Begin() { Clear(); }
+	inline void Begin() { Clear(); }
 
 	void Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::IRectangle& rect,
 			const Color& color, float rotation, const Math::Vec2& origin, const Math::Vec2& scale,

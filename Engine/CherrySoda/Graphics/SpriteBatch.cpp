@@ -3,6 +3,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::SpriteBatch;
@@ -14,12 +15,22 @@ using cherrysoda::SpriteEffects;
 using cherrysoda::STL;
 using cherrysoda::Texture2D;
 
+namespace type = cherrysoda::type;
+
 void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::IRectangle& rect, \
 					const Color& color, float rotation, const Math::Vec2& origin, const Math::Vec2& scale, \
 					SpriteEffects effects, float layerDepth)
 {
-	if (VertexAmount() && tex.GetHandle() != m_previousTexture.GetHandle())	{
-		End(); Begin();
+	if (VertexIsNotEmpty()) {
+		if (tex.GetHandle() != m_previousTexture.GetHandle()) {
+			End(); Begin();
+		}
+		else {
+			type::UInt16 vn = static_cast<type::UInt16>(VertexAmount());
+			if (static_cast<type::UInt16>(vn + 4) < vn) {
+				End(); Begin();
+			}
+		}
 	}
 	// TexelHalf is a hack for d3d9's different pixel coordinate
 	// TODO: Consider moving this hack to camera

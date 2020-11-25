@@ -37,10 +37,11 @@ public:
 	inline void AddIndex(type::UInt16 index) { STL::Add(m_indices, index); }
 	inline size_t VertexAmount() const { return STL::Count(m_vertices); }
 	inline size_t IndexAmount() const { return STL::Count(m_indices); }
+	inline bool VertexIsNotEmpty() const { return STL::IsNotEmpty(m_vertices); }
 	inline void AddLastVertexIndex()
 	{
 		CHERRYSODA_ASSERT(VertexAmount(), "There is no vertex at the moment.\n");
-		if (VertexAmount() > 0) {
+		if (VertexIsNotEmpty()) {
 			AddIndex(static_cast<type::UInt16>(VertexAmount()) - 1);
 		}
 	}
@@ -56,7 +57,7 @@ public:
 	}
 	inline void AddLine(const VERTEX_T& v)
 	{
-		if (VertexAmount() != 0) {
+		if (VertexIsNotEmpty()) {
 			AddLastVertexIndex();
 			AddNewVertexIndex();
 		}
