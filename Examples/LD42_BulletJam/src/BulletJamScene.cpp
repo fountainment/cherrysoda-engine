@@ -232,6 +232,7 @@ Math::Vec2 BulletJamScene::GetValidSpawnPosition()
 {
 	float num = Calc::GetRandom()->NextAngle();
 	Math::Vec2 vector = Math::Vec2((float)Math_Cos(num), (float)Math_Sin(num));
+	// TODO: Implement LineWalkCheck
 	// Math::Vec2 position = LineWalkCheck(Player::Instance()->Position(), Player::Instance()->Position() + vector * 500f, GameApp::ms_deadBulletTag.ID(), 5.f);
 	Math::Vec2 position = Player::Instance()->Position2D() + vector * 400.f;
 	CheckOutsideOfPlayZone(position, true);

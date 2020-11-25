@@ -125,7 +125,6 @@ void Player::Update()
 		}
 	}
 	Move(move);
-	Depth(Position().x - 700.0f);
 
 	if (MInput::Mouse()->CheckLeftButton())
 	{
@@ -139,6 +138,7 @@ void Player::Move(const Math::Vec2& move)
 	auto pos2D = Position2D();
 	BulletJamScene::CheckOutsideOfPlayZone(pos2D, true, 30.f);
 	Position(pos2D);
+	Depth(Math_Round(PositionY() - 700.0f));
 }
 
 void Player::Shoot()

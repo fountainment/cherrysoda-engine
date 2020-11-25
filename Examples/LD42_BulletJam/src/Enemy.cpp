@@ -41,4 +41,5 @@ void Enemy::Update()
 
 	Math::Vec2 vec2 = Calc::SafeNormalize(Player::Instance()->Position() - Position(), Vec2_YUp) * 42.f;
 	Position(Math::Vec2(Position()) + vec2 * Engine::Instance()->DeltaTime());
+	Depth(Math_Round(PositionY() - 700.f));
 }

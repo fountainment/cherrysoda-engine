@@ -33,10 +33,10 @@ public:
 
 	void RemoveSelf();
 
-	inline bool TagCheck(BitTagValueType tag) { return (m_tag & tag) != 0; }
-	bool TagFullCheck(BitTagValueType tag) { return (m_tag & tag) == tag; }
-	void AddTag(BitTagValueType tag) { m_tag |= tag; }
-	void RemoveTag(BitTagValueType tag) { m_tag &= tag; }
+	inline bool TagCheck(BitTagValueType tag) const { return (m_tag & tag) != 0; }
+	inline bool TagFullCheck(BitTagValueType tag) const { return (m_tag & tag) == tag; }
+	inline void AddTag(BitTagValueType tag) { m_tag |= tag; }
+	inline void RemoveTag(BitTagValueType tag) { m_tag &= ~tag; }
 
 	void Add(Component* component); 
 	void Remove(Component* component);
@@ -54,6 +54,8 @@ public:
 	static bool CompareDepth(Entity* a, Entity* b) { return a->m_actualDepth < b->m_actualDepth; }
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Active, m_active);
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Visible, m_visible);
 
 private:
 	friend class EntityList;
@@ -62,10 +64,10 @@ private:
 	virtual void Added(Scene* scene);
 	virtual void Removed(Scene* scene);
 
+	Math::Vec3 m_position = Math::Vec3(0.f);
 	bool m_active = true;
 	bool m_visible = true;
 	bool m_collidable = false;
-	Math::Vec3 m_position = Math::Vec3(0.f);
 
 	Scene* m_scene = nullptr;
 	ComponentList* m_components = nullptr;

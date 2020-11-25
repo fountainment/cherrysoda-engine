@@ -52,6 +52,8 @@ public:
 	}
 	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec) { return SafeNormalize(vec, Vec2_Zero); }
 
+	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return Math::Vec2(vec.y, -vec.x); }
+
 private:
 	static STL::Stack<Random> ms_randomStack;
 };

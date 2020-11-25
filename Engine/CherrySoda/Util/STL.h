@@ -199,6 +199,12 @@ public:
 	}
 
 	template <typename T>
+	static inline size_t Empty(const T& container)
+	{
+		return container.empty();
+	}
+
+	template <typename T>
 	static inline auto Data(const T& container)
 	{
 		return container.data();
