@@ -199,9 +199,15 @@ public:
 	}
 
 	template <typename T>
-	static inline size_t Empty(const T& container)
+	static inline bool IsEmpty(const T& container)
 	{
 		return container.empty();
+	}
+
+	template <typename T>
+	static inline bool IsNotEmpty(const T& container)
+	{
+		return !container.empty();
 	}
 
 	template <typename T>

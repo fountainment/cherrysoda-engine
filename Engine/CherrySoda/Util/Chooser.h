@@ -65,7 +65,7 @@ public:
 
 	inline bool CanChoose() const { return m_totalWeight > 0; }
 
-	inline bool IsEmpty() const { return STL::Empty(m_choices); }
+	inline bool IsEmpty() const { return STL::IsEmpty(m_choices); }
 
 	STL::Vector<Choice> m_choices;
 	Choice m_defaultChoice;

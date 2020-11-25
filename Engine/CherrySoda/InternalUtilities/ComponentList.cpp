@@ -21,7 +21,7 @@ void ComponentList::LockMode(LockModes lockMode)
 {
 	m_lockMode = lockMode;
 
-	if (!STL::Empty(m_toAdd)) {
+	if (STL::IsNotEmpty(m_toAdd)) {
 		for (auto component : m_toAdd) {
 			if (!STL::Contains(m_current, component)) {
 				STL::Add(m_current, component);
@@ -34,7 +34,7 @@ void ComponentList::LockMode(LockModes lockMode)
 		m_toAdd.clear();
 	}
 
-	if (!STL::Empty(m_toRemove)) {
+	if (STL::IsNotEmpty(m_toRemove)) {
 		for (auto component : m_toRemove) {
 			if (STL::Contains(m_current, component)) {
 				STL::Remove(m_current, component);

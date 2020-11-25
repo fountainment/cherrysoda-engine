@@ -21,7 +21,7 @@ EntityList::EntityList(Scene* scene)
 
 void EntityList::UpdateLists()
 {
-	if (!STL::Empty(m_toAdd)) {
+	if (STL::IsNotEmpty(m_toAdd)) {
 		for (auto entity : m_toAdd) {
 			if (!STL::Contains(m_current, entity)) {
 				STL::Add(m_current, entity);
@@ -39,7 +39,7 @@ void EntityList::UpdateLists()
 		m_unsorted = true;
 	}
 
-	if (!STL::Empty(m_toRemove)) {
+	if (STL::IsNotEmpty(m_toRemove)) {
 		for (auto entity : m_toRemove) {
 			if (STL::Contains(m_entities, entity)) {
 				STL::Remove(m_current, entity);
@@ -63,7 +63,7 @@ void EntityList::UpdateLists()
 		STL::Sort(m_entities, Entity::CompareDepth);	
 	}
 
-	if (!STL::Empty(m_toAdd)) {
+	if (STL::IsNotEmpty(m_toAdd)) {
         STL::AddRange(m_toAwake, m_toAdd);
         m_toAdd.clear();
         m_adding.clear();

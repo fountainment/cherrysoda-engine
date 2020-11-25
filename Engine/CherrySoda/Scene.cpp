@@ -75,7 +75,7 @@ void Scene::AfterUpdate()
 {
 	CHERRYSODA_PROFILE_FUNCTION();
 
-	if (!STL::Empty(m_onEndOfFrame)) {
+	if (STL::IsNotEmpty(m_onEndOfFrame)) {
 		for (auto func : m_onEndOfFrame) {
 			func();
 		}
