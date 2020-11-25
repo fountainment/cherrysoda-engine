@@ -3,10 +3,10 @@
 #include <CherrySoda/CherrySoda.h>
 
 #include "Program.h"
+#include "BulletJamScene.h"
 
 using namespace cherrysoda;
-
-using ld42_bulletjam::Bullet;
+using namespace ld42_bulletjam;
 
 static BitTag s_bulletTag("bullet");
 
@@ -25,9 +25,6 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 	bullet->Add(bullet->m_bulletImage);
 	// bullet->m_collider = new Circle((float)bullet->m_bulletImage->Height() / 2.f);
 	bullet->Position(position);
-	if (speed == Vec2_Zero) {
-		speed = Vec2_YUp * 10.f;
-	}
 	bullet->Speed(speed);
 	if (needRandom)
 	{
@@ -40,6 +37,13 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 void Bullet::Update()
 {
 	base::Update();
+
+	auto pos2D = Position2D();
+	bool flag = BulletJamScene::CheckOutsideOfPlayZone(pos2D);
+
+	if (flag) {
+		RemoveSelf();
+	}
 
 	Position(Position() + Math::Vec3(Speed(), 0.f) * Engine::Instance()->DeltaTime());
 }

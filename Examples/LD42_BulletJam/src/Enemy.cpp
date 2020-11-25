@@ -1,17 +1,18 @@
 #include "Enemy.h"
 
 #include "Program.h"
+#include "Player.h"
 
 #include <CherrySoda/CherrySoda.h>
 
 using namespace cherrysoda;
-
-using ld42_bulletjam::Enemy;
+using namespace ld42_bulletjam;
 
 Enemy* Enemy::Create(int type)
 {
 	auto enemy = new Enemy;
 	enemy->m_slimeSprite = new Sprite(GameApp::GetAtlas());
+	enemy->m_slimeSprite->CenterOrigin();
 	enemy->Add(enemy->m_slimeSprite);
 	switch (type) {
 	case 0:
@@ -32,4 +33,12 @@ Enemy* Enemy::Create(int type)
 	}
 	enemy->m_slimeSprite->Play("walk");
 	return enemy;
+}
+
+void Enemy::Update()
+{
+	base::Update();
+
+	Math::Vec2 vec2 = Calc::SafeNormalize(Player::Instance()->Position() - Position(), Vec2_YUp) * 42.f;
+	Position(Math::Vec2(Position()) + vec2 * Engine::Instance()->DeltaTime());
 }

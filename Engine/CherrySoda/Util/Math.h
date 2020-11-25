@@ -31,7 +31,9 @@
 	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(NAME,VALUE,CHERRYSODA_NONE_OP,CHERRYSODA_NONE_OP)
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
-	inline const Math::Vec3 NAME() const { EXTRA_GET_OP; return VALUE; } \
+	inline const cherrysoda::Math::Vec3 NAME() const { EXTRA_GET_OP; return VALUE; } \
+	inline cherrysoda::Math::Vec3& NAME##Ref() { return VALUE; } \
+	inline const cherrysoda::Math::Vec2 NAME##2D() const { return cherrysoda::Math::Vec2(NAME()); } \
 	inline void NAME(const cherrysoda::Math::Vec3& v) { EXTRA_SET_OP; VALUE = v; } \
 	inline void NAME(const cherrysoda::Math::Vec2& v) { NAME(cherrysoda::Math::Vec3(v, NAME().z)); } \
 	inline float NAME##X() const { EXTRA_GET_OP; return VALUE.x; } \
@@ -46,6 +48,8 @@
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
 	inline const cherrysoda::Math::Vec2 NAME() const { EXTRA_GET_OP; return VALUE; } \
+	inline const cherrysoda::Math::Vec2 NAME##2D() const { return NAME(); } \
+	inline cherrysoda::Math::Vec2& NAME##Ref() { return VALUE; } \
 	inline void NAME(const cherrysoda::Math::Vec2& v) { EXTRA_SET_OP; VALUE = v; } \
 	inline float NAME##X() const { EXTRA_GET_OP; return VALUE.x; } \
 	inline float NAME##Y() const { EXTRA_GET_OP; return VALUE.y; } \

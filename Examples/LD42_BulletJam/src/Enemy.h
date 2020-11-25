@@ -12,6 +12,10 @@ namespace ld42_bulletjam {
 class Enemy : public cherrysoda::Entity
 {
 public:
+	typedef cherrysoda::Entity base;
+
+	void Update() override;
+
 	static Enemy* Create(int type);
 
 private:

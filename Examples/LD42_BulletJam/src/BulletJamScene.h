@@ -35,7 +35,9 @@ public:
 	void AddEnemy(const cherrysoda::STL::Vector<int>& enemyType);
 	void AddEnemy(int enemyType);
 	void AddEnemyAt(int type, const cherrysoda::Math::Vec2& position);
-	cherrysoda::Math::Vec2 GetValidSpawnPosition();
+
+	static bool CheckOutsideOfPlayZone(cherrysoda::Math::Vec2& position, bool normalize = false, float margin = 0.f);
+	static cherrysoda::Math::Vec2 GetValidSpawnPosition();
 
 	void OnEnemyDead();
 

@@ -201,10 +201,41 @@ void BulletJamScene::AddEnemyAt(int type, const Math::Vec2& position)
 	m_aliveEnemyCounter++;
 }
 
+bool BulletJamScene::CheckOutsideOfPlayZone(Math::Vec2& position, bool normalize/* = false*/, float margin/* = 0.f*/)
+{
+	const float rangeMin = 50.f + margin;
+	const float rangeMax = 550.f - margin;
+	bool result = position.x < rangeMin || position.y < rangeMin || position.x > rangeMax || position.y > rangeMax;
+	if (normalize)
+	{
+		if (position.x < rangeMin)
+		{
+			position.x = rangeMin;
+		}
+		if (position.y < rangeMin)
+		{
+			position.y = rangeMin;
+		}
+		if (position.x > rangeMax)
+		{
+			position.x = rangeMax;
+		}
+		if (position.y > rangeMax)
+		{
+			position.y = rangeMax;
+		}
+	}
+	return result;
+}
+
 Math::Vec2 BulletJamScene::GetValidSpawnPosition()
 {
-	return Math::Vec2(Player::Instance()->Position());
-	return Math::Vec2();
+	float num = Calc::GetRandom()->NextAngle();
+	Math::Vec2 vector = Math::Vec2((float)Math_Cos(num), (float)Math_Sin(num));
+	// Math::Vec2 position = LineWalkCheck(Player::Instance()->Position(), Player::Instance()->Position() + vector * 500f, GameApp::ms_deadBulletTag.ID(), 5.f);
+	Math::Vec2 position = Player::Instance()->Position2D() + vector * 400.f;
+	CheckOutsideOfPlayZone(position, true);
+	return position + (Player::Instance()->Position2D() - position) * 0.1f;
 }
 
 void BulletJamScene::OnEnemyDead()
