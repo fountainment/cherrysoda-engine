@@ -7,7 +7,7 @@
 namespace cherrysoda {
 class Alarm;
 class Sprite;
-};
+} // namespace cherrysoda
 
 namespace ld42_bulletjam {
 

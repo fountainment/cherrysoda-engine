@@ -5,6 +5,7 @@
 #include "Program.h"
 #include "Player.h"
 #include "Cursor.h"
+#include "Enemy.h"
 
 using namespace cherrysoda;
 using namespace ld42_bulletjam;
@@ -74,6 +75,7 @@ void BulletJamScene::Update()
 		GameStart();
 	}
 
+	// TODO: Consider moving these to Camera
 	m_renderer->GetCamera()->SetSize(Engine::Instance()->GetViewSize());
 	Math::IVec2 winSize = Engine::Instance()->GetWindowSize();
 	float ratio = winSize.x / (float)winSize.y;
@@ -193,14 +195,15 @@ void BulletJamScene::AddEnemy(int type)
 
 void BulletJamScene::AddEnemyAt(int type, const Math::Vec2& position)
 {
-	// Enemy* enemy = Enemy::Create(type);
-	// enemy->Position(position);
-	// Add(enemy);
-	// m_aliveEnemyCounter++;
+	Enemy* enemy = Enemy::Create(type);
+	enemy->Position(position);
+	Add(enemy);
+	m_aliveEnemyCounter++;
 }
 
 Math::Vec2 BulletJamScene::GetValidSpawnPosition()
 {
+	return Math::Vec2(Player::Instance()->Position());
 	return Math::Vec2();
 }
 
