@@ -87,7 +87,7 @@ void EntityList::Add(Entity* entity)
 
 void EntityList::Remove(Entity* entity)
 {
-	if (!STL::Contains(m_removing, entity) && !STL::Contains(m_current, entity)) {
+	if (!STL::Contains(m_removing, entity) && STL::Contains(m_current, entity)) {
 		STL::Add(m_removing, entity);
 		STL::Add(m_toRemove, entity);
 	}
