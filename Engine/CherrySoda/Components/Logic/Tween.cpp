@@ -19,7 +19,7 @@ STL::Stack<Tween*> Tween::ms_cached;
 Tween* Tween::Create(TweenMode mode, Easer easer/* = nullptr*/, float duration/* = 1.f*/, bool start/* = false*/)
 {
 	Tween* tween = nullptr;
-	if (STL::Count(ms_cached) == 0) {
+	if (STL::Empty(ms_cached)) {
 		tween = new Tween();
 	}
 	else {

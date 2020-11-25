@@ -187,7 +187,7 @@ public:
 			if (!IsValid()) {
 				InitBuffer();
 			}
-			else if (STL::Count(m_vertices) > 0) {
+			else if (!STL::Empty(m_vertices)) {
 				UpdateVertexBuffer(0, m_vertices);
 				UpdateIndexBuffer(0, m_indices);
 			}
@@ -228,17 +228,17 @@ private:
 		CHERRYSODA_ASSERT(!IsValid(), "Mesh already initialized!\n");
 		switch (GetBufferType()) {
 		case Graphics::BufferType::Static:
-			if (STL::Count(m_vertices) > 0) {
+			if (!STL::Empty(m_vertices)) {
 				m_vertexBuffer = Graphics::CreateVertexBuffer(m_vertices);
-				if (STL::Count(m_indices) > 0) {
+				if (!STL::Empty(m_indices)) {
 					m_indexBuffer = Graphics::CreateIndexBuffer(m_indices);
 				}
 			}
 			break;
 		case Graphics::BufferType::Dynamic:
-			if (STL::Count(m_vertices) > 0) {
+			if (!STL::Empty(m_vertices)) {
 				m_vertexBuffer = Graphics::CreateDynamicVertexBuffer(m_vertices);
-				if (STL::Count(m_indices) > 0) {
+				if (!STL::Empty(m_indices)) {
 					m_indexBuffer = Graphics::CreateDynamicIndexBuffer(m_indices);
 				}
 			}

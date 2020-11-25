@@ -15,7 +15,7 @@ STL::Stack<Alarm*> Alarm::ms_cached;
 Alarm* Alarm::Create(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.f*/, bool start/* = false*/)
 {
 	Alarm* alarm = nullptr;
-	if (STL::Count(ms_cached) == 0) {
+	if (STL::Empty(ms_cached)) {
 		alarm = new Alarm();
 	}
 	else {

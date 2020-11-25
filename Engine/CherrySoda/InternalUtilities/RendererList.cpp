@@ -35,11 +35,11 @@ void RendererList::Remove(Renderer* renderer)
 
 void RendererList::UpdateLists()
 {
-	if (STL::Count(m_adding) > 0)
+	if (!STL::Empty(m_adding))
 		for (auto renderer : m_adding)
 			STL::Add(m_renderers, renderer);
 	m_adding.clear();
-	if (STL::Count(m_removing) > 0)
+	if (!STL::Empty(m_removing))
 		for (auto renderer : m_removing)
 			STL::Remove(m_renderers, renderer);
 	m_removing.clear();
