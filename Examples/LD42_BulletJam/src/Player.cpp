@@ -157,7 +157,7 @@ void Player::Shoot()
 {
 	if (m_canShoot)
 	{
-		GetScene()->Add(Bullet::Create(Position(), 600.f * Math_Normalize(Cursor::Instance()->Position() - Position())));
+		GetScene()->Add(Bullet::Create(Position(), 600.f * Calc::SafeNormalize(Cursor::Instance()->Position() - Position())));
 		m_canShoot = false;
 		m_bulletAlarm->Start();
 	}

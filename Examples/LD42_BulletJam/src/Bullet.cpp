@@ -23,13 +23,12 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 		bullet->m_bulletImage->RotateOnZ(Calc::GetRandom()->NextFloat());
 	}
 	bullet->Add(bullet->m_bulletImage);
-	// bullet->m_collider = new Circle((float)Game1.BulletImage.Height / 2f);
+	// bullet->m_collider = new Circle((float)bullet->m_bulletImage->Height() / 2.f);
 	bullet->Position(position);
-	bullet->Speed(speed);
-	// if (float.IsNaN(speed.Length()))
-	{
-		// bullet->Speed(-Vec2_YUp * 10.f);
+	if (speed == Vec2_Zero) {
+		speed = Vec2_YUp * 10.f;
 	}
+	bullet->Speed(speed);
 	if (needRandom)
 	{
 		bullet->SpeedX(bullet->SpeedX() + Calc::GetRandom()->NextFloat() - 0.5f);
