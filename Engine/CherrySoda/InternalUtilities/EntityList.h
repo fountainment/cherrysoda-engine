@@ -30,6 +30,8 @@ public:
 	void RenderExcept(BitTagValueType excludeTags);
 	void DebugRender(Camera* camera);
 
+	static bool CompareDepth(Entity* a, Entity* b) { return a->m_actualDepth < b->m_actualDepth; }
+
 private:
 	friend class Scene;
 

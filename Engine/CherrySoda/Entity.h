@@ -51,8 +51,6 @@ public:
 
 	inline Scene* GetScene() { return m_scene; }
 
-	static bool CompareDepth(Entity* a, Entity* b) { return a->m_actualDepth < b->m_actualDepth; }
-
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Active, m_active);
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Visible, m_visible);

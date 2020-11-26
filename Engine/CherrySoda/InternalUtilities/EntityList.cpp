@@ -60,7 +60,7 @@ void EntityList::UpdateLists()
 
 	if (m_unsorted) {
 		m_unsorted = false;
-		STL::Sort(m_entities, Entity::CompareDepth);	
+		STL::Sort(m_entities, CompareDepth);	
 	}
 
 	if (STL::IsNotEmpty(m_toAdd)) {
