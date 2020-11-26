@@ -41,6 +41,8 @@ set(ENGINE_SRC
   CherrySoda/InternalUtilities/EntityList.h
   CherrySoda/InternalUtilities/RendererList.cpp
   CherrySoda/InternalUtilities/RendererList.h
+  CherrySoda/InternalUtilities/TagLists.cpp
+  CherrySoda/InternalUtilities/TagLists.h
   CherrySoda/Renderers/Renderer.h
   CherrySoda/Renderers/EverythingRenderer.cpp
   CherrySoda/Renderers/EverythingRenderer.h

@@ -37,6 +37,7 @@ public:
 	}
 
 	operator BitTagValueType() const { return m_value; }
+	inline int ID() const { return m_id; }
 
 	static BitTag Get(const StringID& name)
 	{

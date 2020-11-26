@@ -4,25 +4,32 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/RendererList.h>
+#include <CherrySoda/InternalUtilities/TagLists.h>
 #include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Renderers/EverythingRenderer.h>
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Scene;
 
+using cherrysoda::BitTag;
 using cherrysoda::Engine;
 using cherrysoda::Entity;
 using cherrysoda::EntityList;
 using cherrysoda::Renderer;
 using cherrysoda::RendererList;
 using cherrysoda::STL;
+using cherrysoda::TagLists;
 
 Scene::Scene()
 {
 	m_entities = new EntityList(this);
+	m_tagLists = new TagLists();
 	m_rendererList = new RendererList(this);
-	// TODO: finish Scene::Scene
+
+	m_helperEntity = new Entity();
+	m_entities->Add(m_helperEntity);
 }
 
 Scene::~Scene()
@@ -57,7 +64,7 @@ void Scene::BeforeUpdate()
 	m_rawTimeActive += Engine::Instance()->RawDeltaTime();
 
 	m_entities->UpdateLists();
-	// TODO: m_tagLists->UpdateLists();
+	m_tagLists->UpdateLists();
 	m_rendererList->UpdateLists();
 }
 
@@ -109,6 +116,11 @@ Renderer* Scene::FirstRenderer()
 	return Renderers()->First();	
 }
 
+const STL::List<Entity*> Scene::operator [] (const BitTag& tag) const
+{
+	return (*m_tagLists)[tag.ID()];
+}
+
 void Scene::AddActionOnEndOfFrame(STL::Action<> func)
 {
 	STL::Add(m_onEndOfFrame, func);
@@ -146,23 +158,24 @@ void Scene::Remove(Renderer* renderer)
 
 void Scene::_SetActualDepth(Entity* entity)
 {
-	double value = 0.0;
-	if (STL::TryGetValue(m_actualDepthLookup, entity->Depth(), value))
+	const double theta = 0.000001;
+
+	double add = 0;
+	if (STL::TryGetValue(m_actualDepthLookup, entity->Depth(), add))
 	{
-		m_actualDepthLookup[entity->Depth()] += 9.9999999747524271E-07;
+		m_actualDepthLookup[entity->Depth()] += theta;
 	}
 	else
 	{
-		STL::Add(m_actualDepthLookup, STL::MakePair(entity->Depth(), 9.9999999747524271E-07));
+		STL::Add(m_actualDepthLookup, STL::MakePair(entity->Depth(), (double)theta));
 	}
-	entity->m_actualDepth = (double)entity->Depth() - value;
+	entity->m_actualDepth = (double)entity->Depth() - add;
 	m_entities->MarkUnsorted();	
-	// TODO: Implement taglist
-	// for (int i = 0; i < BitTag::TotalTags(); ++i)
-	// {
-	// 	if (entity->TagCheck(1 << i))
-	// 	{
-	// 		m_tagLists->MarkUnsorted(i);
-	// 	}
-	// }
+	for (int i = 0; i < BitTag::TotalTags(); ++i)
+	{
+		if (entity->TagCheck(1 << i))
+		{
+			m_tagLists->MarkUnsorted(i);
+	 	}
+	}
 }

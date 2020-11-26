@@ -1,6 +1,7 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/InternalUtilities/TagLists.h>
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Camera.h>
@@ -29,8 +30,8 @@ void EntityList::UpdateLists()
 			}	
 
 			if (m_scene != nullptr) {
-				// TODO: Add Taglists and Tracker
-				// m_scene->Taglists()->EntityAdded(entity);	
+				// TODO: Add Tracker
+				m_scene->Tags()->EntityAdded(entity);	
 				// m_scene->Tracker()->EntityAdded(entity);	
 				entity->Added(m_scene);	
 			}
@@ -47,7 +48,8 @@ void EntityList::UpdateLists()
 
 				if (m_scene != nullptr) {
 					entity->Removed(m_scene);
-					// TODO: m_scene->TagLists()->EntityRemoved(entity);
+					// TODO: Add Tracker and Pooler
+					m_scene->Tags()->EntityRemoved(entity);
 					// m_scene->Tracker()->EntityRemoved(entity);
 					// Engine.Pooler.EntityRemoved(entity);
 				}

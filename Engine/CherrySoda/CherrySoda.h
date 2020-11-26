@@ -26,6 +26,10 @@
 
 #include <CherrySoda/Interface/Window.h>
 
+#include <CherrySoda/InternalUtilities/EntityList.h>
+#include <CherrySoda/InternalUtilities/RendererList.h>
+#include <CherrySoda/InternalUtilities/TagLists.h>
+
 #include <CherrySoda/Renderers/EverythingRenderer.h>
 #include <CherrySoda/Renderers/SingleTagRenderer.h>
 

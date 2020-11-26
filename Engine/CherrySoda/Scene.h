@@ -5,10 +5,12 @@
 
 namespace cherrysoda {
 
+class BitTag;
 class Entity;
 class EntityList;
 class Renderer;
 class RendererList;
+class TagLists;
 
 class Scene
 {
@@ -39,14 +41,21 @@ public:
 	void _SetActualDepth(Entity* entity);
 
 	EntityList* Entities() { return m_entities; }
+	TagLists* Tags() { return m_tagLists; }
 	RendererList* Renderers() { return m_rendererList; }
+	Entity* HelperEntity() { return m_helperEntity; }
 	Renderer* FirstRenderer();
+
+	const STL::List<Entity*> operator [] (const BitTag& tag) const;
 
 	void AddActionOnEndOfFrame(STL::Action<> func);
 
 private:
 	EntityList* m_entities = nullptr;
+	TagLists* m_tagLists = nullptr;
 	RendererList* m_rendererList = nullptr;
+
+	Entity* m_helperEntity = nullptr;
 
 	float m_timeActive = 0.f;
 	float m_rawTimeActive = 0.f;
