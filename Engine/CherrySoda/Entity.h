@@ -33,10 +33,13 @@ public:
 
 	void RemoveSelf();
 
-	inline bool TagCheck(BitTagValueType tag) const { return (m_tag & tag) != 0; }
-	inline bool TagFullCheck(BitTagValueType tag) const { return (m_tag & tag) == tag; }
-	inline void AddTag(BitTagValueType tag) { m_tag |= tag; }
-	inline void RemoveTag(BitTagValueType tag) { m_tag &= ~tag; }
+	inline bool TagCheck(BitTagValueType tag) const { return (Tag() & tag) != 0; }
+	inline bool TagFullCheck(BitTagValueType tag) const { return (Tag() & tag) == tag; }
+	inline void AddTag(BitTagValueType tag) { Tag(Tag() | tag); }
+	inline void RemoveTag(BitTagValueType tag) { Tag(Tag() & ~tag); }
+
+	inline int Tag() const { return m_tag; }
+	void Tag(int tag); 
 
 	void Add(Component* component); 
 	void Remove(Component* component);

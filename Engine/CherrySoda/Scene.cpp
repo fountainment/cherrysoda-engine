@@ -116,9 +116,9 @@ Renderer* Scene::FirstRenderer()
 	return Renderers()->First();	
 }
 
-const STL::List<Entity*> Scene::operator [] (const BitTag& tag) const
+const STL::List<Entity*>& Scene::operator [] (const BitTag& tag) const
 {
-	return (*m_tagLists)[tag.ID()];
+	return m_tagLists->operator[](tag.ID());
 }
 
 void Scene::AddActionOnEndOfFrame(STL::Action<> func)
@@ -144,6 +144,32 @@ void Scene::Add(Entity* entity)
 void Scene::Remove(Entity* entity)
 {
 	m_entities->Remove(entity);
+}
+
+const STL::List<Entity*> Scene::GetEntitiesByTagMask(int mask) const
+{
+	STL::List<Entity*> list;
+	for (Entity* entity : *m_entities)
+	{
+		if ((entity->Tag() & mask) != 0)
+		{
+			STL::Add(list, entity);
+		}
+	}
+	return list;
+}
+
+const STL::List<Entity*> Scene::GetEntitiesExcludingTagMask(int mask) const
+{
+	STL::List<Entity*> list;
+	for (Entity* entity : *m_entities)
+	{
+		if ((entity->Tag() & mask) == 0)
+		{
+			STL::Add(list, entity);
+		}
+	}
+	return list;
 }
 
 void Scene::Add(Renderer* renderer)

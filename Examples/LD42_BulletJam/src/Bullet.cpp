@@ -32,7 +32,7 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 	{
 		bullet->SpeedX(bullet->SpeedX() + Calc::GetRandom()->NextFloat() - 0.5f);
 	}
-	bullet->AddTag(s_bulletTag);
+	bullet->Tag(s_bulletTag);
 	return bullet;
 }
 
@@ -67,15 +67,13 @@ void Bullet::Update()
 			float num3 = num2 * 0.5f - 0.05f;
 			bullet->m_bulletImage->Scale(Math::Vec2(num2));
 			// bullet.Collider = new Circle(BulletImage.Width * num3);
-			bullet->RemoveTag(s_bulletTag);
-			bullet->AddTag(s_littleBulletTag);
+			bullet->Tag(s_littleBulletTag);
 			GetScene()->Add(bullet);
 		}
 	}
 	else if (TagCheck(s_littleBulletTag) && outsideFlag) {
 		Speed(Vec2_Zero);
-		RemoveTag(s_littleBulletTag);
-		AddTag(s_deadBulletTag);
+		Tag(s_deadBulletTag);
 		Active(false);
 	}
 

@@ -66,7 +66,7 @@ void MainScene::Begin()
 
 	m_skybox = new Entity;
 	m_skybox->Add(new Skybox);
-	m_skybox->AddTag(ms_skyboxTag);
+	m_skybox->Tag(ms_skyboxTag);
 
 	m_player = new Player(m_voxelRenderer->GetCamera());
 	m_player->Position(Math::Vec3(0.f, 70.f, 0.f));
@@ -88,7 +88,7 @@ void MainScene::Begin()
 				}
 			}
 		}
-		chunk.AddTag(ms_voxelTag);
+		chunk.Tag(ms_voxelTag);
 		Add(&chunk);
 	}
 

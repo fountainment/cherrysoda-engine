@@ -18,7 +18,12 @@ TagLists::TagLists()
 	m_unsorted = STL::Vector<bool>(BitTag::TotalTags());
 }
 
-const STL::List<Entity*> TagLists::operator [] (int index) const
+const STL::List<Entity*>& TagLists::operator [] (int index) const
+{
+	return m_lists[index];
+}
+
+STL::List<Entity*>& TagLists::operator [] (int index)
 {
 	return m_lists[index];
 }

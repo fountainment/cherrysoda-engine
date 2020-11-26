@@ -10,13 +10,16 @@ class Entity;
 class TagLists
 {
 public:
-	const STL::List<Entity*> operator [] (int index) const;
+	const STL::List<Entity*>& operator [] (int index) const;
 
 private:
+	friend class Entity;
 	friend class EntityList;
 	friend class Scene;
 
 	TagLists();
+
+	STL::List<Entity*>& operator [] (int index);
 
 	void MarkUnsorted(int index);
 	void UpdateLists();

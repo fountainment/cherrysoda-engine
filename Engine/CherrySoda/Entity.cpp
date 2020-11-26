@@ -4,6 +4,7 @@
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
+#include <CherrySoda/InternalUtilities/TagLists.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/Math.h>
 
@@ -51,6 +52,34 @@ void Entity::Render()
 	CHERRYSODA_PROFILE_FUNCTION();
 
 	m_components->Render();
+}
+
+void Entity::Tag(int tag)
+{
+	if (m_tag == tag)
+	{
+		return;
+	}
+	if (m_scene != nullptr)
+	{
+		for (int i = 0; i < BitTag::TotalTags(); ++i)
+		{
+			int num = 1 << i;
+			bool flag = (tag & num) != 0;
+			if ((m_tag & num) != 0 != flag)
+			{
+				if (flag)
+				{
+					STL::Add(m_scene->Tags()->operator[](i), this);
+				}
+				else
+				{
+					STL::Remove(m_scene->Tags()->operator[](i), this);
+				}
+			}
+		}
+	}
+	m_tag = tag;	
 }
 
 void Entity::Add(Component* component)
