@@ -45,8 +45,8 @@ public:
 	inline const Entity* GetEntity() const { return m_entity; };
 	Scene* GetScene();
 
-	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Active, m_active);
-	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Visible, m_visible);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
 
 private:
 	Entity* m_entity = nullptr;

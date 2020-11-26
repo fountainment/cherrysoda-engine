@@ -31,7 +31,7 @@ Enemy* Enemy::Create(int type)
 		enemy->m_slimeSprite->AddLoop("walk", "slimeCC_walk/slimeCC_walk", 1, 1);
 		break;
 	}
-	enemy->m_slimeSprite->Play("walk");
+	enemy->m_slimeSprite->Play("walk", false, true);
 	return enemy;
 }
 

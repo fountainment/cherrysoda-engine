@@ -55,8 +55,9 @@ public:
 	inline Scene* GetScene() { return m_scene; }
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
-	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Active, m_active);
-	CHERRYSODA_GETTER_SETTER_OF_TYPE(bool, Visible, m_visible);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Collidable, m_collidable);
 
 private:
 	friend class EntityList;

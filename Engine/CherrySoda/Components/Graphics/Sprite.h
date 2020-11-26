@@ -71,7 +71,7 @@ public:
 
 	inline float Rate() const { return m_rate; }
 
-	CHERRYSODA_GETTER_SETTER_OF_TYPE(Math::Vec2, Justify, m_justify);
+	CHERRYSODA_GETTER_SETTER_OF_VEC2(Justify, m_justify);
 
 private:
 	struct Animation
