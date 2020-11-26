@@ -21,8 +21,8 @@ public:
 	T* Get()
 	{
 		for (auto component : m_components) {
-			if (auto t = dynamic_cast<T*>(component)) {
-				return t;
+			if (typeid(T*) == typeid(component)) {
+				return component;
 			}
 		}
 		return nullptr;
@@ -35,7 +35,7 @@ private:
 
 	ComponentList(Entity* entity);
 
-	inline LockModes LockMode() { return m_lockMode; }
+	inline LockModes LockMode() const { return m_lockMode; }
 	void LockMode(LockModes lockMode);
 
 	void Add(Component* component);

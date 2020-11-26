@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_COMPONENTS_COMPONENT_H_
 #define _CHERRYSODA_COMPONENTS_COMPONENT_H_
 
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
@@ -36,14 +37,14 @@ public:
 	void RemoveSelf();	
 
 	template <class T>
-	T* SceneAs() { return dynamic_cast<T*>(GetScene()); }
+	T* SceneAs() { return typeid(T*) == typeid(GetScene()) ? static_cast<T*>(GetScene()) : nullptr; }
 
 	template <class T>
-	T* EntityAs() { return dynamic_cast<T*>(GetEntity()); }
+	T* EntityAs() { return typeid(T*) == typeid(GetEntity()) ? static_cast<T*>(GetEntity()) : nullptr; }
 
 	inline Entity* GetEntity() { return m_entity; };
 	inline const Entity* GetEntity() const { return m_entity; };
-	Scene* GetScene();
+	inline Scene* GetScene() const { return m_entity != nullptr ? m_entity->GetScene() : nullptr; }
 
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);

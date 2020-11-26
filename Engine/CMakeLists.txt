@@ -5,6 +5,12 @@ set(ENGINE_SRC
   CherrySoda/Entity.h
   CherrySoda/Scene.cpp
   CherrySoda/Scene.h
+  CherrySoda/Colliders/Collide.cpp
+  CherrySoda/Colliders/Collide.h
+  CherrySoda/Colliders/Collider.cpp
+  CherrySoda/Colliders/Collider.h
+  CherrySoda/Colliders/Circle.cpp
+  CherrySoda/Colliders/Circle.h
   CherrySoda/Components/Component.cpp
   CherrySoda/Components/Component.h
   CherrySoda/Components/Graphics/GraphicsComponent.cpp

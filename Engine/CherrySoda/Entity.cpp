@@ -1,20 +1,26 @@
 #include <CherrySoda/Entity.h>
 
 #include <CherrySoda/Scene.h>
+#include <CherrySoda/Colliders/Collide.h>
+#include <CherrySoda/Colliders/Collider.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/TagLists.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Entity;
 
 using cherrysoda::Camera;
+using cherrysoda::Collide;
+using cherrysoda::Collider;
 using cherrysoda::Component;
 using cherrysoda::ComponentList;
 using cherrysoda::Math;
 using cherrysoda::Scene;
+using cherrysoda::STL;
 
 Entity::Entity(const Math::Vec3& position)
 {
@@ -80,6 +86,30 @@ void Entity::Tag(int tag)
 		}
 	}
 	m_tag = tag;	
+}
+
+const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
+{
+#ifndef NDEBUG
+	CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+#endif
+	return Collide::All(this, (*m_scene)[tag]);
+}
+
+bool Entity::CollideCheck(const BitTag& tag) const
+{
+#ifndef NDEBUG
+	CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+#endif
+	return Collide::Check(this, (*m_scene)[tag]);
+}
+
+Entity* Entity::CollideFirst(const BitTag& tag) const
+{
+#ifndef NDEBUG
+	CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+#endif
+	return Collide::First(this, (*m_scene)[tag]);
 }
 
 void Entity::Add(Component* component)
@@ -150,4 +180,23 @@ void Entity::Removed(Scene* scene)
 		component->EntityRemoved(scene);
 	}
 	m_scene = nullptr;
+}
+
+void Entity::SetCollider(Collider* collider)
+{
+	if (m_collider == collider) {
+		return;
+	}
+#ifndef NDEBUG
+	if (collider->GetEntity() != nullptr) {
+		CHERRYSODA_ASSERT(false, "Setting an Entity's Collider to a Collider already in use by another object\n")
+	}
+#endif
+	if (m_collider != nullptr) {
+		m_collider->Removed();
+	}
+	m_collider = collider;	
+	if (m_collider) {
+		m_collider->Added(this);
+	}
 }

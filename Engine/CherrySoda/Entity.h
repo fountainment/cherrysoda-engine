@@ -5,10 +5,12 @@
 
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
 class Camera;
+class Collider;
 class Component;
 class ComponentList;
 class Scene;
@@ -39,7 +41,11 @@ public:
 	inline void RemoveTag(BitTagValueType tag) { Tag(Tag() & ~tag); }
 
 	inline int Tag() const { return m_tag; }
-	void Tag(int tag); 
+	void Tag(int tag);
+
+	const STL::List<Entity*> CollideAll(const BitTag& tag) const;
+	bool CollideCheck(const BitTag& tag) const;
+	Entity* CollideFirst(const BitTag& tag) const;
 
 	void Add(Component* component); 
 	void Remove(Component* component);
@@ -53,6 +59,9 @@ public:
 	T* Get() { return m_components != nullptr ? m_components->Get<T>() : nullptr; }
 
 	inline Scene* GetScene() { return m_scene; }
+
+	inline Collider* GetCollider() const { return m_collider; }
+	inline void SetCollider(Collider* collider);
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
@@ -77,7 +86,7 @@ private:
 	int m_id = 0;
 	BitTagValueType m_tag = 0;
 
-	// Collider* collider;
+	Collider* m_collider = nullptr;
 
 	int m_depth = 0;
 	double m_actualDepth = 0.0;
