@@ -761,7 +761,7 @@ Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const 
 		bgfx::TransientIndexBuffer ib;
 		bgfx::allocTransientIndexBuffer(&ib, indexAmount);
 		auto index = (type::UInt16*)ib.data;
-		bx::memCopy((void*)index, (void*)indices, indexAmount << 1);
+		bx::memCopy((void*)index, (void*)indices, (size_t)indexAmount << 1);
 		STL::Add(s_transientIndexBufferStack, ib);
 		return Graphics::TransientIndexBufferHandle(STL::Count(s_transientIndexBufferStack) - 1);
 	}
