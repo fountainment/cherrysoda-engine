@@ -183,6 +183,8 @@ void Engine::Update()
 
 	m_currentTime = Time::GetSystemTime();
 	m_rawDeltaTime = m_currentTime - m_lastFrameTime;
+	// Avoid big deltatime
+	if (m_rawDeltaTime > 0.1) m_rawDeltaTime = 0.1;
 	m_deltaTime = m_rawDeltaTime * m_timeRate;
 	m_lastFrameTime = m_currentTime;
 
