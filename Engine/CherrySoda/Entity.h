@@ -45,6 +45,7 @@ public:
 
 	const STL::List<Entity*> CollideAll(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag) const;
+	int CollideCount(const BitTag& tag) const;
 	Entity* CollideFirst(const BitTag& tag) const;
 
 	void Add(Component* component); 
@@ -61,7 +62,9 @@ public:
 	inline Scene* GetScene() { return m_scene; }
 
 	inline Collider* GetCollider() const { return m_collider; }
-	inline void SetCollider(Collider* collider);
+	template <typename T>
+	inline T* GetColliderAs() const { return static_cast<T*>(m_collider); }
+	void SetCollider(Collider* collider);
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);

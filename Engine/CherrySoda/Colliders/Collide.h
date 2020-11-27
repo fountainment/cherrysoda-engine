@@ -14,6 +14,8 @@ public:
 
 	static bool Check(const Entity* a, const STL::List<Entity*> b);
 
+	static int Count(const Entity* a, const STL::List<Entity*> b);
+
 	static Entity* First(const Entity* a, const STL::List<Entity*> b);
 
 	static const STL::List<Entity*> All(const Entity* a, const STL::List<Entity*> b);

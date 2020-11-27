@@ -29,6 +29,17 @@ bool Collide::Check(const Entity* a, const STL::List<Entity*> b)
 	return false;
 }
 
+int Collide::Count(const Entity* a, const STL::List<Entity*> b)
+{
+	int count = 0;
+	for (auto e : b) {
+		if (Check(a, e)) {
+			++count;
+		}
+	}	
+	return count;
+}
+
 Entity* Collide::First(const Entity* a, const STL::List<Entity*> b)
 {
 	for (auto e : b) {

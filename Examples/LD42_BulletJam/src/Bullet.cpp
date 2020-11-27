@@ -25,12 +25,14 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 		bullet->m_bulletImage->RotateOnZ(Calc::GetRandom()->NextFloat());
 	}
 	bullet->Add(bullet->m_bulletImage);
-	// bullet->m_collider = new Circle((float)bullet->m_bulletImage->Height() / 2.f);
+	bullet->SetCollider(new Circle((float)bullet->m_bulletImage->Height() / 2.f));
+	bullet->Collidable(true);
 	bullet->Position(position);
 	bullet->Speed(speed);
 	if (needRandom)
 	{
-		bullet->SpeedX(bullet->SpeedX() + Calc::GetRandom()->NextFloat() - 0.5f);
+		bullet->SpeedX(bullet->SpeedX() + Calc::GetRandom()->NextFloat(-0.5f, 0.5f) * 60.f);
+		bullet->SpeedY(bullet->SpeedY() + Calc::GetRandom()->NextFloat(-0.5f, 0.5f) * 60.f);
 	}
 	bullet->Tag(s_bulletTag);
 	return bullet;
@@ -41,41 +43,51 @@ void Bullet::Update()
 	base::Update();
 
 	auto pos2D = Position2D();
+	Position2D(pos2D + Speed() * Engine::Instance()->DeltaTime());
 	bool outsideFlag = BulletJamScene::CheckOutsideOfPlayZone(pos2D);
 
-	if (TagCheck(s_bulletTag) && outsideFlag) {
-		RemoveSelf();
-		m_bulletImage->Visible(false);
+	if (TagCheck(s_bulletTag)) {
+		int collideCount = 0;
+		if (!outsideFlag) {
+			collideCount = CollideCount(s_deadBulletTag);
+		}
+		if (outsideFlag || collideCount >= 5) {
+			RemoveSelf();
+			m_bulletImage->Visible(false);
 
-		STL::Vector<int> array = { -2, -1, 0, 1, 2 };
-		for (int arrayi : array)
-		{
-			Math::Vec2 vector = Calc::SafeNormalize(Calc::Perpendicular(Speed()));
-			Bullet* bullet = Create(Position2D() + Speed() / 60.f * 0.5f + (float)arrayi * 10.f * vector, Speed() + (float)arrayi * 120.f * vector);
-			// bullet->m_bulletImage->SetColor(m_bulletImage->GetColor());
-			// bullet->m_bulletImage->SetTexture(m_bulletImage->GetTexture());
-			float num2 = 0.7f;
-			switch (Math_Abs(arrayi))
+			STL::Vector<int> array = { -2, -1, 0, 1, 2 };
+			for (int arrayi : array)
 			{
-			case 1:
-				num2 *= 0.8f;
-				break;
-			case 2:
-				num2 *= 0.6f;
-				break;
+				Math::Vec2 vector = Calc::SafeNormalize(Calc::Perpendicular(Speed()));
+				Bullet* bullet = Create(Position2D() + Speed() / 60.f * 0.5f + (float)arrayi * 10.f * vector, Speed() + (float)arrayi * 120.f * vector);
+				bullet->m_bulletImage->SetColor(m_bulletImage->GetColor());
+				float scale = 0.7f;
+				switch (Math_Abs(arrayi))
+				{
+				case 1:
+					scale *= 0.8f;
+					break;
+				case 2:
+					scale *= 0.6f;
+					break;
+				}
+				float colliderSize = scale * 0.5f - 0.05f;
+				bullet->m_bulletImage->Scale(Math::Vec2(scale));
+				bullet->GetColliderAs<Circle>()->Radius(bullet->m_bulletImage->Width() * colliderSize);
+				bullet->Tag(s_littleBulletTag);
+				GetScene()->Add(bullet);
 			}
-			float num3 = num2 * 0.5f - 0.05f;
-			bullet->m_bulletImage->Scale(Math::Vec2(num2));
-			// bullet.Collider = new Circle(BulletImage.Width * num3);
-			bullet->Tag(s_littleBulletTag);
-			GetScene()->Add(bullet);
 		}
 	}
-	else if (TagCheck(s_littleBulletTag) && outsideFlag) {
+	else if (TagCheck(s_littleBulletTag) && (outsideFlag || CollideCheck(s_deadBulletTag))) {
 		Speed(Vec2_Zero);
 		Tag(s_deadBulletTag);
 		Active(false);
+		if (outsideFlag) {
+			auto pos2D = Position2D();
+			BulletJamScene::CheckOutsideOfPlayZone(pos2D, true);
+			Position2D(pos2D);
+		}
 	}
 
-	Position(Position() + Math::Vec3(Speed(), 0.f) * Engine::Instance()->DeltaTime());
 }

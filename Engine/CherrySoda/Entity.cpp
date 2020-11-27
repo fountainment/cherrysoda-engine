@@ -91,7 +91,9 @@ void Entity::Tag(int tag)
 const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
 {
 #ifndef NDEBUG
-	CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	if (m_scene == nullptr) {
+		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	}
 #endif
 	return Collide::All(this, (*m_scene)[tag]);
 }
@@ -99,15 +101,29 @@ const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
 bool Entity::CollideCheck(const BitTag& tag) const
 {
 #ifndef NDEBUG
-	CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	if (m_scene == nullptr) {
+		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	}
 #endif
 	return Collide::Check(this, (*m_scene)[tag]);
+}
+
+int Entity::CollideCount(const BitTag& tag) const
+{
+#ifndef NDEBUG
+	if (m_scene == nullptr) {
+		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	}
+#endif
+	return Collide::Count(this, (*m_scene)[tag]);
 }
 
 Entity* Entity::CollideFirst(const BitTag& tag) const
 {
 #ifndef NDEBUG
-	CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	if (m_scene == nullptr) {
+		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	}
 #endif
 	return Collide::First(this, (*m_scene)[tag]);
 }

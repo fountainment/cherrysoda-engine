@@ -11,7 +11,7 @@ class Color;
 class Circle : public Collider
 {
 public:
-	Circle(float radius, const Math::Vec2& center)
+	Circle(float radius, const Math::Vec2& center = Vec2_Zero)
 	{
 		Radius(radius);
 		Position2D(center);
