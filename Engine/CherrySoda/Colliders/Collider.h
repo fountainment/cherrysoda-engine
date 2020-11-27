@@ -48,4 +48,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif _CHERRYSODA_COLLIDERS_COLLIDER_H_
+#endif // _CHERRYSODA_COLLIDERS_COLLIDER_H_
