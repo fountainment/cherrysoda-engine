@@ -21,4 +21,4 @@ public:
 
 } // namespace cherrysoda
 
-#endif _CHERRYSODA_COLLIDERS_COLLIDE_H_
+#endif // _CHERRYSODA_COLLIDERS_COLLIDE_H_
