@@ -37,10 +37,10 @@ public:
 	void RemoveSelf();	
 
 	template <class T>
-	T* SceneAs() { return typeid(T*) == typeid(GetScene()) ? static_cast<T*>(GetScene()) : nullptr; }
+	T* SceneAs() { return dynamic_cast<T*>(GetScene()); }
 
 	template <class T>
-	T* EntityAs() { return typeid(T*) == typeid(GetEntity()) ? static_cast<T*>(GetEntity()) : nullptr; }
+	T* EntityAs() { return dynamic_cast<T*>(GetEntity()); }
 
 	inline Entity* GetEntity() { return m_entity; };
 	inline const Entity* GetEntity() const { return m_entity; };
