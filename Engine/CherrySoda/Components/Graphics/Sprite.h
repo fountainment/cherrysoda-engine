@@ -40,6 +40,8 @@ public:
 		}
 	}
 
+	void operator = (const Sprite& sprite) = delete;
+
 	void Update() override;
 	void SetFrame(MTexture texture);
 

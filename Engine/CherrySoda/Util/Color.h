@@ -15,6 +15,10 @@ public:
 	constexpr Color(float r, float g, float b, float a)
 		: m_r(r), m_g(g), m_b(b), m_a(a) {}
 
+	constexpr Color(int r, int g, int b) : Color(r, g, b, 255) {}
+	constexpr Color(int r, int g, int b, int a)
+		: Color(r/255.f, g/255.f, b/255.f, a/255.f) {}
+
 	constexpr float R() const { return m_r; }
 	constexpr float G() const { return m_g; }
 	constexpr float B() const { return m_b; }

@@ -26,7 +26,6 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 	}
 	bullet->Add(bullet->m_bulletImage);
 	bullet->SetCollider(new Circle((float)bullet->m_bulletImage->Height() / 2.f));
-	bullet->Collidable(true);
 	bullet->Position(position);
 	bullet->Speed(speed);
 	if (needRandom)
@@ -36,6 +35,13 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 	}
 	bullet->Tag(s_bulletTag);
 	return bullet;
+}
+
+void Bullet::Destroy(Bullet* bullet)
+{
+	delete bullet->GetCollider();
+	delete bullet->m_bulletImage;
+	delete bullet;
 }
 
 void Bullet::Update()
@@ -90,4 +96,9 @@ void Bullet::Update()
 		}
 	}
 
+}
+
+void Bullet::Removed(Scene* scene)
+{
+	scene->AddActionOnEndOfFrame([this]() { Bullet::Destroy(this); });
 }

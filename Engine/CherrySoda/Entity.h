@@ -20,6 +20,7 @@ class Entity
 public:
 	Entity() : Entity(Math::Vec3(0.f)) {}
 	Entity(const Math::Vec3& position);
+	virtual ~Entity() {}
 	
 	virtual void SceneBegin(Scene* scene);
 	virtual void SceneEnd(Scene* scene);
@@ -60,6 +61,8 @@ public:
 	T* Get() { return m_components != nullptr ? m_components->Get<T>() : nullptr; }
 
 	inline Scene* GetScene() { return m_scene; }
+	template <typename T>
+	inline T* GetSceneAs() const { return static_cast<T*>(m_scene); }
 
 	inline Collider* GetCollider() const { return m_collider; }
 	template <typename T>
@@ -81,7 +84,7 @@ private:
 	Math::Vec3 m_position = Math::Vec3(0.f);
 	bool m_active = true;
 	bool m_visible = true;
-	bool m_collidable = false;
+	bool m_collidable = true;
 
 	Scene* m_scene = nullptr;
 	ComponentList* m_components = nullptr;

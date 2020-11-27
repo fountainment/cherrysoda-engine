@@ -16,14 +16,18 @@ public:
 	typedef cherrysoda::Entity base;
 
 	static Bullet* Create(cherrysoda::Math::Vec2 position, cherrysoda::Math::Vec2 speed, bool needRandom = true);
+	static void Destroy(Bullet* bullet);
 
 	void Update() override;
+	void Removed(cherrysoda::Scene* scene) override;
+	int Damage() const { return m_damage; }
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Speed, m_speed);
 
 private:
 	cherrysoda::Image* m_bulletImage = nullptr;
 	cherrysoda::Math::Vec2 m_speed = Vec2_Zero;
+	int m_damage = 40;
 
 	static float ms_initialScale;
 };
