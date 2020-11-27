@@ -13,6 +13,8 @@ set(CHERRYSODA_EXECUTABLE_SRC
   src/Cursor.h
   src/Enemy.cpp
   src/Enemy.h
+  src/Boss.cpp
+  src/Boss.h
 )
 
 set(CHERRYSODA_SHADER_SRC

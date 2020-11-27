@@ -22,6 +22,8 @@ public:
 	void Removed(cherrysoda::Scene* scene) override;
 	int Damage() const { return m_damage; }
 
+	cherrysoda::Image* BulletImage() { return m_bulletImage; }
+
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Speed, m_speed);
 
 private:
