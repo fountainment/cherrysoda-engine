@@ -21,7 +21,7 @@ public:
 	void Move(const cherrysoda::Math::Vec2& move);
 	void Shoot();
 
-	static Player* Instance();	
+	static Player* Instance();
 
 private:
 	Player() {}

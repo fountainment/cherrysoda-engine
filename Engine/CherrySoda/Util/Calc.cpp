@@ -32,7 +32,7 @@ Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 	{
 		vec.y = 0.f;
 	}
-	return vec;	
+	return vec;
 }
 
 STL::Stack<Random> Calc::ms_randomStack({ Random() });
