@@ -34,6 +34,7 @@ private:
 	cherrysoda::Math::Vec2 m_deadSpeed = Vec2_Zero;
 	cherrysoda::Color m_jamColor = cherrysoda::Color::White;
 	int m_hp = 100;
+	int m_slimeType = 0;
 	float m_jamSize = 1.f;
 	bool m_isDead = false;
 

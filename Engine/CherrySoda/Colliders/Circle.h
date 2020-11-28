@@ -18,8 +18,10 @@ public:
 	}
 
 	bool Collide(const Circle* circle) const override;
+	bool Collide(const Math::Vec2& point) const override;
 	void Render(const Camera* camera, const Color& color) const override;
 
+	inline float RadiusSq() const { return m_radius * m_radius; }
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, Radius, m_radius);
 
 private:

@@ -15,7 +15,7 @@ class Bullet : public cherrysoda::Entity
 public:
 	typedef cherrysoda::Entity base;
 
-	static Bullet* Create(cherrysoda::Math::Vec2 position, cherrysoda::Math::Vec2 speed, bool needRandom = true);
+	static Bullet* Create(cherrysoda::Math::Vec2 position, cherrysoda::Math::Vec2 speed, bool needRandom = true, bool whiteBullet = false);
 	static void Destroy(Bullet* bullet);
 
 	void Update() override;
@@ -27,6 +27,8 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Speed, m_speed);
 
 private:
+	Bullet() {};
+
 	cherrysoda::Image* m_bulletImage = nullptr;
 	cherrysoda::Math::Vec2 m_speed = Vec2_Zero;
 	int m_damage = 40;

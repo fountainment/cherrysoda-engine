@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_COLLIDERS_COLLIDE_H_
 #define _CHERRYSODA_COLLIDERS_COLLIDE_H_
 
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
@@ -13,6 +14,8 @@ public:
 	static bool Check(const Entity* a, const Entity* b);
 
 	static bool Check(const Entity* a, const STL::List<Entity*> b);
+
+	static bool CheckPoint(const Entity* a, const Math::Vec2& point);
 
 	static int Count(const Entity* a, const STL::List<Entity*> b);
 

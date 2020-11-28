@@ -11,13 +11,19 @@ using namespace ld42_bulletjam;
 static BitTag s_bulletTag("bullet");
 static BitTag s_littleBulletTag("littlebullet");
 static BitTag s_deadBulletTag("deadbullet");
+static BitTag s_enemyBulletTag("enemybullet");
 
 float Bullet::ms_initialScale = 0.5f;
 
-Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* = true*/)
+Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* = true*/, bool whiteBullet/* = false*/)
 {
 	Bullet* bullet = new Bullet();
-	bullet->m_bulletImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("bullet"));
+	if (whiteBullet) {
+		bullet->m_bulletImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("bullet_white"));
+	}
+	else {
+		bullet->m_bulletImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("bullet"));
+	}
 	bullet->m_bulletImage->Scale(Math::Vec2(ms_initialScale));
 	bullet->m_bulletImage->CenterOrigin();
 	if (needRandom)

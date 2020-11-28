@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_SCENE_H_
 #define _CHERRYSODA_SCENE_H_
 
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
@@ -48,6 +49,9 @@ public:
 	RendererList* Renderers() { return m_rendererList; }
 	Entity* HelperEntity() { return m_helperEntity; }
 	Renderer* FirstRenderer();
+
+	bool CollideCheck(const Math::Vec2& point, int tag);
+	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision);
 
 	const STL::List<Entity*>& operator [] (const BitTag& tag) const;
 

@@ -18,6 +18,7 @@ Enemy* Enemy::Create(int type)
 	enemy->m_slimeSprite = new Sprite(GameApp::GetAtlas());
 	enemy->m_slimeSprite->CenterOrigin();
 	enemy->Add(enemy->m_slimeSprite);
+	enemy->m_slimeType = type;
 	float colliderSize = 8.f;
 	switch (type) {
 	case 0:
@@ -84,8 +85,7 @@ void Enemy::Update()
 			for (int arrayi : array)
 			{
 				Math::Vec2 vector = Calc::SafeNormalize(Calc::Perpendicular(m_deadSpeed));
-				Bullet* bullet = Bullet::Create(Position2D() + m_deadSpeed / 60.f * 0.5f + (float)arrayi * 10.f * m_jamSize * vector,  m_deadSpeed + (float)arrayi * 120.f * vector);
-				bullet->BulletImage()->Texture(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("bullet_white"));
+				Bullet* bullet = Bullet::Create(Position2D() + m_deadSpeed / 60.f * 0.5f + (float)arrayi * 10.f * m_jamSize * vector,  m_deadSpeed + (float)arrayi * 120.f * vector, true, true);
 				bullet->BulletImage()->SetColor(m_jamColor);
 				float scale = m_jamSize;
 				switch (Math_Abs(arrayi))
@@ -139,7 +139,22 @@ void Enemy::Dead()
 		return;
 	}
 	m_isDead = true;
-	m_slimeSprite->Stop();
+	switch (m_slimeType) {
+	case 2:
+		{
+			Math::Vec2 vector = Calc::SafeNormalize(Calc::Perpendicular(m_deadSpeed), Vec2_XUp);
+			GetSceneAs<BulletJamScene>()->AddEnemyAt(4, Position2D() + vector * 20.f);
+			GetSceneAs<BulletJamScene>()->AddEnemyAt(4, Position2D() + vector * -20.f);
+			RemoveSelf();
+		}
+	case 3:
+		{
+			RemoveSelf();
+		}
+	default:
+		m_slimeSprite->Stop();
+		break;
+	}
 	GetSceneAs<BulletJamScene>()->OnEnemyDead();
 }
 

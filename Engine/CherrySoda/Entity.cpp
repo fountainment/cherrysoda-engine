@@ -108,6 +108,11 @@ bool Entity::CollideCheck(const BitTag& tag) const
 	return Collide::Check(this, (*m_scene)[tag]);
 }
 
+bool Entity::CollidePoint(const Math::Vec2& point) const
+{
+	return Collide::CheckPoint(this, point);	
+}
+
 int Entity::CollideCount(const BitTag& tag) const
 {
 #ifndef NDEBUG

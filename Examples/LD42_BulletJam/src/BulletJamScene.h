@@ -37,16 +37,19 @@ public:
 	void AddEnemyAt(int type, const cherrysoda::Math::Vec2& position);
 
 	static bool CheckOutsideOfPlayZone(cherrysoda::Math::Vec2& position, bool normalize = false, float margin = 0.f);
-	static cherrysoda::Math::Vec2 GetValidSpawnPosition();
+	cherrysoda::Math::Vec2 GetValidSpawnPosition();
 
 	void OnEnemyDead();
 
+	void SetPlayerHP(int hp);
+	void SetPlayerBomb(int bombCount);
+
 private:
-	cherrysoda::Alarm* m_enemyTimer;
-	cherrysoda::EverythingRenderer* m_renderer;
-	cherrysoda::Image* m_playerHPImage;
-	cherrysoda::Image* m_playerBombImage;
-	cherrysoda::Tween* m_openUITween;
+	cherrysoda::Alarm* m_enemyTimer = nullptr;
+	cherrysoda::EverythingRenderer* m_renderer = nullptr;
+	cherrysoda::Image* m_playerHPImage = nullptr;
+	cherrysoda::Image* m_playerBombImage = nullptr;
+	cherrysoda::Tween* m_openUITween = nullptr;
 	int m_aliveEnemyCounter = 0;
 	bool m_inGameProgress = false;
 	bool m_gameHasEnded = false;

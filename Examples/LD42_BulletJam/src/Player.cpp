@@ -47,7 +47,7 @@ Player* Player::Create()
 	player->m_playerSprite->SetSpriteEffects(SpriteEffects::RoundRenderingPosition);
 	player->Add(player->m_playerFootSprite);
 	player->Add(player->m_playerSprite);
-	// player->m_collider = new Circle(8f);
+	player->SetCollider(new Circle(8.f));
 	player->Position(Math::Vec2(300.f, 200.f));
 	// player->m_hitShaker = new Shaker(false, player.OnShake);
 	// player->Add(player->m_hitShaker);
@@ -130,11 +130,19 @@ void Player::Update()
 	{
 		Shoot();
 	}
+	if (MInput::Mouse()->PressedRightButton())
+	{
+		PlaceBomb();
+	}
 }
 
 void Player::Move(const Math::Vec2& move)
 {
-	Position(Position() + Engine::Instance()->DeltaTime() * 180.f * Math::Vec3(move, 0.f));
+	const auto lastPos2D = Position2D();
+	Position2D(lastPos2D + Engine::Instance()->DeltaTime() * 180.f * move);
+	if (CollideCheck(BitTag::Get("deadbullet"))) {
+		Position2D(lastPos2D);
+	}
 	auto pos2D = Position2D();
 	BulletJamScene::CheckOutsideOfPlayZone(pos2D, true, 30.f);
 	Position(pos2D);
@@ -148,5 +156,14 @@ void Player::Shoot()
 		GetScene()->Add(Bullet::Create(Position(), 600.f * Calc::SafeNormalize(Cursor::Instance()->Position() - Position(), Vec2_YUp)));
 		m_canShoot = false;
 		m_bulletAlarm->Start();
+	}
+}
+
+void Player::PlaceBomb()
+{
+	if (m_bombCount > 0) {
+		--m_bombCount;	
+		// GetScene()->Add(Bomb::CreateAt(Position2D() - Vec2_YUp * 10.f));
+		GetSceneAs<BulletJamScene>()->SetPlayerBomb(m_bombCount);
 	}
 }

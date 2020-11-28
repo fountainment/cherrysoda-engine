@@ -8,6 +8,7 @@
 #include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Renderers/EverythingRenderer.h>
 #include <CherrySoda/Util/BitTag.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -17,6 +18,7 @@ using cherrysoda::BitTag;
 using cherrysoda::Engine;
 using cherrysoda::Entity;
 using cherrysoda::EntityList;
+using cherrysoda::Math;
 using cherrysoda::Renderer;
 using cherrysoda::RendererList;
 using cherrysoda::STL;
@@ -204,4 +206,38 @@ void Scene::_SetActualDepth(Entity* entity)
 			m_tagLists->MarkUnsorted(i);
 	 	}
 	}
+}
+
+bool Scene::CollideCheck(const Math::Vec2& point, int tag)
+{
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list)
+	{
+		if (item->Collidable() && item->CollidePoint(point))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision)
+{
+	Math::Vec2 add = to - from;
+	add = Math_Normalize(add);
+	add *= precision;
+
+	int amount = static_cast<int>(Math_Floor(Math_Length(from - to) / precision));
+	Math::Vec2 prev = from;
+	Math::Vec2 at = from + add;
+
+	for (int i = 0; i <= amount; ++i)
+	{
+		if (CollideCheck(at, tag))
+			return prev;
+		prev = at;
+		at += add;
+	}
+
+	return to;
 }

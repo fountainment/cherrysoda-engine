@@ -20,6 +20,7 @@ public:
 
 	void Move(const cherrysoda::Math::Vec2& move);
 	void Shoot();
+	void PlaceBomb();
 
 	static Player* Instance();
 
@@ -32,6 +33,7 @@ private:
 	cherrysoda::Sprite* m_playerSprite = nullptr;
 	bool m_canShoot = true;
 	int m_HP = 0;
+	int m_bombCount = 3;
 };
 
 } // namespace ld42_bulletjam

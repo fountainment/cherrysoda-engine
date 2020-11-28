@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Cursor.h"
 #include "Enemy.h"
+#include "Boss.h"
 
 using namespace cherrysoda;
 using namespace ld42_bulletjam;
@@ -177,7 +178,13 @@ void BulletJamScene::GenerateEnemy(int wave)
 
 void BulletJamScene::AddBoss()
 {
-	// TODO:
+	auto boss = Boss::Instance();
+	auto pos2D = boss->Position2D();
+	pos2D = GetValidSpawnPosition();
+	CheckOutsideOfPlayZone(pos2D, true, 100.f);
+	boss->Position2D(pos2D);
+	Add(boss);
+
 }
 
 void BulletJamScene::AddEnemy(const STL::Vector<int>& enemyType)
@@ -232,9 +239,7 @@ Math::Vec2 BulletJamScene::GetValidSpawnPosition()
 {
 	float num = Calc::GetRandom()->NextAngle();
 	Math::Vec2 vector = Math::Vec2((float)Math_Cos(num), (float)Math_Sin(num));
-	// TODO: Implement LineWalkCheck
-	// Math::Vec2 position = LineWalkCheck(Player::Instance()->Position(), Player::Instance()->Position() + vector * 500f, GameApp::ms_deadBulletTag.ID(), 5.f);
-	Math::Vec2 position = Player::Instance()->Position2D() + vector * 400.f;
+	Math::Vec2 position = LineWalkCheck(Player::Instance()->Position2D(), Player::Instance()->Position2D() + vector * 500.f, BitTag::Get("deadbullet").ID(), 5.f);
 	CheckOutsideOfPlayZone(position, true);
 	return position + (Player::Instance()->Position2D() - position) * 0.1f;
 }
@@ -244,5 +249,19 @@ void BulletJamScene::OnEnemyDead()
 	--m_aliveEnemyCounter;
 	if (m_aliveEnemyCounter == 0 && !m_enemyTimer->Active()) {
 		m_enemyTimer->Start();
+	}
+}
+
+void BulletJamScene::SetPlayerHP(int hp)
+{
+	if (m_playerHPImage) {
+		m_playerHPImage->Texture(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt(CHERRYSODA_FORMAT("player_HP/player_HP%d", 7 - hp)));
+	}
+}
+
+void BulletJamScene::SetPlayerBomb(int bombCount)
+{
+	if (m_playerBombImage) {
+		m_playerBombImage->Texture(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt(CHERRYSODA_FORMAT("bomb_num/bomb_num%d", 4 - bombCount)));
 	}
 }

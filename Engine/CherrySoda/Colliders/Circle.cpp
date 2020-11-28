@@ -13,7 +13,13 @@ using cherrysoda::Math;
 bool Circle::Collide(const Circle* circle) const
 {
 	const Math::Vec2 vec = AbsolutePosition2D() - circle->AbsolutePosition2D();
-	return Math_Dot(vec, vec) < (Radius() + circle->Radius()) * (Radius() + circle->Radius());
+	return Math_LengthSq(vec) <= (Radius() + circle->Radius()) * (Radius() + circle->Radius());
+}
+
+bool Circle::Collide(const Math::Vec2& point) const
+{
+	const Math::Vec2 vec = AbsolutePosition2D() - point;
+	return Math_LengthSq(vec) <= RadiusSq();
 }
 
 void Circle::Render(const Camera* camera, const Color& color) const

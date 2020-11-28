@@ -14,9 +14,7 @@ bool Collide::Check(const Entity* a, const Entity* b)
 	if (a->GetCollider() == nullptr || b->GetCollider() == nullptr) {
 		return false;
 	}
-	else {
-		return a != b && b->Collidable() && a->GetCollider()->Collide(b);
-	}
+	return a != b && b->Collidable() && a->GetCollider()->Collide(b);
 }
 
 bool Collide::Check(const Entity* a, const STL::List<Entity*> b)
@@ -27,6 +25,14 @@ bool Collide::Check(const Entity* a, const STL::List<Entity*> b)
 		}
 	}	
 	return false;
+}
+
+bool Collide::CheckPoint(const Entity* a, const Math::Vec2& point)
+{
+	if (a->GetCollider() == nullptr) {
+		return false;
+	}
+	return a->GetCollider()->Collide(point);
 }
 
 int Collide::Count(const Entity* a, const STL::List<Entity*> b)
