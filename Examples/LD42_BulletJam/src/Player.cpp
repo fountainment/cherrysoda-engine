@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include "BulletJamScene.h"
 #include "Cursor.h"
+#include "Bomb.h"
 
 #include <CherrySoda/CherrySoda.h>
 
@@ -163,7 +164,7 @@ void Player::PlaceBomb()
 {
 	if (m_bombCount > 0) {
 		--m_bombCount;	
-		// GetScene()->Add(Bomb::CreateAt(Position2D() - Vec2_YUp * 10.f));
+		GetScene()->Add(Bomb::CreateAt(Position2D() - Vec2_YUp * 10.f));
 		GetSceneAs<BulletJamScene>()->SetPlayerBomb(m_bombCount);
 	}
 }

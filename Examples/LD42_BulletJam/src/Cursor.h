@@ -15,7 +15,7 @@ public:
 	static Cursor* Instance();
 
 private:
-	Cursor() {}
+	Cursor() = default;
 	static Cursor* Create();
 };
 

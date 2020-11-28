@@ -12,14 +12,25 @@ namespace ld42_bulletjam {
 class Boss : public cherrysoda::Entity
 {
 public:
+	typedef cherrysoda::Entity base;
+
+	void Update() override;
+	void Hit(float damage);
+	void Die();
+
 	static Boss* Instance();
+	static bool Exists() { return ms_instance != nullptr; }
 
 private:
-	Boss() {}
+	Boss() = default;
 
 	static Boss* Create();
 
 	cherrysoda::Sprite* m_bossSprite = nullptr;
+	float m_hp = 24000.f;
+	bool m_isDead = false;
+
+	static Boss* ms_instance;
 };
 
 } // namespace ld42_bulletjam

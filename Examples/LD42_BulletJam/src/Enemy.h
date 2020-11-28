@@ -20,7 +20,7 @@ public:
 	void Update() override;
 
 	void Hit(int damage, cherrysoda::Math::Vec2 speed);
-	void Dead();
+	void Die();
 
 	static Enemy* Create(int type);
 	static void Destroy(Enemy* Enemy);

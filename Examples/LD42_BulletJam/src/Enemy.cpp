@@ -129,11 +129,11 @@ void Enemy::Hit(int damage, Math::Vec2 speed)
 	m_hp -= damage;
 	m_deadSpeed = speed;
 	if (m_hp < 0) {
-		Dead();
+		Die();
 	}
 }
 
-void Enemy::Dead()
+void Enemy::Die()
 {
 	if (m_isDead) {
 		return;

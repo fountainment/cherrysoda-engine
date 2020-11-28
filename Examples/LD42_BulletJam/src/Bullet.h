@@ -27,7 +27,7 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Speed, m_speed);
 
 private:
-	Bullet() {};
+	Bullet() = default;
 
 	cherrysoda::Image* m_bulletImage = nullptr;
 	cherrysoda::Math::Vec2 m_speed = Vec2_Zero;

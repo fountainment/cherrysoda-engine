@@ -50,12 +50,15 @@ public:
 		return STL::ToVector(m_atlas->GetAtlasSubtextures(m_path + path, startIndex, indexLength));
 	}
 
+	void Add(const String& id, const String& path, int startIndex = 1, int indexLength = 4, float delay = 1.f / 15.f)
+	{
+		m_animations[id] = { delay, GetFrames(path, startIndex, indexLength), Chooser<StringID>() };
+	}
+
 	void AddLoop(const String& id, const String& path, int startIndex = 1, int indexLength = 4, float delay = 1.f / 15.f)
 	{
 		m_animations[id] = { delay, GetFrames(path, startIndex, indexLength), Chooser<StringID>(id, 1.f) };
 	}
-
-	// TODO: void Add(const String& id, const String& path)
 
 	void Play(StringID id, bool restart = false, bool randomizeFrame = false);
 
@@ -72,6 +75,12 @@ public:
 	}
 
 	inline float Rate() const { return m_rate; }
+
+	inline void OnFinish(STL::Action<StringID> onFinish) { m_onFinish = onFinish; }
+	inline void OnLoop(STL::Action<StringID> onLoop) { m_onLoop = onLoop; }
+	inline void OnFrameChange(STL::Action<StringID> onFrameChange) { m_onFrameChange = onFrameChange; }
+	inline void OnLastFrame(STL::Action<StringID> onLastFrame) { m_onLastFrame = onLastFrame; }
+	inline void OnChange(STL::Action<StringID,StringID> onChange) { m_onChange = onChange; }
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Justify, m_justify);
 

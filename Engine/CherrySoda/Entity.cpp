@@ -108,6 +108,11 @@ bool Entity::CollideCheck(const BitTag& tag) const
 	return Collide::Check(this, (*m_scene)[tag]);
 }
 
+bool Entity::CollideCheck(const Entity* other) const
+{
+	return Collide::Check(this, other);
+}
+
 bool Entity::CollidePoint(const Math::Vec2& point) const
 {
 	return Collide::CheckPoint(this, point);	

@@ -25,7 +25,7 @@ public:
 	static Player* Instance();
 
 private:
-	Player() {}
+	Player() = default;
 	static Player* Create();
 
 	cherrysoda::Alarm* m_bulletAlarm = nullptr;

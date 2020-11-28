@@ -15,6 +15,8 @@ set(CHERRYSODA_EXECUTABLE_SRC
   src/Enemy.h
   src/Boss.cpp
   src/Boss.h
+  src/Bomb.cpp
+  src/Bomb.h
 )
 
 set(CHERRYSODA_SHADER_SRC

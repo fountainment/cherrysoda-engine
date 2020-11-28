@@ -46,6 +46,7 @@ public:
 
 	const STL::List<Entity*> CollideAll(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag) const;
+	bool CollideCheck(const Entity* other) const;
 	bool CollidePoint(const Math::Vec2& point) const;
 	int CollideCount(const BitTag& tag) const;
 	Entity* CollideFirst(const BitTag& tag) const;
