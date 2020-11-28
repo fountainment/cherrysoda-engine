@@ -77,20 +77,34 @@ public:
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 3 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
 		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
-		STL::AddRange(m_vertices, { v1, v2, v3 });
-		STL::AddRange(m_indices,  { i, i+1_su, i+2_su });
+		STL::Add(m_vertices, v1);
+		STL::Add(m_vertices, v2);
+		STL::Add(m_vertices, v3);
+		STL::Add(m_indices, i);
+		STL::Add(m_indices, i + 1_su);
+		STL::Add(m_indices, i + 2_su);
 	}
 	inline void AddTriangleNoIndex(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 3 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
-		STL::AddRange(m_vertices, { v1, v2, v3 });
+		STL::Add(m_vertices, v1);
+		STL::Add(m_vertices, v2);
+		STL::Add(m_vertices, v3);
 	}
 	inline void AddQuad(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 4 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
 		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
-		STL::AddRange(m_vertices, { v1, v2, v3, v4 });
-		STL::AddRange(m_indices,  { i, i+1_su, i+2_su, i+1_su, i+3_su, i+2_su });
+		STL::Add(m_vertices, v1);
+		STL::Add(m_vertices, v2);
+		STL::Add(m_vertices, v3);
+		STL::Add(m_vertices, v4);
+		STL::Add(m_indices, i);
+		STL::Add(m_indices, i + 1_su);
+		STL::Add(m_indices, i + 2_su);
+		STL::Add(m_indices, i + 1_su);
+		STL::Add(m_indices, i + 3_su);
+		STL::Add(m_indices, i + 2_su);
 	}
 	inline void AddQuadNoIndex(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
 	{
