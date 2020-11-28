@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_SCENE_H_
 #define _CHERRYSODA_SCENE_H_
 
+#include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -44,11 +45,19 @@ public:
 
 	void _SetActualDepth(Entity* entity);
 
-	EntityList* Entities() { return m_entities; }
-	TagLists* Tags() { return m_tagLists; }
-	RendererList* Renderers() { return m_rendererList; }
-	Entity* HelperEntity() { return m_helperEntity; }
+	inline EntityList* Entities() { return m_entities; }
+	inline TagLists* Tags() { return m_tagLists; }
+	inline RendererList* Renderers() { return m_rendererList; }
 	Renderer* FirstRenderer();
+
+	inline Entity* HelperEntity() { return m_helperEntity; }
+
+	inline float TimeActive() const { return m_timeActive; }
+	inline float RawTimeActive() const { return m_rawTimeActive; }
+
+	inline bool OnInterval(float interval) {
+		return (int)((TimeActive() - Engine::Instance()->DeltaTime()) / interval) < (int)(TimeActive() / interval);
+	}
 
 	bool CollideCheck(const Math::Vec2& point, int tag);
 	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision);

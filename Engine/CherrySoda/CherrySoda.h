@@ -15,6 +15,7 @@
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Sprite.h>
 #include <CherrySoda/Components/Logic/Alarm.h>
+#include <CherrySoda/Components/Logic/Shaker.h>
 #include <CherrySoda/Components/Logic/StateMachine.h>
 #include <CherrySoda/Components/Logic/Tween.h>
 

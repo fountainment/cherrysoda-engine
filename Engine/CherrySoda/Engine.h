@@ -59,7 +59,7 @@ public:
 
 	inline bool Initialized() { return m_initialized; }
 
-	static Engine* Instance() { return ms_instance; }
+	static inline Engine* Instance() { return ms_instance; }
 
 protected:
 	virtual void OnClientSizeChanged(int width, int height);

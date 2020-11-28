@@ -114,13 +114,14 @@ void BulletJamScene::GameOver()
 {
 	if (!m_gameHasEnded)
 	{
-		Tween* tween = Tween::Create(TweenMode::Oneshot, Ease::QuadInOut, 0.5f, true);
+		Tween* tween = Tween::Create(TweenMode::Oneshot, Ease::SineInOut, 0.7f, true);
 		Entity* entity = new Entity();
 		Image* loseImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("loseUI"));
-		loseImage->SetColorA(0.f);
+		loseImage->SetColor(Color(0.f, 0.f, 0.f, 0.f));
 		entity->Add(loseImage);
 		entity->Add(tween);
-		tween->OnUpdate([loseImage](Tween* t){ loseImage->SetColorA(t->Eased()); });
+		// For premultiplied-alpha, the color rgb need to multiply alpha value
+		tween->OnUpdate([loseImage](Tween* t){ loseImage->SetColor(Color::White * t->Eased()); });
 		entity->Depth(-999999);
 		Add(entity);
 		m_gameHasEnded = true;
@@ -131,15 +132,16 @@ void BulletJamScene::Win()
 {
 	if (!m_gameHasEnded)
 	{
-		Tween* tween = Tween::Create(TweenMode::Oneshot, Ease::QuadInOut, 0.5f, true);
+		Tween* tween = Tween::Create(TweenMode::Oneshot, Ease::SineInOut, 0.7f, true);
 		Entity* entity = new Entity();
 		Image* winImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("winUI"));
-		winImage->SetColorA(0);
+		winImage->SetColor(Color(0.f, 0.f, 0.f, 0.f));
 		entity->Add(winImage);
 		entity->Add(tween);
 		tween->OnUpdate([winImage](Tween* t)
 		{
-			winImage->SetColorA(t->Eased());
+			// For premultiplied-alpha, the color rgb need to multiply alpha value
+			winImage->SetColor(Color::White * t->Eased());
 		});
 		entity->Depth(-999999);
 		Add(entity);

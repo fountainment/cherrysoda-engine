@@ -49,8 +49,13 @@ Player* Player::Create()
 	player->Add(player->m_playerSprite);
 	player->SetCollider(new Circle(8.f));
 	player->Position(Math::Vec2(300.f, 200.f));
-	// player->m_hitShaker = new Shaker(false, player.OnShake);
-	// player->Add(player->m_hitShaker);
+	player->m_hitShaker = new Shaker(false,
+		[player](Math::Vec2 shake)
+		{
+			player->m_playerFootSprite->Position2D(shake);
+			player->m_playerSprite->Position2D(shake);
+		});
+	player->Add(player->m_hitShaker);
 	player->m_HP = 6;
 	return player;
 }
@@ -186,17 +191,15 @@ void Player::Hit()
 	}
 	if (m_HP > 0) {
 		m_POW = true;
-		m_playerFootSprite->SetColor(Color::Red);
-		m_playerFootSprite->SetColorA(64);
-		m_playerSprite->SetColor(Color::Red);
-		m_playerSprite->SetColorA(64);
+		m_playerFootSprite->SetColor(Color::Red * 0.7f);
+		m_playerSprite->SetColor(Color::Red * 0.7f);
 		Add(Alarm::Create(AlarmMode::Oneshot, [this]()
 		{
 			m_POW = false;
 			m_playerFootSprite->SetColor(Color::White);
 			m_playerSprite->SetColor(Color::White);
-		}, 0.5f, true));
-		// HitShaker.ShakeFor(0.5f, removeOnFinish: false);
+		}, 0.7f, true));
+		m_hitShaker->ShakeFor(0.5f);
 	}
 	else {
 		Die();

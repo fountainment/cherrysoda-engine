@@ -24,6 +24,11 @@ public:
 	inline float NextFloat(float min, float max) { return min + NextFloat(max - min); }
 	inline double NextDouble() { return Next() / static_cast<double>(STL::RandomMax(m_random)); }
 	inline float NextAngle() { return NextFloat(Math::Pi2); }
+	inline Math::Vec2 ShakeVector()
+	{
+		constexpr float shakeVectorOffsets[5] = { -1.f, -1.f, 0.f, 1.f, 1.f };
+		return Math::Vec2(shakeVectorOffsets[Next(4)], shakeVectorOffsets[Next(4)]);
+	}
 
 	static type::UInt32 TrueRandomNext();
 

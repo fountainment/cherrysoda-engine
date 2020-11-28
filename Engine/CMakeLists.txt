@@ -21,6 +21,8 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/Sprite.h
   CherrySoda/Components/Logic/Alarm.cpp
   CherrySoda/Components/Logic/Alarm.h
+  CherrySoda/Components/Logic/Shaker.cpp
+  CherrySoda/Components/Logic/Shaker.h
   CherrySoda/Components/Logic/StateMachine.cpp
   CherrySoda/Components/Logic/StateMachine.h
   CherrySoda/Components/Logic/Tween.cpp

@@ -44,6 +44,8 @@ public:
 	inline void B(int v) { B(v / 255.f); }
 	inline void A(int v) { A(v / 255.f); }
 
+	constexpr Color operator * (float scale) const { return Color(m_r * scale, m_g * scale, m_b * scale, m_a * scale); }
+
 	static const Color Black;
 	static const Color White;
 	static const Color Red;

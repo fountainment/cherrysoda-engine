@@ -6,6 +6,7 @@
 
 namespace cherrysoda {
 class Alarm;
+class Shaker;
 class Sprite;
 } // namespace cherrysoda
 
@@ -34,6 +35,7 @@ private:
 	cherrysoda::Alarm* m_bulletAlarm = nullptr;
 	cherrysoda::Sprite* m_playerFootSprite = nullptr;
 	cherrysoda::Sprite* m_playerSprite = nullptr;
+	cherrysoda::Shaker* m_hitShaker = nullptr;
 	bool m_canShoot = true;
 	bool m_POW = false;
 	bool m_isDead = false;
