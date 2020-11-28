@@ -39,6 +39,10 @@ public:
 	inline void G(float v) { m_g = v; }
 	inline void B(float v) { m_b = v; }
 	inline void A(float v) { m_a = v; }
+	inline void R(int v) { R(v / 255.f); }
+	inline void G(int v) { G(v / 255.f); }
+	inline void B(int v) { B(v / 255.f); }
+	inline void A(int v) { A(v / 255.f); }
 
 	static const Color Black;
 	static const Color White;

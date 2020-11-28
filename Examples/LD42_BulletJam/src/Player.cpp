@@ -13,11 +13,10 @@ using namespace ld42_bulletjam;
 
 Player* Player::Instance()
 {
-	static Player* s_instance = nullptr;
-	if (s_instance == nullptr) {
-		s_instance = Create();
+	if (ms_instance == nullptr) {
+		ms_instance = Create();
 	}
-	return s_instance;
+	return ms_instance;
 }
 
 Player* Player::Create()
@@ -125,6 +124,13 @@ void Player::Update()
 			m_playerFootSprite->FlipX(true);
 		}
 	}
+
+	for (auto item : CollideAll(BitTag::Get("enemybullet")))
+	{
+		Hit();
+		item->RemoveSelf();
+	}
+
 	Move(move);
 
 	if (MInput::Mouse()->CheckLeftButton())
@@ -152,7 +158,7 @@ void Player::Move(const Math::Vec2& move)
 
 void Player::Shoot()
 {
-	if (m_canShoot)
+	if (m_canShoot && !m_isDead)
 	{
 		GetScene()->Add(Bullet::Create(Position(), 600.f * Calc::SafeNormalize(Cursor::Instance()->Position() - Position(), Vec2_YUp)));
 		m_canShoot = false;
@@ -168,3 +174,41 @@ void Player::PlaceBomb()
 		GetSceneAs<BulletJamScene>()->SetPlayerBomb(m_bombCount);
 	}
 }
+
+void Player::Hit()
+{
+	if (m_POW || m_isDead) {
+		return;
+	}
+	if (m_HP > 1) {
+		m_HP -= 2;
+		GetSceneAs<BulletJamScene>()->SetPlayerHP(m_HP);
+	}
+	if (m_HP > 0) {
+		m_POW = true;
+		m_playerFootSprite->SetColor(Color::Red);
+		m_playerFootSprite->SetColorA(64);
+		m_playerSprite->SetColor(Color::Red);
+		m_playerSprite->SetColorA(64);
+		Add(Alarm::Create(AlarmMode::Oneshot, [this]()
+		{
+			m_POW = false;
+			m_playerFootSprite->SetColor(Color::White);
+			m_playerSprite->SetColor(Color::White);
+		}, 0.5f, true));
+		// HitShaker.ShakeFor(0.5f, removeOnFinish: false);
+	}
+	else {
+		Die();
+	}
+}
+
+void Player::Die()
+{
+	m_isDead = true;
+	RemoveSelf();
+
+	GetSceneAs<BulletJamScene>()->GameOver();
+}
+
+Player* Player::ms_instance = nullptr;

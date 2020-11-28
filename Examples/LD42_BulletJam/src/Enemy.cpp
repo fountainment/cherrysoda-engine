@@ -110,14 +110,42 @@ void Enemy::Update()
 		}
 	}
 	else {
-		Math::Vec2 vec2 = Calc::SafeNormalize(Player::Instance()->Position() - Position(), Vec2_YUp) * 42.f;
-		Position2D(Position2D() + vec2 * Engine::Instance()->DeltaTime());
+		Math::Vec2 speed = Calc::SafeNormalize(Player::Instance()->Position() - Position(), Vec2_YUp) * 42.f;
 
-		auto list = CollideAll(BitTag::Get("bullet"));
-		for (auto entity : list) {
-			auto bullet = (Bullet*)entity;
-			Hit(bullet->Damage(), bullet->Speed());
-			bullet->RemoveSelf();
+		auto bulletList = CollideAll(BitTag::Get("bullet"));
+		if (STL::IsNotEmpty(bulletList)) {
+			for (auto entity : bulletList) {
+				auto bullet = (Bullet*)entity;
+				Hit(bullet->Damage(), bullet->Speed());
+				bullet->RemoveSelf();
+			}
+		}
+		else {
+			Math::Vec2 move = speed * Engine::Instance()->DeltaTime();
+			Position2D(Position2D() + move);
+
+			STL::List<Entity*> actorList = CollideAll(s_enemyTag);
+			if (Player::Exists() && CollideCheck(Player::Instance()))
+			{
+				Player::Instance()->Hit();
+				STL::Add(actorList, Player::Instance());
+			}
+			if (STL::IsNotEmpty(actorList))
+			{
+				Position2D(Position2D() - move);
+			}
+			actorList = CollideAll(s_enemyTag);
+			if (Player::Exists() && CollideCheck(Player::Instance()))
+			{
+				STL::Add(actorList, Player::Instance());
+			}
+			Entity* entity = nullptr;
+			if (STL::TryGetFirst(actorList, entity))
+			{
+				Math::Vec2 vec = Position2D() - entity->Position2D();
+				vec = Calc::SafeNormalize(vec, Vec2_XUp);
+				Position2D(Position2D() + vec * 10.f);
+			}
 		}
 	}
 

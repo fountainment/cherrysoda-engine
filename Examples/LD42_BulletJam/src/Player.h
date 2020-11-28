@@ -21,8 +21,11 @@ public:
 	void Move(const cherrysoda::Math::Vec2& move);
 	void Shoot();
 	void PlaceBomb();
+	void Hit();
+	void Die();
 
 	static Player* Instance();
+	static inline bool Exists() { return ms_instance != nullptr; }
 
 private:
 	Player() = default;
@@ -32,8 +35,12 @@ private:
 	cherrysoda::Sprite* m_playerFootSprite = nullptr;
 	cherrysoda::Sprite* m_playerSprite = nullptr;
 	bool m_canShoot = true;
+	bool m_POW = false;
+	bool m_isDead = false;
 	int m_HP = 0;
 	int m_bombCount = 3;
+
+	static Player* ms_instance;
 };
 
 } // namespace ld42_bulletjam

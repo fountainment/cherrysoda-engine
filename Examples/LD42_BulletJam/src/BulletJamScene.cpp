@@ -11,6 +11,10 @@
 using namespace cherrysoda;
 using namespace ld42_bulletjam;
 
+// It's the code port from the original BulletJam in LD42 which is written in C# and with XNA.
+// And the original code can be find here: https://github.com/fountainment/LD42_BulletJam
+// The structure is currently quite messy, I may clean it up in the future.
+
 void BulletJamScene::Begin()
 {
 	// Renderer

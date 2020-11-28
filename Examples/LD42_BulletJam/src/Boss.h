@@ -2,12 +2,16 @@
 #define _BULLETJAM_BOSS_H_
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
+class Alarm;
 class Sprite;
 } // namespace cherrysoda
 
 namespace ld42_bulletjam {
+
+class Bullet;
 
 class Boss : public cherrysoda::Entity
 {
@@ -18,8 +22,13 @@ public:
 	void Hit(float damage);
 	void Die();
 
+	void Shoot();
+
+	void StartSuckBullet();
+	void StartShoot() { m_startShoot = true; }
+
 	static Boss* Instance();
-	static bool Exists() { return ms_instance != nullptr; }
+	static inline bool Exists() { return ms_instance != nullptr; }
 
 private:
 	Boss() = default;
@@ -29,6 +38,10 @@ private:
 	cherrysoda::Sprite* m_bossSprite = nullptr;
 	float m_hp = 24000.f;
 	bool m_isDead = false;
+	bool m_startShoot = false;
+	cherrysoda::Alarm* m_startShootBulletTimer = nullptr;
+	cherrysoda::Alarm* m_shootBulletTimer = nullptr;
+	cherrysoda::STL::List<Bullet*> m_bulletDepo;
 
 	static Boss* ms_instance;
 };
