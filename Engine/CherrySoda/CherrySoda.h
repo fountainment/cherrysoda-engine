@@ -18,6 +18,7 @@
 #include <CherrySoda/Components/Logic/Shaker.h>
 #include <CherrySoda/Components/Logic/StateMachine.h>
 #include <CherrySoda/Components/Logic/Tween.h>
+#include <CherrySoda/Components/Logic/Wiggler.h>
 
 #include <CherrySoda/Graphics/Atlas.h>
 #include <CherrySoda/Graphics/Effect.h>

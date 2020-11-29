@@ -27,6 +27,8 @@ set(ENGINE_SRC
   CherrySoda/Components/Logic/StateMachine.h
   CherrySoda/Components/Logic/Tween.cpp
   CherrySoda/Components/Logic/Tween.h
+  CherrySoda/Components/Logic/Wiggler.cpp
+  CherrySoda/Components/Logic/Wiggler.h
   CherrySoda/Graphics/Atlas.cpp
   CherrySoda/Graphics/Atlas.h
   CherrySoda/Graphics/Effect.h
