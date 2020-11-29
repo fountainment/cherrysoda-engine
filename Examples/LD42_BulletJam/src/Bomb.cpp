@@ -17,7 +17,12 @@ Bomb* Bomb::CreateAt(const Math::Vec2& pos2D)
 	bomb->m_bombRedTex = GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("bomb_clear/bomb_clear2");
 	bomb->m_bombImage = new Image(bomb->m_bombTex);
 	bomb->m_bombImage->CenterOrigin();
+	bomb->m_boomSprite = new Sprite(GameApp::GetAtlas());
+	bomb->m_boomSprite->Add("boom", "bomb_clear_bang/bomb_clear_bang", 1, 1);
+	bomb->m_boomSprite->OnFinish([bomb](StringID) { bomb->RemoveSelf(); });
+	bomb->m_boomSprite->CenterOrigin();
 	bomb->Add(bomb->m_bombImage);
+	bomb->Add(bomb->m_boomSprite);
 	bomb->Add(Alarm::Create(AlarmMode::Oneshot, [bomb]()
 		{
 			bomb->Explode();
@@ -49,7 +54,8 @@ void Bomb::Update()
 
 void Bomb::Explode()
 {
-	RemoveSelf();
+	m_bombImage->Visible(false);
+	m_boomSprite->Play("boom");
 	for (auto item : CollideAll(BitTag::Get("deadbullet"))) {
 		item->RemoveSelf();
 	}
@@ -58,6 +64,6 @@ void Bomb::Explode()
 		enemy->Hit(1000, Math_Normalize(item->Position2D() - Position2D()) * 600.f);
 	}
 	if (Boss::Exists() && CollideCheck(Boss::Instance())) {
-		Boss::Instance()->Hit(5000.f);
+		Boss::Instance()->Hit(4000.f);
 	}
 }

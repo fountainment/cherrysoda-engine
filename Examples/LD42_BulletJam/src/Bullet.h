@@ -15,9 +15,6 @@ class Bullet : public cherrysoda::Entity
 public:
 	typedef cherrysoda::Entity base;
 
-	static Bullet* Create(cherrysoda::Math::Vec2 position, cherrysoda::Math::Vec2 speed, bool needRandom = true, bool whiteBullet = false);
-	static void Destroy(Bullet* bullet);
-
 	void Update() override;
 	void Removed(cherrysoda::Scene* scene) override;
 	int Damage() const { return m_damage; }
@@ -25,6 +22,10 @@ public:
 	cherrysoda::Image* BulletImage() { return m_bulletImage; }
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Speed, m_speed);
+
+	static Bullet* Create(cherrysoda::Math::Vec2 position, cherrysoda::Math::Vec2 speed, bool needRandom = true, bool whiteBullet = false, bool enemyBullet = false);
+	static void Destroy(Bullet* bullet);
+	static float InitialScale() { return ms_initialScale; }
 
 private:
 	Bullet() = default;

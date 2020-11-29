@@ -7,6 +7,7 @@
 
 namespace cherrysoda {
 class Image;
+class Sprite;
 } // namespace cherrysoda
 
 namespace ld42_bulletjam {
@@ -28,11 +29,12 @@ private:
 	int m_blinkIndex = 0;
 	int m_blinkPeriod = 8;
 	cherrysoda::Image* m_bombImage = nullptr;
+	cherrysoda::Sprite* m_boomSprite = nullptr;
 	cherrysoda::MTexture m_bombTex;
 	cherrysoda::MTexture m_bombRedTex;
 
 	const float m_timeToExplode = 3.f;
-	const float m_explodeRadius = 100.f;
+	const float m_explodeRadius = 110.f;
 };
 
 } // namespace ld42_bulletjam

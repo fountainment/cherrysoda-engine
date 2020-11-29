@@ -11,6 +11,7 @@ using namespace cherrysoda;
 using namespace ld42_bulletjam;
 
 BitTag s_enemyTag("enemy");
+BitTag s_itemTag("item");
 
 Enemy* Enemy::Create(int type)
 {
@@ -75,7 +76,7 @@ void Enemy::Update()
 	base::Update();
 
 	if (m_isDead) {
-		Position2D(Position2D() + m_deadSpeed * Engine::Instance()->DeltaTime());
+		MovePosition2D(m_deadSpeed * Engine::Instance()->DeltaTime());
 
 		auto pos2D = Position2D();
 		if (BulletJamScene::CheckOutsideOfPlayZone(pos2D, true) || CollideCheck(BitTag::Get("deadbullet")))
@@ -112,6 +113,14 @@ void Enemy::Update()
 	else {
 		Math::Vec2 speed = Calc::SafeNormalize(Player::Instance()->Position() - Position(), Vec2_YUp) * 42.f;
 
+		if (auto entity = CollideFirst(BitTag::Get("deadbullet")))
+		{
+			if (GetScene()->OnInterval(0.1f)) {
+				entity->RemoveSelf();
+			}
+			speed *= 0.3f;
+		}
+
 		auto bulletList = CollideAll(BitTag::Get("bullet"));
 		if (STL::IsNotEmpty(bulletList)) {
 			for (auto entity : bulletList) {
@@ -122,7 +131,7 @@ void Enemy::Update()
 		}
 		else {
 			Math::Vec2 move = speed * Engine::Instance()->DeltaTime();
-			Position2D(Position2D() + move);
+			MovePosition2D(move);
 
 			STL::List<Entity*> actorList = CollideAll(s_enemyTag);
 			if (Player::Exists() && CollideCheck(Player::Instance()))
@@ -132,7 +141,7 @@ void Enemy::Update()
 			}
 			if (STL::IsNotEmpty(actorList))
 			{
-				Position2D(Position2D() - move);
+				MovePosition2D(-move);
 			}
 			actorList = CollideAll(s_enemyTag);
 			if (Player::Exists() && CollideCheck(Player::Instance()))
@@ -144,7 +153,7 @@ void Enemy::Update()
 			{
 				Math::Vec2 vec = Position2D() - entity->Position2D();
 				vec = Calc::SafeNormalize(vec, Vec2_XUp);
-				Position2D(Position2D() + vec * 10.f);
+				MovePosition2D(vec * 10.f);
 			}
 		}
 	}
@@ -175,10 +184,42 @@ void Enemy::Die()
 			GetSceneAs<BulletJamScene>()->AddEnemyAt(4, Position2D() + vector * -20.f);
 			RemoveSelf();
 		}
+		break;
 	case 3:
 		{
+			STL::Vector<Color> colors =	
+			{
+				Color(223, 62, 35),
+				Color(250, 106, 10),
+				Color(255, 213, 65),
+				Color(89, 193, 53),
+				Color(32, 214, 199),
+				Color(40, 92, 196),
+				Color(152, 21, 179)
+			};
+			for (int i = 0; i < 7; ++i)
+			{
+				Bullet* bullet = Bullet::Create(Position2D(), Calc::AngleToVector(0.8975979f * (float)i, 180.f), false, true, true);
+				bullet->BulletImage()->SetColor(colors[i]);
+				bullet->BulletImage()->Scale(Math::Vec2(0.6f));
+				GetScene()->Add(bullet);
+			}
+			Image* itemImage = new Image(GameApp::GetAtlas()->GetAtlasSubtextureFromAtlasAt("bomb_icon"));
+			itemImage->CenterOrigin();
+			Entity* entity = new Entity();
+			entity->Add(itemImage);
+			entity->Depth((int)(PositionY() - 700.f));
+			entity->Add(Wiggler::Create(1000000.f, 1.3f, [itemImage](float angle)
+			{
+				itemImage->PositionY(angle * 3.f);
+			}, true));
+			entity->Tag(s_itemTag);
+			entity->SetCollider(new Circle(8.f));
+			entity->Position(Position());
+			GetScene()->Add(entity);
 			RemoveSelf();
 		}
+		break;
 	default:
 		m_slimeSprite->Stop();
 		break;

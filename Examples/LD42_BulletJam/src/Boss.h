@@ -25,7 +25,7 @@ public:
 	void Shoot();
 
 	void StartSuckBullet();
-	void StartShoot() { m_startShoot = true; }
+	void StartShoot() { m_canShoot = true; }
 
 	static Boss* Instance();
 	static inline bool Exists() { return ms_instance != nullptr; }
@@ -37,8 +37,9 @@ private:
 
 	cherrysoda::Sprite* m_bossSprite = nullptr;
 	float m_hp = 24000.f;
+	int m_shootCounter = 0;
 	bool m_isDead = false;
-	bool m_startShoot = false;
+	bool m_canShoot = false;
 	cherrysoda::Alarm* m_startShootBulletTimer = nullptr;
 	cherrysoda::Alarm* m_shootBulletTimer = nullptr;
 	cherrysoda::STL::List<Bullet*> m_bulletDepo;

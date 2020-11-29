@@ -35,6 +35,9 @@
 	inline void NAME(const cherrysoda::Math::Vec3& v) { EXTRA_SET_OP; VALUE = v; } \
 	inline void NAME(const cherrysoda::Math::Vec2& v) { NAME(cherrysoda::Math::Vec3(v, NAME().z)); } \
 	inline void NAME##2D(const cherrysoda::Math::Vec2& v) { NAME(cherrysoda::Math::Vec3(v, NAME().z)); } \
+	inline void Move##NAME(const cherrysoda::Math::Vec3& v) { NAME(VALUE + v); } \
+	inline void Move##NAME(const cherrysoda::Math::Vec2& v) { NAME(VALUE + cherrysoda::Math::Vec3(v, NAME().z)); } \
+	inline void Move##NAME##2D(const cherrysoda::Math::Vec2& v) { NAME(VALUE + cherrysoda::Math::Vec3(v, NAME().z)); } \
 	inline float NAME##X() const { EXTRA_GET_OP; return VALUE.x; } \
 	inline float NAME##Y() const { EXTRA_GET_OP; return VALUE.y; } \
 	inline float NAME##Z() const { EXTRA_GET_OP; return VALUE.z; } \
@@ -47,10 +50,9 @@
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
 	inline const cherrysoda::Math::Vec2 NAME() const { EXTRA_GET_OP; return VALUE; } \
-	inline const cherrysoda::Math::Vec2 NAME##2D() const { return NAME(); } \
 	inline cherrysoda::Math::Vec2& NAME##Ref() { return VALUE; } \
 	inline void NAME(const cherrysoda::Math::Vec2& v) { EXTRA_SET_OP; VALUE = v; } \
-	inline void NAME##2D(const cherrysoda::Math::Vec2& v) { EXTRA_SET_OP; VALUE = v; } \
+	inline void Move##NAME(const cherrysoda::Math::Vec2& v) { NAME(VALUE + v); } \
 	inline float NAME##X() const { EXTRA_GET_OP; return VALUE.x; } \
 	inline float NAME##Y() const { EXTRA_GET_OP; return VALUE.y; } \
 	inline void NAME##X(float x) { NAME(cherrysoda::Math::Vec2(x, VALUE.y)); } \
@@ -186,9 +188,14 @@ public:
 		inline int Bottom() const { return Y(); }
 	};
 
-	static inline Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis)
+	static inline Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis = Vec3_ZUp)
 	{
 		return Vec3(Math_Rotate(Math_Identity<Mat4>(), angle, axis) * Vec4(v3, 1.f));
+	}
+
+	static inline Vec2 RotateVector_(const Vec2& v2, float angle)
+	{
+		return Vec2(RotateVector_(Vec3(v2, 0.f), angle));
 	}
 
 	static const Mat4 GetOrientationMatrix_(const Mat4& matrix);

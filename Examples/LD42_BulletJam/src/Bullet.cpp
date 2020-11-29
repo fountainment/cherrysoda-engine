@@ -15,7 +15,7 @@ static BitTag s_enemyBulletTag("enemybullet");
 
 float Bullet::ms_initialScale = 0.5f;
 
-Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* = true*/, bool whiteBullet/* = false*/)
+Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* = true*/, bool whiteBullet/* = false*/, bool enemyBullet/* = false*/)
 {
 	Bullet* bullet = new Bullet();
 	if (whiteBullet) {
@@ -39,7 +39,7 @@ Bullet* Bullet::Create(Math::Vec2 position, Math::Vec2 speed, bool needRandom/* 
 		bullet->SpeedX(bullet->SpeedX() + Calc::GetRandom()->NextFloat(-0.5f, 0.5f) * 60.f);
 		bullet->SpeedY(bullet->SpeedY() + Calc::GetRandom()->NextFloat(-0.5f, 0.5f) * 60.f);
 	}
-	bullet->Tag(s_bulletTag);
+	bullet->Tag(enemyBullet ? s_enemyBulletTag : s_bulletTag);
 	return bullet;
 }
 
@@ -58,7 +58,7 @@ void Bullet::Update()
 	Position2D(pos2D + Speed() * Engine::Instance()->DeltaTime());
 	bool outsideFlag = BulletJamScene::CheckOutsideOfPlayZone(pos2D);
 
-	if (TagCheck(s_bulletTag)) {
+	if (TagCheck(s_bulletTag) || TagCheck(s_enemyBulletTag)) {
 		int collideCount = 0;
 		if (!outsideFlag) {
 			collideCount = CollideCount(s_deadBulletTag);
@@ -73,6 +73,7 @@ void Bullet::Update()
 				Math::Vec2 vector = Calc::SafeNormalize(Calc::Perpendicular(Speed()));
 				Bullet* bullet = Create(Position2D() + Speed() / 60.f * 0.5f + (float)arrayi * 10.f * vector, Speed() + (float)arrayi * 120.f * vector);
 				bullet->m_bulletImage->SetColor(m_bulletImage->GetColor());
+				bullet->m_bulletImage->Texture(m_bulletImage->Texture());
 				float scale = 0.7f;
 				switch (Math_Abs(arrayi))
 				{

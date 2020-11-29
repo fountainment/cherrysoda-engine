@@ -130,6 +130,22 @@ void Player::Update()
 		}
 	}
 
+	for (auto item : CollideAll(BitTag::Get("item"))) {
+		if (m_bombCount < 3) {
+			++m_bombCount;
+			item->RemoveSelf();
+			GetSceneAs<BulletJamScene>()->SetPlayerBomb(m_bombCount);
+		}
+		else {
+			Math::Vec2 vec = item->Position2D() - Position2D();
+			if (Math_Abs(vec.x) < 1.f) vec.x = 1.f * Math_Sign(vec.x);
+			if (Math_Abs(vec.y) < 1.f) vec.y = 1.f * Math_Sign(vec.y);
+			Math::Vec2 pushItem = Vec2_One * 300.f / vec;
+			item->MovePosition2D(pushItem * Engine::Instance()->DeltaTime());
+			item->Depth(item->PositionY() - 700.f);
+		}
+	}
+
 	for (auto item : CollideAll(BitTag::Get("enemybullet")))
 	{
 		Hit();
@@ -142,7 +158,7 @@ void Player::Update()
 	{
 		Shoot();
 	}
-	if (MInput::Mouse()->PressedRightButton())
+	if (MInput::Mouse()->PressedRightButton() || MInput::Keyboard()->Pressed(Keys::F))
 	{
 		PlaceBomb();
 	}
