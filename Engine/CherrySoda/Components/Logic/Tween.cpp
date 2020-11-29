@@ -116,10 +116,9 @@ void Tween::Update()
 
 void Tween::Start(bool reverse/* = false*/)
 {
-	bool flag2 = (m_reverse = reverse);
-	m_startedReversed = flag2;
+	m_startedReversed = (m_reverse = reverse);
 	m_timeLeft = m_duration;
-	float num3 = (m_eased = (m_percent = (m_reverse ? 1 : 0)));
+	m_eased = (m_percent = (m_reverse ? 1 : 0));
 	Active(true);
 	if (m_onStart != nullptr)
 	{
@@ -135,5 +134,5 @@ void Tween::Stop()
 void Tween::Reset()
 {
 	m_timeLeft = m_duration;
-	float num3 = (m_eased = (m_percent = (m_reverse ? 1 : 0)));
+	m_eased = (m_percent = (m_reverse ? 1 : 0));
 }

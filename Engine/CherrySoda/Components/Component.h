@@ -16,6 +16,7 @@ public:
 	friend class ComponentList;
 
 	Component(bool active, bool visible);
+	virtual ~Component() = default;
 
 	virtual void Added(Entity* entity);
 	virtual void Removed(Entity* entity);

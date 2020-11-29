@@ -15,6 +15,9 @@ class Entity;
 class Collider
 {
 public:
+	Collider() = default;
+	virtual ~Collider() = default;
+
 	inline bool Collide(const Entity* entity) const
 	{
 		return Collide(entity->GetCollider());

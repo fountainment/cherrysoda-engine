@@ -15,6 +15,7 @@
 using cherrysoda::Scene;
 
 using cherrysoda::BitTag;
+using cherrysoda::BitTagValueType;
 using cherrysoda::Engine;
 using cherrysoda::Entity;
 using cherrysoda::EntityList;
@@ -148,7 +149,7 @@ void Scene::Remove(Entity* entity)
 	m_entities->Remove(entity);
 }
 
-const STL::List<Entity*> Scene::GetEntitiesByTagMask(int mask) const
+const STL::List<Entity*> Scene::GetEntitiesByTagMask(BitTagValueType mask) const
 {
 	STL::List<Entity*> list;
 	for (Entity* entity : *m_entities)
@@ -161,7 +162,7 @@ const STL::List<Entity*> Scene::GetEntitiesByTagMask(int mask) const
 	return list;
 }
 
-const STL::List<Entity*> Scene::GetEntitiesExcludingTagMask(int mask) const
+const STL::List<Entity*> Scene::GetEntitiesExcludingTagMask(BitTagValueType mask) const
 {
 	STL::List<Entity*> list;
 	for (Entity* entity : *m_entities)

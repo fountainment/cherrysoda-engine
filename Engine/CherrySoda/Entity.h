@@ -41,8 +41,8 @@ public:
 	inline void AddTag(BitTagValueType tag) { Tag(Tag() | tag); }
 	inline void RemoveTag(BitTagValueType tag) { Tag(Tag() & ~tag); }
 
-	inline int Tag() const { return m_tag; }
-	void Tag(int tag);
+	inline BitTagValueType Tag() const { return m_tag; }
+	void Tag(BitTagValueType tag);
 
 	const STL::List<Entity*> CollideAll(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag) const;

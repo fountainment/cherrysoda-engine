@@ -2,12 +2,12 @@
 #define _CHERRYSODA_SCENE_H_
 
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
-class BitTag;
 class Entity;
 class EntityList;
 class Renderer;
@@ -37,8 +37,8 @@ public:
 	void Add(Entity* entity);
 	void Remove(Entity* entity);
 	
-	const STL::List<Entity*> GetEntitiesByTagMask(int mask) const;
-	const STL::List<Entity*> GetEntitiesExcludingTagMask(int mask) const;
+	const STL::List<Entity*> GetEntitiesByTagMask(BitTagValueType mask) const;
+	const STL::List<Entity*> GetEntitiesExcludingTagMask(BitTagValueType mask) const;
 
 	void Add(Renderer* renderer);
 	void Remove(Renderer* renderer);

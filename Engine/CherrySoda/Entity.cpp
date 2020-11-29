@@ -7,12 +7,14 @@
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/TagLists.h>
+#include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Entity;
 
+using cherrysoda::BitTagValueType;
 using cherrysoda::Camera;
 using cherrysoda::Collide;
 using cherrysoda::Collider;
@@ -60,7 +62,7 @@ void Entity::Render()
 	m_components->Render();
 }
 
-void Entity::Tag(int tag)
+void Entity::Tag(BitTagValueType tag)
 {
 	if (m_tag == tag)
 	{
@@ -70,11 +72,12 @@ void Entity::Tag(int tag)
 	{
 		for (int i = 0; i < BitTag::TotalTags(); ++i)
 		{
-			int num = 1 << i;
-			bool flag = (tag & num) != 0;
-			if ((m_tag & num) != 0 != flag)
+			BitTagValueType check = 1 << i;
+			bool add = (tag & check) != 0;
+			bool has = (m_tag & check) != 0; 
+			if (has != add)
 			{
-				if (flag)
+				if (add)
 				{
 					STL::Add(m_scene->Tags()->operator[](i), this);
 				}
