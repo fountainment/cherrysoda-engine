@@ -157,7 +157,7 @@ void BulletJamScene::GenerateEnemy(int wave)
 	switch (wave)
 	{
 	case 0:
-		typeArray = { 0, 0, 0, 3 };
+		typeArray = { 0, 0, 0 };
 		break;
 	case 1:
 		typeArray = { 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0 };
