@@ -39,6 +39,20 @@ emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j8
 ```
 
+## Tips
+
+### To use the sublime project
+
+You need to install the CMakeBuilder plugin first
+
+### To pack texture atlas
+
+You need to use Tools/crunch (use the built binary in Tools/bin or build it youself)
+
+The recommend parameters for crunch is: ```-j -p -u -s2048 -p16```
+
+For more information about crunch you can look into https://github.com/fountainment/crunch
+
 ## Current Status
 
 - Finished the integration of bgfx and SDL2
