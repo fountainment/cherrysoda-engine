@@ -48,6 +48,8 @@ public:
 	inline EntityList* Entities() { return m_entities; }
 	inline TagLists* Tags() { return m_tagLists; }
 	inline RendererList* Renderers() { return m_rendererList; }
+
+	Entity* FirstEntity();
 	Renderer* FirstRenderer();
 
 	inline Entity* HelperEntity() { return m_helperEntity; }

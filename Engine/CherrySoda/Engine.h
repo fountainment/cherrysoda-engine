@@ -55,6 +55,7 @@ public:
 	void Run();
 	void Exit();
 
+	inline Scene* GetScene() { return m_scene; }
 	void SetScene(Scene* scene);
 
 	inline bool Initialized() { return m_initialized; }

@@ -114,6 +114,11 @@ void Scene::AfterRender()
 	m_rendererList->AfterRender();
 }
 
+Entity* Scene::FirstEntity()
+{
+	return Entities()->First();
+}
+
 Renderer* Scene::FirstRenderer()
 {
 	return Renderers()->First();	

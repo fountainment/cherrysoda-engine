@@ -156,3 +156,10 @@ void EntityList::HandleGraphicsCreate()
 		entity->HandleGraphicsCreate();
 	}
 }
+
+Entity* EntityList::First()
+{
+	Entity* first = nullptr;
+	STL::TryGetFirst(m_entities, first);
+	return first;
+}

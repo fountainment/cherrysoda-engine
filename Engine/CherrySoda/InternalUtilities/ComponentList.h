@@ -22,7 +22,7 @@ public:
 	{
 		for (auto component : m_components) {
 			if (T::ComponentTypeID() == component->TypeID()) {
-				return component;
+				return static_cast<T*>(component);
 			}
 		}
 		return nullptr;
