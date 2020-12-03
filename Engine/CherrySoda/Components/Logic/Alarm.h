@@ -18,7 +18,7 @@ enum class AlarmMode
 class Alarm : public Component
 {
 public:
-	typedef Component base;
+	CHERRYSODA_DECLARE_COMPONENT(Alarm, Component);
 
 	inline AlarmMode Mode() const { return m_mode; }
 	inline float Duration() const { return m_duration; }	

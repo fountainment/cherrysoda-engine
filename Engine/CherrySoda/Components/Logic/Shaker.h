@@ -11,7 +11,7 @@ namespace cherrysoda {
 class Shaker : public Component
 {
 public:
-	typedef cherrysoda::Component base;	
+	CHERRYSODA_DECLARE_COMPONENT(Shaker, Component);
 
 	Shaker(bool on = true, STL::Action<Math::Vec2> onShake = nullptr)
 		: base(true, false)

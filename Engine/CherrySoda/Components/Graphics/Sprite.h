@@ -14,7 +14,7 @@ namespace cherrysoda {
 class Sprite : public Image
 {
 public:
-	typedef Image base;
+	CHERRYSODA_DECLARE_COMPONENT(Sprite, Image);
 
 	Sprite() : base(MTexture(), true) {}
 

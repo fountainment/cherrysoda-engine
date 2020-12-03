@@ -12,7 +12,7 @@ class Scene;
 class StateMachine : public Component
 {
 public:
-	typedef Component base;	
+	CHERRYSODA_DECLARE_COMPONENT(StateMachine, Component);
 
 	StateMachine(int maxStates = 32)
 	: base(true, false)

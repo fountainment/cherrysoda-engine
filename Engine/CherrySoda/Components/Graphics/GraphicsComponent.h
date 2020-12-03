@@ -11,7 +11,7 @@ namespace cherrysoda {
 class GraphicsComponent : public Component
 {
 public:
-	typedef Component base;
+	CHERRYSODA_DECLARE_COMPONENT(GraphicsComponent, Component);
 
 	GraphicsComponent(bool active) : base(active, true) {}
 

@@ -12,7 +12,7 @@ class Entity;
 class Wiggler : public Component
 {
 public:
-	typedef cherrysoda::Component base;
+	CHERRYSODA_DECLARE_COMPONENT(Wiggler, Component);
 
 	void Removed(Entity* entity) override;
 	void Start();

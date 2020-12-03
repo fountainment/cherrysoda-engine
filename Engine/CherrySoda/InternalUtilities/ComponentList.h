@@ -1,12 +1,12 @@
 #ifndef _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_
 #define _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_
 
+#include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
 class Camera;
-class Component;
 class Entity;
 
 class ComponentList
@@ -21,7 +21,7 @@ public:
 	T* Get()
 	{
 		for (auto component : m_components) {
-			if (typeid(T*) == typeid(component)) {
+			if (T::ComponentTypeID() == component->TypeID()) {
 				return component;
 			}
 		}

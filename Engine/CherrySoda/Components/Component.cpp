@@ -76,3 +76,7 @@ void Component::RemoveSelf()
 	}	
 }
 
+Scene* Component::GetScene() const
+{
+	return m_entity != nullptr ? m_entity->GetScene() : nullptr;
+}

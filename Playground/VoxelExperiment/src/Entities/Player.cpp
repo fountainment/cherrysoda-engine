@@ -7,7 +7,6 @@ using namespace cherrysoda;
 void PlayerControl::Update()
 {
 	auto player = EntityAs<Player>();
-	CHERRYSODA_ASSERT(player, "PlayerControl can only be used on Player!\n");
 
 	float deltaTime = Engine::Instance()->DeltaTime();
 
@@ -34,7 +33,6 @@ void PlayerControl::Update()
 void PlayerCamera::Update()
 {
 	auto player = EntityAs<Player>();
-	CHERRYSODA_ASSERT(player, "PlayerCamera can only be used on Player!\n");
 
 	GetCamera()->Direction(player->FacingDirection());
 	GetCamera()->Position(player->Position());

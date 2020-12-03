@@ -13,7 +13,7 @@ namespace cherrysoda
 class PlayerControl : public cherrysoda::Component
 {
 public:
-	typedef cherrysoda::Component base;
+	CHERRYSODA_DECLARE_COMPONENT(PlayerControl, cherrysoda::Component);
 
 	PlayerControl() : base(true, false) {}
 
@@ -23,7 +23,7 @@ public:
 class PlayerCamera : public cherrysoda::Component
 {
 public:
-	typedef cherrysoda::Component base;
+	CHERRYSODA_DECLARE_COMPONENT(PlayerCamera, cherrysoda::Component);
 
 	PlayerCamera(cherrysoda::Camera* camera) : base(true, false)
 	, m_camera(camera)

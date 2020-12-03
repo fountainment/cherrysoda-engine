@@ -79,10 +79,6 @@
 					"shell_cmd": "make -j8 FirstTriangle"
 				},
 				{
-					"name": "LD42_BulletJam",
-					"shell_cmd": "make -j8 LD42_BulletJam"
-				},
-				{
 					"name": "Minimal",
 					"shell_cmd": "make -j8 Minimal"
 				},

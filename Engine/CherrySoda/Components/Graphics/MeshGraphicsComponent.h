@@ -11,7 +11,7 @@ template <class VERTEX_T>
 class MeshGraphicsComponent : public cherrysoda::GraphicsComponent
 {
 public:
-	typedef cherrysoda::GraphicsComponent base;
+	CHERRYSODA_DECLARE_COMPONENT(MeshGraphicsComponent<VERTEX_T>, GraphicsComponent);
 	typedef VERTEX_T VertexType;
 
 	MeshGraphicsComponent(bool active) : base(active) {}

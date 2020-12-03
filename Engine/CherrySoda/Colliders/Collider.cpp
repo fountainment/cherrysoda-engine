@@ -16,7 +16,7 @@ using cherrysoda::Math;
 
 bool Collider::Collide(const Collider* collider) const
 {
-	if (dynamic_cast<const Circle*>(collider) != nullptr) {
+	if (collider->TypeID() == Circle::ColliderTypeID()) {
 		return Collide(static_cast<const Circle*>(collider));
 	}
 	return false;

@@ -12,7 +12,7 @@ namespace cherrysoda {
 class Image : public GraphicsComponent
 {
 public:
-	typedef GraphicsComponent base;
+	CHERRYSODA_DECLARE_COMPONENT(Image, GraphicsComponent);
 
 	Image(const MTexture& texture)
 	: base(false)

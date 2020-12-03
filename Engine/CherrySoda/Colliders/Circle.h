@@ -11,6 +11,8 @@ class Color;
 class Circle : public Collider
 {
 public:
+	CHERRYSODA_DECLARE_COLLIDER(Circle, Collider);
+
 	Circle(float radius, const Math::Vec2& center = Vec2_Zero)
 	{
 		Radius(radius);

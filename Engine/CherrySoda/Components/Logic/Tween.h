@@ -21,7 +21,7 @@ enum class TweenMode
 class Tween : public Component
 {
 public:
-	typedef Component base;
+	CHERRYSODA_DECLARE_COMPONENT(Tween, Component);
 
 	Tween() : base(false, false) {}
 
