@@ -57,7 +57,7 @@ private:
 
 	float m_width;
 	float m_height;
-	Math::Vec3 m_position = Vec3_Zero;
+	Math::Vec3 m_position = Math::Vec3(0.f, 0.f, 1.f);
 	Math::Vec3 m_zoom = Vec3_One;
 	Math::Vec3 m_origin = Vec3_Zero;
 	Math::Vec3 m_direction = -Vec3_ZUp;
