@@ -65,7 +65,7 @@ public:
 	inline String GetStr() const { return m_str; }
 #endif
 
-	inline type::Int32 GetID() const { return m_id; }
+	constexpr type::Int32 GetID() const { return m_id; }
 
 	operator type::Int32() const { return GetID(); }
 	bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }

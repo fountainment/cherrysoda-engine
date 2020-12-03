@@ -6,21 +6,14 @@
 #include <CherrySoda/Util/String.h>
 
 
-#ifndef NDEBUG
-#define CHERRYSODA_COMPONENT_TYPE_STR(NAME) \
-virtual cherrysoda::String TypeStr() const override \
-{ return cherrysoda::StringID(""#NAME).GetStr(); }
-#else
-#define CHERRYSODA_COMPONENT_TYPE_STR(NAME)
-#endif // NDEBUG
-
 #define CHERRYSODA_DECLARE_COMPONENT(COMP,BASE) \
 typedef BASE base; \
 virtual cherrysoda::type::Int32 TypeID() const override \
 { return COMP::ComponentTypeID(); } \
-CHERRYSODA_COMPONENT_TYPE_STR(COMP) \
-static cherrysoda::type::Int32 ComponentTypeID() \
-{ return cherrysoda::StringID(""#COMP).GetID(); }
+virtual const char* TypeCStr() const override \
+{ return #COMP; } \
+static constexpr cherrysoda::type::Int32 ComponentTypeID() \
+{ return cherrysoda::StringID(#COMP).GetID(); }
 
 
 namespace cherrysoda {
@@ -55,10 +48,7 @@ public:
 	virtual void HandleGraphicsCreate();
 
 	virtual type::Int32 TypeID() const = 0;
-
-#ifndef NDEBUG
-	virtual String TypeStr() const = 0;
-#endif
+	virtual const char* TypeCStr() const = 0;
 
 	void RemoveSelf();	
 

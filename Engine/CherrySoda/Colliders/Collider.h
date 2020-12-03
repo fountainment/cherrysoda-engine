@@ -5,21 +5,16 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
-#ifndef NDEBUG
-#define CHERRYSODA_COLLIDER_TYPE_STR(NAME) \
-virtual cherrysoda::String TypeStr() const override \
-{ return cherrysoda::StringID(""#NAME).GetStr(); }
-#else
-#define CHERRYSODA_COLLIDER_TYPE_STR(NAME)
-#endif // NDEBUG
 
 #define CHERRYSODA_DECLARE_COLLIDER(COLL,BASE) \
 typedef BASE base; \
 virtual cherrysoda::type::Int32 TypeID() const override \
 { return COLL::ColliderTypeID(); } \
-CHERRYSODA_COLLIDER_TYPE_STR(COLL) \
-static inline cherrysoda::type::Int32 ColliderTypeID() \
-{ return cherrysoda::StringID(""#COLL).GetID(); }
+virtual const char* TypeCStr() const override \
+{ return #COLL; } \
+static constexpr cherrysoda::type::Int32 ColliderTypeID() \
+{ return cherrysoda::StringID(#COLL).GetID(); }
+
 
 namespace cherrysoda {
 
@@ -54,10 +49,7 @@ public:
 	inline Component* GetComponent() const { return m_component; }
 
 	virtual type::Int32 TypeID() const = 0;
-
-#ifndef NDEBUG
-	virtual String TypeStr() const = 0;
-#endif
+	virtual const char* TypeCStr() const = 0;
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 
