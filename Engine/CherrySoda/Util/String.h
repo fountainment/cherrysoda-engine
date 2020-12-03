@@ -12,6 +12,12 @@
 #define CHERRYSODA_LOG_FORMAT(format,...)              CHERRYSODA_LOG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 #define CHERRYSODA_ASSERT_FORMAT(condition,format,...) CHERRYSODA_ASSERT(condition,CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 
+#ifdef NDEBUG // RELEASE
+#define CHERRYSODA_STRINGID_CONSTEXPR constexpr
+#else // DEBUG
+#define CHERRYSODA_STRINGID_CONSTEXPR inline
+#endif // NDEBUG
+
 namespace cherrysoda {
 
 typedef std::string String;
@@ -39,13 +45,21 @@ public:
 
 	inline StringID(const String& str) : StringID(str.c_str()) {}
 
-#ifdef NDEBUG
+	constexpr type::Int32 GetID() const { return m_id; }
+	constexpr operator type::Int32() const { return GetID(); }
+	constexpr bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }
+
+#ifdef NDEBUG // RELEASE
+public:
 	constexpr StringID(const char* str)
 	: m_id(GetHashBKDR(str))
 	{}
 
 	inline String GetStr() const { return ""; }
-#else
+private:
+	type::Int32 m_id;
+#else // DEBUG
+public:
 	StringID(const char* str)
 	: m_id(GetHashBKDR(str))
 	, m_str(String(str))
@@ -63,19 +77,11 @@ public:
 	}
 
 	inline String GetStr() const { return m_str; }
-#endif
-
-	constexpr type::Int32 GetID() const { return m_id; }
-
-	operator type::Int32() const { return GetID(); }
-	bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }
 
 private:
 	type::Int32 m_id;
-
-#ifndef NDEBUG
 	String m_str;
-#endif
+#endif // NDEBUG
 };
 
 } // namespace cherrysoda

@@ -12,7 +12,7 @@ virtual cherrysoda::type::Int32 TypeID() const override \
 { return COLL::ColliderTypeID(); } \
 virtual const char* TypeCStr() const override \
 { return #COLL; } \
-static constexpr cherrysoda::type::Int32 ColliderTypeID() \
+static CHERRYSODA_STRINGID_CONSTEXPR cherrysoda::type::Int32 ColliderTypeID() \
 { return cherrysoda::StringID(#COLL).GetID(); }
 
 

@@ -12,7 +12,7 @@ virtual cherrysoda::type::Int32 TypeID() const override \
 { return COMP::ComponentTypeID(); } \
 virtual const char* TypeCStr() const override \
 { return #COMP; } \
-static constexpr cherrysoda::type::Int32 ComponentTypeID() \
+static CHERRYSODA_STRINGID_CONSTEXPR cherrysoda::type::Int32 ComponentTypeID() \
 { return cherrysoda::StringID(#COMP).GetID(); }
 
 
