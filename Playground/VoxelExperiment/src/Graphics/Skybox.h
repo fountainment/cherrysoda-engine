@@ -6,7 +6,7 @@
 class Skybox : public cherrysoda::GraphicsComponent
 {
 public:
-	typedef cherrysoda::GraphicsComponent base;
+	CHERRYSODA_DECLARE_COMPONENT(Skybox, cherrysoda::GraphicsComponent);
 
 	Skybox() : base(true) {}
 

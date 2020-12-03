@@ -9,7 +9,7 @@ using namespace cherrysoda;
 class Triangle : public MeshGraphicsComponent<Graphics::PosColorVertex>
 {
 public:
-	typedef MeshGraphicsComponent<VertexType> base;
+	CHERRYSODA_DECLARE_COMPONENT(Triangle, MeshGraphicsComponent<VertexType>);
 
 	Triangle() : base(true)
 	{
