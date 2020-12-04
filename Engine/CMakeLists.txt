@@ -132,7 +132,7 @@ else()
 endif()
 
 target_include_directories(CherrySoda PUBLIC . ${SDL2_INCLUDE_DIRS})
-set(CHERRYSODA_COMMON_LIBS imgui bgfx bimg bimg_decode bx glm glm_static rapidjson ${SDL2_LIBRARIES})
+set(CHERRYSODA_COMMON_LIBS imgui bgfx bimg bimg_decode bx glm rapidjson ${SDL2_LIBRARIES})
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} gdi32 kernel32 psapi)
 else()

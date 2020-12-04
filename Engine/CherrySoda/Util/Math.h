@@ -1,7 +1,14 @@
 #ifndef _CHERRYSODA_UTIL_MATH_H_
 #define _CHERRYSODA_UTIL_MATH_H_
 
-#include <glm/glm.hpp>
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#define GLM_FORCE_INTRINSICS
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/common.hpp>
+#include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>

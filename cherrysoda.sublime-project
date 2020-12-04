@@ -79,6 +79,14 @@
 					"shell_cmd": "make -j8 FirstTriangle"
 				},
 				{
+					"name": "LD42_BulletJam",
+					"shell_cmd": "make -j8 LD42_BulletJam"
+				},
+				{
+					"name": "MathBench",
+					"shell_cmd": "make -j8 MathBench"
+				},
+				{
 					"name": "Minimal",
 					"shell_cmd": "make -j8 Minimal"
 				},
@@ -113,10 +121,6 @@
 				{
 					"name": "crunch",
 					"shell_cmd": "make -j8 crunch"
-				},
-				{
-					"name": "glm_static",
-					"shell_cmd": "make -j8 glm_static"
 				},
 				{
 					"name": "imgui",
