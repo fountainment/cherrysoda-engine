@@ -47,7 +47,9 @@ public:
 
 	STL::Vector<MTexture> GetFrames(const String& path, int startIndex = 1, int indexLength = 4)
 	{
-		return STL::ToVector(m_atlas->GetAtlasSubtextures(m_path + path, startIndex, indexLength));
+		auto ret = STL::ToVector(m_atlas->GetAtlasSubtextures(m_path + path, startIndex, indexLength));
+		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!", (m_path + path).c_str());
+		return ret;
 	}
 
 	void Add(const String& id, const String& path, int startIndex = 1, int indexLength = 4, float delay = 1.f / 15.f)
