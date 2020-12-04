@@ -22,7 +22,7 @@ git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake ..
 ```
 
 ```sh
@@ -35,7 +35,7 @@ git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
 mkdir build
 cd build
-emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
+emcmake cmake ..
 make -j8
 ```
 

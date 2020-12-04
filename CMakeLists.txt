@@ -13,6 +13,9 @@ project(CherrySoda VERSION 0.01
 include(cmake/SysDetect.cmake)
 
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 if(EMSCRIPTEN)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2")
