@@ -49,7 +49,7 @@ You need to install the CMakeBuilder plugin first
 
 You need to use Tools/crunch (use the built binary in Tools/bin or build it youself)
 
-The recommended parameters for crunch is: ```-j -p -u -s2048 -p16```
+The recommended parameters for crunch is: ```-j -p -u -t -s2048 -p8```
 
 For more information about crunch you can look into https://github.com/fountainment/crunch
 
