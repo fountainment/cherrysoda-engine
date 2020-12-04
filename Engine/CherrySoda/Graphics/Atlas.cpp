@@ -75,7 +75,14 @@ void Atlas::ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat form
 					Math::IVec2(sub["x"].GetInt(), sub["y"].GetInt()),
 					Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
 				};
-				atlas.m_textures[name] = MTexture(mTexture, name, clipRect);
+				if (sub.HasMember("fx")) {
+					const float fullHeight = sub["fh"].GetInt();
+					const float yOffset = fullHeight - (clipRect.Height() - sub["fy"].GetInt());
+					atlas.m_textures[name] = MTexture(mTexture, name, clipRect, Math::Vec2(-sub["fx"].GetInt(), yOffset), sub["fw"].GetInt(), fullHeight);
+				}
+				else {
+					atlas.m_textures[name] = MTexture(mTexture, name, clipRect);
+				}
 			}
 		}
 		break;

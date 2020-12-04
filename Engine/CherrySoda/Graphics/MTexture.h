@@ -21,6 +21,7 @@ public:
 	MTexture(const MTexture& parent, int x, int y, int width, int height);
 	MTexture(const MTexture& parent, const Math::IRectangle& clipRect);
 	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect);
+	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height);
 
 	Math::IRectangle GetRelativeRect(int x, int y, int width, int height) const;
 	Math::IRectangle GetRelativeRect(const Math::IRectangle& rect) const;
