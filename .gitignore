@@ -47,3 +47,4 @@ __pycache__
 # Download
 SDL2-*/
 tracy
+.tracy

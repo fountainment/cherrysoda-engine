@@ -22,7 +22,6 @@ class Circle;
 class Color;
 class Camera;
 class Component;
-class Entity;
 
 class Collider
 {
@@ -39,8 +38,15 @@ public:
 	virtual bool Collide(const Circle* circle) const = 0;
 	virtual bool Collide(const Math::Vec2& point) const = 0;
 
-	Math::Vec2 AbsolutePosition2D() const;
-	Math::Vec3 AbsolutePosition() const;
+	inline Math::Vec2 AbsolutePosition2D() const
+	{
+		return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D();
+	}
+
+	inline Math::Vec3 Collider::AbsolutePosition() const
+	{
+		return m_entity != nullptr ? m_entity->Position() + Position() : Position();
+	}
 
 	void Render(const Camera* camera) const;
 	virtual void Render(const Camera* camera, const Color& color) const = 0;

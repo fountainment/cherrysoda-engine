@@ -22,22 +22,6 @@ bool Collider::Collide(const Collider* collider) const
 	return false;
 }
 
-Math::Vec2 Collider::AbsolutePosition2D() const
-{
-	if (m_entity != nullptr) {
-		return m_entity->Position2D() + Position2D();
-	}
-	return Position2D();
-}
-
-Math::Vec3 Collider::AbsolutePosition() const
-{
-	if (m_entity != nullptr) {
-		return m_entity->Position() + Position();
-	}
-	return Position();
-}
-
 void Collider::Removed()
 {
 	m_entity = nullptr;

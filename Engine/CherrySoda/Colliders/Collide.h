@@ -13,15 +13,15 @@ class Collide
 public:
 	static bool Check(const Entity* a, const Entity* b);
 
-	static bool Check(const Entity* a, const STL::List<Entity*> b);
+	static bool Check(const Entity* a, const STL::List<Entity*>& b);
 
 	static bool CheckPoint(const Entity* a, const Math::Vec2& point);
 
-	static int Count(const Entity* a, const STL::List<Entity*> b);
+	static int Count(const Entity* a, const STL::List<Entity*>& b);
 
-	static Entity* First(const Entity* a, const STL::List<Entity*> b);
+	static Entity* First(const Entity* a, const STL::List<Entity*>& b);
 
-	static const STL::List<Entity*> All(const Entity* a, const STL::List<Entity*> b);
+	static const STL::List<Entity*> All(const Entity* a, const STL::List<Entity*>& b);
 };
 
 } // namespace cherrysoda

@@ -17,7 +17,7 @@ bool Collide::Check(const Entity* a, const Entity* b)
 	return a != b && b->Collidable() && a->GetCollider()->Collide(b);
 }
 
-bool Collide::Check(const Entity* a, const STL::List<Entity*> b)
+bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)
 {
 	for (auto e : b) {
 		if (Check(a, e)) {
@@ -35,7 +35,7 @@ bool Collide::CheckPoint(const Entity* a, const Math::Vec2& point)
 	return a->GetCollider()->Collide(point);
 }
 
-int Collide::Count(const Entity* a, const STL::List<Entity*> b)
+int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 {
 	int count = 0;
 	for (auto e : b) {
@@ -46,7 +46,7 @@ int Collide::Count(const Entity* a, const STL::List<Entity*> b)
 	return count;
 }
 
-Entity* Collide::First(const Entity* a, const STL::List<Entity*> b)
+Entity* Collide::First(const Entity* a, const STL::List<Entity*>& b)
 {
 	for (auto e : b) {
 		if (Check(a, e)) {
@@ -56,7 +56,7 @@ Entity* Collide::First(const Entity* a, const STL::List<Entity*> b)
 	return nullptr;
 }
 
-const STL::List<Entity*> Collide::All(const Entity* a, const STL::List<Entity*> b)
+const STL::List<Entity*> Collide::All(const Entity* a, const STL::List<Entity*>& b)
 {
 	STL::List<Entity*> ret;
 	for (auto e : b) {
