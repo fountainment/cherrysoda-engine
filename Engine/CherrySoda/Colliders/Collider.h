@@ -43,7 +43,7 @@ public:
 		return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D();
 	}
 
-	inline Math::Vec3 Collider::AbsolutePosition() const
+	inline Math::Vec3 AbsolutePosition() const
 	{
 		return m_entity != nullptr ? m_entity->Position() + Position() : Position();
 	}
