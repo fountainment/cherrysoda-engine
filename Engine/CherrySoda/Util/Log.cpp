@@ -23,7 +23,7 @@ void Log::DebugOutput(const String& output, int channel)
 
 void Log::LogOutput(const String& output, int channel)
 {
-	std::printf("%s", output.c_str());
+	DebugOutput(output, channel);
 	FILE* f = std::fopen("cherrysoda.log", "a");
 	std::fprintf(f, "%s", output.c_str());
 	std::fclose(f);
