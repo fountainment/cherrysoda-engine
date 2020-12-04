@@ -47,12 +47,12 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 	const Math::Vec4 rPos = ((effects & SpriteEffects::RoundRenderingPosition) == SpriteEffects::RoundRenderingPosition) ? Math::Vec4(Math_Round(pos), 0.f, 0.f) : Math::Vec4(pos, 0.f, 0.f);
 	const Math::Mat4 rotationMat = rotation == 0 ? Math_Identity<Math::Mat4>() : Math_Rotate(Math_Identity<Math::Mat4>(), rotation, Vec3_ZUp);
 	AddQuad(
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(rect.Width(), 0.f)  - origin) * scale, 0.f, 1.f)), color, Math::Vec2(rightUV, bottomUV)),
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(rect.Size())        - origin) * scale, 0.f, 1.f)), color, Math::Vec2(rightUV, topUV)),
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Vec2_Zero                      - origin) * scale, 0.f, 1.f)), color, Math::Vec2(leftUV,  bottomUV)),
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(0.f, rect.Height()) - origin) * scale, 0.f, 1.f)), color, Math::Vec2(leftUV,  topUV))
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(rect.Width(), 0.f)  - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(rightUV, bottomUV)),
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(rect.Size())        - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(rightUV, topUV)),
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Vec2_Zero                      - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(leftUV,  bottomUV)),
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(0.f, rect.Height()) - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(leftUV,  topUV))
 	);
-	m_previousTexture = tex;	
+	m_previousTexture = tex;
 }
 
 void SpriteBatch::End()
