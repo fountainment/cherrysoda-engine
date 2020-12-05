@@ -22,6 +22,12 @@ option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
 option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
 option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 
+# PocketCHIP
+if(CHIP)
+  add_definitions(-DCHIP)
+  add_definitions(-mcpu=cortex-a8 -mfpu=neon -mfloat-abi=hard -ftree-vectorize -fsingle-precision-constant -ffast-math)
+endif()
+
 set(CHERRYSODA_SIMD "")
 if(NOT EMSCRIPTEN)
   if(NOT MSVC)
