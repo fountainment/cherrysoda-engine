@@ -93,6 +93,7 @@ void Engine::Run()
 	Draw();
 
 	m_window->Show();
+	Draw();
 
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(&Engine::MainLoop, -1, 1);
