@@ -7,6 +7,7 @@ namespace cherrysoda {
 	{
 	public:
 		static double GetSystemTime();
+		static void SleepForMilliseconds(unsigned int ms);
 	};
 
 } // namespace cherrysoda

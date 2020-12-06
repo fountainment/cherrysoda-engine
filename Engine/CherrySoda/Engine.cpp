@@ -85,9 +85,14 @@ void Engine::Run()
 	Initialize();
 	LoadContent();
 
-	m_window->Show();
-
 	m_lastFrameTime = Time::GetSystemTime();
+
+	// Render one frame before showing window to prevent white blink
+	Time::SleepForMilliseconds(16);
+	Update();
+	Draw();
+
+	m_window->Show();
 
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(&Engine::MainLoop, -1, 1);
