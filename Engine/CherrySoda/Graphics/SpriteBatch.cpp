@@ -4,6 +4,7 @@
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::SpriteBatch;
@@ -57,6 +58,7 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 
 void SpriteBatch::End()
 {
+	CHERRYSODA_PROFILE_FUNCTION();
 	if (VertexAmount()) {
 		SubmitBuffer();
 		Graphics::SetTexture(&m_previousTexture);

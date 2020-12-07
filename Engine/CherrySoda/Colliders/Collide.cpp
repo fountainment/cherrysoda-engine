@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Colliders/Collider.h>
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Collide;
@@ -19,6 +20,7 @@ bool Collide::Check(const Entity* a, const Entity* b)
 
 bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)
 {
+	CHERRYSODA_PROFILE_FUNCTION();
 	for (auto e : b) {
 		if (Check(a, e)) {
 			return true;
@@ -37,6 +39,7 @@ bool Collide::CheckPoint(const Entity* a, const Math::Vec2& point)
 
 int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 {
+	CHERRYSODA_PROFILE_FUNCTION();
 	int count = 0;
 	for (auto e : b) {
 		if (Check(a, e)) {
@@ -48,6 +51,7 @@ int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 
 Entity* Collide::First(const Entity* a, const STL::List<Entity*>& b)
 {
+	CHERRYSODA_PROFILE_FUNCTION();
 	for (auto e : b) {
 		if (Check(a, e)) {
 			return e;
@@ -58,6 +62,7 @@ Entity* Collide::First(const Entity* a, const STL::List<Entity*>& b)
 
 const STL::List<Entity*> Collide::All(const Entity* a, const STL::List<Entity*>& b)
 {
+	CHERRYSODA_PROFILE_FUNCTION();
 	STL::List<Entity*> ret;
 	for (auto e : b) {
 		if (Check(a, e)) {
