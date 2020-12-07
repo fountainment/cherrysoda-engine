@@ -72,20 +72,21 @@ if(EMSCRIPTEN)
                                           -s OFFSCREENCANVAS_SUPPORT=1 \
                                           -s TOTAL_MEMORY=512MB \
                                           --preload-file assets")
-  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g4 -s ASSERTIONS=2 -s GL_ASSERTIONS=2")
+  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g4 -s ASSERTIONS=2 -s GL_ASSERTIONS=2 -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 --closure 1") 
   # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
   #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
-  #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1") 
+  #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1")
   add_compile_options(-fno-exceptions -fno-rtti)
 elseif(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIE ${CHERRYSODA_SIMD}")
-  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g")
+  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3") 
   add_compile_options(-fno-exceptions -fno-rtti)
 else(NOT MSVC)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP -D_CRT_SECURE_NO_WARNINGS ${CHERRYSODA_SIMD}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /D_CRT_SECURE_NO_WARNINGS ${CHERRYSODA_SIMD}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /DCHERRYSODA_ENABLE_PROFILE /DTRACY_ENABLE")
 endif()
 

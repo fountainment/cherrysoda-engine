@@ -21,12 +21,13 @@ public:
 
 	BitTag(const StringID& name)
 	{
-#ifndef NDEBUG // Debug
-		m_name = name.GetStr();
-
 		CHERRYSODA_ASSERT(ms_totalTags < TagBitsAmount, "Maximum tag limit exceeded!\n");
+
+#ifdef CHERRYSODA_ENABLE_DEBUG
+		m_name = name.GetStr();
 		CHERRYSODA_ASSERT(!STL::ContainsKey(GetNameMap(), name.GetID()), "Two tags defined with the same name: '" + m_name + "'!\n");
 #endif
+
 		m_id = ms_totalTags;
 		m_value = 1 << ms_totalTags;
 
@@ -41,9 +42,7 @@ public:
 
 	static BitTag Get(const StringID& name)
 	{
-#ifndef NDEBUG // Debug
 		CHERRYSODA_ASSERT(STL::ContainsKey(GetNameMap(), name.GetID()), "No tag with the name '" + name.GetStr() + "' has been defined!\n");
-#endif
 		return GetNameMap()[name];
 	}
 
@@ -52,7 +51,7 @@ public:
 private:
 	int m_id = 0;
 	BitTagValueType m_value = 0;
-#ifndef NDEBUG // Debug
+#ifdef CHERRYSODA_ENABLE_DEBUG
 	String m_name;
 #endif
 	static int ms_totalTags;

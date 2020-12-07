@@ -93,21 +93,13 @@ void Entity::Tag(BitTagValueType tag)
 
 const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
 {
-#ifndef NDEBUG
-	if (m_scene == nullptr) {
-		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
-	}
-#endif
+	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::All(this, (*m_scene)[tag]);
 }
 
 bool Entity::CollideCheck(const BitTag& tag) const
 {
-#ifndef NDEBUG
-	if (m_scene == nullptr) {
-		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
-	}
-#endif
+	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::Check(this, (*m_scene)[tag]);
 }
 
@@ -123,21 +115,13 @@ bool Entity::CollidePoint(const Math::Vec2& point) const
 
 int Entity::CollideCount(const BitTag& tag) const
 {
-#ifndef NDEBUG
-	if (m_scene == nullptr) {
-		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
-	}
-#endif
+	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::Count(this, (*m_scene)[tag]);
 }
 
 Entity* Entity::CollideFirst(const BitTag& tag) const
 {
-#ifndef NDEBUG
-	if (m_scene == nullptr) {
-		CHERRYSODA_ASSERT(false, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
-	}
-#endif
+	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::First(this, (*m_scene)[tag]);
 }
 
@@ -216,11 +200,8 @@ void Entity::SetCollider(Collider* collider)
 	if (m_collider == collider) {
 		return;
 	}
-#ifndef NDEBUG
-	if (collider->GetEntity() != nullptr) {
-		CHERRYSODA_ASSERT(false, "Setting an Entity's Collider to a Collider already in use by another object\n")
-	}
-#endif
+	CHERRYSODA_ASSERT(collider->GetEntity() == nullptr, "Setting an Entity's Collider to a Collider already in use by another object\n")
+
 	if (m_collider != nullptr) {
 		m_collider->Removed();
 	}

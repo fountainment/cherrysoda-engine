@@ -233,7 +233,7 @@ void Engine::Draw()
 	m_fpsCounter++;
 	m_counterElapsed += m_rawDeltaTime;
 	if (m_counterElapsed > 1.0) {
-#if !defined(NDEBUG) || defined(CHERRYSODA_ENABLE_PROFILE)
+#if defined(CHERRYSODA_ENABLE_DEBUG) || defined(CHERRYSODA_ENABLE_PROFILE)
 		m_window->SetTitle(m_title + " " + std::to_string(m_fpsCounter) + " fps");
 #endif
 		m_FPS = m_fpsCounter;

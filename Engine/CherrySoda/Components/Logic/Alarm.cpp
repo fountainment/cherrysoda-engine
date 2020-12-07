@@ -34,11 +34,8 @@ Alarm* Alarm::Set(Entity* entity, float duration, STL::Action<> onComplete, Alar
 
 void Alarm::Init(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.f*/, bool start/* = false*/)
 {
-#ifndef NDEBUG
-	if (duration <= 0) {
-		CHERRYSODA_ASSERT(false, "Alarm duration cannot be <= 0\n");
-	}
-#endif
+	CHERRYSODA_ASSERT(duration > 0.f, "Alarm duration cannot be <= 0\n");
+
 	m_mode = mode;
 	m_duration = duration;
 	m_onComplete = onComplete;	
@@ -85,11 +82,7 @@ void Alarm::Start()
 
 void Alarm::Start(float duration)
 {
-#ifndef NDEBUG
-	if (duration <= 0) {
-		CHERRYSODA_ASSERT(false, "Alarm duration cannot be <= 0\n");
-	}
-#endif
+	CHERRYSODA_ASSERT(duration > 0.f, "Alarm duration cannot be <= 0\n");
 
 	m_duration = duration;
 	Start();

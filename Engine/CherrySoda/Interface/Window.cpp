@@ -40,7 +40,7 @@ using cherrysoda::MInput;
 using cherrysoda::String;
 using cherrysoda::STL;
 
-#ifndef NDEBUG // DEBUG
+#ifdef CHERRYSODA_ENABLE_DEBUG
 #define ENUM_NAME_PAIR(ENUM) { (int)ENUM, #ENUM }
 static STL::HashMap<int,const char*> s_debugEventLookUp =
 {
@@ -97,7 +97,7 @@ static STL::HashMap<int,const char*> s_debugEventLookUp =
 	ENUM_NAME_PAIR(SDL_LASTEVENT)
 };
 #undef ENUM_NAME_PAIR
-#endif // DEBUG
+#endif // CHERRYSODA_ENABLE_DEBUG
 
 static STL::List<Keys> s_keyboardKeys;
 static STL::HashMap<int, Keys> s_keycodeToKeys = {
@@ -515,11 +515,11 @@ void cherrysoda::Window::PollEvents()
 {
 	SDL_Event event;
 	Keys key;
-#ifndef NDEBUG // DEBUG
+#ifdef CHERRYSODA_ENABLE_DEBUG
 	bool first = true;
-#endif // DEBUG
+#endif
 	while (SDL_PollEvent(&event)) {
-#ifndef NDEBUG // DEBUG
+#ifdef CHERRYSODA_ENABLE_DEBUG
 		if (first) {
 			CHERRYSODA_DEBUG("cherrysoda::Window::PollEvents(): ");
 			first = false;
@@ -528,8 +528,7 @@ void cherrysoda::Window::PollEvents()
 			CHERRYSODA_DEBUG("                                  ");
 		}
 		CHERRYSODA_DEBUG_FORMAT("0x%X__<%s>\n", event.type, s_debugEventLookUp[event.type]);
-		first = true;
-#endif // DEBUG
+#endif // CHERRYSODA_ENABLE_DEBUG
 		switch (event.type) {
 		case SDL_QUIT:
 			Engine::Instance()->Exit();
