@@ -32,11 +32,11 @@ target_compile_features(bimg_decode PRIVATE cxx_std_14)
 
 
 # bimg_encode
-file(GLOB BIMG_ENCODE_SRC bimg/include/bimg/*.h bimg/src/image_cubemap_filter.cpp bimg/src/image_encode.cpp bimg/src/*.h)
+# file(GLOB BIMG_ENCODE_SRC bimg/include/bimg/*.h bimg/src/image_cubemap_filter.cpp bimg/src/image_encode.cpp bimg/src/*.h)
 
-add_library(bimg_encode STATIC ${BIMG_ENCODE_SRC})
-target_include_directories(bimg_encode PRIVATE bx/include bimg/include bimg/3rdparty bimg/3rdparty/iqa/include)
-target_compile_features(bimg_encode PRIVATE cxx_std_14)
+# add_library(bimg_encode STATIC ${BIMG_ENCODE_SRC})
+# target_include_directories(bimg_encode PRIVATE bx/include bimg/include bimg/3rdparty bimg/3rdparty/iqa/include)
+# target_compile_features(bimg_encode PRIVATE cxx_std_14)
 
 
 # bgfx

@@ -25,7 +25,7 @@ option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 # PocketCHIP
 if(CHIP)
   add_definitions(-DCHIP)
-  add_definitions(-mcpu=cortex-a8 -mfpu=neon -mfloat-abi=hard -ftree-vectorize -ffast-math)
+  add_definitions(-march=armv7-a -ftree-vectorize -ffast-math)
 endif()
 
 set(CHERRYSODA_SIMD "")
