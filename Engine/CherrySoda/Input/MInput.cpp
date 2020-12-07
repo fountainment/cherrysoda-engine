@@ -181,14 +181,14 @@ const MInput::MouseState MInput::GetMouseState()
 	if (GetRelativeMouseMode()) {
 		flags = SDL_GetRelativeMouseState(&x, &y);	
 	}
-#ifndef CHIP
+#if SDL_VERSION_ATLEAST(2,0,4)
 	else if (ms_supportsGlobalMouse) {
 		flags = SDL_GetGlobalMouseState(&x, &y);
 		auto pos = Engine::Instance()->GetWindowPosition();
 		x -= pos.x;
 		y -= pos.y;
 	}
-#endif // CHIP
+#endif // SDL_VERSION_ATLEAST(2,0,4)
 	else {
 		flags = SDL_GetMouseState(&x, &y);	
 	}
@@ -328,14 +328,14 @@ bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 		return false;
 	}
 
-#ifndef CHIP
+#if SDL_VERSION_ATLEAST(2,0,9)
 	return SDL_GameControllerRumble(
 		device,
 		(type::UInt16)((Math_Clamp(leftMotor, 0.0f, 1.0f) * 0xFFFF)),
 		(type::UInt16)((Math_Clamp(rightMotor, 0.0f, 1.0f) * 0xFFFF)),
 		0
 	) == 0;
-#endif // CHIP
+#endif // SDL_VERSION_ATLEAST(2,0,9)
 	return true;
 }
 
