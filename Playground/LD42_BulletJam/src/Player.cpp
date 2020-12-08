@@ -99,6 +99,24 @@ void Player::Update()
 	}
 
 	Math::Vec2 move(0.f);
+#if defined(CHIP) || defined(CLOCKWORK_PI)
+	if (MInput::Keyboard()->Check(Keys::Up))
+	{
+		move.y += 1.f;
+	}
+	if (MInput::Keyboard()->Check(Keys::Left))
+	{
+		move.x -= 1.f;
+	}
+	if (MInput::Keyboard()->Check(Keys::Down))
+	{
+		move.y -= 1.f;
+	}
+	if (MInput::Keyboard()->Check(Keys::Right))
+	{
+		move.x += 1.f;
+	}
+#else // defined(CHIP) || defined(CLOCKWORK_PI)
 	if (MInput::Keyboard()->Check(Keys::W))
 	{
 		move.y += 1.f;
@@ -115,6 +133,7 @@ void Player::Update()
 	{
 		move.x += 1.f;
 	}
+#endif
 	move = Calc::SafeNormalize(move);
 	if (move == Vec2_Zero) {
 		m_playerFootSprite->Play("stand");
