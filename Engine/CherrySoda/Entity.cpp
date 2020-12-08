@@ -150,7 +150,7 @@ void Entity::Depth(int depth)
 	if (m_depth != depth) {
 		m_depth = depth;
 		if (m_scene != nullptr) {
-			m_scene->_SetActualDepth(this);
+			m_scene->INTERNAL_SetActualDepth(this);
 		}
 	}
 }
@@ -184,7 +184,7 @@ void Entity::Added(Scene* scene)
 	for (auto component : *m_components) {
 		component->EntityAdded(scene);
 	}
-	m_scene->_SetActualDepth(this);
+	m_scene->INTERNAL_SetActualDepth(this);
 }
 
 void Entity::Removed(Scene* scene)

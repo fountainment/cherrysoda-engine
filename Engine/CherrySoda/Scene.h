@@ -43,7 +43,7 @@ public:
 	void Add(Renderer* renderer);
 	void Remove(Renderer* renderer);
 
-	void _SetActualDepth(Entity* entity);
+	void INTERNAL_SetActualDepth(Entity* entity);
 
 	inline EntityList* Entities() { return m_entities; }
 	inline TagLists* Tags() { return m_tagLists; }

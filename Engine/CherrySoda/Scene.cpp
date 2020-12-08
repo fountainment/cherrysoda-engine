@@ -185,7 +185,7 @@ void Scene::Remove(Renderer* renderer)
 	m_rendererList->Remove(renderer);
 }
 
-void Scene::_SetActualDepth(Entity* entity)
+void Scene::INTERNAL_SetActualDepth(Entity* entity)
 {
 	const double theta = 0.000001;
 
