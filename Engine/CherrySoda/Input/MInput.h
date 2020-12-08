@@ -464,6 +464,10 @@ public:
 		bool Pressed(Keys keyA, Keys keyB, Keys keyC) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC); }
 		bool Released(Keys keyA, Keys keyB, Keys keyC) const { return Released(keyA) || Released(keyB) || Released(keyC); }
 
+		bool Check(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Check(keyA) || Check(keyB) || Check(keyC) || Check(keyD); }
+		bool Pressed(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC) || Pressed(keyD); }
+		bool Released(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Released(keyA) || Released(keyB) || Released(keyC) || Released(keyD); }
+
 		int AxisCheck(Keys negative, Keys positive) const
 		{
 			if (Check(negative)) {

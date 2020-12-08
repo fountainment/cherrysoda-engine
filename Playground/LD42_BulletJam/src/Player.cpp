@@ -158,7 +158,19 @@ void Player::Update()
 	{
 		Shoot();
 	}
-	if (MInput::Mouse()->PressedRightButton() || MInput::Keyboard()->Pressed(Keys::F))
+#ifdef CLOCKWORK_PI
+	else if (MInput::Keyboard()->Check(Keys::U, Keys::I, Keys::J, Keys::K)) {
+		Math::Vec2 direction = Vec2_Zero;
+		if (MInput::Keyboard()->Check(Keys::I)) direction +=  Vec2_YUp;
+		if (MInput::Keyboard()->Check(Keys::J)) direction += -Vec2_YUp;
+		if (MInput::Keyboard()->Check(Keys::U)) direction += -Vec2_XUp;
+		if (MInput::Keyboard()->Check(Keys::K)) direction +=  Vec2_XUp;
+		direction = Math_Normalize(direction);
+		Cursor::Instance()->Position2D(Position2D() + direction * 50.f);
+		Shoot();
+	}
+#endif // CLOCKWORK_PI
+	if (MInput::Mouse()->PressedRightButton() || MInput::Keyboard()->Pressed(Keys::F, Keys::Enter))
 	{
 		PlaceBomb();
 	}

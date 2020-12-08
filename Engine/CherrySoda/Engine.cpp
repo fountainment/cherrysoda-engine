@@ -40,10 +40,20 @@ Engine::Engine(int width, int height, int windowWidth, int windowHeight,
                const String& title, bool fullscreen)
 {
 	ms_instance = this;
+#if defined(CHIP)
+	m_width = m_windowWidth = 480;
+	m_height = m_windowHeight = 274;
+	// Intentionally give two more pixels on height
+	// to avoid graphics stuck issue on PocketCHIP
+#elif defined(CLOCKWORK_PI)
+	m_width = m_windowWidth = 320;
+	m_height = m_windowHeight = 240;
+#else
 	m_width = width;
 	m_height = height;
 	m_windowWidth = windowWidth;
 	m_windowHeight = windowHeight;
+#endif
 	m_title = title;
 	m_fullscreen = fullscreen;
 }

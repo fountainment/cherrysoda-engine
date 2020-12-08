@@ -28,6 +28,12 @@ if(CHIP)
   add_definitions(-march=armv7-a -mtune=cortex-a8 -ftree-vectorize -ffast-math)
 endif()
 
+# ClockworkPi
+if(CPI)
+  add_definitions(-DCLOCKWORK_PI)
+  add_definitions(-mcpu=cortex-a7 -ftree-vectorize -ffast-math)
+endif()
+
 set(CHERRYSODA_SIMD "")
 if(NOT EMSCRIPTEN)
   if(NOT MSVC)
