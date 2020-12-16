@@ -1,4 +1,3 @@
 set(CHERRYSODA_EXECUTABLE_FOLDER Playground)
 add_subdirectory(VoxelExperiment)
-add_subdirectory(LD42_BulletJam)
 add_subdirectory(Noise)
