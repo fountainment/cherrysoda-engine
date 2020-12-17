@@ -57,11 +57,19 @@ For more information about crunch you can look into https://github.com/fountainm
 
 You need to add somthing like ```-DCHERRYSODA_USE_XXXX=1``` with cmake.
 
-Currently, options added are "SSE2" "SSE42" "AVX2" and "NEON".
+Currently, available options are "SSE2" "SSE42" "AVX2" and "NEON".
 
 For example, ```cmake .. -DCHERRYSODA_USE_SSE2=1``` will enable SSE2.
 
 You can use Bench/MathBench to see how glm's performance changes.
+
+### To Build On Specific Device
+
+Curently, there are cmake options provided for these two devices:
+
+PocketCHIP: ```cmake .. -DCHIP=1```
+
+GameShell: ```cmake .. -DCPI=1```
 
 ## Current Status
 
