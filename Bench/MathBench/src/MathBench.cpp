@@ -46,4 +46,3 @@ void MathBench::LoadContent()
 
 	// Load textures, sprites, shaders and other resources here
 }
-

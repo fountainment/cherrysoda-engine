@@ -22,6 +22,11 @@ option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
 option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
 option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 
+# MIPS
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(mips64)|(MIPS64)")
+  add_definitions(-Umips)
+endif()
+
 # PocketCHIP
 if(CHIP)
   add_definitions(-DCHIP)

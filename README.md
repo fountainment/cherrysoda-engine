@@ -63,7 +63,7 @@ For example, ```cmake .. -DCHERRYSODA_USE_SSE2=1``` will enable SSE2.
 
 You can use Bench/MathBench to see how glm's performance changes.
 
-### To Build On Specific Device
+### To Build on Specific Device
 
 Curently, there are cmake options provided for these two devices:
 
