@@ -27,6 +27,11 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(mips64)|(MIPS64)")
   add_definitions(-Umips)
 endif()
 
+# Lemote Fuloong 2.0
+if(LOONGSON)
+  add_definitions(-march=loongson3a -mmsa)
+endif()
+
 # PocketCHIP
 if(CHIP)
   add_definitions(-DCHIP)

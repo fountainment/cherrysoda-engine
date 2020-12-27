@@ -67,6 +67,8 @@ You can use Bench/MathBench to see how glm's performance changes.
 
 Curently, there are cmake options provided for these two devices:
 
+Lemote Fuloong 2.0: ```cmake .. -DLOONGSON=1```
+
 PocketCHIP: ```cmake .. -DCHIP=1```
 
 GameShell: ```cmake .. -DCPI=1```
