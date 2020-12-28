@@ -1,7 +1,7 @@
 #ifndef _CHERRYSODA_MAIN_H_
 #define _CHERRYSODA_MAIN_H_
 
-#include <SDL2/SDL_Main.h>
+#include <SDL2/SDL_main.h>
 
 #define CHERRYSODA_DEFAULT_MAIN \
 int main(int argc, char* argv[]) \
