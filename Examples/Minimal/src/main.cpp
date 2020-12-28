@@ -1,8 +1,7 @@
 #include <CherrySoda/Engine.h>
 
-int main()
-{
-	auto m = new cherrysoda::Engine;
-	m->Run();
-	return 0;
-}
+#include <CherrySoda/Main.h>
+
+using GameApp = cherrysoda::Engine;
+
+CHERRYSODA_DEFAULT_MAIN

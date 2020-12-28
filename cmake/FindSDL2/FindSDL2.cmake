@@ -190,7 +190,7 @@ if(SDL2_INCLUDE_DIR AND EXISTS "${SDL2_INCLUDE_DIR}/SDL2_version.h")
   unset(SDL2_VERSION_PATCH)
 endif()
 
-if (WIN32)
+if(WIN32)
   set(SDL2MAIN_LINK "${SDL2MAIN_LIBRARY}")
 else()
   set(SDL2MAIN_LINK "")

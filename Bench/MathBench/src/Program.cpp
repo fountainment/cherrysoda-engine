@@ -1,8 +1,5 @@
 #include "Program.h"
 
-int main()
-{
-	GameApp* game = new GameApp;
-	game->Run();
-	return 0;
-}
+#include <CherrySoda/Main.h>
+
+CHERRYSODA_DEFAULT_MAIN

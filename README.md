@@ -65,7 +65,7 @@ You can use Bench/MathBench to see how glm's performance changes.
 
 ### To Build on Specific Device
 
-Curently, there are cmake options provided for these two devices:
+Curently, there are cmake options provided for these devices:
 
 Lemote Fuloong 2.0: ```cmake .. -DLOONGSON=1```
 

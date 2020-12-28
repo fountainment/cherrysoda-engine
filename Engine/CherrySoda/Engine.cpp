@@ -90,8 +90,9 @@ void Engine::SetMousePosition(const Math::IVec2& pos)
 	}
 }
 
-void Engine::Run()
+void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 {
+	ParseArgs(argc, argv);
 	Initialize();
 	LoadContent();
 
@@ -139,6 +140,10 @@ void Engine::OnClientSizeChanged(int width, int height)
 		Graphics::UpdateView();
 		m_resizing = false;
 	}
+}
+
+void Engine::ParseArgs(int argc, char* argv[])
+{
 }
 
 void Engine::Initialize()

@@ -52,7 +52,7 @@ public:
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
 	inline int FPS() { return m_FPS; }
 
-	void Run();
+	void Run(int argc = 0, char* argv[] = {});
 	void Exit();
 
 	inline Scene* GetScene() { return m_scene; }
@@ -65,6 +65,7 @@ public:
 protected:
 	virtual void OnClientSizeChanged(int width, int height);
 
+	virtual void ParseArgs(int argc, char* argv[]);
 	virtual void Initialize();
 	virtual void LoadContent();
 
