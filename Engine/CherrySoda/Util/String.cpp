@@ -11,10 +11,10 @@ using cherrysoda::StringUtil;
 
 const String StringUtil::Format(const char* format, ...)
 {
-	char buffer[64];
+	char buffer[256];
 	va_list args;
 	va_start(args, format);
-	std::vsprintf(buffer, format, args);
+	std::vsnprintf(buffer, 256, format, args);
 	va_end(args);
 	return String(buffer);
 }
