@@ -138,7 +138,7 @@ set(CHERRYSODA_COMMON_LIBS imgui bgfx bimg bimg_decode bx glm rapidjson ${SDL2_L
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS})
 else()
-  target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} dl GL pthread X11)
+  target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} dl GL X11)
 endif()
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
 if(MSVC)
