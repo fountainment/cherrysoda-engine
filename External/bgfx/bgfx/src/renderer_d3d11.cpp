@@ -3963,7 +3963,7 @@ namespace bgfx { namespace d3d11
 
 	static void patchUAVRegisterByteCode(DxbcInstruction& _instruction, void* _userData)
 	{
-		union { void* ptr; uint32_t offset; } cast = { _userData };
+		BX_UNUSED(_userData);
 
 		switch (_instruction.opcode)
 		{
@@ -3972,37 +3972,37 @@ namespace bgfx { namespace d3d11
 				DxbcOperand& operand = _instruction.operand[0];
 				operand.regIndex[0] += 16;
 
-				BX_ASSERT(operand.regIndex[1] == 0 && operand.regIndex[2] == 0
-					, "Unexpected values");
+				BX_ASSERT(operand.regIndex[1] == 0 && operand.regIndex[2] == 0, "Unexpected values");
 			}
 			break;
+
 		case DxbcOpcode::DCL_UNORDERED_ACCESS_VIEW_RAW:
-			{
-				BX_ASSERT(false, "Unsupported UAV access");
-			}
+			BX_ASSERT(false, "Unsupported UAV access");
 			break;
+
 		case DxbcOpcode::DCL_UNORDERED_ACCESS_VIEW_STRUCTURED:
-			{
-				BX_ASSERT(false, "Unsupported UAV access");
-			}
+			BX_ASSERT(false, "Unsupported UAV access");
 			break;
+
 		case DxbcOpcode::LD_UAV_TYPED:
 			{
 				DxbcOperand& operand = _instruction.operand[2];
 				operand.regIndex[0] += 16;
 
-				BX_ASSERT(operand.regIndex[1] == 0 && operand.regIndex[2] == 0
-					, "Unexpected values");
+				BX_ASSERT(operand.regIndex[1] == 0 && operand.regIndex[2] == 0, "Unexpected values");
 			}
 			break;
+
 		case DxbcOpcode::STORE_UAV_TYPED:
 			{
 				DxbcOperand& operand = _instruction.operand[0];
 				operand.regIndex[0] += 16;
 
-				BX_ASSERT(operand.regIndex[1] == 0 && operand.regIndex[2] == 0
-					, "Unexpected values");
+				BX_ASSERT(operand.regIndex[1] == 0 && operand.regIndex[2] == 0, "Unexpected values");
 			}
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -4028,7 +4028,7 @@ namespace bgfx { namespace d3d11
 					}
 
 					uint32_t regNum = 0;
-					uint32_t regLen = endPtr - startPtr;
+					uint32_t regLen = uint32_t(endPtr - startPtr);
 					bx::fromString(&regNum, bx::StringView(startPtr, regLen));
 
 					regNum += 16;
@@ -4988,7 +4988,7 @@ namespace bgfx { namespace d3d11
 									{
 										dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY;
 										dsvDesc.Texture2DMSArray.FirstArraySlice = at.layer;
-										dsvDesc.Texture2DMSArray.ArraySize       = 1;
+										dsvDesc.Texture2DMSArray.ArraySize       = at.numLayers;
 									}
 									else
 									{
@@ -5001,7 +5001,7 @@ namespace bgfx { namespace d3d11
 									{
 										dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
 										dsvDesc.Texture2DArray.FirstArraySlice = at.layer;
-										dsvDesc.Texture2DArray.ArraySize       = 1;
+										dsvDesc.Texture2DArray.ArraySize       = at.numLayers;
 										dsvDesc.Texture2DArray.MipSlice        = at.mip;
 									}
 									else
@@ -5023,14 +5023,14 @@ namespace bgfx { namespace d3d11
 								if (1 < msaa.Count)
 								{
 									dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY;
-									dsvDesc.Texture2DMSArray.ArraySize       = 1;
 									dsvDesc.Texture2DMSArray.FirstArraySlice = at.layer;
+									dsvDesc.Texture2DMSArray.ArraySize       = at.numLayers;
 								}
 								else
 								{
 									dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
-									dsvDesc.Texture2DArray.ArraySize       = 1;
 									dsvDesc.Texture2DArray.FirstArraySlice = at.layer;
+									dsvDesc.Texture2DArray.ArraySize       = at.numLayers;
 									dsvDesc.Texture2DArray.MipSlice        = at.mip;
 								}
 								DX_CHECK(s_renderD3D11->m_device->CreateDepthStencilView(texture.m_ptr, &dsvDesc, &m_dsv) );
@@ -5065,7 +5065,7 @@ namespace bgfx { namespace d3d11
 								{
 									desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 									desc.Texture2DArray.FirstArraySlice = at.layer;
-									desc.Texture2DArray.ArraySize       = 1;
+									desc.Texture2DArray.ArraySize       = at.numLayers;
 									desc.Texture2DArray.MipSlice        = at.mip;
 								}
 								else
@@ -5086,14 +5086,14 @@ namespace bgfx { namespace d3d11
 							if (1 < msaa.Count)
 							{
 								desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMSARRAY;
-								desc.Texture2DMSArray.ArraySize       = 1;
 								desc.Texture2DMSArray.FirstArraySlice = at.layer;
+								desc.Texture2DMSArray.ArraySize       = at.numLayers;
 							}
 							else
 							{
 								desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-								desc.Texture2DArray.ArraySize       = 1;
 								desc.Texture2DArray.FirstArraySlice = at.layer;
+								desc.Texture2DArray.ArraySize       = at.numLayers;
 								desc.Texture2DArray.MipSlice        = at.mip;
 							}
 
@@ -5103,8 +5103,8 @@ namespace bgfx { namespace d3d11
 						case TextureD3D11::Texture3D:
 							desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
 							desc.Texture3D.MipSlice    = at.mip;
-							desc.Texture3D.WSize       = 1;
 							desc.Texture3D.FirstWSlice = at.layer;
+							desc.Texture3D.WSize       = at.numLayers;
 
 							DX_CHECK(s_renderD3D11->m_device->CreateRenderTargetView(texture.m_ptr, &desc, &m_rtv[m_num]) );
 							break;
@@ -6155,8 +6155,6 @@ namespace bgfx { namespace d3d11
 						}
 					}
 
-					currentState.m_numVertices = numVertices;
-
 					if (0 < numStreams)
 					{
 						deviceCtx->IASetVertexBuffers(0, numStreams, buffers, strides, offsets);
@@ -6192,16 +6190,18 @@ namespace bgfx { namespace d3d11
 					}
 				}
 
-				if (currentState.m_indexBuffer.idx != draw.m_indexBuffer.idx)
+				if (currentState.m_indexBuffer.idx != draw.m_indexBuffer.idx
+				||  currentState.isIndex16() != draw.isIndex16() )
 				{
 					currentState.m_indexBuffer = draw.m_indexBuffer;
+					currentState.m_submitFlags = draw.m_submitFlags;
 
 					uint16_t handle = draw.m_indexBuffer.idx;
 					if (kInvalidHandle != handle)
 					{
 						const IndexBufferD3D11& ib = m_indexBuffers[handle];
 						deviceCtx->IASetIndexBuffer(ib.m_ptr
-							, 0 == (ib.m_flags & BGFX_BUFFER_INDEX32) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT
+							, draw.isIndex16() ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT
 							, 0
 							);
 					}
@@ -6213,7 +6213,7 @@ namespace bgfx { namespace d3d11
 
 				if (0 != currentState.m_streamMask)
 				{
-					uint32_t numVertices       = currentState.m_numVertices;
+					uint32_t numVertices       = draw.m_numVertices;
 					uint32_t numIndices        = 0;
 					uint32_t numPrimsSubmitted = 0;
 					uint32_t numInstances      = 0;
