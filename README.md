@@ -39,6 +39,36 @@ emcmake cmake ..
 make -j
 ```
 
+### How to Do Performance Profiling with Tracy Profiler
+
+First, clone the tracy profiler and put the tracy folder into "Engine" directory:
+
+```sh
+cd Engine
+git clone https://github.com/wolfpld/tracy
+```
+
+In this engine, profiling that use tracy profiler is only enabled in "Profile" build:
+
+```sh
+# Profile build on Linux
+mkdir build_profile
+cd build_profile
+cmake .. -DCMAKE_BUILD_TYPE=Profile
+make -j
+```
+
+And on Visual Studio, it's the "RelWithDebInfo" build option.
+
+Then you can use tracy profiler to monitor performance.
+
+```sh
+# How to build tracy profiler on Linux
+git clone https://github.com/wolfpld/tracy
+cd tracy/profiler/build/unix/
+make -j
+```
+
 ## Tips
 
 ### To Use The Sublime Project
