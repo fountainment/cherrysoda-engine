@@ -99,7 +99,6 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 	m_lastFrameTime = Time::GetSystemTime();
 
 	// Render one frame before showing window to prevent white blink
-	Time::SleepForMilliseconds(16);
 	Update();
 	Draw();
 
@@ -115,7 +114,7 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 		Update();
 		Draw();
 	}	
-#endif // __EMSCRIPTEN__ 
+#endif // __EMSCRIPTEN__
 
 	GUI::Terminate();
 	Draw::Terminate();

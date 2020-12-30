@@ -22,17 +22,18 @@ public:
 	};
 
 	Atlas() = default;
+	~Atlas();
 
 	const STL::List<MTexture> GetAtlasSubtextures(const String& key, int startIndex = 0, int keyLength = 4);
 	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index = 0, int startIndex = 0, int keyLength = 4);
-	static Atlas FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
+	static Atlas* FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
 	{
-		Atlas atlas;
+		Atlas* atlas = new Atlas;
 		ReadAtlasData(atlas, path, format);
-		return atlas;	
+		return atlas;
 	}
 
-	static void ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat format);
+	static void ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format);
 
 private:
 	STL::List<Texture2D> m_sources;

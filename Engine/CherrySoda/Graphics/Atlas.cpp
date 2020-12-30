@@ -1,5 +1,6 @@
 #include <CherrySoda/Graphics/Atlas.h>
 
+#include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/Log.h>
@@ -8,11 +9,19 @@
 
 using cherrysoda::Atlas;
 
+using cherrysoda::Graphics;
 using cherrysoda::JsonUtil;
 using cherrysoda::Math;
 using cherrysoda::MTexture;
 using cherrysoda::STL;
 using cherrysoda::String;
+
+Atlas::~Atlas()
+{
+	for (auto& tex2D : m_sources) {
+		Graphics::DestroyTexture(tex2D.GetHandle());
+	}
+}
 
 const STL::List<MTexture> Atlas::GetAtlasSubtextures(const String& key, int startIndex/* = 0*/, int keyLength/* = 4*/)
 {
@@ -32,7 +41,7 @@ const STL::List<MTexture> Atlas::GetAtlasSubtextures(const String& key, int star
 		m_orderedTexturesCache[key] = list;
 	}
 
-	return list;		
+	return list;
 }
 
 const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index/* = 0*/, int startIndex/* = 0*/, int keyLength/* = 4*/)
@@ -53,7 +62,7 @@ const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index
 	return result;
 }
 
-void Atlas::ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat format/* = AtlasDataFormat::CrunchJson*/)
+void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format/* = AtlasDataFormat::CrunchJson*/)
 {
 	switch (format) {
 	case AtlasDataFormat::CrunchJson:
@@ -66,7 +75,7 @@ void Atlas::ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat form
 			String texturePath = path.substr(0, path.find_last_of("/\\") + 1) + tex["name"].GetString() + ".png";
 			auto texture = Texture2D::FromFile(texturePath);
 			auto mTexture = MTexture(texture);
-			STL::Add(atlas.m_sources, texture);
+			STL::Add(atlas->m_sources, texture);
 			const auto& img = tex["images"];
 			CHERRYSODA_ASSERT_FORMAT(img.IsArray(), "Atlas json parse failed: \"images\" scope is not an array in \"%s\"!\n");
 			for (const auto& sub : img.GetArray()) {
@@ -78,10 +87,10 @@ void Atlas::ReadAtlasData(Atlas& atlas, const String& path, AtlasDataFormat form
 				if (sub.HasMember("fx")) {
 					const float fullHeight = sub["fh"].GetInt();
 					const float yOffset = fullHeight - (clipRect.Height() - sub["fy"].GetInt());
-					atlas.m_textures[name] = MTexture(mTexture, name, clipRect, Math::Vec2(-sub["fx"].GetInt(), yOffset), sub["fw"].GetInt(), fullHeight);
+					atlas->m_textures[name] = MTexture(mTexture, name, clipRect, Math::Vec2(-sub["fx"].GetInt(), yOffset), sub["fw"].GetInt(), fullHeight);
 				}
 				else {
-					atlas.m_textures[name] = MTexture(mTexture, name, clipRect);
+					atlas->m_textures[name] = MTexture(mTexture, name, clipRect);
 				}
 			}
 		}

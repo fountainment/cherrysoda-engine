@@ -21,8 +21,7 @@ public:
 	Sprite(const String& atlasPath, const String& path = "") : Sprite()
 	{
 		m_ownAtlas = true;
-		m_atlas = new Atlas;
-		*m_atlas = Atlas::FromAtlas(atlasPath);
+		m_atlas = Atlas::FromAtlas(atlasPath);
 		m_path = path;
 	}
 
