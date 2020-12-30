@@ -1,10 +1,10 @@
 set(ENGINE_SRC
-  CherrySoda/CherrySoda.cpp
+  CherrySoda/CherrySoda.h
   CherrySoda/Engine.cpp
   CherrySoda/Engine.h
   CherrySoda/Entity.cpp
   CherrySoda/Entity.h
-  CherrySoda/Math.h
+  CherrySoda/Main.h
   CherrySoda/Scene.cpp
   CherrySoda/Scene.h
   CherrySoda/Colliders/Collide.cpp
