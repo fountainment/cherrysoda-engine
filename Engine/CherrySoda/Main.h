@@ -1,6 +1,10 @@
 #ifndef _CHERRYSODA_MAIN_H_
 #define _CHERRYSODA_MAIN_H_
 
+#ifdef _WIN32
+#	define SDL_MAIN_HANDLED
+#endif // _WIN32
+
 #include <SDL2/SDL_main.h>
 
 #define CHERRYSODA_DEFAULT_MAIN \

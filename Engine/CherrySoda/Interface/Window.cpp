@@ -7,6 +7,11 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <bx/bx.h>
+
+#ifndef ENTRY_CONFIG_USE_WAYLAND
+#	define ENTRY_CONFIG_USE_WAYLAND 0
+#endif // ENTRY_CONFIG_USE_WAYLAND
 
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #	if ENTRY_CONFIG_USE_WAYLAND
