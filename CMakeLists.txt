@@ -29,17 +29,20 @@ endif()
 
 # Lemote Fuloong 2.0
 if(LOONGSON)
+  message(STATUS "Build on Loongson3A platform")
   add_definitions(-march=loongson3a -mmsa)
 endif()
 
 # PocketCHIP
 if(CHIP)
+  message(STATUS "Build on PocketCHIP")
   add_definitions(-DCHIP)
   add_definitions(-march=armv7-a -mtune=cortex-a8 -ftree-vectorize -ffast-math)
 endif()
 
 # ClockworkPi
 if(CPI)
+  message(STATUS "Build on GameShell")
   add_definitions(-DCLOCKWORK_PI)
   add_definitions(-mcpu=cortex-a7 -ftree-vectorize -ffast-math)
 endif()
