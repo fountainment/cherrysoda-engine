@@ -24,8 +24,8 @@ public:
 	Atlas() = default;
 	~Atlas();
 
-	const STL::List<MTexture> GetAtlasSubtextures(const String& key, int startIndex = 0, int keyLength = 4);
-	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index = 0, int startIndex = 0, int keyLength = 4);
+	const STL::Vector<MTexture> GetAtlasSubtextures(const String& key);
+	const MTexture GetAtlasSubtextureAt(const String& key, int index);
 	static Atlas* FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
 	{
 		Atlas* atlas = new Atlas;
@@ -36,10 +36,13 @@ public:
 	static void ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format);
 
 private:
+	const MTexture GetAtlasSubtextureFromCacheAt(const String& key, int index);
+	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index);
+
 	STL::List<Texture2D> m_sources;
 
 	STL::HashMap<StringID,MTexture> m_textures;
-	STL::HashMap<StringID,STL::List<MTexture>> m_orderedTexturesCache;
+	STL::HashMap<StringID,STL::Vector<MTexture>> m_orderedTexturesCache;
 };
 
 } // namespace cherrysoda

@@ -23,19 +23,17 @@ Atlas::~Atlas()
 	}
 }
 
-const STL::List<MTexture> Atlas::GetAtlasSubtextures(const String& key, int startIndex/* = 0*/, int keyLength/* = 4*/)
+const STL::Vector<MTexture> Atlas::GetAtlasSubtextures(const String& key)
 {
-	STL::List<MTexture> list;
+	STL::Vector<MTexture> list;
 
 	if (!STL::TryGetValue(m_orderedTexturesCache, key, list)) {
-		int index = startIndex;
-		for (;;) {
-			MTexture texture = GetAtlasSubtextureFromAtlasAt(key, index, startIndex, keyLength);
+		for (int index = 0; ; ++index) {
+			MTexture texture = GetAtlasSubtextureFromAtlasAt(key, index);
 			if (texture.IsValid())
 				STL::Add(list, texture);
 			else
 				break;
-			++index;
 		}
 
 		m_orderedTexturesCache[key] = list;
@@ -44,19 +42,36 @@ const STL::List<MTexture> Atlas::GetAtlasSubtextures(const String& key, int star
 	return list;
 }
 
-const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index/* = 0*/, int startIndex/* = 0*/, int keyLength/* = 4*/)
+const MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index)
 {
-	if (index == startIndex && STL::ContainsKey(m_textures, key)) {
+	STL::Vector<MTexture> list;
+	if (STL::TryGetValue(m_orderedTexturesCache, key, list)) {
+		return list[index];
+	}
+	else {
+		return GetAtlasSubtextureFromAtlasAt(key, index);
+	}
+}
+
+const MTexture Atlas::GetAtlasSubtextureFromCacheAt(const String& key, int index)
+{
+	return m_orderedTexturesCache[key][index];
+}
+
+const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index)
+{
+	if (index == 0 && STL::ContainsKey(m_textures, key)) {
 		return m_textures[key];
 	}
 
-	String format = "%s%00d";
-	format[4] += keyLength;
-	String finalKey = CHERRYSODA_FORMAT(format.c_str(), key.c_str(), index);
-
+	char format[] = "%s%00d";
+	int startLength = CHERRYSODA_FORMAT("%d", index).length();
 	MTexture result;
-	if (!STL::TryGetValue(m_textures, finalKey, result)) {
-		CHERRYSODA_DEBUG_FORMAT("\"%s\" not found in atlas!\n", finalKey.c_str());
+	for (int keyLength = startLength; keyLength <= 4; ++keyLength) {
+		format[4] = '0' + keyLength;
+		if (STL::TryGetValue(m_textures, CHERRYSODA_FORMAT(format, key.c_str(), index), result)) {
+			break;
+		}
 	}
 
 	return result;

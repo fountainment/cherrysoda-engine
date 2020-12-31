@@ -44,31 +44,31 @@ public:
 	void Update() override;
 	void SetFrame(MTexture texture);
 
-	STL::Vector<MTexture> GetFrames(const String& path, int startIndex = 1, int indexLength = 4)
+	inline STL::Vector<MTexture> GetFrames(const String& path)
 	{
-		auto ret = STL::ToVector(m_atlas->GetAtlasSubtextures(m_path + path, startIndex, indexLength));
-		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!", (m_path + path).c_str());
+		auto ret = m_atlas->GetAtlasSubtextures(m_path + path);
+		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
 		return ret;
 	}
 
-	void Add(const String& id, const String& path, int startIndex = 1, int indexLength = 4, float delay = 1.f / 15.f)
+	inline void Add(const String& id, const String& path, float delay = 1.f / 15.f)
 	{
-		m_animations[id] = { delay, GetFrames(path, startIndex, indexLength), Chooser<StringID>() };
+		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>() };
 	}
 
-	void AddLoop(const String& id, const String& path, int startIndex = 1, int indexLength = 4, float delay = 1.f / 15.f)
+	inline void AddLoop(const String& id, const String& path, float delay = 1.f / 15.f)
 	{
-		m_animations[id] = { delay, GetFrames(path, startIndex, indexLength), Chooser<StringID>(id, 1.f) };
+		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
 	}
 
-	void Play(StringID id, bool restart = false, bool randomizeFrame = false);
+	void Play(const StringID& id, bool restart = false, bool randomizeFrame = false);
 
-	bool Has(StringID id)
+	inline bool Has(const StringID& id)
 	{
 		return STL::ContainsKey(m_animations, id);
 	}
 
-	void Stop()
+	inline void Stop()
 	{
 		m_animating = false;
 		m_currentAnimation = nullptr;

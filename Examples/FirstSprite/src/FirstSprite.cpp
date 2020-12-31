@@ -20,13 +20,13 @@ void FirstSprite::Initialize()
 	auto entity = new Entity();
 
 	auto sprite = new Sprite("assets/atlases/cherry_soda.json");
-	sprite->AddLoop("cherrysoda", "cherry_soda");
-	sprite->Play("cherrysoda");
+	sprite->AddLoop("showcase", "cherrysoda");
+	sprite->Play("showcase");
 	auto renderer = new EverythingRenderer();
 
 	entity->Add(sprite);
 	scene->Add(entity);
-	
+
 	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 200.f));
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	scene->Add(renderer);
