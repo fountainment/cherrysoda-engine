@@ -51,12 +51,12 @@ public:
 		return ret;
 	}
 
-	inline void Add(const String& id, const String& path, float delay = 1.f / 15.f)
+	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f)
 	{
 		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>() };
 	}
 
-	inline void AddLoop(const String& id, const String& path, float delay = 1.f / 15.f)
+	inline void AddLoop(const StringID& id, const String& path, float delay = 1.f / 15.f)
 	{
 		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
 	}

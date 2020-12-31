@@ -112,7 +112,7 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 		break;
 	}
 	default:
-		CHERRYSODA_DEBUG("Atlas data format unsupported for now!\n");
+		CHERRYSODA_ASSERT(false, "Atlas data format unsupported for now!\n");
 		break;
 	}
 }
