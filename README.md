@@ -2,6 +2,8 @@
 
 A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
+[![Build Status](https://travis-ci.com/fountainment/cherrysoda-engine.svg?branch=master)](https://travis-ci.org/fountainment/cherrysoda-engine)
+
 ## Requirements
 
 - CMake (>=3.8)
