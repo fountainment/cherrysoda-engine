@@ -15,7 +15,6 @@ addons:
     - x11proto-core-dev
     - libx11-dev
     - libsdl2-dev
-    - python3
 
 script:
   - mkdir build
