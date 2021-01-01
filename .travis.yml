@@ -1,0 +1,30 @@
+language: cpp
+matrix:
+  include:
+    - compiler: gcc
+      os: linux
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-8
+    - g++-8
+    - libgl1-mesa-dev
+    - x11proto-core-dev
+    - libx11-dev
+    - libsdl2-dev
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. -DCHERRYSODA_USE_SSE2=1
+  - make -j
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
