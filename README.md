@@ -1,7 +1,7 @@
 # CherrySoda Engine
 
 [![TravisCI](https://img.shields.io/travis/com/fountainment/cherrysoda-engine?branch=master)](https://travis-ci.com/github/fountainment/cherrysoda-engine)
-[![GitHub](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
+[![Licence](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
 
 A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
@@ -40,7 +40,7 @@ cd cherrysoda-engine
 mkdir build
 cd build
 emcmake cmake ..
-make -j8
+make -j
 ```
 
 ### How to Do Performance Profiling with Tracy Profiler
