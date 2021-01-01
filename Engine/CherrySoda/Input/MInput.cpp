@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
@@ -15,6 +16,7 @@ using cherrysoda::Buttons;
 using cherrysoda::ButtonState;
 using cherrysoda::Engine;
 using cherrysoda::Keys;
+using cherrysoda::Math;
 using cherrysoda::STL;
 using cherrysoda::StringUtil;
 

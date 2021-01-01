@@ -2,12 +2,14 @@
 
 #include <CherrySoda/Colliders/Collider.h>
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Collide;
 
 using cherrysoda::Entity;
+using cherrysoda::Math;
 using cherrysoda::STL;
 
 bool Collide::Check(const Entity* a, const Entity* b)

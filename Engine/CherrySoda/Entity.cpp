@@ -14,6 +14,7 @@
 
 using cherrysoda::Entity;
 
+using cherrysoda::BitTag;
 using cherrysoda::BitTagValueType;
 using cherrysoda::Camera;
 using cherrysoda::Collide;

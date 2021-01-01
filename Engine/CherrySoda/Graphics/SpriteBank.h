@@ -14,9 +14,9 @@ class Sprite;
 class SpriteBank
 {
 public:
-	SpriteBank(Atlas* atlas, json::Document json);
-	SpriteBank(Atlas* atlas, String jsonPath)
-	: SpriteBank(atlas, JsonUtil::ReadJsonFile(jsonPath)) {}
+	// SpriteBank(Atlas* atlas, json::Document json);
+	// SpriteBank(Atlas* atlas, String jsonPath)
+	// : SpriteBank(atlas, JsonUtil::ReadJsonFile(jsonPath)) {}
 
 	bool Has(const StringID& id);
 	Sprite* Create(const StringID& id);
