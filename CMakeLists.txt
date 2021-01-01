@@ -119,6 +119,16 @@ set(CHERRYSODA_EXECUTABLE_SRC src/main.cpp)
 set(CHERRYSODA_SHADER_SRC "")
 set(CHERRYSODA_SDL2_PATH ${CHERRYSODA_EXTERNAL_PATH}/SDL2-2.0.12)
 
+if(MSVC)
+  if(NOT EXISTS ${CHERRYSODA_SDL2_PATH})
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+      execute_process(COMMAND python ${CHERRYSODA_TOOL_PATH}/setup_sdl2_for_windows.py
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+      set(ENV{SDL2_DIR} ${CHERRYSODA_SDL2_PATH})
+    endif()
+  endif()
+endif()
+
 function(cherrysoda_set_target_folder target folder)
   set_target_properties(${target} PROPERTIES FOLDER ${folder})
 endfunction(cherrysoda_set_target_folder)
