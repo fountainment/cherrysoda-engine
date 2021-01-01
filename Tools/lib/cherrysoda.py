@@ -50,9 +50,14 @@ sdl2_version = '2.0.12'
 sdl2_path = join_path(external_path, 'SDL2-' + sdl2_version)
 
 
+def exists(path):
+    return os.path.exists(path)
+
+
 def make_sure_folder_exist(f):
     p = os.path.dirname(f)
-    os.makedirs(p)
+    if not exists(p):
+        os.makedirs(p)
 
 
 def execute_command(command):
@@ -112,10 +117,6 @@ def get_file_list_of_path(path):
         for f in files:
             file_list.append(os.path.join(root, f))
     return file_list
-
-
-def exists(path):
-    return os.path.exists(path)
 
 
 def copy(src, dest):
