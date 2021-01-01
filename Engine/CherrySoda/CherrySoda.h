@@ -25,7 +25,9 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Mesh.h>
 #include <CherrySoda/Graphics/MTexture.h>
+#include <CherrySoda/Graphics/SpriteBank.h>
 #include <CherrySoda/Graphics/SpriteBatch.h>
+#include <CherrySoda/Graphics/SpriteData.h>
 #include <CherrySoda/Graphics/Texture.h>
 
 #include <CherrySoda/Input/MInput.h>

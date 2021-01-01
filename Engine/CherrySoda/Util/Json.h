@@ -4,8 +4,6 @@
 #include <CherrySoda/Util/String.h>
 
 #include <rapidjson/document.h>
-#include <rapidjson/istreamwrapper.h>
-#include <fstream>
 
 namespace cherrysoda {
 
@@ -14,12 +12,8 @@ namespace json = rapidjson;
 class JsonUtil
 {
 public:
-	static void ReadJsonFile(json::Document& doc, const String& filename)
-	{
-		std::ifstream ifs(filename);
-		json::IStreamWrapper isw(ifs);
-		doc.ParseStream(isw);	
-	}
+	static void ReadJsonFile(json::Document& doc, const String& filename);
+	static json::Document ReadJsonFile(const String& filename);
 };
 
 } // namespace cherrysoda

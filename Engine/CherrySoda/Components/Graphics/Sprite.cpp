@@ -117,3 +117,24 @@ void Sprite::Play(const StringID& id, bool restart/* = false*/, bool randomizeFr
 		SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
 	}
 }
+
+Sprite* Sprite::CloneInto(Sprite* clone)
+{
+	clone->Texture(Texture());
+	clone->Position(Position());
+	clone->Justify(Justify());
+	clone->Origin(Origin());
+
+	clone->m_animations = m_animations;
+	clone->m_currentAnimation = m_currentAnimation;
+	clone->m_animationTimer = m_animationTimer;
+	clone->m_width = m_width;
+	clone->m_height = m_height;
+
+	clone->m_animating = m_animating;
+	clone->m_currentAnimationID = m_currentAnimationID;
+	clone->m_lastAnimationID = m_lastAnimationID;
+	clone->m_currentAnimationFrame = m_currentAnimationFrame;
+
+	return clone;
+}

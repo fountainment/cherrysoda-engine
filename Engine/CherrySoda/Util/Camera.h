@@ -11,6 +11,16 @@ public:
 	Camera();
 	Camera(int width, int height);
 
+	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Position, m_position, CHERRYSODA_NONE_OP, m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Scale, m_zoom, CHERRYSODA_NONE_OP, if (m_zoom == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Origin, m_origin, CHERRYSODA_NONE_OP, if (m_origin == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Direction, m_direction, CHERRYSODA_NONE_OP, m_changed = true);
+
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, ZRotation, m_zAngle, CHERRYSODA_NONE_OP, if (m_zAngle == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);
+	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, FOV, m_fov, CHERRYSODA_NONE_OP, if (m_fov == v) return; m_changed = true);
+
 	inline Math::Vec2 GetSize() { return Math::Vec2(m_width, m_height); }
 	inline void SetSize(const Math::Vec2& size) { Width(size[0]); Height(size[1]); }
 	inline float Ratio() { return m_width / m_height; }
@@ -36,16 +46,6 @@ public:
 	void Approach(const Math::Vec2& pos, float ease, float maxDistance);
 	void Approach(const Math::Vec3& pos, float ease);
 	void Approach(const Math::Vec3& pos, float ease, float maxDistance);
-
-	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Position, m_position, CHERRYSODA_NONE_OP, m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Scale, m_zoom, CHERRYSODA_NONE_OP, if (m_zoom == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Origin, m_origin, CHERRYSODA_NONE_OP, if (m_origin == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(Direction, m_direction, CHERRYSODA_NONE_OP, m_changed = true);
-
-	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, ZRotation, m_zAngle, CHERRYSODA_NONE_OP, if (m_zAngle == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Width, m_width, CHERRYSODA_NONE_OP, if (m_width == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, Height, m_height, CHERRYSODA_NONE_OP, if (m_height == v) return; m_changed = true);
-	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(float, FOV, m_fov, CHERRYSODA_NONE_OP, if (m_fov == v) return; m_changed = true);
 
 private:
 	friend class Graphics;

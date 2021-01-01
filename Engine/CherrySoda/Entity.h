@@ -21,6 +21,11 @@ public:
 	Entity() : Entity(Math::Vec3(0.f)) {}
 	Entity(const Math::Vec3& position);
 	virtual ~Entity() {}
+
+	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Collidable, m_collidable);
 	
 	virtual void SceneBegin(Scene* scene);
 	virtual void SceneEnd(Scene* scene);
@@ -70,11 +75,6 @@ public:
 	template <typename T>
 	inline T* GetColliderAs() const { return static_cast<T*>(m_collider); }
 	void SetCollider(Collider* collider);
-
-	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
-	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
-	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
-	CHERRYSODA_GETTER_SETTER_OF_BOOL(Collidable, m_collidable);
 
 private:
 	friend class EntityList;

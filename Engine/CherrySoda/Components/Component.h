@@ -30,6 +30,9 @@ public:
 	Component(bool active, bool visible);
 	virtual ~Component() = default;
 
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
+
 	virtual void Added(Entity* entity);
 	virtual void Removed(Entity* entity);
 
@@ -61,9 +64,6 @@ public:
 	inline Entity* GetEntity() { return m_entity; };
 	inline const Entity* GetEntity() const { return m_entity; };
 	Scene* GetScene() const;
-
-	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
-	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
 
 private:
 	Entity* m_entity = nullptr;

@@ -16,8 +16,6 @@ class Sprite : public Image
 public:
 	CHERRYSODA_DECLARE_COMPONENT(Sprite, Image);
 
-	Sprite() : base(MTexture(), true) {}
-
 	Sprite(const String& atlasPath, const String& path = "") : Sprite()
 	{
 		m_ownAtlas = true;
@@ -38,6 +36,8 @@ public:
 			m_atlas = nullptr;
 		}
 	}
+
+	CHERRYSODA_GETTER_SETTER_OF_VEC2(Justify, m_justify);
 
 	void operator = (const Sprite& sprite) = delete;
 
@@ -83,9 +83,16 @@ public:
 	inline void OnLastFrame(STL::Action<StringID> onLastFrame) { m_onLastFrame = onLastFrame; }
 	inline void OnChange(STL::Action<StringID,StringID> onChange) { m_onChange = onChange; }
 
-	CHERRYSODA_GETTER_SETTER_OF_VEC2(Justify, m_justify);
+	inline Sprite* CreateClone()
+	{
+		return CloneInto(new Sprite());
+	}
+	
+	Sprite* CloneInto(Sprite* sprite);
 
 private:
+	Sprite() : base(MTexture(), true) {}
+
 	struct Animation
 	{
 		float m_delay;

@@ -39,8 +39,12 @@ set(ENGINE_SRC
   CherrySoda/Graphics/Mesh.h
   CherrySoda/Graphics/MTexture.cpp
   CherrySoda/Graphics/MTexture.h
+  CherrySoda/Graphics/SpriteBank.cpp
+  CherrySoda/Graphics/SpriteBank.h
   CherrySoda/Graphics/SpriteBatch.cpp
   CherrySoda/Graphics/SpriteBatch.h
+  CherrySoda/Graphics/SpriteData.cpp
+  CherrySoda/Graphics/SpriteData.h
   CherrySoda/Graphics/Texture.cpp
   CherrySoda/Graphics/Texture.h
   CherrySoda/Input/MInput.cpp
@@ -84,6 +88,7 @@ set(ENGINE_SRC
   CherrySoda/Util/NumType.h
   CherrySoda/Util/Profile.cpp
   CherrySoda/Util/Profile.h
+  CherrySoda/Util/Json.cpp
   CherrySoda/Util/Json.h
   CherrySoda/Util/STL.h
   CherrySoda/Util/String.cpp

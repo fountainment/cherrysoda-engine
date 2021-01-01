@@ -29,6 +29,8 @@ public:
 	Collider() = default;
 	virtual ~Collider() = default;
 
+	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
+
 	inline bool Collide(const Entity* entity) const
 	{
 		return Collide(entity->GetCollider());
@@ -56,8 +58,6 @@ public:
 
 	virtual type::Int32 TypeID() const = 0;
 	virtual const char* TypeCStr() const = 0;
-
-	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 
 private:
 	friend class Entity;
