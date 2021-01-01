@@ -62,7 +62,7 @@ def make_sure_folder_exist(f):
 
 def execute_command(command):
     # print('$ ' + ' '.join(command))
-    subprocess.run(command)
+    subprocess.call(command)
 
 
 def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None, bin2c_array=None):
