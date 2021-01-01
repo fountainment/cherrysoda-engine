@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import glob
 import os
-import pathlib
 import platform
 import shutil
 import subprocess
@@ -54,7 +52,7 @@ sdl2_path = join_path(external_path, 'SDL2-' + sdl2_version)
 
 def make_sure_folder_exist(f):
     p = os.path.dirname(f)
-    pathlib.Path(p).mkdir(parents=True, exist_ok=True)
+    os.makedirs(p)
 
 
 def execute_command(command):

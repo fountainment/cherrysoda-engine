@@ -43,6 +43,7 @@ __pycache__
 *.tmp
 *.stamp
 *.log
+*.pyc
 
 # Download
 SDL2-*/
