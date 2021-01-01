@@ -1,17 +1,17 @@
 # CherrySoda Engine
 
-![Travis (.com)](https://img.shields.io/travis/com/fountainment/cherrysoda-engine?label=linux)
-![GitHub](https://img.shields.io/github/license/fountainment/cherrysoda-engine)
+[![TravisCI](https://img.shields.io/travis/com/fountainment/cherrysoda-engine?branch=master)](https://travis-ci.com/github/fountainment/cherrysoda-engine)
+[![GitHub](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
 
 A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
 ## Requirements
 
 - CMake (>=3.8)
-- Python (>=3.6)
+- Python (>=2.7)
 
 ### Linux
-- GCC (>=5) or Clang (>=3.4)
+- GCC (>=5.2) or Clang (>=3.4)
 - libSDL2-dev
 
 ### Windows
@@ -26,6 +26,7 @@ cd cherrysoda-engine
 mkdir build
 cd build
 cmake ..
+cmake --build . --config Release
 ```
 
 ```sh
@@ -39,7 +40,7 @@ cd cherrysoda-engine
 mkdir build
 cd build
 emcmake cmake ..
-make -j
+make -j8
 ```
 
 ### How to Do Performance Profiling with Tracy Profiler

@@ -1,8 +1,9 @@
 language: cpp
 matrix:
   include:
-    - compiler: gcc
-      os: linux
+    - os: linux
+      compiler: gcc
+    - os: windows
 
 addons:
   apt:
@@ -17,10 +18,10 @@ addons:
     - libsdl2-dev
 
 script:
-  - mkdir build
+  - cmake -E make_directory build
   - cd build
   - cmake .. -DCHERRYSODA_USE_SSE2=1
-  - make -j
+  - cmake --build . --config Release
 
 branches:
   only:
