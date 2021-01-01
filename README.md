@@ -1,8 +1,9 @@
 # CherrySoda Engine
 
-A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
+![Travis (.com)](https://img.shields.io/travis/com/fountainment/cherrysoda-engine?label=linux)
+![GitHub](https://img.shields.io/github/license/fountainment/cherrysoda-engine)
 
-[![Build Status](https://travis-ci.com/fountainment/cherrysoda-engine.svg?branch=master)](https://travis-ci.org/fountainment/cherrysoda-engine)
+A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
 ## Requirements
 
