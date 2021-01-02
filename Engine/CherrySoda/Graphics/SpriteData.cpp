@@ -28,7 +28,7 @@ SpriteData::~SpriteData()
 	STL::Clear(m_sources);
 }
 
-void SpriteData::Add(const json::Value* json, const String& overridePath/* = ""*/)
+void SpriteData::Add(const cherrysoda::json::Value* json, const String& overridePath/* = ""*/)
 {
 	// TODO: implement SpriteData::Add
 }
