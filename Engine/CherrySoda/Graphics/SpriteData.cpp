@@ -3,12 +3,14 @@
 #include <CherrySoda/Components/Graphics/Sprite.h>
 #include <CherrySoda/Graphics/Atlas.h>
 #include <CherrySoda/Util/Json.h>
+#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::SpriteData;
 
 using cherrysoda::Atlas;
 using cherrysoda::Sprite;
+using cherrysoda::String;
 using cherrysoda::STL;
 
 SpriteData::SpriteData(Atlas* atlas)
