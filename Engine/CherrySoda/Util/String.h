@@ -36,6 +36,7 @@ class StringUtil
 {
 public:
 	static const String Format(const char* format, ...);
+	static const STL::Vector<String> Split(const String& s, char delim = ' ');
 };
 
 class StringID
