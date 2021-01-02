@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/String.h>
+#include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 
@@ -11,7 +12,7 @@ class Sprite;
 
 struct SpriteDataSource
 {
-	json::Value m_json;
+	json::Value* m_json;
 	String m_path;
 	String m_overridePath;
 };
@@ -24,12 +25,15 @@ public:
 
 	~SpriteData();
 
+	void Add(const json::Value* json, const String& overridePath = "");
+
 	Sprite* Create();
 	Sprite* CreateOn(Sprite* clone);
 
 private:
 	Atlas* m_atlas = nullptr;
 	Sprite* m_sprite = nullptr;
+	STL::List<SpriteDataSource*> m_sources;
 };
 
 } // namespace cherrysoda

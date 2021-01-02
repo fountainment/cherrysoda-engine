@@ -13,7 +13,6 @@ class JsonUtil
 {
 public:
 	static void ReadJsonFile(json::Document& doc, const String& filename);
-	static json::Document ReadJsonFile(const String& filename);
 };
 
 } // namespace cherrysoda

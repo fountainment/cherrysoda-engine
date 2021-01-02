@@ -14,10 +14,3 @@ void JsonUtil::ReadJsonFile(cherrysoda::json::Document& doc, const String& filen
 	cherrysoda::json::IStreamWrapper isw(ifs);
 	doc.ParseStream(isw);
 }
-
-cherrysoda::json::Document JsonUtil::ReadJsonFile(const String& filename)
-{
-	cherrysoda::json::Document doc;
-	ReadJsonFile(doc, filename);
-	return doc;
-}

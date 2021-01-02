@@ -2,11 +2,13 @@
 
 #include <CherrySoda/Components/Graphics/Sprite.h>
 #include <CherrySoda/Graphics/Atlas.h>
+#include <CherrySoda/Util/STL.h>
 
 using cherrysoda::SpriteData;
 
 using cherrysoda::Atlas;
 using cherrysoda::Sprite;
+using cherrysoda::STL;
 
 SpriteData::SpriteData(Atlas* atlas)
 {
@@ -20,6 +22,15 @@ SpriteData::~SpriteData()
 		delete m_sprite;
 		m_sprite = nullptr;
 	}
+	for (auto& source : m_sources) {
+		delete source;
+	}
+	STL::Clear(m_sources);
+}
+
+void SpriteData::Add(const json::Value* json, const String& overridePath/* = ""*/)
+{
+	// TODO: implement SpriteData::Add
 }
 
 Sprite* SpriteData::Create()

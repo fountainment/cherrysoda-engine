@@ -14,9 +14,8 @@ class Sprite;
 class SpriteBank
 {
 public:
-	// SpriteBank(Atlas* atlas, json::Document json);
-	// SpriteBank(Atlas* atlas, String jsonPath)
-	// : SpriteBank(atlas, JsonUtil::ReadJsonFile(jsonPath)) {}
+	SpriteBank(Atlas* atlas, const String& jsonPath);
+	~SpriteBank();
 
 	bool Has(const StringID& id);
 	Sprite* Create(const StringID& id);
@@ -25,7 +24,7 @@ public:
 private:
 	Atlas* m_atlas;
 	json::Document m_json;
-	STL::HashMap<StringID, SpriteData> m_spriteData;	
+	STL::HashMap<StringID, SpriteData*> m_spriteData;	
 };
 
 } // namespace cherrysoda
