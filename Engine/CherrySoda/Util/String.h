@@ -37,6 +37,11 @@ class StringUtil
 public:
 	static const String Format(const char* format, ...);
 	static const STL::Vector<String> Split(const String& s, char delim = ' ');
+	static inline int IndexOf(const String& s, char c) { return s.find(c, 0); }
+	static const String Trim(const String& s, char trim = ' ');
+
+	static float ToFloat(const String& s) { return std::stof(s); }
+	static int ToInt(const String& s) { return std::stoi(s); }
 };
 
 class StringID

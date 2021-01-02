@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Util/Calc.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
@@ -10,7 +11,7 @@ namespace cherrysoda {
 template <class T>
 class Chooser
 {
-private:
+public:
 	class Choice
 	{
 	public:
@@ -25,7 +26,6 @@ private:
 		{}
 	};
 
-public:
 	Chooser() = default;
 
 	Chooser(T firstChoice, float weight)
@@ -67,6 +67,33 @@ public:
 
 	inline bool IsEmpty() const { return STL::IsEmpty(m_choices); }
 
+	static Chooser<T> FromString(const String& data)
+	{
+		Chooser<T> chooser;	
+		auto choices = StringUtil::Split(data, ',');
+
+		if (STL::Count(choices) == 1 && StringUtil::IndexOf(choices[0], ':') == -1) {
+			chooser.Add(static_cast<T>(choices[0]), 1.f);
+			return chooser;	
+		}
+
+		for (auto& choice : choices) {
+			if (StringUtil::IndexOf(choice, ':') == -1) {
+				chooser.Add(static_cast<T>(choice), 1.f);
+			}
+			else {
+				auto parts = StringUtil::Split(choice, ':');
+				auto key = StringUtil::Trim(parts[0]);
+				auto weight = StringUtil::Trim(parts[1]);
+
+				chooser.Add(static_cast<T>(key), StringUtil::ToFloat(weight));
+			}
+		}
+
+		return chooser;
+	}
+
+private:
 	STL::Vector<Choice> m_choices;
 	Choice m_defaultChoice;
 	float m_totalWeight = 0.f;
