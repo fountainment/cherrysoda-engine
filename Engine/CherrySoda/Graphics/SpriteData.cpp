@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Components/Graphics/Sprite.h>
 #include <CherrySoda/Graphics/Atlas.h>
+#include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::SpriteData;
@@ -28,7 +29,7 @@ SpriteData::~SpriteData()
 	STL::Clear(m_sources);
 }
 
-void SpriteData::Add(const cherrysoda::json::Value* json, const String& overridePath/* = ""*/)
+void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& overridePath/* = ""*/)
 {
 	// TODO: implement SpriteData::Add
 }

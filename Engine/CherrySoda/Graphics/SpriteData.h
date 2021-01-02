@@ -25,7 +25,7 @@ public:
 
 	~SpriteData();
 
-	void Add(const json::Value* json, const String& overridePath = "");
+	void Add(const json::Value* jsonValue, const String& overridePath = "");
 
 	Sprite* Create();
 	Sprite* CreateOn(Sprite* clone);
