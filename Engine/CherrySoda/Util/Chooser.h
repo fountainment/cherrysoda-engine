@@ -60,7 +60,7 @@ public:
 			}
 		}
 
-		return m_defaultChoice.m_value;
+		return m_choices[STL::Count(m_choices) - 1].m_value;
 	}
 
 	inline bool CanChoose() const { return m_totalWeight > 0; }
