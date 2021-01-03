@@ -12,7 +12,7 @@ class Sprite;
 
 struct SpriteDataSource
 {
-	json::Value* m_json;
+	const json::Value* m_json;
 	String m_path;
 	String m_overridePath;
 };

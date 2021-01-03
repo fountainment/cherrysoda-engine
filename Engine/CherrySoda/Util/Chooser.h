@@ -11,7 +11,7 @@ namespace cherrysoda {
 template <class T>
 class Chooser
 {
-public:
+private:
 	class Choice
 	{
 	public:
@@ -26,6 +26,7 @@ public:
 		{}
 	};
 
+public:
 	Chooser() = default;
 
 	Chooser(T firstChoice, float weight)
@@ -69,7 +70,7 @@ public:
 
 	static Chooser<T> FromString(const String& data)
 	{
-		Chooser<T> chooser;	
+		Chooser<T> chooser;
 		auto choices = StringUtil::Split(data, ',');
 
 		if (STL::Count(choices) == 1 && StringUtil::IndexOf(choices[0], ':') == -1) {

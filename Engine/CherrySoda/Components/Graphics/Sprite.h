@@ -51,9 +51,9 @@ public:
 		return ret;
 	}
 
-	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f)
+	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f, Chooser<StringID> into = Chooser<StringID>())
 	{
-		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>() };
+		m_animations[id] = { delay, GetFrames(path), into };
 	}
 
 	inline void AddLoop(const StringID& id, const String& path, float delay = 1.f / 15.f)

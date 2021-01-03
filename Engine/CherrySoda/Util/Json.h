@@ -7,7 +7,11 @@
 
 namespace cherrysoda {
 
-namespace json = rapidjson;
+namespace json {
+
+using namespace ::rapidjson;
+
+} // namespace json
 
 class JsonUtil
 {
