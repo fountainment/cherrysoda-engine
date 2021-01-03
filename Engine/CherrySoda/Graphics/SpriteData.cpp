@@ -57,38 +57,42 @@ void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& ove
 		float masterDelay = jsonObj.HasMember("delay") ? jsonObj["delay"].GetFloat() : 0.f;
 
 		// Build Animation
-		for (const auto& anim : jsonObj["Anim"].GetArray()) {
-			Chooser<StringID> into;
-			if (anim.HasMember("goto")) {
-				into = Chooser<StringID>::FromString(anim["goto"].GetString());
-			}
+		if (jsonObj.HasMember("Anim")) {
+			for (const auto& anim : jsonObj["Anim"].GetArray()) {
+				Chooser<StringID> into;
+				if (anim.HasMember("goto")) {
+					into = Chooser<StringID>::FromString(anim["goto"].GetString());
+				}
 
-			const char* id = anim["id"].GetString();
-			String path = anim.HasMember("path") ? anim["path"].GetString() : "";
-			float delay = anim.HasMember("delay") ? anim["delay"].GetFloat() : masterDelay;
-			if (overridePath.length() != 0) {
-				path = overridePath + path;
+				const char* id = anim["id"].GetString();
+				String path = anim.HasMember("path") ? anim["path"].GetString() : "";
+				float delay = anim.HasMember("delay") ? anim["delay"].GetFloat() : masterDelay;
+				if (overridePath.length() != 0) {
+					path = overridePath + path;
+				}
+				else {
+					path = normalPath + path;
+				}
+				// TODO: add frames
+				m_sprite->Add(id, path, delay, into);
 			}
-			else {
-				path = normalPath + path;
-			}
-			// TODO: add frames
-			m_sprite->Add(id, path, delay, into);
 		}
 
 		// Build Loops
-		for (const auto& loop : jsonObj["Loop"].GetArray()) {
-			const char* id = loop["id"].GetString();
-			String path = loop.HasMember("path") ? loop["path"].GetString() : "";
-			float delay = loop.HasMember("delay") ? loop["delay"].GetFloat() : masterDelay;
-			if (overridePath.length() != 0) {
-				path = overridePath + path;
+		if (jsonObj.HasMember("Loop")) {
+			for (const auto& loop : jsonObj["Loop"].GetArray()) {
+				const char* id = loop["id"].GetString();
+				String path = loop.HasMember("path") ? loop["path"].GetString() : "";
+				float delay = loop.HasMember("delay") ? loop["delay"].GetFloat() : masterDelay;
+				if (overridePath.length() != 0) {
+					path = overridePath + path;
+				}
+				else {
+					path = normalPath + path;
+				}
+				// TODO: add frames
+				m_sprite->AddLoop(id, path, delay);
 			}
-			else {
-				path = normalPath + path;
-			}
-			// TODO: add frames
-			m_sprite->Add(id, path, delay);
 		}
 
 		// Origin
