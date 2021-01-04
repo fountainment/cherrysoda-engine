@@ -5,7 +5,7 @@
 #	define SDL_MAIN_HANDLED
 #endif // _WIN32
 
-#include <SDL2/SDL_main.h>
+#include <SDL_main.h>
 
 #define CHERRYSODA_DEFAULT_MAIN \
 int main(int argc, char* argv[]) \

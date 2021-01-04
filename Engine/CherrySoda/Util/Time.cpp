@@ -1,6 +1,6 @@
 #include <CherrySoda/Util/Time.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 using cherrysoda::Time;
 

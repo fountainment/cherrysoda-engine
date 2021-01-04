@@ -23,11 +23,11 @@
 
 #include <bx/os.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 BX_PRAGMA_DIAGNOSTIC_PUSH()
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG("-Wextern-c-compat")
-#include <SDL2/SDL_syswm.h>
+#include <SDL_syswm.h>
 BX_PRAGMA_DIAGNOSTIC_POP()
 
 #include <bgfx/platform.h>
