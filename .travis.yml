@@ -6,15 +6,12 @@ matrix:
     - os: linux
       compiler: clang
     - os: windows
-      compiler: MSVC
 
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-8
-    - g++-8
     - libgl1-mesa-dev
     - x11proto-core-dev
     - libx11-dev
