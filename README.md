@@ -23,7 +23,7 @@ A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 # Native on Linux or Windows
 git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
-mkdir build
+cmake -E make_directory build
 cd build
 cmake ..
 cmake --build . --config Release
