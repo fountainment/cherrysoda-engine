@@ -1,7 +1,7 @@
 #ifndef _CHERRYSODATEMPLATE_PROGRAM_H_
 #define _CHERRYSODATEMPLATE_PROGRAM_H_
 
-#include "CherrySodaTemplate.h"
+#include "CherrySodaOriginal.h"
 
 using GameApp = cherrysodatemplate::CherrySodaTemplate;
 

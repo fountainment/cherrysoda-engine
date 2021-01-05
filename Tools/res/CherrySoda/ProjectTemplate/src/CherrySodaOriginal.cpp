@@ -1,4 +1,4 @@
-#include "CherrySodaTemplate.h"
+#include "CherrySodaOriginal.h"
 
 #include <CherrySoda/CherrySoda.h>
 
@@ -9,7 +9,7 @@ using namespace cherrysoda;
 CherrySodaTemplate::CherrySodaTemplate()
 	: base()
 {
-	SetTitle("CherrySodaTemplate");
+	SetTitle("CherrySodaOriginal");
 	SetClearColor(Color::Black);
 }
 
