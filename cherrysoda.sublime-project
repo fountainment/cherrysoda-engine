@@ -121,6 +121,10 @@
 				{
 					"name": "libcrunch",
 					"shell_cmd": "make -j8 libcrunch"
+				},
+				{
+					"name": "sfxr_port",
+					"shell_cmd": "make -j8 sfxr_port"
 				}
 			],
 			"working_dir": "${project_path}/build"

@@ -424,9 +424,9 @@ public:
 			for (Keys key : keys) InternalSetKey(key);
 		}
 
-		bool IsKeyDown(Keys key) const { return InternalGetKey(key); }
+		inline bool IsKeyDown(Keys key) const { return InternalGetKey(key); }
 
-		int GetHashCode() const { return (int)(keys0 ^ keys1 ^ keys2 ^ keys3 ^ keys4 ^ keys5 ^ keys6 ^ keys7); }
+		inline int GetHashCode() const { return (int)(keys0 ^ keys1 ^ keys2 ^ keys3 ^ keys4 ^ keys5 ^ keys6 ^ keys7); }
 
 		bool InternalGetKey(Keys key) const;
 		void InternalSetKey(Keys key);
@@ -452,21 +452,21 @@ public:
 			m_currentState = KeyboardState();	
 		}
 
-		bool Check(Keys key) const { return m_currentState.IsKeyDown(key); }
-		bool Pressed(Keys key) const { return m_currentState.IsKeyDown(key) && !m_previousState.IsKeyDown(key); }
-		bool Released(Keys key) const { return !m_currentState.IsKeyDown(key) && m_previousState.IsKeyDown(key); }
+		inline bool Check(Keys key) const { return m_currentState.IsKeyDown(key); }
+		inline bool Pressed(Keys key) const { return m_currentState.IsKeyDown(key) && !m_previousState.IsKeyDown(key); }
+		inline bool Released(Keys key) const { return !m_currentState.IsKeyDown(key) && m_previousState.IsKeyDown(key); }
 
-		bool Check(Keys keyA, Keys keyB) const { return Check(keyA) || Check(keyB); }
-		bool Pressed(Keys keyA, Keys keyB) const { return Pressed(keyA) || Pressed(keyB); }
-		bool Released(Keys keyA, Keys keyB) const { return Released(keyA) || Released(keyB); }
+		inline bool Check(Keys keyA, Keys keyB) const { return Check(keyA) || Check(keyB); }
+		inline bool Pressed(Keys keyA, Keys keyB) const { return Pressed(keyA) || Pressed(keyB); }
+		inline bool Released(Keys keyA, Keys keyB) const { return Released(keyA) || Released(keyB); }
 
-		bool Check(Keys keyA, Keys keyB, Keys keyC) const { return Check(keyA) || Check(keyB) || Check(keyC); }
-		bool Pressed(Keys keyA, Keys keyB, Keys keyC) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC); }
-		bool Released(Keys keyA, Keys keyB, Keys keyC) const { return Released(keyA) || Released(keyB) || Released(keyC); }
+		inline bool Check(Keys keyA, Keys keyB, Keys keyC) const { return Check(keyA) || Check(keyB) || Check(keyC); }
+		inline bool Pressed(Keys keyA, Keys keyB, Keys keyC) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC); }
+		inline bool Released(Keys keyA, Keys keyB, Keys keyC) const { return Released(keyA) || Released(keyB) || Released(keyC); }
 
-		bool Check(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Check(keyA) || Check(keyB) || Check(keyC) || Check(keyD); }
-		bool Pressed(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC) || Pressed(keyD); }
-		bool Released(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Released(keyA) || Released(keyB) || Released(keyC) || Released(keyD); }
+		inline bool Check(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Check(keyA) || Check(keyB) || Check(keyC) || Check(keyD); }
+		inline bool Pressed(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Pressed(keyA) || Pressed(keyB) || Pressed(keyC) || Pressed(keyD); }
+		inline bool Released(Keys keyA, Keys keyB, Keys keyC, Keys keyD) const { return Released(keyA) || Released(keyB) || Released(keyC) || Released(keyD); }
 
 		int AxisCheck(Keys negative, Keys positive) const
 		{
@@ -501,7 +501,7 @@ public:
 				return 0;
 		}
 
-		int GetHashCode() const { return m_currentState.GetHashCode(); }
+		inline int GetHashCode() const { return m_currentState.GetHashCode(); }
 
 	private:
 		KeyboardData() = default;
