@@ -832,213 +832,200 @@ void Mutate()
 
 void DrawScreen()
 {
-	bool redraw=true;
-	if(!firstframe && mouse_x-mouse_px==0 && mouse_y-mouse_py==0 && !mouse_left && !mouse_right)
-		redraw=false;
-	if(!mouse_left)
-	{
-		if(vselected!=NULL || vcurbutton>-1)
-		{
-			redraw=true;
-			refresh_counter=2;
-		}
-		vselected=NULL;
-	}
-	if(refresh_counter>0)
-	{
-		refresh_counter--;
-		redraw=true;
-	}
-
-	if(playing_sample)
-		redraw=true;
-
-	if(drawcount++>20)
-	{
-		redraw=true;
-		drawcount=0;
-	}
-
-	if(!redraw)
-		return;
-
-	firstframe=false;
-
-	ClearScreen(0xC0B090);
-
 	DrawText(font, 10, 10, 0x504030, "GENERATOR");
-	for(int i=0;i<7;i++)
+	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 	{
-		if(Button(5, 35+i*30, false, categories[i].name, 300+i))
-		{
-			switch(i)
+		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
+		ImGui::SetWindowSize(ImVec2(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight()));
+		
+		ImGui::Text("Generator");
+		// PickUp/Coin
+		if (ImGui::Button("PickUp/Coin")) {
+			ResetParams();
+			p_base_freq = 0.4f + frnd(0.5f);
+			p_env_attack = 0.0f;
+			p_env_sustain = frnd(0.1f);
+			p_env_decay = 0.1f + frnd(0.4f);
+			p_env_punch = 0.3f + frnd(0.3f);
+			if (rnd(1))
 			{
-			case 0: // pickup/coin
-				ResetParams();
-				p_base_freq=0.4f+frnd(0.5f);
-				p_env_attack=0.0f;
-				p_env_sustain=frnd(0.1f);
-				p_env_decay=0.1f+frnd(0.4f);
-				p_env_punch=0.3f+frnd(0.3f);
-				if(rnd(1))
-				{
-					p_arp_speed=0.5f+frnd(0.2f);
-					p_arp_mod=0.2f+frnd(0.4f);
-				}
-				break;
-			case 1: // laser/shoot
-				ResetParams();
-				wave_type=rnd(2);
-				if(wave_type==2 && rnd(1))
-					wave_type=rnd(1);
-				p_base_freq=0.5f+frnd(0.5f);
-				p_freq_limit=p_base_freq-0.2f-frnd(0.6f);
-				if(p_freq_limit<0.2f) p_freq_limit=0.2f;
-				p_freq_ramp=-0.15f-frnd(0.2f);
-				if(rnd(2)==0)
-				{
-					p_base_freq=0.3f+frnd(0.6f);
-					p_freq_limit=frnd(0.1f);
-					p_freq_ramp=-0.35f-frnd(0.3f);
-				}
-				if(rnd(1))
-				{
-					p_duty=frnd(0.5f);
-					p_duty_ramp=frnd(0.2f);
-				}
-				else
-				{
-					p_duty=0.4f+frnd(0.5f);
-					p_duty_ramp=-frnd(0.7f);
-				}
-				p_env_attack=0.0f;
-				p_env_sustain=0.1f+frnd(0.2f);
-				p_env_decay=frnd(0.4f);
-				if(rnd(1))
-					p_env_punch=frnd(0.3f);
-				if(rnd(2)==0)
-				{
-					p_pha_offset=frnd(0.2f);
-					p_pha_ramp=-frnd(0.2f);
-				}
-				if(rnd(1))
-					p_hpf_freq=frnd(0.3f);
-				break;
-			case 2: // explosion
-				ResetParams();
-				wave_type=3;
-				if(rnd(1))
-				{
-					p_base_freq=0.1f+frnd(0.4f);
-					p_freq_ramp=-0.1f+frnd(0.4f);
-				}
-				else
-				{
-					p_base_freq=0.2f+frnd(0.7f);
-					p_freq_ramp=-0.2f-frnd(0.2f);
-				}
-				p_base_freq*=p_base_freq;
-				if(rnd(4)==0)
-					p_freq_ramp=0.0f;
-				if(rnd(2)==0)
-					p_repeat_speed=0.3f+frnd(0.5f);
-				p_env_attack=0.0f;
-				p_env_sustain=0.1f+frnd(0.3f);
-				p_env_decay=frnd(0.5f);
-				if(rnd(1)==0)
-				{
-					p_pha_offset=-0.3f+frnd(0.9f);
-					p_pha_ramp=-frnd(0.3f);
-				}
-				p_env_punch=0.2f+frnd(0.6f);
-				if(rnd(1))
-				{
-					p_vib_strength=frnd(0.7f);
-					p_vib_speed=frnd(0.6f);
-				}
-				if(rnd(2)==0)
-				{
-					p_arp_speed=0.6f+frnd(0.3f);
-					p_arp_mod=0.8f-frnd(1.6f);
-				}
-				break;
-			case 3: // powerup
-				ResetParams();
-				if(rnd(1))
-					wave_type=1;
-				else
-					p_duty=frnd(0.6f);
-				if(rnd(1))
-				{
-					p_base_freq=0.2f+frnd(0.3f);
-					p_freq_ramp=0.1f+frnd(0.4f);
-					p_repeat_speed=0.4f+frnd(0.4f);
-				}
-				else
-				{
-					p_base_freq=0.2f+frnd(0.3f);
-					p_freq_ramp=0.05f+frnd(0.2f);
-					if(rnd(1))
-					{
-						p_vib_strength=frnd(0.7f);
-						p_vib_speed=frnd(0.6f);
-					}
-				}
-				p_env_attack=0.0f;
-				p_env_sustain=frnd(0.4f);
-				p_env_decay=0.1f+frnd(0.4f);
-				break;
-			case 4: // hit/hurt
-				ResetParams();
-				wave_type=rnd(2);
-				if(wave_type==2)
-					wave_type=3;
-				if(wave_type==0)
-					p_duty=frnd(0.6f);
-				p_base_freq=0.2f+frnd(0.6f);
-				p_freq_ramp=-0.3f-frnd(0.4f);
-				p_env_attack=0.0f;
-				p_env_sustain=frnd(0.1f);
-				p_env_decay=0.1f+frnd(0.2f);
-				if(rnd(1))
-					p_hpf_freq=frnd(0.3f);
-				break;
-			case 5: // jump
-				ResetParams();
-				wave_type=0;
-				p_duty=frnd(0.6f);
-				p_base_freq=0.3f+frnd(0.3f);
-				p_freq_ramp=0.1f+frnd(0.2f);
-				p_env_attack=0.0f;
-				p_env_sustain=0.1f+frnd(0.3f);
-				p_env_decay=0.1f+frnd(0.2f);
-				if(rnd(1))
-					p_hpf_freq=frnd(0.3f);
-				if(rnd(1))
-					p_lpf_freq=1.0f-frnd(0.6f);
-				break;
-			case 6: // blip/select
-				ResetParams();
-				wave_type=rnd(1);
-				if(wave_type==0)
-					p_duty=frnd(0.6f);
-				p_base_freq=0.2f+frnd(0.4f);
-				p_env_attack=0.0f;
-				p_env_sustain=0.1f+frnd(0.1f);
-				p_env_decay=frnd(0.2f);
-				p_hpf_freq=0.1f;
-				break;
-			default:
-				break;
+				p_arp_speed = 0.5f + frnd(0.2f);
+				p_arp_mod = 0.2f + frnd(0.4f);
 			}
+			PlaySample();
+		}
+		// Laser/Shoot
+		if (ImGui::Button("Laser/Shoot")) {
+			ResetParams();
+			wave_type = rnd(2);
+			if (wave_type == 2 && rnd(1))
+				wave_type = rnd(1);
+			p_base_freq = 0.5f + frnd(0.5f);
+			p_freq_limit = p_base_freq - 0.2f - frnd(0.6f);
+			if (p_freq_limit < 0.2f) p_freq_limit = 0.2f;
+			p_freq_ramp = -0.15f - frnd(0.2f);
+			if (rnd(2) == 0)
+			{
+				p_base_freq = 0.3f + frnd(0.6f);
+				p_freq_limit = frnd(0.1f);
+				p_freq_ramp = -0.35f - frnd(0.3f);
+			}
+			if (rnd(1))
+			{
+				p_duty = frnd(0.5f);
+				p_duty_ramp = frnd(0.2f);
+			}
+			else
+			{
+				p_duty = 0.4f + frnd(0.5f);
+				p_duty_ramp = -frnd(0.7f);
+			}
+			p_env_attack = 0.0f;
+			p_env_sustain = 0.1f + frnd(0.2f);
+			p_env_decay = frnd(0.4f);
+			if (rnd(1))
+				p_env_punch = frnd(0.3f);
+			if (rnd(2) == 0)
+			{
+				p_pha_offset = frnd(0.2f);
+				p_pha_ramp = -frnd(0.2f);
+			}
+			if (rnd(1))
+				p_hpf_freq = frnd(0.3f);
+			PlaySample();
+		}
+		// Explosion
+		if (ImGui::Button("Explosion")) {
+			ResetParams();
+			wave_type = rnd(2);
+			if (wave_type == 2 && rnd(1))
+				wave_type = rnd(1);
+			p_base_freq = 0.5f + frnd(0.5f);
+			p_freq_limit = p_base_freq - 0.2f - frnd(0.6f);
+			if (p_freq_limit < 0.2f) p_freq_limit = 0.2f;
+			p_freq_ramp = -0.15f - frnd(0.2f);
+			if (rnd(2) == 0)
+			{
+				p_base_freq = 0.3f + frnd(0.6f);
+				p_freq_limit = frnd(0.1f);
+				p_freq_ramp = -0.35f - frnd(0.3f);
+			}
+			if (rnd(1))
+			{
+				p_duty = frnd(0.5f);
+				p_duty_ramp = frnd(0.2f);
+			}
+			else
+			{
+				p_duty = 0.4f + frnd(0.5f);
+				p_duty_ramp = -frnd(0.7f);
+			}
+			p_env_attack = 0.0f;
+			p_env_sustain = 0.1f + frnd(0.2f);
+			p_env_decay = frnd(0.4f);
+			if (rnd(1))
+				p_env_punch = frnd(0.3f);
+			if (rnd(2) == 0)
+			{
+				p_pha_offset = frnd(0.2f);
+				p_pha_ramp = -frnd(0.2f);
+			}
+			if (rnd(1))
+				p_hpf_freq = frnd(0.3f);
+			PlaySample();
+		}
+		// PowerUp
+		if (ImGui::Button("PowerUp")) {
+			ResetParams();
+			if (rnd(1))
+				wave_type = 1;
+			else
+				p_duty = frnd(0.6f);
+			if (rnd(1))
+			{
+				p_base_freq = 0.2f + frnd(0.3f);
+				p_freq_ramp = 0.1f + frnd(0.4f);
+				p_repeat_speed = 0.4f + frnd(0.4f);
+			}
+			else
+			{
+				p_base_freq = 0.2f + frnd(0.3f);
+				p_freq_ramp = 0.05f + frnd(0.2f);
+				if (rnd(1))
+				{
+					p_vib_strength = frnd(0.7f);
+					p_vib_speed = frnd(0.6f);
+				}
+			}
+			p_env_attack = 0.0f;
+			p_env_sustain = frnd(0.4f);
+			p_env_decay = 0.1f + frnd(0.4f);
+			PlaySample();
+		}
+		// Hit/Hurt
+		if (ImGui::Button("Hit/Hurt")) {
+			ResetParams();
+			wave_type = rnd(2);
+			if (wave_type == 2)
+				wave_type = 3;
+			if (wave_type == 0)
+				p_duty = frnd(0.6f);
+			p_base_freq = 0.2f + frnd(0.6f);
+			p_freq_ramp = -0.3f - frnd(0.4f);
+			p_env_attack = 0.0f;
+			p_env_sustain = frnd(0.1f);
+			p_env_decay = 0.1f + frnd(0.2f);
+			if (rnd(1))
+				p_hpf_freq = frnd(0.3f);
+			PlaySample();
+		}
+		// Jump
+		if (ImGui::Button("Jump")) {
+			ResetParams();
+			wave_type = 0;
+			p_duty = frnd(0.6f);
+			p_base_freq = 0.3f + frnd(0.3f);
+			p_freq_ramp = 0.1f + frnd(0.2f);
+			p_env_attack = 0.0f;
+			p_env_sustain = 0.1f + frnd(0.3f);
+			p_env_decay = 0.1f + frnd(0.2f);
+			if (rnd(1))
+				p_hpf_freq = frnd(0.3f);
+			if (rnd(1))
+				p_lpf_freq = 1.0f - frnd(0.6f);
+			PlaySample();
+		}
+		// Blip/Select
+		if (ImGui::Button("Blip/Select")) {
+			ResetParams();
+			wave_type = rnd(1);
+			if (wave_type == 0)
+				p_duty = frnd(0.6f);
+			p_base_freq = 0.2f + frnd(0.4f);
+			p_env_attack = 0.0f;
+			p_env_sustain = 0.1f + frnd(0.1f);
+			p_env_decay = frnd(0.2f);
+			p_hpf_freq = 0.1f;
+			PlaySample();
+		}
 
+		// Mutate
+		if (ImGui::Button("Mutate")) {
+			Mutate();
+			PlaySample();
+		}
+		// Randomize
+		if (ImGui::Button("Randomize"))
+		{
+			Randomize();
 			PlaySample();
 		}
 	}
+	ImGui::End();
+
 	DrawBar(110, 0, 2, 480, 0x000000);
 	DrawText(font, 120, 10, 0x504030, "MANUAL SETTINGS");
 	DrawSprite(ld48, 8, 440, 0, 0xB0A080);
-	
 
 	bool do_play=false;
 
@@ -1343,7 +1330,7 @@ bool SfxrUpdate()
 	else
 	 	keydown = false;
 
-	// DrawScreen();
+	DrawScreen();
 
 	return true;
 }
