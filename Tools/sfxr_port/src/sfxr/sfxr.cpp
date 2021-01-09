@@ -53,13 +53,6 @@ float frnd(float range)
 Spriteset font;
 Spriteset ld48;
 
-struct Category
-{
-	char name[32];
-};
-
-Category categories[10];
-
 int wave_type;
 
 float p_base_freq;
@@ -832,203 +825,273 @@ void Mutate()
 
 void DrawScreen()
 {
-	DrawText(font, 10, 10, 0x504030, "GENERATOR");
 	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 	{
 		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
 		ImGui::SetWindowSize(ImVec2(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight()));
 		
-		ImGui::Text("Generator");
-		// PickUp/Coin
-		if (ImGui::Button("PickUp/Coin")) {
-			ResetParams();
-			p_base_freq = 0.4f + frnd(0.5f);
-			p_env_attack = 0.0f;
-			p_env_sustain = frnd(0.1f);
-			p_env_decay = 0.1f + frnd(0.4f);
-			p_env_punch = 0.3f + frnd(0.3f);
-			if (rnd(1))
+		ImGui::BeginGroup();
+		{
+			ImGui::BeginChild("Generator", ImVec2(180.f, 0), true);
 			{
-				p_arp_speed = 0.5f + frnd(0.2f);
-				p_arp_mod = 0.2f + frnd(0.4f);
-			}
-			PlaySample();
-		}
-		// Laser/Shoot
-		if (ImGui::Button("Laser/Shoot")) {
-			ResetParams();
-			wave_type = rnd(2);
-			if (wave_type == 2 && rnd(1))
-				wave_type = rnd(1);
-			p_base_freq = 0.5f + frnd(0.5f);
-			p_freq_limit = p_base_freq - 0.2f - frnd(0.6f);
-			if (p_freq_limit < 0.2f) p_freq_limit = 0.2f;
-			p_freq_ramp = -0.15f - frnd(0.2f);
-			if (rnd(2) == 0)
-			{
-				p_base_freq = 0.3f + frnd(0.6f);
-				p_freq_limit = frnd(0.1f);
-				p_freq_ramp = -0.35f - frnd(0.3f);
-			}
-			if (rnd(1))
-			{
-				p_duty = frnd(0.5f);
-				p_duty_ramp = frnd(0.2f);
-			}
-			else
-			{
-				p_duty = 0.4f + frnd(0.5f);
-				p_duty_ramp = -frnd(0.7f);
-			}
-			p_env_attack = 0.0f;
-			p_env_sustain = 0.1f + frnd(0.2f);
-			p_env_decay = frnd(0.4f);
-			if (rnd(1))
-				p_env_punch = frnd(0.3f);
-			if (rnd(2) == 0)
-			{
-				p_pha_offset = frnd(0.2f);
-				p_pha_ramp = -frnd(0.2f);
-			}
-			if (rnd(1))
-				p_hpf_freq = frnd(0.3f);
-			PlaySample();
-		}
-		// Explosion
-		if (ImGui::Button("Explosion")) {
-			ResetParams();
-			wave_type = rnd(2);
-			if (wave_type == 2 && rnd(1))
-				wave_type = rnd(1);
-			p_base_freq = 0.5f + frnd(0.5f);
-			p_freq_limit = p_base_freq - 0.2f - frnd(0.6f);
-			if (p_freq_limit < 0.2f) p_freq_limit = 0.2f;
-			p_freq_ramp = -0.15f - frnd(0.2f);
-			if (rnd(2) == 0)
-			{
-				p_base_freq = 0.3f + frnd(0.6f);
-				p_freq_limit = frnd(0.1f);
-				p_freq_ramp = -0.35f - frnd(0.3f);
-			}
-			if (rnd(1))
-			{
-				p_duty = frnd(0.5f);
-				p_duty_ramp = frnd(0.2f);
-			}
-			else
-			{
-				p_duty = 0.4f + frnd(0.5f);
-				p_duty_ramp = -frnd(0.7f);
-			}
-			p_env_attack = 0.0f;
-			p_env_sustain = 0.1f + frnd(0.2f);
-			p_env_decay = frnd(0.4f);
-			if (rnd(1))
-				p_env_punch = frnd(0.3f);
-			if (rnd(2) == 0)
-			{
-				p_pha_offset = frnd(0.2f);
-				p_pha_ramp = -frnd(0.2f);
-			}
-			if (rnd(1))
-				p_hpf_freq = frnd(0.3f);
-			PlaySample();
-		}
-		// PowerUp
-		if (ImGui::Button("PowerUp")) {
-			ResetParams();
-			if (rnd(1))
-				wave_type = 1;
-			else
-				p_duty = frnd(0.6f);
-			if (rnd(1))
-			{
-				p_base_freq = 0.2f + frnd(0.3f);
-				p_freq_ramp = 0.1f + frnd(0.4f);
-				p_repeat_speed = 0.4f + frnd(0.4f);
-			}
-			else
-			{
-				p_base_freq = 0.2f + frnd(0.3f);
-				p_freq_ramp = 0.05f + frnd(0.2f);
-				if (rnd(1))
+				ImGui::Text("Generator");
+				// PickUp/Coin
+				ImGui::Spacing();
+				if (ImGui::Button("PickUp/Coin")) {
+					ResetParams();
+					p_base_freq = 0.4f + frnd(0.5f);
+					p_env_attack = 0.0f;
+					p_env_sustain = frnd(0.1f);
+					p_env_decay = 0.1f + frnd(0.4f);
+					p_env_punch = 0.3f + frnd(0.3f);
+					if (rnd(1))
+					{
+						p_arp_speed = 0.5f + frnd(0.2f);
+						p_arp_mod = 0.2f + frnd(0.4f);
+					}
+					PlaySample();
+				}
+				// Laser/Shoot
+				ImGui::Spacing();
+				if (ImGui::Button("Laser/Shoot")) {
+					ResetParams();
+					wave_type = rnd(2);
+					if (wave_type == 2 && rnd(1))
+						wave_type = rnd(1);
+					p_base_freq = 0.5f + frnd(0.5f);
+					p_freq_limit = p_base_freq - 0.2f - frnd(0.6f);
+					if (p_freq_limit < 0.2f) p_freq_limit = 0.2f;
+					p_freq_ramp = -0.15f - frnd(0.2f);
+					if (rnd(2) == 0)
+					{
+						p_base_freq = 0.3f + frnd(0.6f);
+						p_freq_limit = frnd(0.1f);
+						p_freq_ramp = -0.35f - frnd(0.3f);
+					}
+					if (rnd(1))
+					{
+						p_duty = frnd(0.5f);
+						p_duty_ramp = frnd(0.2f);
+					}
+					else
+					{
+						p_duty = 0.4f + frnd(0.5f);
+						p_duty_ramp = -frnd(0.7f);
+					}
+					p_env_attack = 0.0f;
+					p_env_sustain = 0.1f + frnd(0.2f);
+					p_env_decay = frnd(0.4f);
+					if (rnd(1))
+						p_env_punch = frnd(0.3f);
+					if (rnd(2) == 0)
+					{
+						p_pha_offset = frnd(0.2f);
+						p_pha_ramp = -frnd(0.2f);
+					}
+					if (rnd(1))
+						p_hpf_freq = frnd(0.3f);
+					PlaySample();
+				}
+				// Explosion
+				ImGui::Spacing();
+				if (ImGui::Button("Explosion")) {
+					ResetParams();
+					wave_type = 3;
+					if (rnd(1))
+					{
+						p_base_freq = 0.1f + frnd(0.4f);
+						p_freq_ramp = -0.1f + frnd(0.4f);
+					}
+					else
+					{
+						p_base_freq = 0.2f + frnd(0.7f);
+						p_freq_ramp = -0.2f - frnd(0.2f);
+					}
+					p_base_freq *= p_base_freq;
+					if (rnd(4) == 0)
+						p_freq_ramp = 0.0f;
+					if (rnd(2) == 0)
+						p_repeat_speed = 0.3f + frnd(0.5f);
+					p_env_attack = 0.0f;
+					p_env_sustain = 0.1f + frnd(0.3f);
+					p_env_decay = frnd(0.5f);
+					if (rnd(1) == 0)
+					{
+						p_pha_offset = -0.3f + frnd(0.9f);
+						p_pha_ramp = -frnd(0.3f);
+					}
+					p_env_punch = 0.2f + frnd(0.6f);
+					if (rnd(1))
+					{
+						p_vib_strength = frnd(0.7f);
+						p_vib_speed = frnd(0.6f);
+					}
+					if (rnd(2) == 0)
+					{
+						p_arp_speed = 0.6f + frnd(0.3f);
+						p_arp_mod = 0.8f - frnd(1.6f);
+					}
+					PlaySample();
+				}
+				// PowerUp
+				ImGui::Spacing();
+				if (ImGui::Button("PowerUp")) {
+					ResetParams();
+					if (rnd(1))
+						wave_type = 1;
+					else
+						p_duty = frnd(0.6f);
+					if (rnd(1))
+					{
+						p_base_freq = 0.2f + frnd(0.3f);
+						p_freq_ramp = 0.1f + frnd(0.4f);
+						p_repeat_speed = 0.4f + frnd(0.4f);
+					}
+					else
+					{
+						p_base_freq = 0.2f + frnd(0.3f);
+						p_freq_ramp = 0.05f + frnd(0.2f);
+						if (rnd(1))
+						{
+							p_vib_strength = frnd(0.7f);
+							p_vib_speed = frnd(0.6f);
+						}
+					}
+					p_env_attack = 0.0f;
+					p_env_sustain = frnd(0.4f);
+					p_env_decay = 0.1f + frnd(0.4f);
+					PlaySample();
+				}
+				// Hit/Hurt
+				ImGui::Spacing();
+				if (ImGui::Button("Hit/Hurt")) {
+					ResetParams();
+					wave_type = rnd(2);
+					if (wave_type == 2)
+						wave_type = 3;
+					if (wave_type == 0)
+						p_duty = frnd(0.6f);
+					p_base_freq = 0.2f + frnd(0.6f);
+					p_freq_ramp = -0.3f - frnd(0.4f);
+					p_env_attack = 0.0f;
+					p_env_sustain = frnd(0.1f);
+					p_env_decay = 0.1f + frnd(0.2f);
+					if (rnd(1))
+						p_hpf_freq = frnd(0.3f);
+					PlaySample();
+				}
+				// Jump
+				ImGui::Spacing();
+				if (ImGui::Button("Jump")) {
+					ResetParams();
+					wave_type = 0;
+					p_duty = frnd(0.6f);
+					p_base_freq = 0.3f + frnd(0.3f);
+					p_freq_ramp = 0.1f + frnd(0.2f);
+					p_env_attack = 0.0f;
+					p_env_sustain = 0.1f + frnd(0.3f);
+					p_env_decay = 0.1f + frnd(0.2f);
+					if (rnd(1))
+						p_hpf_freq = frnd(0.3f);
+					if (rnd(1))
+						p_lpf_freq = 1.0f - frnd(0.6f);
+					PlaySample();
+				}
+				// Blip/Select
+				ImGui::Spacing();
+				if (ImGui::Button("Blip/Select")) {
+					ResetParams();
+					wave_type = rnd(1);
+					if (wave_type == 0)
+						p_duty = frnd(0.6f);
+					p_base_freq = 0.2f + frnd(0.4f);
+					p_env_attack = 0.0f;
+					p_env_sustain = 0.1f + frnd(0.1f);
+					p_env_decay = frnd(0.2f);
+					p_hpf_freq = 0.1f;
+					PlaySample();
+				}
+
+				for (int i = 0; i < 1; ++i) {
+					ImGui::Spacing();
+					ImGui::NewLine();
+				}
+
+				// Mutate
+				if (ImGui::Button("Mutate")) {
+					Mutate();
+					PlaySample();
+				}
+				// Randomize
+				ImGui::Spacing();
+				if (ImGui::Button("Randomize"))
 				{
-					p_vib_strength = frnd(0.7f);
-					p_vib_speed = frnd(0.6f);
+					Randomize();
+					PlaySample();
 				}
 			}
-			p_env_attack = 0.0f;
-			p_env_sustain = frnd(0.4f);
-			p_env_decay = 0.1f + frnd(0.4f);
-			PlaySample();
+			ImGui::EndChild();
 		}
-		// Hit/Hurt
-		if (ImGui::Button("Hit/Hurt")) {
-			ResetParams();
-			wave_type = rnd(2);
-			if (wave_type == 2)
-				wave_type = 3;
-			if (wave_type == 0)
-				p_duty = frnd(0.6f);
-			p_base_freq = 0.2f + frnd(0.6f);
-			p_freq_ramp = -0.3f - frnd(0.4f);
-			p_env_attack = 0.0f;
-			p_env_sustain = frnd(0.1f);
-			p_env_decay = 0.1f + frnd(0.2f);
-			if (rnd(1))
-				p_hpf_freq = frnd(0.3f);
-			PlaySample();
-		}
-		// Jump
-		if (ImGui::Button("Jump")) {
-			ResetParams();
-			wave_type = 0;
-			p_duty = frnd(0.6f);
-			p_base_freq = 0.3f + frnd(0.3f);
-			p_freq_ramp = 0.1f + frnd(0.2f);
-			p_env_attack = 0.0f;
-			p_env_sustain = 0.1f + frnd(0.3f);
-			p_env_decay = 0.1f + frnd(0.2f);
-			if (rnd(1))
-				p_hpf_freq = frnd(0.3f);
-			if (rnd(1))
-				p_lpf_freq = 1.0f - frnd(0.6f);
-			PlaySample();
-		}
-		// Blip/Select
-		if (ImGui::Button("Blip/Select")) {
-			ResetParams();
-			wave_type = rnd(1);
-			if (wave_type == 0)
-				p_duty = frnd(0.6f);
-			p_base_freq = 0.2f + frnd(0.4f);
-			p_env_attack = 0.0f;
-			p_env_sustain = 0.1f + frnd(0.1f);
-			p_env_decay = frnd(0.2f);
-			p_hpf_freq = 0.1f;
-			PlaySample();
-		}
+		ImGui::EndGroup(); ImGui::SameLine();
 
-		// Mutate
-		if (ImGui::Button("Mutate")) {
-			Mutate();
-			PlaySample();
-		}
-		// Randomize
-		if (ImGui::Button("Randomize"))
+		ImGui::BeginGroup();
 		{
-			Randomize();
-			PlaySample();
+			ImGui::BeginChild("Manual Settings", ImVec2(0, 0), true);
+			{
+				ImGui::Text("Manual Settings");
+				ImGui::Spacing();
+				ImGui::RadioButton("Squarewave", &wave_type, 0); ImGui::SameLine();
+				ImGui::RadioButton("Sawtooth", &wave_type, 1); ImGui::SameLine();
+				ImGui::RadioButton("Sinewave", &wave_type, 2); ImGui::SameLine();
+				ImGui::RadioButton("Noise", &wave_type, 3);
+
+				ImGui::Spacing();
+				ImGui::BeginChild("Parameters", ImVec2(0, 0), true);
+				{
+					ImGui::SliderFloat("Attack Time", &p_env_attack, 0.f, 1.f);
+					ImGui::SliderFloat("Sustain Time", &p_env_sustain, 0.f, 1.f);
+					ImGui::SliderFloat("Sustain Punch", &p_env_punch, 0.f, 1.f);
+					ImGui::SliderFloat("Decay Time", &p_env_decay, 0.f, 1.f);
+
+					ImGui::Separator();
+					ImGui::SliderFloat("Start Frequency", &p_base_freq, 0.f, 1.f);
+					ImGui::SliderFloat("Min Frequency", &p_freq_limit, 0.f, 1.f);
+					ImGui::SliderFloat("Slide", &p_freq_ramp, -1.f, 1.f);
+					ImGui::SliderFloat("Delta Slide", &p_freq_dramp, -1.f, 1.f);
+					ImGui::SliderFloat("Vibrato Depth", &p_vib_strength, 0.f, 1.f);
+					ImGui::SliderFloat("Vibrato Speed", &p_vib_speed, 0.f, 1.f);
+
+					ImGui::Separator();
+					ImGui::SliderFloat("Change Amount", &p_arp_mod, -1.f, 1.f);
+					ImGui::SliderFloat("Change Speed", &p_arp_speed, 0.f, 1.f);
+
+					ImGui::Separator();
+					ImGui::SliderFloat("Square Duty", &p_duty, 0.f, 1.f);
+					ImGui::SliderFloat("Duty Sweep", &p_duty_ramp, -1.f, 1.f);
+
+					ImGui::Separator();
+					ImGui::SliderFloat("Repeat Speed", &p_repeat_speed, 0.f, 1.f);
+
+					ImGui::Separator();
+					ImGui::SliderFloat("Phaser Offset", &p_pha_offset, -1.f, 1.f);
+					ImGui::SliderFloat("Phaser Sweep", &p_pha_ramp, -1.f, 1.f);
+
+					ImGui::Separator();
+					ImGui::SliderFloat("LP Filer Cutoff", &p_lpf_freq, 0.f, 1.f);
+					ImGui::SliderFloat("LP Filer Cutoff Sweep", &p_lpf_ramp, -1.f, 1.f);
+					ImGui::SliderFloat("LP Filer Resonance", &p_lpf_resonance, 0.f, 1.f);
+					ImGui::SliderFloat("HP Filer Cutoff", &p_hpf_freq, 0.f, 1.f);
+					ImGui::SliderFloat("HP Filer Cutoff Sweep", &p_hpf_ramp, -1.f, 1.f);
+				}
+				ImGui::EndChild();
+			}
+			ImGui::EndChild();
 		}
+		ImGui::EndGroup();
 	}
 	ImGui::End();
 
-	DrawBar(110, 0, 2, 480, 0x000000);
-	DrawText(font, 120, 10, 0x504030, "MANUAL SETTINGS");
-	DrawSprite(ld48, 8, 440, 0, 0xB0A080);
-
-	bool do_play=false;
-
+	bool do_play = false;
 	if(Button(130, 30, wave_type==0, "SQUAREWAVE", 10))
 	{
 		wave_type=0;
@@ -1340,13 +1403,8 @@ void SfxrInit()
 {
 	srand(time(NULL));
 
-	strcpy(categories[0].name, "PICKUP/COIN");
-	strcpy(categories[1].name, "LASER/SHOOT");
-	strcpy(categories[2].name, "EXPLOSION");
-	strcpy(categories[3].name, "POWERUP");
-	strcpy(categories[4].name, "HIT/HURT");
-	strcpy(categories[5].name, "JUMP");
-	strcpy(categories[6].name, "BLIP/SELECT");
+	ImGuiIO& io = ImGui::GetIO();
+	io.FontGlobalScale = 2.0f;
 
 	ResetParams();
 
