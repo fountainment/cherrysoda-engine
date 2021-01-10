@@ -825,6 +825,7 @@ void Mutate()
 
 void DrawScreen()
 {
+	bool do_play = false;
 	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 	{
 		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
@@ -832,7 +833,7 @@ void DrawScreen()
 		
 		ImGui::BeginGroup();
 		{
-			ImGui::BeginChild("Generator", ImVec2(180.f, 0), true);
+			ImGui::BeginChild("Generator", ImVec2(200.f, 0), true);
 			{
 				ImGui::Text("Generator");
 				// PickUp/Coin
@@ -1012,21 +1013,33 @@ void DrawScreen()
 					PlaySample();
 				}
 
-				for (int i = 0; i < 1; ++i) {
-					ImGui::Spacing();
-					ImGui::NewLine();
-				}
+				ImGui::Spacing();
+				ImGui::NewLine();
 
 				// Mutate
 				if (ImGui::Button("Mutate")) {
 					Mutate();
-					PlaySample();
+					do_play = true;
 				}
 				// Randomize
 				ImGui::Spacing();
 				if (ImGui::Button("Randomize"))
 				{
 					Randomize();
+					do_play = true;
+				}
+
+				ImGui::Spacing();
+				ImGui::NewLine();
+
+				// Volume
+				ImGui::Text("Volume");
+				if (ImGui::SliderFloat("", &sound_vol, 0.f, 1.f)) {
+					PlaySample();
+				}
+				// Play Sound
+				ImGui::Spacing();
+				if (ImGui::Button("Play Sound")) {
 					PlaySample();
 				}
 			}
@@ -1040,10 +1053,10 @@ void DrawScreen()
 			{
 				ImGui::Text("Manual Settings");
 				ImGui::Spacing();
-				ImGui::RadioButton("Squarewave", &wave_type, 0); ImGui::SameLine();
-				ImGui::RadioButton("Sawtooth", &wave_type, 1); ImGui::SameLine();
-				ImGui::RadioButton("Sinewave", &wave_type, 2); ImGui::SameLine();
-				ImGui::RadioButton("Noise", &wave_type, 3);
+				if (ImGui::RadioButton("Squarewave", &wave_type, 0)) { do_play = true; } ImGui::SameLine();
+				if (ImGui::RadioButton("Sawtooth", &wave_type, 1))   { do_play = true; } ImGui::SameLine();
+				if (ImGui::RadioButton("Sinewave", &wave_type, 2))   { do_play = true; } ImGui::SameLine();
+				if (ImGui::RadioButton("Noise", &wave_type, 3))      { do_play = true; }
 
 				ImGui::Spacing();
 				ImGui::BeginChild("Parameters", ImVec2(0, 0), true);
@@ -1091,27 +1104,6 @@ void DrawScreen()
 	}
 	ImGui::End();
 
-	bool do_play = false;
-	if(Button(130, 30, wave_type==0, "SQUAREWAVE", 10))
-	{
-		wave_type=0;
-		do_play=true;
-	}
-	if(Button(250, 30, wave_type==1, "SAWTOOTH", 11))
-	{
-		wave_type=1;
-		do_play=true;
-	}
-	if(Button(370, 30, wave_type==2, "SINEWAVE", 12))
-	{
-		wave_type=2;
-		do_play=true;
-	}
-	if(Button(490, 30, wave_type==3, "NOISE", 13))
-	{
-		wave_type=3;
-		do_play=true;
-	}
 	if(dragOnLeftClick)
 	{
 		if(ButtonWH(490, 140, 17, 17, dragOnLeftClick, "X", 101))
@@ -1124,21 +1116,9 @@ void DrawScreen()
 	}
 	DrawText(font, 515, 145, 0x000000, "DRAG BARS");
 
-	DrawBar(5-1-1, 412-1-1, 102+2, 19+2, 0x000000);
-	if(Button(5, 412, false, "RANDOMIZE", 40))
-	{
-		Randomize();
-		do_play = true;
-	}
-
 	if(ButtonWH(5, 352, 75, 17, false, "UNDO (Z)", 102))
 	{
 		Undo();
-	}
-	if(Button(5, 382, false, "MUTATE", 30))
-	{
-		Mutate();
-		do_play=true;
 	}
 
 	DrawText(font, 515, 170, 0x000000, "VOLUME");
