@@ -834,6 +834,8 @@ void Mutate()
 
 void DrawScreen()
 {
+	static int lang_i = 1;
+	#define LANGS(A,B) ((const char*[]){A,B}[lang_i])
 	bool do_play = false;
 	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 	{
@@ -844,10 +846,10 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Generator", ImVec2(200.f, 0), true);
 			{
-				ImGui::Text("Generator");
+				ImGui::Text(LANGS("生成器", "Generator"));
 				// PickUp/Coin
 				ImGui::Spacing();
-				if (ImGui::Button("PickUp/Coin", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"拾取/金币", "PickUp/Coin"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					p_base_freq = 0.4f + frnd(0.5f);
 					p_env_attack = 0.0f;
@@ -863,7 +865,7 @@ void DrawScreen()
 				}
 				// Laser/Shoot
 				ImGui::Spacing();
-				if (ImGui::Button("Laser/Shoot", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"激光/射击", "Laser/Shoot"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2 && rnd(1))
@@ -904,7 +906,7 @@ void DrawScreen()
 				}
 				// Explosion
 				ImGui::Spacing();
-				if (ImGui::Button("Explosion", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"爆炸", "Explosion"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = 3;
 					if (rnd(1))
@@ -945,7 +947,7 @@ void DrawScreen()
 				}
 				// PowerUp
 				ImGui::Spacing();
-				if (ImGui::Button("PowerUp", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"升级", "PowerUp"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					if (rnd(1))
 						wave_type = 1;
@@ -974,7 +976,7 @@ void DrawScreen()
 				}
 				// Hit/Hurt
 				ImGui::Spacing();
-				if (ImGui::Button("Hit/Hurt", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"被击/受伤", "Hit/Hurt"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2)
@@ -992,7 +994,7 @@ void DrawScreen()
 				}
 				// Jump
 				ImGui::Spacing();
-				if (ImGui::Button("Jump", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"跳跃", "Jump"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = 0;
 					p_duty = frnd(0.6f);
@@ -1009,7 +1011,7 @@ void DrawScreen()
 				}
 				// Blip/Select
 				ImGui::Spacing();
-				if (ImGui::Button("Blip/Select", ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"哔哔声/选择", "Blip/Select"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(1);
 					if (wave_type == 0)
@@ -1025,13 +1027,13 @@ void DrawScreen()
 				ImGui::Spacing(); ImGui::NewLine();
 
 				// Mutate
-				if (ImGui::Button("Mutate", ImVec2(140.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"变异", "Mutate"), ImVec2(140.f, 0.f))) {
 					Mutate();
 					do_play = true;
 				}
 				// Randomize
 				ImGui::Spacing();
-				if (ImGui::Button("Randomize", ImVec2(140.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"随机", "Randomize"), ImVec2(140.f, 0.f))) {
 					Randomize();
 					do_play = true;
 				}
@@ -1039,20 +1041,20 @@ void DrawScreen()
 				ImGui::Spacing(); ImGui::NewLine();
 
 				// Volume
-				ImGui::Text("Volume");
+				ImGui::Text(LANGS(u8"音量", "Volume"));
 				if (ImGui::SliderFloat("", &sound_vol, 0.f, 1.f)) {
 					PlaySample();
 				}
 				// Play Sound
 				ImGui::Spacing();
-				if (ImGui::Button("Play Sound")) {
+				if (ImGui::Button(LANGS(u8"播放声音", "Play Sound"), ImVec2(170.f, 0.f))) {
 					PlaySample();
 				}
 
 				ImGui::Spacing(); ImGui::NewLine();
 
 				// Export WAV
-				if (ImGui::Button("Export WAV")) {
+				if (ImGui::Button(LANGS(u8"导出WAV", "Export WAV"), ImVec2(170.f, 0.f))) {
 					ExportWAV("export.wav");
 				}
 			}
@@ -1064,12 +1066,22 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Manual Settings", ImVec2(0, 0), true);
 			{
-				ImGui::Text("Manual Settings");
+				ImGui::Text(LANGS(u8"手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 40.f);
+				const char* lang[] = { "En", u8"中" };
+				if (ImGui::Button(lang[lang_i])) {
+					if (lang_i == 0) {
+						lang_i = 1;
+					}
+					else {
+						lang_i = 0;
+					}
+				}
 				ImGui::Spacing();
-				if (ImGui::RadioButton("Squarewave", &wave_type, 0)) { do_play = true; } ImGui::SameLine();
-				if (ImGui::RadioButton("Sawtooth", &wave_type, 1))   { do_play = true; } ImGui::SameLine();
-				if (ImGui::RadioButton("Sinewave", &wave_type, 2))   { do_play = true; } ImGui::SameLine();
-				if (ImGui::RadioButton("Noise", &wave_type, 3))      { do_play = true; }
+				float rbWidth = 180.f;
+				if (ImGui::RadioButton(LANGS(u8"方波", "Squarewave"), &wave_type, 0)) { do_play = true; } ImGui::SameLine(rbWidth);
+				if (ImGui::RadioButton(LANGS(u8"锯齿波", "Sawtooth"), &wave_type, 1)) { do_play = true; } ImGui::SameLine(rbWidth * 2.f);
+				if (ImGui::RadioButton(LANGS(u8"正弦波", "Sinewave"), &wave_type, 2)) { do_play = true; } ImGui::SameLine(rbWidth * 3.f);
+				if (ImGui::RadioButton(LANGS(u8"噪声", "Noise"), &wave_type, 3)) { do_play = true; }
 
 				ImGui::Spacing();
 				ImGui::BeginChild("Parameters", ImVec2(0, 0), true);
@@ -1397,7 +1409,14 @@ void SfxrInit()
 	srand(time(NULL));
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.FontGlobalScale = 2.0f;
+	// io.FontGlobalScale = 2.0f;
+	ImVector<ImWchar> gRanges;
+	ImFontGlyphRangesBuilder gBuilder;
+	gBuilder.AddText(u8" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./中生成器拾取金币激光射击爆炸升级被击受伤跳跃哔声选择变异随机音量播放导出手动设置方波锯齿正弦噪");
+	gBuilder.BuildRanges(&gRanges);
+	io.Fonts->Clear();
+	io.Fonts->AddFontFromFileTTF("./assets/wqy.ttf", 26.f, nullptr, gRanges.Data);
+	GUI::BuildFontTexture();
 
 	ResetParams();
 

@@ -15,6 +15,8 @@ public:
 	static void Disable() { ms_disable = true; }
 	static void Enable() { ms_disable = false; }
 
+	static void BuildFontTexture();
+
 private:
 	friend class Engine;
 

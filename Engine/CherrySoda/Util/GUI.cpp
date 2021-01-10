@@ -65,14 +65,8 @@ void GUI::Initialize()
 	io.KeyMap[ImGuiKey_Y] = (int)Keys::Y;
 	io.KeyMap[ImGuiKey_Z] = (int)Keys::Z;
 
-
 	// Font texture 
-	unsigned char* data;
-	int width, height;
-	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
-	ms_fontTexture = Texture2D::FromRGBA(data, width, height);
-
-	io.Fonts->TexID = (ImTextureID)(&ms_fontTexture);
+	BuildFontTexture();
 
 	// Style
 	// auto& style = ImGui::GetStyle();
@@ -196,4 +190,15 @@ void GUI::Render()
 		}
 	}
 	Graphics::EndRenderPass(ms_guiRenderPass);
+}
+
+void GUI::BuildFontTexture()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	unsigned char* data;
+	int width, height;
+	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
+	ms_fontTexture.Dispose();
+	ms_fontTexture = Texture2D::FromRGBA(data, width, height);
+	io.Fonts->TexID = (ImTextureID)(&ms_fontTexture);
 }
