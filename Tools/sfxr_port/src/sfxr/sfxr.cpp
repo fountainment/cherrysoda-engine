@@ -838,7 +838,7 @@ void DrawScreen()
 				ImGui::Text("Generator");
 				// PickUp/Coin
 				ImGui::Spacing();
-				if (ImGui::Button("PickUp/Coin")) {
+				if (ImGui::Button("PickUp/Coin", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					p_base_freq = 0.4f + frnd(0.5f);
 					p_env_attack = 0.0f;
@@ -854,7 +854,7 @@ void DrawScreen()
 				}
 				// Laser/Shoot
 				ImGui::Spacing();
-				if (ImGui::Button("Laser/Shoot")) {
+				if (ImGui::Button("Laser/Shoot", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2 && rnd(1))
@@ -895,7 +895,7 @@ void DrawScreen()
 				}
 				// Explosion
 				ImGui::Spacing();
-				if (ImGui::Button("Explosion")) {
+				if (ImGui::Button("Explosion", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = 3;
 					if (rnd(1))
@@ -936,7 +936,7 @@ void DrawScreen()
 				}
 				// PowerUp
 				ImGui::Spacing();
-				if (ImGui::Button("PowerUp")) {
+				if (ImGui::Button("PowerUp", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					if (rnd(1))
 						wave_type = 1;
@@ -965,7 +965,7 @@ void DrawScreen()
 				}
 				// Hit/Hurt
 				ImGui::Spacing();
-				if (ImGui::Button("Hit/Hurt")) {
+				if (ImGui::Button("Hit/Hurt", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2)
@@ -983,7 +983,7 @@ void DrawScreen()
 				}
 				// Jump
 				ImGui::Spacing();
-				if (ImGui::Button("Jump")) {
+				if (ImGui::Button("Jump", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = 0;
 					p_duty = frnd(0.6f);
@@ -1000,7 +1000,7 @@ void DrawScreen()
 				}
 				// Blip/Select
 				ImGui::Spacing();
-				if (ImGui::Button("Blip/Select")) {
+				if (ImGui::Button("Blip/Select", ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(1);
 					if (wave_type == 0)
@@ -1013,24 +1013,21 @@ void DrawScreen()
 					PlaySample();
 				}
 
-				ImGui::Spacing();
-				ImGui::NewLine();
+				ImGui::Spacing(); ImGui::NewLine();
 
 				// Mutate
-				if (ImGui::Button("Mutate")) {
+				if (ImGui::Button("Mutate", ImVec2(140.f, 0.f))) {
 					Mutate();
 					do_play = true;
 				}
 				// Randomize
 				ImGui::Spacing();
-				if (ImGui::Button("Randomize"))
-				{
+				if (ImGui::Button("Randomize", ImVec2(140.f, 0.f))) {
 					Randomize();
 					do_play = true;
 				}
 
-				ImGui::Spacing();
-				ImGui::NewLine();
+				ImGui::Spacing(); ImGui::NewLine();
 
 				// Volume
 				ImGui::Text("Volume");
@@ -1041,6 +1038,13 @@ void DrawScreen()
 				ImGui::Spacing();
 				if (ImGui::Button("Play Sound")) {
 					PlaySample();
+				}
+
+				ImGui::Spacing(); ImGui::NewLine();
+
+				// Export WAV
+				if (ImGui::Button("Export WAV")) {
+					ExportWAV("export.wav");
 				}
 			}
 			ImGui::EndChild();
@@ -1349,10 +1353,10 @@ void DrawScreen()
 		vcurbutton=-1;
 }
 
-bool keydown=false;
 
 bool SfxrUpdate()
 {
+	static bool keydown = false;
 	if(MInput::Keyboard()->Pressed(Keys::Space) || MInput::Keyboard()->Pressed(Keys::Enter)) {
 	 	if (!keydown) {
 	 		PlaySample();
