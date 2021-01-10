@@ -35,6 +35,10 @@
 
 #include <SDL.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif // __EMSCRIPTEN__
+
 using namespace cherrysoda;
 
 SDL_AudioSpec des;
@@ -617,6 +621,11 @@ bool ExportWAV(const char* filename)
 	dword=file_sampleswritten*wav_bits/8;
 	fwrite(&dword, 1, 4, foutput); // chunk size (data)
 	fclose(foutput);
+
+#ifdef __EMSCRIPTEN__
+	String cmd = CHERRYSODA_FORMAT("saveFileFromMemoryFSToDisk('/%s','%s')", filename, filename);
+	emscripten_run_script(cmd.c_str());
+#endif // __EMSCRIPTEN__
 	
 	return true;
 }

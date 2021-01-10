@@ -170,7 +170,7 @@ function(add_cherrysoda_executable executable_name)
       file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/assets/placeholder)
     endif() 
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/index.html)
-      file(COPY index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/index.html)
+      file(COPY index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
     else()
       execute_process(COMMAND python ${CHERRYSODA_TOOL_PATH}/generate_index_html.py ${executable_name} ./index.html
                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
