@@ -44,7 +44,7 @@ using namespace cherrysoda;
 SDL_AudioSpec des;
 bool firstPlay = true;
 
-#define rnd(n) (rand()%(n+1))
+#define rnd(n) (std::rand()%(n+1))
 
 #define PI 3.14159265f
 
@@ -835,7 +835,7 @@ void Mutate()
 void DrawScreen()
 {
 	static int lang_i = 1;
-	#define LANGS(A,B) ((const char*[]){A,B}[lang_i])
+	#define LANGS(A,B) (lang_i?(B):(A))
 	bool do_play = false;
 	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 	{
@@ -846,7 +846,7 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Generator", ImVec2(200.f, 0), true);
 			{
-				ImGui::Text(LANGS("生成器", "Generator"));
+				ImGui::Text(LANGS(u8"生成器", "Generator"));
 				// PickUp/Coin
 				ImGui::Spacing();
 				if (ImGui::Button(LANGS(u8"拾取/金币", "PickUp/Coin"), ImVec2(170.f, 0.f))) {
