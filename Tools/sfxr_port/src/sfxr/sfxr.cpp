@@ -1086,40 +1086,40 @@ void DrawScreen()
 				ImGui::Spacing();
 				ImGui::BeginChild("Parameters", ImVec2(0, 0), true);
 				{
-					ImGui::SliderFloat("Attack Time", &p_env_attack, 0.f, 1.f);
-					ImGui::SliderFloat("Sustain Time", &p_env_sustain, 0.f, 1.f);
-					ImGui::SliderFloat("Sustain Punch", &p_env_punch, 0.f, 1.f);
-					ImGui::SliderFloat("Decay Time", &p_env_decay, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"起音时长", "Attack Time"), &p_env_attack, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"延音时长", "Sustain Time"), &p_env_sustain, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"延音打击", "Sustain Punch"), &p_env_punch, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"衰减时长", "Decay Time"), &p_env_decay, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat("Start Frequency", &p_base_freq, 0.f, 1.f);
-					ImGui::SliderFloat("Min Frequency", &p_freq_limit, 0.f, 1.f);
-					ImGui::SliderFloat("Slide", &p_freq_ramp, -1.f, 1.f);
-					ImGui::SliderFloat("Delta Slide", &p_freq_dramp, -1.f, 1.f);
-					ImGui::SliderFloat("Vibrato Depth", &p_vib_strength, 0.f, 1.f);
-					ImGui::SliderFloat("Vibrato Speed", &p_vib_speed, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"初始频率", "Start Frequency"), &p_base_freq, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"最低频率", "Min Frequency"), &p_freq_limit, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"滑音速度", "Slide"), &p_freq_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"滑音加速度", "Delta Slide"), &p_freq_dramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"颤音深度", "Vibrato Depth"), &p_vib_strength, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"颤音速率", "Vibrato Speed"), &p_vib_speed, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat("Change Amount", &p_arp_mod, -1.f, 1.f);
-					ImGui::SliderFloat("Change Speed", &p_arp_speed, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"瞬时音高变化", "Change Amount"), &p_arp_mod, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"变化速度", "Change Speed"), &p_arp_speed, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat("Square Duty", &p_duty, 0.f, 1.f);
-					ImGui::SliderFloat("Duty Sweep", &p_duty_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"方波占空比", "Square Duty"), &p_duty, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"占空比扫描", "Duty Sweep"), &p_duty_ramp, -1.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat("Repeat Speed", &p_repeat_speed, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"重复速率", "Repeat Speed"), &p_repeat_speed, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat("Phaser Offset", &p_pha_offset, -1.f, 1.f);
-					ImGui::SliderFloat("Phaser Sweep", &p_pha_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"移相", "Phaser Offset"), &p_pha_offset, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"移相扫描", "Phaser Sweep"), &p_pha_ramp, -1.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat("LP Filer Cutoff", &p_lpf_freq, 0.f, 1.f);
-					ImGui::SliderFloat("LP Filer Cutoff Sweep", &p_lpf_ramp, -1.f, 1.f);
-					ImGui::SliderFloat("LP Filer Resonance", &p_lpf_resonance, 0.f, 1.f);
-					ImGui::SliderFloat("HP Filer Cutoff", &p_hpf_freq, 0.f, 1.f);
-					ImGui::SliderFloat("HP Filer Cutoff Sweep", &p_hpf_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"低通滤波截止频率", "LP Filer Cutoff"), &p_lpf_freq, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"低通滤波截止频率扫描", "LP Filer Cutoff Sweep"), &p_lpf_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"低通滤波共鸣", "LP Filer Resonance"), &p_lpf_resonance, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"高通滤波截止频率", "HP Filer Cutoff"), &p_hpf_freq, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS(u8"高通滤波截止频率扫描", "HP Filer Cutoff Sweep"), &p_hpf_ramp, -1.f, 1.f);
 				}
 				ImGui::EndChild();
 			}
@@ -1410,12 +1410,14 @@ void SfxrInit()
 
 	ImGuiIO& io = ImGui::GetIO();
 	// io.FontGlobalScale = 2.0f;
-	ImVector<ImWchar> gRanges;
-	ImFontGlyphRangesBuilder gBuilder;
-	gBuilder.AddText(u8" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-./中生成器拾取金币激光射击爆炸升级被击受伤跳跃哔声选择变异随机音量播放导出手动设置方波锯齿正弦噪");
-	gBuilder.BuildRanges(&gRanges);
+
+	// ImVector<ImWchar> gRanges;
+	// ImFontGlyphRangesBuilder gBuilder;
+	// gBuilder.AddText(u8"");
+	// gBuilder.BuildRanges(&gRanges);
+
 	io.Fonts->Clear();
-	io.Fonts->AddFontFromFileTTF("./assets/wqy.ttf", 26.f, nullptr, gRanges.Data);
+	io.Fonts->AddFontFromFileTTF("./assets/wqy.ttf", 26.f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
 	GUI::BuildFontTexture();
 
 	ResetParams();
