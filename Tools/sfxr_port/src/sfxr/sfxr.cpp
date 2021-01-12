@@ -976,7 +976,7 @@ void DrawScreen()
 				}
 				// Hit/Hurt
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"被击/受伤", "Hit/Hurt"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS(u8"击中/受伤", "Hit/Hurt"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2)
