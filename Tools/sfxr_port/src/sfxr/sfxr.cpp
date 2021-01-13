@@ -48,14 +48,7 @@ bool firstPlay = true;
 
 #define PI 3.14159265f
 
-float frnd(float range)
-{
-	return (float)rnd(10000)/10000*range;
-}
-
-
-Spriteset font;
-Spriteset ld48;
+inline float frnd(float range) { return (float)rnd(10000)/10000*range; }
 
 int wave_type;
 
@@ -130,9 +123,6 @@ int rep_limit;
 int arp_time;
 int arp_limit;
 double arp_mod;
-
-float* vselected=NULL;
-int vcurbutton=-1;
 
 int wav_bits=16;
 int wav_freq=44100;
@@ -550,10 +540,11 @@ bool mute_stream;
 //lets use SDL instead
 static void SDLAudioCallback(void *userdata, Uint8 *stream, int len)
 {
+	static float s_fbuf[2048];
 	if (playing_sample && !mute_stream)
 	{
 		unsigned int l = len/2;
-		float* fbuf = new float[l];
+		float* fbuf = s_fbuf;
 		memset(fbuf, 0, sizeof(*fbuf));
 		SynthSample(l, fbuf, NULL);
 		while (l--)
@@ -563,7 +554,6 @@ static void SDLAudioCallback(void *userdata, Uint8 *stream, int len)
 			if (f > 1.0) f = 1.0;
 			((Sint16*)stream)[l] = (Sint16)(f * 32767);
 		}
-		delete[] fbuf;
 	}
 	else memset(stream, 0, len);
 }
@@ -634,139 +624,10 @@ bool ExportWAV(const char* filename)
 
 bool firstframe=true;
 int refresh_counter=0;
-bool dragOnLeftClick = false;
-
-// Port Begin
-bool mouse_leftclick = false;
-bool mouse_rightclick = false;
-bool mouse_left = false;
-bool mouse_right = false;
-float mouse_x = 0.f;
-float mouse_y = 0.f;
-float mouse_px = 0.f;
-float mouse_py = 0.f;
-// Port End
-
-bool Slider(int x, int y, float& value, bool bipolar, const char* text)
-{
-	bool result = false;
-	if(MouseInBox(x, y, 100, 10))
-	{
-		if(mouse_rightclick)
-		{
-			value=0.0f;
-			result = true;
-		}
-		if(mouse_leftclick)
-		{
-			if(dragOnLeftClick)
-				vselected=&value;
-			else
-			{
-				if(bipolar)
-					value = (mouse_x - x)/50.0f - 1.0f;
-				else
-					value = (mouse_x - x)/100.0f;
-				result = true;
-			}
-		}
-	}
-	float mv=(float)(mouse_x-mouse_px);
-	if(vselected!=&value)
-		mv=0.0f;
-	if(bipolar)
-	{
-		value+=mv*0.005f;
-		if(value<-1.0f) value=-1.0f;
-		if(value>1.0f) value=1.0f;
-	}
-	else
-	{
-		value+=mv*0.0025f;
-		if(value<0.0f) value=0.0f;
-		if(value>1.0f) value=1.0f;
-	}
-	DrawBar(x-1, y, 102, 10, 0x000000);
-	int ival=(int)(value*99);
-	if(bipolar)
-		ival=(int)(value*49.5f+49.5f);
-	DrawBar(x, y+1, ival, 8, 0xF0C090);
-	DrawBar(x+ival, y+1, 100-ival, 8, 0x807060);
-	DrawBar(x+ival, y+1, 1, 8, 0xFFFFFF);
-	if(bipolar)
-	{
-		DrawBar(x+50, y-1, 1, 3, 0x000000);
-		DrawBar(x+50, y+8, 1, 3, 0x000000);
-	}
-	DWORD tcol=0x000000;
-	if(wave_type!=0 && (&value==&p_duty || &value==&p_duty_ramp))
-		tcol=0x808080;
-	DrawText(font, x-4-strlen(text)*8, y+1, tcol, text);
-	return result;
-}
-
-bool Button(int x, int y, bool highlight, const char* text, int id)
-{
-	DWORD color1=0x000000;
-	DWORD color2=0xA09088;
-	DWORD color3=0x000000;
-	bool hover=MouseInBox(x, y, 100, 17);
-	if(hover && mouse_leftclick)
-		vcurbutton=id;
-	bool current=(vcurbutton==id);
-	if(highlight)
-	{
-		color1=0x000000;
-		color2=0x988070;
-		color3=0xFFF0E0;
-	}
-	if(current && hover)
-	{
-		color1=0xA09088;
-		color2=0xFFF0E0;
-		color3=0xA09088;
-	}
-	DrawBar(x-1, y-1, 102, 19, color1);
-	DrawBar(x, y, 100, 17, color2);
-	DrawText(font, x+5, y+5, color3, text);
-	if(current && hover && !mouse_left)
-		return true;
-	return false;
-}
-
-bool ButtonWH(int x, int y, int w, int h, bool highlight, const char* text, int id)
-{
-	DWORD color1=0x000000;
-	DWORD color2=0xA09088;
-	DWORD color3=0x000000;
-	bool hover=MouseInBox(x, y, w, h);
-	if(hover && mouse_leftclick)
-		vcurbutton=id;
-	bool current=(vcurbutton==id);
-	if(highlight)
-	{
-		color1=0x000000;
-		color2=0x988070;
-		color3=0xFFF0E0;
-	}
-	if(current && hover)
-	{
-		color1=0xA09088;
-		color2=0xFFF0E0;
-		color3=0xA09088;
-	}
-	DrawBar(x-1, y-1, w + 2, h + 2, color1);
-	DrawBar(x, y, w, h, color2);
-	DrawText(font, x+5, y+5, color3, text);
-	if(current && hover && !mouse_left)
-		return true;
-	return false;
-}
-
-int drawcount=0;
 
 void Randomize()
 {
+	wave_type = rnd(3);
 	p_base_freq=pow(frnd(2.0f)-1.0f, 2.0f);
 	if(rnd(1))
 		p_base_freq=pow(frnd(2.0f)-1.0f, 3.0f)+0.5f;
@@ -1129,32 +990,6 @@ void DrawScreen()
 	}
 	ImGui::End();
 
-	if(dragOnLeftClick)
-	{
-		if(ButtonWH(490, 140, 17, 17, dragOnLeftClick, "X", 101))
-			dragOnLeftClick = !dragOnLeftClick;
-	}
-	else
-	{
-		if(ButtonWH(490, 140, 17, 17, dragOnLeftClick, "", 101))
-			dragOnLeftClick = !dragOnLeftClick;
-	}
-	DrawText(font, 515, 145, 0x000000, "DRAG BARS");
-
-	if(ButtonWH(5, 352, 75, 17, false, "UNDO (Z)", 102))
-	{
-		Undo();
-	}
-
-	DrawText(font, 515, 170, 0x000000, "VOLUME");
-	DrawBar(490-1-1+60, 180-1+5, 70, 2, 0x000000);
-	DrawBar(490-1-1+60+68, 180-1+5, 2, 205, 0x000000);
-	DrawBar(490-1-1+60, 180-1, 42+2, 10+2, 0xFF0000);
-	if(Slider(490, 180, sound_vol, false, " "))
-		PlaySample();
-	if(Button(490, 200, false, "PLAY SOUND", 20))
-		PlaySample();
-
 	// Port Begin
 	// if(Button(490, 290, false, "LOAD SOUND", 14))
 	// {
@@ -1172,206 +1007,10 @@ void DrawScreen()
 	// 	if(FileSelectorSave(filename, 1))
 	// 		SaveSettings(filename);
 	// }
-
-	DrawBar(490-1-1+60, 380-1+9, 70, 2, 0x000000);
-	DrawBar(490-1-2, 380-1-2, 102+4, 19+4, 0x000000);
-	// if(Button(490, 380, false, "EXPORT .WAV", 16))
-	// {
-	// 	std::string filename = new_file(".wav");
-	// 	//char filename[256];
-	// 	//if(FileSelectorSave(filename, 0))
-	// 	if(filename.size() > 0)
-	// 		ExportWAV(filename.c_str());
-	// }
 	// Port End
-	char str[10];
-	sprintf(str, "%i HZ", wav_freq);
-	if(Button(490, 410, false, str, 18))
-	{
-		if(wav_freq==44100)
-			wav_freq=22050;
-		else
-			wav_freq=44100;
-	}
-	sprintf(str, "%i-BIT", wav_bits);
-	if(Button(490, 440, false, str, 19))
-	{
-		if(wav_bits==16)
-			wav_bits=8;
-		else
-			wav_bits=16;
-	}
-
-	int ypos=4;
-
-	int xpos=350;
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-	
-	float oldValue = 0;
-	
-	oldValue = p_env_attack;
-	if(Slider(xpos, (ypos++)*18, p_env_attack, false, "ATTACK TIME"))
-	{
-		do_play = true;
-		SetUndo(&p_env_attack, oldValue);
-	}
-	oldValue = p_env_sustain;
-	if(Slider(xpos, (ypos++)*18, p_env_sustain, false, "SUSTAIN TIME"))
-	{
-		do_play = true;
-		SetUndo(&p_env_sustain, oldValue);
-	}
-	oldValue = p_env_punch;
-	if(Slider(xpos, (ypos++)*18, p_env_punch, false, "SUSTAIN PUNCH"))
-	{
-		do_play = true;
-		SetUndo(&p_env_punch, oldValue);
-	}
-	oldValue = p_env_decay;
-	if(Slider(xpos, (ypos++)*18, p_env_decay, false, "DECAY TIME"))
-	{
-		do_play = true;
-		SetUndo(&p_env_decay, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	oldValue = p_base_freq;
-	if(Slider(xpos, (ypos++)*18, p_base_freq, false, "START FREQUENCY"))
-	{
-		do_play = true;
-		SetUndo(&p_base_freq, oldValue);
-	}
-	oldValue = p_freq_limit;
-	if(Slider(xpos, (ypos++)*18, p_freq_limit, false, "MIN FREQUENCY"))
-	{
-		do_play = true;
-		SetUndo(&p_freq_limit, oldValue);
-	}
-	oldValue = p_freq_ramp;
-	if(Slider(xpos, (ypos++)*18, p_freq_ramp, true, "SLIDE"))
-	{
-		do_play = true;
-		SetUndo(&p_freq_ramp, oldValue);
-	}
-	oldValue = p_freq_dramp;
-	if(Slider(xpos, (ypos++)*18, p_freq_dramp, true, "DELTA SLIDE"))
-	{
-		do_play = true;
-		SetUndo(&p_freq_dramp, oldValue);
-	}
-
-	oldValue = p_vib_strength;
-	if(Slider(xpos, (ypos++)*18, p_vib_strength, false, "VIBRATO DEPTH"))
-	{
-		do_play = true;
-		SetUndo(&p_vib_strength, oldValue);
-	}
-	oldValue = p_vib_speed;
-	if(Slider(xpos, (ypos++)*18, p_vib_speed, false, "VIBRATO SPEED"))
-	{
-		do_play = true;
-		SetUndo(&p_vib_speed, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	oldValue = p_arp_mod;
-	if(Slider(xpos, (ypos++)*18, p_arp_mod, true, "CHANGE AMOUNT"))
-	{
-		do_play = true;
-		SetUndo(&p_arp_mod, oldValue);
-	}
-	oldValue = p_arp_speed;
-	if(Slider(xpos, (ypos++)*18, p_arp_speed, false, "CHANGE SPEED"))
-	{
-		do_play = true;
-		SetUndo(&p_arp_speed, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	oldValue = p_duty;
-	if(Slider(xpos, (ypos++)*18, p_duty, false, "SQUARE DUTY"))
-	{
-		do_play = true;
-		SetUndo(&p_duty, oldValue);
-	}
-	oldValue = p_duty_ramp;
-	if(Slider(xpos, (ypos++)*18, p_duty_ramp, true, "DUTY SWEEP"))
-	{
-		do_play = true;
-		SetUndo(&p_duty_ramp, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	oldValue = p_repeat_speed;
-	if(Slider(xpos, (ypos++)*18, p_repeat_speed, false, "REPEAT SPEED"))
-	{
-		do_play = true;
-		SetUndo(&p_repeat_speed, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	oldValue = p_pha_offset;
-	if(Slider(xpos, (ypos++)*18, p_pha_offset, true, "PHASER OFFSET"))
-	{
-		do_play = true;
-		SetUndo(&p_pha_offset, oldValue);
-	}
-	oldValue = p_pha_ramp;
-	if(Slider(xpos, (ypos++)*18, p_pha_ramp, true, "PHASER SWEEP"))
-	{
-		do_play = true;
-		SetUndo(&p_pha_ramp, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	oldValue = p_lpf_freq;
-	if(Slider(xpos, (ypos++)*18, p_lpf_freq, false, "LP FILTER CUTOFF"))
-	{
-		do_play = true;
-		SetUndo(&p_lpf_freq, oldValue);
-	}
-	oldValue = p_lpf_ramp;
-	if(Slider(xpos, (ypos++)*18, p_lpf_ramp, true, "LP FILTER CUTOFF SWEEP"))
-	{
-		do_play = true;
-		SetUndo(&p_lpf_ramp, oldValue);
-	}
-	oldValue = p_lpf_resonance;
-	if(Slider(xpos, (ypos++)*18, p_lpf_resonance, false, "LP FILTER RESONANCE"))
-	{
-		do_play = true;
-		SetUndo(&p_lpf_resonance, oldValue);
-	}
-	oldValue = p_hpf_freq;
-	if(Slider(xpos, (ypos++)*18, p_hpf_freq, false, "HP FILTER CUTOFF"))
-	{
-		do_play = true;
-		SetUndo(&p_hpf_freq, oldValue);
-	}
-	oldValue = p_hpf_ramp;
-	if(Slider(xpos, (ypos++)*18, p_hpf_ramp, true, "HP FILTER CUTOFF SWEEP"))
-	{
-		do_play = true;
-		SetUndo(&p_hpf_ramp, oldValue);
-	}
-
-	DrawBar(xpos-190, ypos*18-5, 300, 2, 0x0000000);
-
-	DrawBar(xpos-190, 4*18-5, 1, (ypos-4)*18, 0x0000000);
-	DrawBar(xpos-190+299, 4*18-5, 1, (ypos-4)*18, 0x0000000);
 
 	if(do_play)
 		PlaySample();
-
-	if(!mouse_left)
-		vcurbutton=-1;
 }
 
 
