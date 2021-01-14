@@ -666,10 +666,16 @@ void Randomize()
 	p_arp_mod=frnd(2.0f)-1.0f;
 
 	if(p_base_freq<0.f) p_base_freq=0.f;
+	if(p_base_freq>1.f) p_base_freq=1.f;
 	if(p_duty<0.f) p_duty=0.f;
+	if(p_vib_strength<0.f) p_vib_strength=0.f;
 	if(p_vib_speed<0.f) p_vib_speed=0.f;
 	if(p_env_attack<0.f) p_env_attack=0.f;
+	if(p_env_attack>1.f) p_env_attack=1.f;
+	if(p_env_sustain<0.f) p_env_sustain=0.f;
+	if(p_env_sustain>1.f) p_env_sustain=1.f;
 	if(p_env_decay<0.f) p_env_decay=0.f;
+	if(p_env_decay>1.f) p_env_decay=1.f;
 	if(p_lpf_resonance<0.f) p_lpf_resonance=0.f;
 	if(p_repeat_speed<0.f) p_repeat_speed=0.f;
 	if(p_arp_speed<0.f) p_arp_speed=0.f;
