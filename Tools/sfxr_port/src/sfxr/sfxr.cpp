@@ -21,9 +21,6 @@
 
 */
 
-// #include "sdlkit.h"
-#include "tools.h"
-
 #include <CherrySoda/CherrySoda.h>
 
 #include <cstdio>
@@ -40,6 +37,9 @@
 #endif // __EMSCRIPTEN__
 
 using namespace cherrysoda;
+
+typedef type::UInt32 DWORD;
+typedef type::UInt16 WORD;
 
 SDL_AudioSpec des;
 bool firstPlay = true;
@@ -541,14 +541,14 @@ bool ExportWAV(const char* filename)
 	std::fclose(foutput);
 
 #ifdef __EMSCRIPTEN__
-	String cmd = CHERRYSODA_FORMAT("saveFileFromMemoryFSToDisk('/%s','%s')", filename, filename);
-	emscripten_run_script(cmd.c_str());
+	{
+		String cmd = CHERRYSODA_FORMAT("saveFileFromMemoryFSToDisk('/%s','%s')", filename, filename);
+		emscripten_run_script(cmd.c_str());
+	}
 #endif // __EMSCRIPTEN__
 	
 	return true;
 }
-
-#include "tools.h"
 
 bool firstframe=true;
 int refresh_counter=0;
@@ -636,9 +636,16 @@ void Mutate()
 	if(rnd(1)) p_arp_mod+=frnd(0.1f)-0.05f;
 }
 
+#ifdef __EMSCRIPTEN__
+extern "C" void UnserializeSettingForJS(char* str)
+{
+	UnserializeSetting(str);
+}
+#endif // __EMSCRIPTEN__
+
 void DrawScreen()
 {
-	static int lang_i = 1;
+	static int lang_i = 0;
 	#define LANGS(A,B) (lang_i?(B):(A))
 	bool do_play = false;
 	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
@@ -868,10 +875,25 @@ void DrawScreen()
 				static char unserialize_input[512];
 				if (ImGui::Button(serialize_str, ImVec2(170.f, 0.f))) {
 					serialize_result_str = SerializeSetting();
+#ifdef __EMSCRIPTEN__
+					{
+						const char* title = LANGS(u8"请复制设置", "Please copy the setting");
+						String cmd = CHERRYSODA_FORMAT("prompt('%s', '%s')", title, serialize_result_str.c_str());
+						emscripten_run_script(cmd.c_str());
+					}
+#else // __EMSCRIPTEN__
 					ImGui::OpenPopup(serialize_str);
+#endif // __EMSCRIPTEN__
 				}
 				ImGui::Spacing();
 				if (ImGui::Button(unserialize_str, ImVec2(170.f, 0.f))) {
+#ifdef __EMSCRIPTEN__
+					{
+						const char* title = LANGS(u8"请粘贴设置", "Please paste the setting");
+						String cmd = CHERRYSODA_FORMAT("unserializeInputBox('%s', '')", title);
+						emscripten_run_script(cmd.c_str());
+					}
+#else // __EMSCRIPTEN__
 					const char* clipBoard = ImGui::GetClipboardText();
 					if (clipBoard && clipBoard[0] >= '0' && clipBoard[0] <= '3') {
 						int i;
@@ -881,6 +903,7 @@ void DrawScreen()
 						unserialize_input[i] = '\0';
 					}
 					ImGui::OpenPopup(unserialize_str);
+#endif // __EMSCRIPTEN__
 				}
 
 				const char* ok_str = LANGS(u8"确定", "OK");

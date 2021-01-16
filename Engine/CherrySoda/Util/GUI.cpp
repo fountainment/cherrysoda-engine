@@ -8,6 +8,7 @@
 #include <CherrySoda/Graphics/Texture.h>
 
 #include <imgui.h>
+#include <SDL.h>
 
 #include <cstring>
 
@@ -28,6 +29,16 @@ Texture2D GUI::ms_fontTexture;
 type::UInt16 GUI::ms_guiRenderPass = 0;
 bool GUI::ms_disable = false;
 bool GUI::ms_frameStarted = false;
+
+const char* GetClipboardText_SDLImplForImGui(void*)
+{
+	return SDL_GetClipboardText();
+}
+
+void SetClipboardText_SDLImplForImGui(void*, const char* text)
+{
+	SDL_SetClipboardText(text);
+}
 
 void GUI::Initialize()
 {
@@ -126,6 +137,10 @@ void GUI::Update()
 
 	// GamePad
 	// TODO: Add GamePad support
+
+	// Clipboard
+	io.GetClipboardTextFn = GetClipboardText_SDLImplForImGui;
+	io.SetClipboardTextFn = SetClipboardText_SDLImplForImGui;
 
 	// Delta time
 	io.DeltaTime = Engine::Instance()->RawDeltaTime();

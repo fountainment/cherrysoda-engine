@@ -191,7 +191,8 @@
             module.exports = saveAs;
         }
 
-        function saveFileFromMemoryFSToDisk(memoryFSname,localFSname)     // This can be called by C++ code
+        // Called by C++ code BEGIN
+        function saveFileFromMemoryFSToDisk(memoryFSname,localFSname)
         {
             var data=Module['FS_readFile'](memoryFSname);
             var blob;
@@ -203,6 +204,17 @@
             }
             saveAs(blob, localFSname);
         }
+
+        function unserializeInputBox(title)
+        {
+            var s = prompt(title, "");
+            if (s != null) {
+                var ptr = allocate(intArrayFromString(s), ALLOC_NORMAL);
+                Module["_UnserializeSettingForJS"](ptr);
+                _free(ptr);
+            }
+        }
+        // Called by C++ code END
     </script>
 </body>
 </html>
