@@ -144,6 +144,11 @@ void Engine::OnClientSizeChanged(int width, int height)
 	}
 }
 
+void Engine::OnTextInput(const char* text)
+{
+	GUI::TextInput(text);
+}
+
 void Engine::ParseArgs(int argc, char* argv[])
 {
 }

@@ -574,6 +574,12 @@ void cherrysoda::Window::PollEvents()
 			}
 		}
 		break;
+		case SDL_TEXTINPUT:
+		{
+			const SDL_TextInputEvent& tev = event.text;
+			Engine::Instance()->OnTextInput(tev.text);
+		}
+		break;
 		}
 	}
 	MInput::SetKeyboardKeys(s_keyboardKeys);

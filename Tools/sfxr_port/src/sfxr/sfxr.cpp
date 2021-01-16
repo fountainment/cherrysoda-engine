@@ -29,9 +29,9 @@
 #include <cstdio>
 #include <cstdarg>
 #include <cstdlib>
+#include <cstring>
 #include <ctime>
 #include <cmath>
-#include <string>
 
 #include <SDL.h>
 
@@ -68,7 +68,6 @@ float p_env_sustain;
 float p_env_decay;
 float p_env_punch;
 
-bool filter_on;
 float p_lpf_resonance;
 float p_lpf_freq;
 float p_lpf_ramp;
@@ -131,28 +130,8 @@ int file_sampleswritten;
 float filesample=0.0f;
 int fileacc=0;
 
-float* lastChanged = NULL;  // For undo
-float undoValue = 0.0f;
-
-void SetUndo(float* valueptr, float oldValue)
-{
-	lastChanged = valueptr;
-	undoValue = oldValue;
-}
-
-void Undo()
-{
-	if(lastChanged != NULL)
-	{
-		*lastChanged = undoValue;
-		lastChanged = NULL;
-		undoValue = 0.0f;
-	}
-}
-
 void ResetParams()
 {
-	lastChanged = NULL;
 	wave_type=0;
 
 	p_base_freq=0.3f;
@@ -171,7 +150,6 @@ void ResetParams()
 	p_env_decay=0.4f;
 	p_env_punch=0.0f;
 
-	filter_on=false;
 	p_lpf_resonance=0.0f;
 	p_lpf_freq=1.0f;
 	p_lpf_ramp=0.0f;
@@ -187,111 +165,60 @@ void ResetParams()
 	p_arp_mod=0.0f;
 }
 
-bool LoadSettings(char* filename)
+STL::Vector<float*> paramPtr = {
+	&p_env_attack,
+	&p_env_sustain,
+	&p_env_punch,
+	&p_env_decay,
+	&p_base_freq,
+	&p_freq_limit,
+	&p_freq_ramp,
+	&p_freq_dramp,
+	&p_vib_strength,
+	&p_vib_speed,
+	&p_arp_mod,
+	&p_arp_speed,
+	&p_duty,
+	&p_duty_ramp,
+	&p_repeat_speed,
+	&p_pha_offset,
+	&p_pha_ramp,
+	&p_lpf_freq,
+	&p_lpf_ramp,
+	&p_lpf_resonance,
+	&p_hpf_freq,
+	&p_hpf_ramp
+};
+
+void UnserializeSetting(const String& str)
 {
-	lastChanged = NULL;
-	FILE* file=fopen(filename, "rb");
-	if(!file)
-		return false;
-	
-	size_t n;
-	(void)n;
-	int version=0;
-	n = fread(&version, 1, sizeof(int), file);
-	if(version!=100 && version!=101 && version!=102)
-		return false;
-
-	n = fread(&wave_type, 1, sizeof(int), file);
-
-	sound_vol=0.5f;
-	if(version==102)
-		n = fread(&sound_vol, 1, sizeof(float), file);
-
-	n = fread(&p_base_freq, 1, sizeof(float), file);
-	n = fread(&p_freq_limit, 1, sizeof(float), file);
-	n = fread(&p_freq_ramp, 1, sizeof(float), file);
-	if(version>=101)
-		n = fread(&p_freq_dramp, 1, sizeof(float), file);
-	n = fread(&p_duty, 1, sizeof(float), file);
-	n = fread(&p_duty_ramp, 1, sizeof(float), file);
-
-	n = fread(&p_vib_strength, 1, sizeof(float), file);
-	n = fread(&p_vib_speed, 1, sizeof(float), file);
-	n = fread(&p_vib_delay, 1, sizeof(float), file);
-
-	n = fread(&p_env_attack, 1, sizeof(float), file);
-	n = fread(&p_env_sustain, 1, sizeof(float), file);
-	n = fread(&p_env_decay, 1, sizeof(float), file);
-	n = fread(&p_env_punch, 1, sizeof(float), file);
-
-	n = fread(&filter_on, 1, sizeof(bool), file);
-	n = fread(&p_lpf_resonance, 1, sizeof(float), file);
-	n = fread(&p_lpf_freq, 1, sizeof(float), file);
-	n = fread(&p_lpf_ramp, 1, sizeof(float), file);
-	n = fread(&p_hpf_freq, 1, sizeof(float), file);
-	n = fread(&p_hpf_ramp, 1, sizeof(float), file);
-	
-	n = fread(&p_pha_offset, 1, sizeof(float), file);
-	n = fread(&p_pha_ramp, 1, sizeof(float), file);
-
-	n = fread(&p_repeat_speed, 1, sizeof(float), file);
-
-	if(version>=101)
-	{
-		n = fread(&p_arp_speed, 1, sizeof(float), file);
-		n = fread(&p_arp_mod, 1, sizeof(float), file);
+	auto data = StringUtil::Split(str, ',');
+	if (data.size() != 0) {
+		wave_type = StringUtil::ToInt(data[0]);
+		for (int i = 1; i < data.size() && i <= 22; ++i) {
+			*(paramPtr[i - 1]) = StringUtil::ToFloat(data[i]);
+		}
 	}
-
-	fclose(file);
-	return true;
 }
 
-bool SaveSettings(char* filename)
+String SerializeSetting()
 {
-	FILE* file=fopen(filename, "wb");
-	if(!file)
-		return false;
-
-	int version=102;
-	fwrite(&version, 1, sizeof(int), file);
-
-	fwrite(&wave_type, 1, sizeof(int), file);
-
-	fwrite(&sound_vol, 1, sizeof(float), file);
-
-	fwrite(&p_base_freq, 1, sizeof(float), file);
-	fwrite(&p_freq_limit, 1, sizeof(float), file);
-	fwrite(&p_freq_ramp, 1, sizeof(float), file);
-	fwrite(&p_freq_dramp, 1, sizeof(float), file);
-	fwrite(&p_duty, 1, sizeof(float), file);
-	fwrite(&p_duty_ramp, 1, sizeof(float), file);
-
-	fwrite(&p_vib_strength, 1, sizeof(float), file);
-	fwrite(&p_vib_speed, 1, sizeof(float), file);
-	fwrite(&p_vib_delay, 1, sizeof(float), file);
-
-	fwrite(&p_env_attack, 1, sizeof(float), file);
-	fwrite(&p_env_sustain, 1, sizeof(float), file);
-	fwrite(&p_env_decay, 1, sizeof(float), file);
-	fwrite(&p_env_punch, 1, sizeof(float), file);
-
-	fwrite(&filter_on, 1, sizeof(bool), file);
-	fwrite(&p_lpf_resonance, 1, sizeof(float), file);
-	fwrite(&p_lpf_freq, 1, sizeof(float), file);
-	fwrite(&p_lpf_ramp, 1, sizeof(float), file);
-	fwrite(&p_hpf_freq, 1, sizeof(float), file);
-	fwrite(&p_hpf_ramp, 1, sizeof(float), file);
-	
-	fwrite(&p_pha_offset, 1, sizeof(float), file);
-	fwrite(&p_pha_ramp, 1, sizeof(float), file);
-
-	fwrite(&p_repeat_speed, 1, sizeof(float), file);
-
-	fwrite(&p_arp_speed, 1, sizeof(float), file);
-	fwrite(&p_arp_mod, 1, sizeof(float), file);
-
-	fclose(file);
-	return true;
+	auto serializeFloat =
+		[](float f) -> String
+		{
+			String ret = StringUtil::Format("%.4f", f);
+			bool negative = false;
+			if (ret.size() != 0 && ret[0] == '-') { negative = true; ret = ret.substr(1, ret.size() - 1); }
+			ret = StringUtil::Trim(ret, '0');
+			if (ret == ".") ret = "0"; else if (ret == "1.") ret = "1";
+			if (negative) ret = "-" + ret;
+			return "," + ret;
+		};
+	String result = StringUtil::Format("%d", wave_type);
+	for (auto f : paramPtr) {
+		result += serializeFloat(*f);
+	}
+	return result;
 }
 
 void ResetSample(bool restart)
@@ -301,16 +228,16 @@ void ResetSample(bool restart)
 	fperiod=100.0/(p_base_freq*p_base_freq+0.001);
 	period=(int)fperiod;
 	fmaxperiod=100.0/(p_freq_limit*p_freq_limit+0.001);
-	fslide=1.0-pow((double)p_freq_ramp, 3.0)*0.01;
-	fdslide=-pow((double)p_freq_dramp, 3.0)*0.000001;
+	fslide=1.0-std::pow((double)p_freq_ramp, 3.0)*0.01;
+	fdslide=-std::pow((double)p_freq_dramp, 3.0)*0.000001;
 	square_duty=0.5f-p_duty*0.5f;
 	square_slide=-p_duty_ramp*0.00005f;
 	if(p_arp_mod>=0.0f)
-		arp_mod=1.0-pow((double)p_arp_mod, 2.0)*0.9;
+		arp_mod=1.0-std::pow((double)p_arp_mod, 2.0)*0.9;
 	else
-		arp_mod=1.0+pow((double)p_arp_mod, 2.0)*10.0;
+		arp_mod=1.0+std::pow((double)p_arp_mod, 2.0)*10.0;
 	arp_time=0;
-	arp_limit=(int)(pow(1.0f-p_arp_speed, 2.0f)*20000+32);
+	arp_limit=(int)(std::pow(1.0f-p_arp_speed, 2.0f)*20000+32);
 	if(p_arp_speed==1.0f)
 		arp_limit=0;
 	if(!restart)
@@ -318,16 +245,16 @@ void ResetSample(bool restart)
 		// reset filter
 		fltp=0.0f;
 		fltdp=0.0f;
-		fltw=pow(p_lpf_freq, 3.0f)*0.1f;
+		fltw=std::pow(p_lpf_freq, 3.0f)*0.1f;
 		fltw_d=1.0f+p_lpf_ramp*0.0001f;
-		fltdmp=5.0f/(1.0f+pow(p_lpf_resonance, 2.0f)*20.0f)*(0.01f+fltw);
+		fltdmp=5.0f/(1.0f+std::pow(p_lpf_resonance, 2.0f)*20.0f)*(0.01f+fltw);
 		if(fltdmp>0.8f) fltdmp=0.8f;
 		fltphp=0.0f;
-		flthp=pow(p_hpf_freq, 2.0f)*0.1f;
+		flthp=std::pow(p_hpf_freq, 2.0f)*0.1f;
 		flthp_d=1.0+p_hpf_ramp*0.0003f;
 		// reset vibrato
 		vib_phase=0.0f;
-		vib_speed=pow(p_vib_speed, 2.0f)*0.01f;
+		vib_speed=std::pow(p_vib_speed, 2.0f)*0.01f;
 		vib_amp=p_vib_strength*0.5f;
 		// reset envelope
 		env_vol=0.0f;
@@ -337,11 +264,11 @@ void ResetSample(bool restart)
 		env_length[1]=(int)(p_env_sustain*p_env_sustain*100000.0f);
 		env_length[2]=(int)(p_env_decay*p_env_decay*100000.0f);
 
-		fphase=pow(p_pha_offset, 2.0f)*1020.0f;
+		fphase=std::pow(p_pha_offset, 2.0f)*1020.0f;
 		if(p_pha_offset<0.0f) fphase=-fphase;
-		fdphase=pow(p_pha_ramp, 2.0f)*1.0f;
+		fdphase=std::pow(p_pha_ramp, 2.0f)*1.0f;
 		if(p_pha_ramp<0.0f) fdphase=-fdphase;
-		iphase=abs((int)fphase);
+		iphase=std::abs((int)fphase);
 		ipp=0;
 		for(int i=0;i<1024;i++)
 			phaser_buffer[i]=0.0f;
@@ -350,7 +277,7 @@ void ResetSample(bool restart)
 			noise_buffer[i]=frnd(2.0f)-1.0f;
 
 		rep_time=0;
-		rep_limit=(int)(pow(1.0f-p_repeat_speed, 2.0f)*20000+32);
+		rep_limit=(int)(std::pow(1.0f-p_repeat_speed, 2.0f)*20000+32);
 		if(p_repeat_speed==0.0f)
 			rep_limit=0;
 	}
@@ -359,7 +286,7 @@ void ResetSample(bool restart)
 void PlaySample()
 {
 	if (firstPlay) {
-		SDL_OpenAudio(&des, NULL);
+		SDL_OpenAudio(&des, nullptr);
 		SDL_PauseAudio(0);
 		firstPlay = false;
 	}
@@ -400,7 +327,7 @@ void SynthSample(int length, float* buffer, FILE* file)
 		if(vib_amp>0.0f)
 		{
 			vib_phase+=vib_speed;
-			rfperiod=fperiod*(1.0+sin(vib_phase)*vib_amp);
+			rfperiod=fperiod*(1.0+std::sin(vib_phase)*vib_amp);
 		}
 		period=(int)rfperiod;
 		if(period<8) period=8;
@@ -419,13 +346,13 @@ void SynthSample(int length, float* buffer, FILE* file)
 		if(env_stage==0)
 			env_vol=(float)env_time/env_length[0];
 		if(env_stage==1)
-			env_vol=1.0f+pow(1.0f-(float)env_time/env_length[1], 1.0f)*2.0f*p_env_punch;
+			env_vol=1.0f+std::pow(1.0f-(float)env_time/env_length[1], 1.0f)*2.0f*p_env_punch;
 		if(env_stage==2)
 			env_vol=1.0f-(float)env_time/env_length[2];
 
 		// phaser step
 		fphase+=fdphase;
-		iphase=abs((int)fphase);
+		iphase=std::abs((int)fphase);
 		if(iphase>1023) iphase=1023;
 
 		if(flthp_d!=0.0f)
@@ -499,13 +426,13 @@ void SynthSample(int length, float* buffer, FILE* file)
 
 		ssample*=2.0f*sound_vol;
 
-		if(buffer!=NULL)
+		if(buffer!=nullptr)
 		{
 			if(ssample>1.0f) ssample=1.0f;
 			if(ssample<-1.0f) ssample=-1.0f;
 			*buffer++=ssample;
 		}
-		if(file!=NULL)
+		if(file!=nullptr)
 		{
 			// quantize depending on format
 			// accumulate/count to accomodate variable sample rate?
@@ -545,8 +472,8 @@ static void SDLAudioCallback(void *userdata, Uint8 *stream, int len)
 	{
 		unsigned int l = len/2;
 		float* fbuf = s_fbuf;
-		memset(fbuf, 0, sizeof(*fbuf));
-		SynthSample(l, fbuf, NULL);
+		std::memset(fbuf, 0, sizeof(*fbuf));
+		SynthSample(l, fbuf, nullptr);
 		while (l--)
 		{
 			float f = fbuf[l];
@@ -555,42 +482,42 @@ static void SDLAudioCallback(void *userdata, Uint8 *stream, int len)
 			((Sint16*)stream)[l] = (Sint16)(f * 32767);
 		}
 	}
-	else memset(stream, 0, len);
+	else std::memset(stream, 0, len);
 }
 
 bool ExportWAV(const char* filename)
 {
-	FILE* foutput=fopen(filename, "wb");
+	FILE* foutput=std::fopen(filename, "wb");
 	if(!foutput)
 		return false;
 	// write wav header
 	unsigned int dword=0;
 	unsigned short word=0;
-	fwrite("RIFF", 4, 1, foutput); // "RIFF"
+	std::fwrite("RIFF", 4, 1, foutput); // "RIFF"
 	dword=0;
-	fwrite(&dword, 1, 4, foutput); // remaining file size
-	fwrite("WAVE", 4, 1, foutput); // "WAVE"
+	std::fwrite(&dword, 1, 4, foutput); // remaining file size
+	std::fwrite("WAVE", 4, 1, foutput); // "WAVE"
 
-	fwrite("fmt ", 4, 1, foutput); // "fmt "
+	std::fwrite("fmt ", 4, 1, foutput); // "fmt "
 	dword=16;
-	fwrite(&dword, 1, 4, foutput); // chunk size
+	std::fwrite(&dword, 1, 4, foutput); // chunk size
 	word=1;
-	fwrite(&word, 1, 2, foutput); // compression code
+	std::fwrite(&word, 1, 2, foutput); // compression code
 	word=1;
-	fwrite(&word, 1, 2, foutput); // channels
+	std::fwrite(&word, 1, 2, foutput); // channels
 	dword=wav_freq;
-	fwrite(&dword, 1, 4, foutput); // sample rate
+	std::fwrite(&dword, 1, 4, foutput); // sample rate
 	dword=wav_freq*wav_bits/8;
-	fwrite(&dword, 1, 4, foutput); // bytes/sec
+	std::fwrite(&dword, 1, 4, foutput); // bytes/sec
 	word=wav_bits/8;
-	fwrite(&word, 1, 2, foutput); // block align
+	std::fwrite(&word, 1, 2, foutput); // block align
 	word=wav_bits;
-	fwrite(&word, 1, 2, foutput); // bits per sample
+	std::fwrite(&word, 1, 2, foutput); // bits per sample
 
-	fwrite("data", 4, 1, foutput); // "data"
+	std::fwrite("data", 4, 1, foutput); // "data"
 	dword=0;
 	int foutstream_datasize=ftell(foutput);
-	fwrite(&dword, 1, 4, foutput); // chunk size
+	std::fwrite(&dword, 1, 4, foutput); // chunk size
 
 	// write sample data
 	mute_stream=true;
@@ -599,18 +526,18 @@ bool ExportWAV(const char* filename)
 	fileacc=0;
 	PlaySample();
 	while(playing_sample)
-		SynthSample(256, NULL, foutput);
+		SynthSample(256, nullptr, foutput);
 	mute_stream=false;
 
 	// seek back to header and write size info
-	fseek(foutput, 4, SEEK_SET);
+	std::fseek(foutput, 4, SEEK_SET);
 	dword=0;
 	dword=foutstream_datasize-4+file_sampleswritten*wav_bits/8;
-	fwrite(&dword, 1, 4, foutput); // remaining file size
-	fseek(foutput, foutstream_datasize, SEEK_SET);
+	std::fwrite(&dword, 1, 4, foutput); // remaining file size
+	std::fseek(foutput, foutstream_datasize, SEEK_SET);
 	dword=file_sampleswritten*wav_bits/8;
-	fwrite(&dword, 1, 4, foutput); // chunk size (data)
-	fclose(foutput);
+	std::fwrite(&dword, 1, 4, foutput); // chunk size (data)
+	std::fclose(foutput);
 
 #ifdef __EMSCRIPTEN__
 	String cmd = CHERRYSODA_FORMAT("saveFileFromMemoryFSToDisk('/%s','%s')", filename, filename);
@@ -628,39 +555,39 @@ int refresh_counter=0;
 void Randomize()
 {
 	wave_type = rnd(3);
-	p_base_freq=pow(frnd(2.0f)-1.0f, 2.0f);
+	p_base_freq=std::pow(frnd(2.0f)-1.0f, 2.0f);
 	if(rnd(1))
-		p_base_freq=pow(frnd(2.0f)-1.0f, 3.0f)+0.5f;
+		p_base_freq=std::pow(frnd(2.0f)-1.0f, 3.0f)+0.5f;
 	p_freq_limit=0.0f;
-	p_freq_ramp=pow(frnd(2.0f)-1.0f, 5.0f);
+	p_freq_ramp=std::pow(frnd(2.0f)-1.0f, 5.0f);
 	if(p_base_freq>0.7f && p_freq_ramp>0.2f)
 		p_freq_ramp=-p_freq_ramp;
 	if(p_base_freq<0.2f && p_freq_ramp<-0.05f)
 		p_freq_ramp=-p_freq_ramp;
-	p_freq_dramp=pow(frnd(2.0f)-1.0f, 3.0f);
+	p_freq_dramp=std::pow(frnd(2.0f)-1.0f, 3.0f);
 	p_duty=frnd(2.0f)-1.0f;
-	p_duty_ramp=pow(frnd(2.0f)-1.0f, 3.0f);
-	p_vib_strength=pow(frnd(2.0f)-1.0f, 3.0f);
+	p_duty_ramp=std::pow(frnd(2.0f)-1.0f, 3.0f);
+	p_vib_strength=std::pow(frnd(2.0f)-1.0f, 3.0f);
 	p_vib_speed=frnd(2.0f)-1.0f;
 	p_vib_delay=frnd(2.0f)-1.0f;
-	p_env_attack=pow(frnd(2.0f)-1.0f, 3.0f);
-	p_env_sustain=pow(frnd(2.0f)-1.0f, 2.0f);
+	p_env_attack=std::pow(frnd(2.0f)-1.0f, 3.0f);
+	p_env_sustain=std::pow(frnd(2.0f)-1.0f, 2.0f);
 	p_env_decay=frnd(2.0f)-1.0f;
-	p_env_punch=pow(frnd(0.8f), 2.0f);
+	p_env_punch=std::pow(frnd(0.8f), 2.0f);
 	if(p_env_attack+p_env_sustain+p_env_decay<0.2f)
 	{
 		p_env_sustain+=0.2f+frnd(0.3f);
 		p_env_decay+=0.2f+frnd(0.3f);
 	}
 	p_lpf_resonance=frnd(2.0f)-1.0f;
-	p_lpf_freq=1.0f-pow(frnd(1.0f), 3.0f);
-	p_lpf_ramp=pow(frnd(2.0f)-1.0f, 3.0f);
+	p_lpf_freq=1.0f-std::pow(frnd(1.0f), 3.0f);
+	p_lpf_ramp=std::pow(frnd(2.0f)-1.0f, 3.0f);
 	if(p_lpf_freq<0.1f && p_lpf_ramp<-0.05f)
 		p_lpf_ramp=-p_lpf_ramp;
-	p_hpf_freq=pow(frnd(1.0f), 5.0f);
-	p_hpf_ramp=pow(frnd(2.0f)-1.0f, 5.0f);
-	p_pha_offset=pow(frnd(2.0f)-1.0f, 3.0f);
-	p_pha_ramp=pow(frnd(2.0f)-1.0f, 3.0f);
+	p_hpf_freq=std::pow(frnd(1.0f), 5.0f);
+	p_hpf_ramp=std::pow(frnd(2.0f)-1.0f, 5.0f);
+	p_pha_offset=std::pow(frnd(2.0f)-1.0f, 3.0f);
+	p_pha_ramp=std::pow(frnd(2.0f)-1.0f, 3.0f);
 	p_repeat_speed=frnd(2.0f)-1.0f;
 	p_arp_speed=frnd(2.0f)-1.0f;
 	p_arp_mod=frnd(2.0f)-1.0f;
@@ -722,7 +649,7 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Generator", ImVec2(200.f, 0), true);
 			{
-				ImGui::Text(LANGS(u8"生成器", "Generator"));
+				ImGui::TextUnformatted(LANGS(u8"生成器", "Generator"));
 				// PickUp/Coin
 				ImGui::Spacing();
 				if (ImGui::Button(LANGS(u8"拾取/金币", "PickUp/Coin"), ImVec2(170.f, 0.f))) {
@@ -926,12 +853,61 @@ void DrawScreen()
 				if (ImGui::Button(LANGS(u8"播放声音", "Play Sound"), ImVec2(170.f, 0.f))) {
 					PlaySample();
 				}
+				// Export WAV
+				ImGui::Spacing();
+				if (ImGui::Button(LANGS(u8"导出WAV", "Export WAV"), ImVec2(170.f, 0.f))) {
+					ExportWAV("export.wav");
+				}
 
 				ImGui::Spacing(); ImGui::NewLine();
 
-				// Export WAV
-				if (ImGui::Button(LANGS(u8"导出WAV", "Export WAV"), ImVec2(170.f, 0.f))) {
-					ExportWAV("export.wav");
+				const char* serialize_str = LANGS(u8"保存设置", "Serialize");
+				const char* unserialize_str = LANGS(u8"读取设置", "Unserialize");
+				static String serialize_result_str = "";
+				static char unserialize_input[512];
+				if (ImGui::Button(serialize_str, ImVec2(170.f, 0.f))) {
+					serialize_result_str = SerializeSetting();
+					ImGui::OpenPopup(serialize_str);
+				}
+				ImGui::Spacing();
+				if (ImGui::Button(unserialize_str, ImVec2(170.f, 0.f))) {
+					const char* clipBoard = ImGui::GetClipboardText();
+					if (clipBoard && clipBoard[0] >= '0' && clipBoard[0] <= '3') {
+						int i;
+						for (i = 0; i < 511 && clipBoard[i]; ++i) {
+							unserialize_input[i] = clipBoard[i];
+						}
+						unserialize_input[i] = '\0';
+					}
+					ImGui::OpenPopup(unserialize_str);
+				}
+
+				const char* ok_str = LANGS(u8"确定", "OK");
+				const char* cancel_str = LANGS(u8"取消", "Cancel");
+				const char* copy_to_clipboard_str = LANGS(u8"复制到剪贴板", "Copy to Clipboard");
+				if (ImGui::BeginPopupModal(serialize_str, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+					ImGui::PushTextWrapPos(400.f);
+					ImGui::Text(serialize_result_str.c_str());
+					ImGui::PopTextWrapPos();
+					if (ImGui::Button(copy_to_clipboard_str, ImVec2(240.f, 0.f))) {
+						ImGui::SetClipboardText(serialize_result_str.c_str());
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::SameLine();
+					if (ImGui::Button(cancel_str, ImVec2(120.f, 0.f))) { ImGui::CloseCurrentPopup(); }
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::BeginPopupModal(unserialize_str, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+					ImGui::InputText("", unserialize_input, 512, ImGuiInputTextFlags_CharsNoBlank);
+					ImGui::Spacing();
+					if (ImGui::Button(ok_str, ImVec2(120.f, 0.f))) {
+						UnserializeSetting(unserialize_input);
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::SameLine();
+					if (ImGui::Button(cancel_str, ImVec2(120.f, 0.f))) { ImGui::CloseCurrentPopup(); }
+					ImGui::EndPopup();
 				}
 			}
 			ImGui::EndChild();
@@ -942,7 +918,7 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Manual Settings", ImVec2(0, 0), true);
 			{
-				ImGui::Text(LANGS(u8"手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 40.f);
+				ImGui::TextUnformatted(LANGS(u8"手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 40.f);
 				const char* lang[] = { "En", u8"中" };
 				if (ImGui::Button(lang[lang_i])) {
 					if (lang_i == 0) {
@@ -1005,25 +981,6 @@ void DrawScreen()
 	}
 	ImGui::End();
 
-	// Port Begin
-	// if(Button(490, 290, false, "LOAD SOUND", 14))
-	// {
-	// 	char filename[256];
-	// 	if(FileSelectorLoad(filename, 1))
-	// 	{
-	// 		ResetParams();
-	// 		LoadSettings(filename);
-	// 		PlaySample();
-	// 	}
-	// }
-	// if(Button(490, 320, false, "SAVE SOUND", 15))
-	// {
-	// 	char filename[256];
-	// 	if(FileSelectorSave(filename, 1))
-	// 		SaveSettings(filename);
-	// }
-	// Port End
-
 	if(do_play)
 		PlaySample();
 }
@@ -1045,12 +1002,9 @@ bool SfxrUpdate()
 			keydown = true;
 		}
 	}
-	else if(MInput::Keyboard()->Pressed(Keys::Z)) {
-	 	Undo();
-	 	keydown = true;
+	else {
+		keydown = false;
 	}
-	else
-	 	keydown = false;
 
 	DrawScreen();
 
@@ -1060,7 +1014,7 @@ bool SfxrUpdate()
 
 void SfxrInit()
 {
-	srand(time(NULL));
+	std::srand(std::time(nullptr));
 
 	ImGuiIO& io = ImGui::GetIO();
 	// io.FontGlobalScale = 2.0f;
@@ -1081,5 +1035,5 @@ void SfxrInit()
 	des.channels = 1;
 	des.samples = 512;
 	des.callback = SDLAudioCallback;
-	des.userdata = NULL;
+	des.userdata = nullptr;
 }

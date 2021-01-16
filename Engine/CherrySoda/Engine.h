@@ -64,6 +64,7 @@ public:
 
 protected:
 	virtual void OnClientSizeChanged(int width, int height);
+	virtual void OnTextInput(const char* text);
 
 	virtual void ParseArgs(int argc, char* argv[]);
 	virtual void Initialize();

@@ -202,3 +202,10 @@ void GUI::BuildFontTexture()
 	ms_fontTexture = Texture2D::FromRGBA(data, width, height);
 	io.Fonts->TexID = (ImTextureID)(&ms_fontTexture);
 }
+
+void GUI::TextInput(const char* text)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	io.AddInputCharactersUTF8(text);
+}
+

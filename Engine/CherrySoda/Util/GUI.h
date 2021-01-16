@@ -17,6 +17,8 @@ public:
 
 	static void BuildFontTexture();
 
+	static void TextInput(const char* text);
+
 private:
 	friend class Engine;
 

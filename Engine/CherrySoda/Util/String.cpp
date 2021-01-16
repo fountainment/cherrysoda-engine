@@ -35,7 +35,7 @@ const STL::Vector<String> StringUtil::Split(const String& s, char delim/* = ' '*
 
 const String StringUtil::Trim(const String& s, char trim/* = ' '*/)
 {
-	int li = 0, ri = s.length();
+	int li = 0, ri = s.length() - 1;
 	while (s[li] == trim) ++li;
 	while (s[ri] == trim && ri > li) --ri;
 	return s.substr(li, ri - li + 1);
