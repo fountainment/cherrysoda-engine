@@ -645,7 +645,7 @@ extern "C" void UnserializeSettingForJS(char* str)
 
 void DrawScreen()
 {
-	static int lang_i = 0;
+	static int lang_i = 1;
 	#define LANGS(A,B) (lang_i?(B):(A))
 	bool do_play = false;
 	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
@@ -877,7 +877,7 @@ void DrawScreen()
 					serialize_result_str = SerializeSetting();
 #ifdef __EMSCRIPTEN__
 					{
-						const char* title = LANGS(u8"请复制设置", "Please copy the setting");
+						const char* title = LANGS(u8"请按Ctrl+C复制设置", "Please press Ctrl+C to copy the setting");
 						String cmd = CHERRYSODA_FORMAT("prompt('%s', '%s')", title, serialize_result_str.c_str());
 						emscripten_run_script(cmd.c_str());
 					}
@@ -889,7 +889,7 @@ void DrawScreen()
 				if (ImGui::Button(unserialize_str, ImVec2(170.f, 0.f))) {
 #ifdef __EMSCRIPTEN__
 					{
-						const char* title = LANGS(u8"请粘贴设置", "Please paste the setting");
+						const char* title = LANGS(u8"请输入或粘贴(Ctrl+V)设置", "Please input or paste(Ctrl+V) the setting");
 						String cmd = CHERRYSODA_FORMAT("unserializeInputBox('%s', '')", title);
 						emscripten_run_script(cmd.c_str());
 					}
