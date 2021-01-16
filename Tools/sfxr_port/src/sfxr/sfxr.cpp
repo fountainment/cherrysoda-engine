@@ -195,7 +195,7 @@ void UnserializeSetting(const String& str)
 	auto data = StringUtil::Split(str, ',');
 	if (data.size() != 0) {
 		wave_type = StringUtil::ToInt(data[0]);
-		for (int i = 1; i < data.size() && i <= 22; ++i) {
+		for (int i = 1; i < data.size() && i <= paramPtr.size(); ++i) {
 			*(paramPtr[i - 1]) = StringUtil::ToFloat(data[i]);
 		}
 	}
@@ -887,7 +887,7 @@ void DrawScreen()
 				const char* copy_to_clipboard_str = LANGS(u8"复制到剪贴板", "Copy to Clipboard");
 				if (ImGui::BeginPopupModal(serialize_str, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 					ImGui::PushTextWrapPos(400.f);
-					ImGui::Text(serialize_result_str.c_str());
+					ImGui::TextUnformatted(serialize_result_str.c_str());
 					ImGui::PopTextWrapPos();
 					if (ImGui::Button(copy_to_clipboard_str, ImVec2(240.f, 0.f))) {
 						ImGui::SetClipboardText(serialize_result_str.c_str());
