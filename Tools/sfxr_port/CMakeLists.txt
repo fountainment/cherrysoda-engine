@@ -12,5 +12,6 @@ set(CHERRYSODA_SHADER_SRC
 
 add_cherrysoda_executable(sfxr_port)
 if(EMSCRIPTEN)
-  target_link_options(sfxr_port PRIVATE -s "EXPORTED_FUNCTIONS=['_main','_UnserializeSettingForJS']")
+  target_link_options(sfxr_port PRIVATE "-sEXPORTED_FUNCTIONS=[_main,_UnserializeSettingForJS,_free]")
+  target_link_options(sfxr_port PRIVATE "-sEXTRA_EXPORTED_RUNTIME_METHODS=[FS_readFile,allocate,intArrayFromString,ALLOC_NORMAL]")
 endif()

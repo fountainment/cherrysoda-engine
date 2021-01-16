@@ -209,9 +209,9 @@
         {
             var s = prompt(title, "");
             if (s != null) {
-                var ptr = allocate(intArrayFromString(s), ALLOC_NORMAL);
-                Module["_UnserializeSettingForJS"](ptr);
-                _free(ptr);
+                var ptr = Module['allocate'](Module['intArrayFromString'](s), Module['ALLOC_NORMAL']);
+                Module['_UnserializeSettingForJS'](ptr);
+                Module['_free'](ptr);
             }
         }
         // Called by C++ code END
