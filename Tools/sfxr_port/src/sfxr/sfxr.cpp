@@ -193,9 +193,10 @@ STL::Vector<float*> paramPtr = {
 void UnserializeSetting(const String& str)
 {
 	auto data = StringUtil::Split(str, ',');
-	if (data.size() != 0) {
+	if (STL::IsNotEmpty(data)) {
 		wave_type = StringUtil::ToInt(data[0]);
-		for (int i = 1; i < data.size() && i <= paramPtr.size(); ++i) {
+		for (int i = 1; i < static_cast<int>(STL::Count(data)) &&
+			i <= static_cast<int>(STL::Count(paramPtr)); ++i) {
 			*(paramPtr[i - 1]) = StringUtil::ToFloat(data[i]);
 		}
 	}
