@@ -30,12 +30,14 @@ type::UInt16 GUI::ms_guiRenderPass = 0;
 bool GUI::ms_disable = false;
 bool GUI::ms_frameStarted = false;
 
-const char* GetClipboardText_SDLImplForImGui(void*)
+static SDL_Cursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
+
+const char* GetClipboardText_SDL2ImplForImGui(void*)
 {
 	return SDL_GetClipboardText();
 }
 
-void SetClipboardText_SDLImplForImGui(void*, const char* text)
+void SetClipboardText_SDL2ImplForImGui(void*, const char* text)
 {
 	SDL_SetClipboardText(text);
 }
@@ -75,6 +77,23 @@ void GUI::Initialize()
 	io.KeyMap[ImGuiKey_X] = (int)Keys::X;
 	io.KeyMap[ImGuiKey_Y] = (int)Keys::Y;
 	io.KeyMap[ImGuiKey_Z] = (int)Keys::Z;
+
+	// TODO: Hide SDL2 from ImGui, provide engine interface
+	// Load mouse cursors
+	g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+	g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+	g_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+	g_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+	g_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+	g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+	g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+	g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+	g_MouseCursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+
+	// Clipboard
+	io.GetClipboardTextFn = GetClipboardText_SDL2ImplForImGui;
+	io.SetClipboardTextFn = SetClipboardText_SDL2ImplForImGui;
+	io.ClipboardUserData = nullptr;
 
 	// Font texture 
 	BuildFontTexture();
@@ -133,14 +152,24 @@ void GUI::Update()
 	io.MouseDown[2] = MInput::Mouse()->CheckMiddleButton();
 	io.MouseWheel += MInput::Mouse()->WheelDelta() / 120;
 
-	// TODO: Add mouse cursor control support
+	// Mouse cursor control
+	if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)) {
+		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+		if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
+		{
+			// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+			SDL_ShowCursor(SDL_FALSE);
+		}
+		else
+		{
+			// Show OS mouse cursor
+			SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
+			SDL_ShowCursor(SDL_TRUE);
+		}
+	}
 
 	// GamePad
 	// TODO: Add GamePad support
-
-	// Clipboard
-	io.GetClipboardTextFn = GetClipboardText_SDLImplForImGui;
-	io.SetClipboardTextFn = SetClipboardText_SDLImplForImGui;
 
 	// Delta time
 	io.DeltaTime = Engine::Instance()->RawDeltaTime();
