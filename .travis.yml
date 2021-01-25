@@ -1,6 +1,6 @@
 language: cpp
 python:
-    - "3.7"
+    - 3.7
 matrix:
   include:
     - os: linux
@@ -10,7 +10,8 @@ matrix:
     - os: linux
       compiler: emcc
       python: 3.7
-      sudo: true
+      sudo: required
+      dist: xenial
     - os: windows
       compiler: msvc
 
@@ -31,6 +32,8 @@ script:
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then source ./emsdk/emsdk_env.sh; fi
   - cmake -E make_directory build
   - cd build
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then python --version; fi
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then python3 --version; fi
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then emcmake cmake ..; else cmake .. -DCHERRYSODA_USE_SSE2=1; fi
   - cmake --build . --config Release
 
