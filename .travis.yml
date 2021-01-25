@@ -1,6 +1,4 @@
 language: cpp
-python:
-    - 3.7
 matrix:
   include:
     - os: linux
@@ -9,9 +7,7 @@ matrix:
       compiler: clang
     - os: linux
       compiler: emcc
-      python: 3.7
-      sudo: required
-      dist: xenial
+      dist: bionic
     - os: windows
       compiler: msvc
 
@@ -24,7 +20,6 @@ addons:
     - x11proto-core-dev
     - libx11-dev
     - libsdl2-dev
-    - python3.7-dev
 
 script:
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then git clone https://github.com/emscripten-core/emsdk.git; fi
