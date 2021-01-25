@@ -7,7 +7,6 @@ matrix:
       compiler: clang
     - os: linux
       compiler: emcc
-      python: "3.7"
     - os: windows
       compiler: msvc
 
@@ -20,6 +19,7 @@ addons:
     - x11proto-core-dev
     - libx11-dev
     - libsdl2-dev
+    - python3
 
 script:
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then git clone https://github.com/emscripten-core/emsdk.git; fi
@@ -28,7 +28,6 @@ script:
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then source ./emsdk/emsdk_env.sh; fi
   - cmake -E make_directory build
   - cd build
-  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then export PYTHON=`which python3`; fi
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then emcmake cmake ..; else cmake .. -DCHERRYSODA_USE_SSE2=1; fi
   - cmake --build . --config Release
 
