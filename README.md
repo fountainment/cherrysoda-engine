@@ -7,15 +7,15 @@ A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
 ## Requirements
 
-- CMake (>=3.8)
-- Python (>=2.7)
+- CMake >=3.8 (emscripten build require 3.12 or above)
+- Python >=2.7 (emcmake require 3.6 or above)
 
 ### Linux
-- GCC (>=5.2) or Clang (>=3.4)
+- GCC >=5.2 or Clang >=3.4
 - libSDL2-dev
 
 ### Windows
-- Visual Studio (>=2017)
+- Visual Studio >=2017
 
 ## How to Build
 
