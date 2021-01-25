@@ -5,7 +5,10 @@ matrix:
       compiler: gcc
     - os: linux
       compiler: clang
+    - os: linux
+      compiler: emcc
     - os: windows
+      compiler: msvc
 
 addons:
   apt:
@@ -18,9 +21,13 @@ addons:
     - libsdl2-dev
 
 script:
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then git clone https://github.com/emscripten-core/emsdk.git; fi
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then ./emsdk/emsdk install latest; fi
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then ./emsdk/emsdk activate latest; fi
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then source ./emsdk/emsdk_env.sh; fi
   - cmake -E make_directory build
   - cd build
-  - cmake .. -DCHERRYSODA_USE_SSE2=1
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then emcmake cmake ..; else cmake .. -DCHERRYSODA_USE_SSE2=1; fi
   - cmake --build . --config Release
 
 branches:
