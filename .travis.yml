@@ -1,4 +1,6 @@
 language: cpp
+python:
+    - "3.7"
 matrix:
   include:
     - os: linux
@@ -8,6 +10,7 @@ matrix:
     - os: linux
       compiler: emcc
       python: 3.7
+      sudo: true
     - os: windows
       compiler: msvc
 
