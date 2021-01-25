@@ -10,7 +10,9 @@ project(CherrySoda VERSION 0.01
                    DESCRIPTION "A C++ Game Engine Based on BGFX and SDL2"
                    LANGUAGES CXX)
 
-include(cmake/SysDetect.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+include(Documentation)
+include(SysDetect)
 
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 if(NOT CMAKE_BUILD_TYPE)

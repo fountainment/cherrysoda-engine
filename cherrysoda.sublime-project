@@ -63,6 +63,10 @@
 					"shell_cmd": "make -j8 rebuild_cache"
 				},
 				{
+					"name": "doc",
+					"shell_cmd": "make -j8 doc"
+				},
+				{
 					"name": "CherrySoda",
 					"shell_cmd": "make -j8 CherrySoda"
 				},
