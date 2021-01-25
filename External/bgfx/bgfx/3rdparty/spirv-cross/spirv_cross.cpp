@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 Arm Limited
+ * Copyright 2015-2021 Arm Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,9 @@ bool Compiler::variable_storage_is_aliased(const SPIRVariable &v)
 bool Compiler::block_is_pure(const SPIRBlock &block)
 {
 	// This is a global side effect of the function.
-	if (block.terminator == SPIRBlock::Kill)
+	if (block.terminator == SPIRBlock::Kill ||
+	    block.terminator == SPIRBlock::TerminateRay ||
+	    block.terminator == SPIRBlock::IgnoreIntersection)
 		return false;
 
 	for (auto &i : block.ops)
@@ -158,11 +160,13 @@ bool Compiler::block_is_pure(const SPIRBlock &block)
 			return false;
 
 		// Ray tracing builtins are impure.
-		case OpReportIntersectionNV:
+		case OpReportIntersectionKHR:
 		case OpIgnoreIntersectionNV:
 		case OpTerminateRayNV:
 		case OpTraceNV:
+		case OpTraceRayKHR:
 		case OpExecuteCallableNV:
+		case OpExecuteCallableKHR:
 			return false;
 
 			// OpExtInst is potentially impure depending on extension, but GLSL builtins are at least pure.
@@ -805,9 +809,17 @@ unordered_set<VariableID> Compiler::get_active_interface_variables() const
 	InterfaceVariableAccessHandler handler(*this, variables);
 	traverse_all_reachable_opcodes(get<SPIRFunction>(ir.default_entry_point), handler);
 
-	// Make sure we preserve output variables which are only initialized, but never accessed by any code.
 	ir.for_each_typed_id<SPIRVariable>([&](uint32_t, const SPIRVariable &var) {
-		if (var.storage == StorageClassOutput && var.initializer != ID(0))
+		if (var.storage != StorageClassOutput)
+			return;
+		if (!interface_variable_exists_in_entry_point(var.self))
+			return;
+
+		// An output variable which is just declared (but uninitialized) might be read by subsequent stages
+		// so we should force-enable these outputs,
+		// since compilation will fail if a subsequent stage attempts to read from the variable in question.
+		// Also, make sure we preserve output variables which are only initialized, but never accessed by any code.
+		if (var.initializer != ID(0) || get_execution_model() != ExecutionModelFragment)
 			variables.insert(var.self);
 	});
 
@@ -2279,16 +2291,22 @@ SPIREntryPoint &Compiler::get_entry_point()
 bool Compiler::interface_variable_exists_in_entry_point(uint32_t id) const
 {
 	auto &var = get<SPIRVariable>(id);
-	if (var.storage != StorageClassInput && var.storage != StorageClassOutput &&
-	    var.storage != StorageClassUniformConstant)
-		SPIRV_CROSS_THROW("Only Input, Output variables and Uniform constants are part of a shader linking interface.");
 
-	// This is to avoid potential problems with very old glslang versions which did
-	// not emit input/output interfaces properly.
-	// We can assume they only had a single entry point, and single entry point
-	// shaders could easily be assumed to use every interface variable anyways.
-	if (ir.entry_points.size() <= 1)
-		return true;
+	if (ir.get_spirv_version() < 0x10400)
+	{
+		if (var.storage != StorageClassInput && var.storage != StorageClassOutput &&
+		    var.storage != StorageClassUniformConstant)
+			SPIRV_CROSS_THROW("Only Input, Output variables and Uniform constants are part of a shader linking interface.");
+
+		// This is to avoid potential problems with very old glslang versions which did
+		// not emit input/output interfaces properly.
+		// We can assume they only had a single entry point, and single entry point
+		// shaders could easily be assumed to use every interface variable anyways.
+		if (ir.entry_points.size() <= 1)
+			return true;
+	}
+
+	// In SPIR-V 1.4 and later, all global resource variables must be present.
 
 	auto &execution = get_entry_point();
 	return find(begin(execution.interface_variables), end(execution.interface_variables), VariableID(id)) !=
@@ -2811,7 +2829,8 @@ const SPIRConstant &Compiler::get_constant(ConstantID id) const
 	return get<SPIRConstant>(id);
 }
 
-static bool exists_unaccessed_path_to_return(const CFG &cfg, uint32_t block, const unordered_set<uint32_t> &blocks)
+static bool exists_unaccessed_path_to_return(const CFG &cfg, uint32_t block, const unordered_set<uint32_t> &blocks,
+                                             unordered_set<uint32_t> &visit_cache)
 {
 	// This block accesses the variable.
 	if (blocks.find(block) != end(blocks))
@@ -2823,8 +2842,14 @@ static bool exists_unaccessed_path_to_return(const CFG &cfg, uint32_t block, con
 
 	// If any of our successors have a path to the end, there exists a path from block.
 	for (auto &succ : cfg.get_succeeding_edges(block))
-		if (exists_unaccessed_path_to_return(cfg, succ, blocks))
-			return true;
+	{
+		if (visit_cache.count(succ) == 0)
+		{
+			if (exists_unaccessed_path_to_return(cfg, succ, blocks, visit_cache))
+				return true;
+			visit_cache.insert(succ);
+		}
+	}
 
 	return false;
 }
@@ -2881,7 +2906,8 @@ void Compiler::analyze_parameter_preservation(
 		// void foo(int &var) { if (cond) var = 10; }
 		// Using read/write counts, we will think it's just an out variable, but it really needs to be inout,
 		// because if we don't write anything whatever we put into the function must return back to the caller.
-		if (exists_unaccessed_path_to_return(cfg, entry.entry_block, itr->second))
+		unordered_set<uint32_t> visit_cache;
+		if (exists_unaccessed_path_to_return(cfg, entry.entry_block, itr->second, visit_cache))
 			arg.read_count++;
 	}
 }
@@ -3839,23 +3865,55 @@ void Compiler::ActiveBuiltinHandler::handle_builtin(const SPIRType &type, BuiltI
 	}
 }
 
-bool Compiler::ActiveBuiltinHandler::handle(spv::Op opcode, const uint32_t *args, uint32_t length)
+void Compiler::ActiveBuiltinHandler::add_if_builtin(uint32_t id, bool allow_blocks)
 {
-	const auto add_if_builtin = [&](uint32_t id) {
-		// Only handles variables here.
-		// Builtins which are part of a block are handled in AccessChain.
-		auto *var = compiler.maybe_get<SPIRVariable>(id);
-		auto &decorations = compiler.ir.meta[id].decoration;
-		if (var && decorations.builtin)
+	// Only handle plain variables here.
+	// Builtins which are part of a block are handled in AccessChain.
+	// If allow_blocks is used however, this is to handle initializers of blocks,
+	// which implies that all members are written to.
+
+	auto *var = compiler.maybe_get<SPIRVariable>(id);
+	auto *m = compiler.ir.find_meta(id);
+	if (var && m)
+	{
+		auto &type = compiler.get<SPIRType>(var->basetype);
+		auto &decorations = m->decoration;
+		auto &flags = type.storage == StorageClassInput ?
+		              compiler.active_input_builtins : compiler.active_output_builtins;
+		if (decorations.builtin)
 		{
-			auto &type = compiler.get<SPIRType>(var->basetype);
-			auto &flags =
-			    type.storage == StorageClassInput ? compiler.active_input_builtins : compiler.active_output_builtins;
 			flags.set(decorations.builtin_type);
 			handle_builtin(type, decorations.builtin_type, decorations.decoration_flags);
 		}
-	};
+		else if (allow_blocks && compiler.has_decoration(type.self, DecorationBlock))
+		{
+			uint32_t member_count = uint32_t(type.member_types.size());
+			for (uint32_t i = 0; i < member_count; i++)
+			{
+				if (compiler.has_member_decoration(type.self, i, DecorationBuiltIn))
+				{
+					auto &member_type = compiler.get<SPIRType>(type.member_types[i]);
+					BuiltIn builtin = BuiltIn(compiler.get_member_decoration(type.self, i, DecorationBuiltIn));
+					flags.set(builtin);
+					handle_builtin(member_type, builtin, compiler.get_member_decoration_bitset(type.self, i));
+				}
+			}
+		}
+	}
+}
 
+void Compiler::ActiveBuiltinHandler::add_if_builtin(uint32_t id)
+{
+	add_if_builtin(id, false);
+}
+
+void Compiler::ActiveBuiltinHandler::add_if_builtin_or_block(uint32_t id)
+{
+	add_if_builtin(id, true);
+}
+
+bool Compiler::ActiveBuiltinHandler::handle(spv::Op opcode, const uint32_t *args, uint32_t length)
+{
 	switch (opcode)
 	{
 	case OpStore:
@@ -3993,6 +4051,17 @@ void Compiler::update_active_builtins()
 	clip_distance_count = 0;
 	ActiveBuiltinHandler handler(*this);
 	traverse_all_reachable_opcodes(get<SPIRFunction>(ir.default_entry_point), handler);
+
+	ir.for_each_typed_id<SPIRVariable>([&](uint32_t, const SPIRVariable &var) {
+		if (var.storage != StorageClassOutput)
+			return;
+		if (!interface_variable_exists_in_entry_point(var.self))
+			return;
+
+		// Also, make sure we preserve output variables which are only initialized, but never accessed by any code.
+		if (var.initializer != ID(0))
+			handler.add_if_builtin_or_block(var.self);
+	});
 }
 
 // Returns whether this shader uses a builtin of the storage class

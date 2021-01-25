@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2021 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -168,7 +168,9 @@ namespace bgfx { namespace glsl
 
 					char uniformType[256];
 
-					if (0 == bx::strCmp(typen, "sampler", 7) )
+					if (0 == bx::strCmp(typen, "sampler", 7)
+					||  0 == bx::strCmp(typen, "isampler", 8)
+					||  0 == bx::strCmp(typen, "usampler", 8) )
 					{
 						bx::strCopy(uniformType, BX_COUNTOF(uniformType), "int");
 					}

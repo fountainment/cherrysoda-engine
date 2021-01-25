@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2021 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -530,9 +530,32 @@ namespace bx
 		return _str;
 	}
 
+	StringView strRTrimSpace(const StringView& _str)
+	{
+		if (!_str.isEmpty() )
+		{
+			const char* ptr = _str.getPtr();
+
+			for (int32_t len = _str.getLength(), ii = len - 1; 0 <= ii; --ii)
+			{
+				if (!isSpace(ptr[ii]) )
+				{
+					return StringView(ptr, ii + 1);
+				}
+			}
+		}
+
+		return _str;
+	}
+
 	StringView strTrim(const StringView& _str, const StringView& _chars)
 	{
 		return strLTrim(strRTrim(_str, _chars), _chars);
+	}
+
+	StringView strTrimSpace(const StringView& _str)
+	{
+		return strLTrimSpace(strRTrimSpace(_str) );
 	}
 
 	constexpr uint32_t kFindStep = 1024;

@@ -1,4 +1,4 @@
-// dear imgui, v1.80 WIP
+// dear imgui, v1.80
 // (internal structures/api)
 
 // You may use this file to debug, understand or extend ImGui features but we don't provide any guarantee of forward compatibility!
@@ -178,7 +178,7 @@ namespace ImStb
 #define IMGUI_DEBUG_LOG_NAV(...)        ((void)0)       // Disable log
 
 // Static Asserts
-#if (__cplusplus >= 201100)
+#if (__cplusplus >= 201100) || (defined(_MSVC_LANG) && _MSVC_LANG >= 201100)
 #define IM_STATIC_ASSERT(_COND)         static_assert(_COND, "")
 #else
 #define IM_STATIC_ASSERT(_COND)         typedef char static_assertion_##__line__[(_COND)?1:-1]
@@ -466,8 +466,9 @@ struct IMGUI_API ImRect
 inline bool     ImBitArrayTestBit(const ImU32* arr, int n)      { ImU32 mask = (ImU32)1 << (n & 31); return (arr[n >> 5] & mask) != 0; }
 inline void     ImBitArrayClearBit(ImU32* arr, int n)           { ImU32 mask = (ImU32)1 << (n & 31); arr[n >> 5] &= ~mask; }
 inline void     ImBitArraySetBit(ImU32* arr, int n)             { ImU32 mask = (ImU32)1 << (n & 31); arr[n >> 5] |= mask; }
-inline void     ImBitArraySetBitRange(ImU32* arr, int n, int n2)
+inline void     ImBitArraySetBitRange(ImU32* arr, int n, int n2) // Works on range [n..n2)
 {
+    n2--;
     while (n <= n2)
     {
         int a_mod = (n & 31);
@@ -485,11 +486,12 @@ struct IMGUI_API ImBitArray
 {
     ImU32           Storage[(BITCOUNT + 31) >> 5];
     ImBitArray()                                { }
-    void            ClearBits()                 { memset(Storage, 0, sizeof(Storage)); }
+    void            ClearAllBits()              { memset(Storage, 0, sizeof(Storage)); }
+    void            SetAllBits()                { memset(Storage, 255, sizeof(Storage)); }
     bool            TestBit(int n) const        { IM_ASSERT(n < BITCOUNT); return ImBitArrayTestBit(Storage, n); }
     void            SetBit(int n)               { IM_ASSERT(n < BITCOUNT); ImBitArraySetBit(Storage, n); }
     void            ClearBit(int n)             { IM_ASSERT(n < BITCOUNT); ImBitArrayClearBit(Storage, n); }
-    void            SetBitRange(int n1, int n2) { ImBitArraySetBitRange(Storage, n1, n2); }
+    void            SetBitRange(int n, int n2)  { ImBitArraySetBitRange(Storage, n, n2); } // Works on range [n..n2)
 };
 
 // Helper: ImBitVector
@@ -1637,7 +1639,8 @@ struct IMGUI_API ImGuiWindowTempData
     ImVec2                  CursorPos;              // Current emitting position, in absolute coordinates.
     ImVec2                  CursorPosPrevLine;
     ImVec2                  CursorStartPos;         // Initial position after Begin(), generally ~ window position + WindowPadding.
-    ImVec2                  CursorMaxPos;           // Used to implicitly calculate the size of our contents, always growing during the frame. Used to calculate window->ContentSize at the beginning of next frame
+    ImVec2                  CursorMaxPos;           // Used to implicitly calculate ContentSize at the beginning of next frame, for scrolling range and auto-resize. Always growing during the frame.
+    ImVec2                  IdealMaxPos;            // Used to implicitly calculate ContentSizeIdeal at the beginning of next frame, for auto-resize only. Always growing during the frame.
     ImVec2                  CurrLineSize;
     ImVec2                  PrevLineSize;
     float                   CurrLineTextBaseOffset; // Baseline offset (0.0f by default on a new line, generally == style.FramePadding.y when a framed item has been added).
@@ -1695,6 +1698,7 @@ struct IMGUI_API ImGuiWindow
     ImVec2                  Size;                               // Current size (==SizeFull or collapsed title bar size)
     ImVec2                  SizeFull;                           // Size when non collapsed
     ImVec2                  ContentSize;                        // Size of contents/scrollable client area (calculated from the extents reach of the cursor) from previous frame. Does not include window decoration or window padding.
+    ImVec2                  ContentSizeIdeal;
     ImVec2                  ContentSizeExplicit;                // Size of contents/scrollable client area explicitly request by the user via SetNextWindowContentSize().
     ImVec2                  WindowPadding;                      // Window padding at the time of Begin().
     float                   WindowRounding;                     // Window rounding at the time of Begin(). May be clamped lower to avoid rendering artifacts with title bar, menu bar etc.
@@ -1906,23 +1910,23 @@ typedef ImU8 ImGuiTableDrawChannelIdx;
 
 // [Internal] sizeof() ~ 104
 // We use the terminology "Enabled" to refer to a column that is not Hidden by user/api.
-// We use the terminology "Clipped" to refer to a column that is out of sight because of scrolling/clipping. 
+// We use the terminology "Clipped" to refer to a column that is out of sight because of scrolling/clipping.
 // This is in contrast with some user-facing api such as IsItemVisible() / IsRectVisible() which use "Visible" to mean "not clipped".
 struct ImGuiTableColumn
 {
-    ImRect                  ClipRect;                       // Clipping rectangle for the column
-    ImGuiID                 UserID;                         // Optional, value passed to TableSetupColumn()
     ImGuiTableColumnFlags   Flags;                          // Flags after some patching (not directly same as provided by user). See ImGuiTableColumnFlags_
+    float                   WidthGiven;                     // Final/actual width visible == (MaxX - MinX), locked in TableUpdateLayout(). May be > WidthRequest to honor minimum width, may be < WidthRequest to honor shrinking columns down in tight space.
     float                   MinX;                           // Absolute positions
     float                   MaxX;
-    float                   InitStretchWeightOrWidth;       // Value passed to TableSetupColumn(). For Width it is a content width (_without padding_).
-    float                   StretchWeight;                  // Master width weight when (Flags & _WidthStretch). Often around ~1.0f initially.
-    float                   WidthAuto;                      // Automatic width
     float                   WidthRequest;                   // Master width absolute value when !(Flags & _WidthStretch). When Stretch this is derived every frame from StretchWeight in TableUpdateLayout()
-    float                   WidthGiven;                     // Final/actual width visible == (MaxX - MinX), locked in TableUpdateLayout(). May be > WidthRequest to honor minimum width, may be < WidthRequest to honor shrinking columns down in tight space.
-    float                   WorkMinX;                       // Start position for the frame, currently ~(MinX + CellPaddingX)
-    float                   WorkMaxX;
-    float                   ItemWidth;
+    float                   WidthAuto;                      // Automatic width
+    float                   StretchWeight;                  // Master width weight when (Flags & _WidthStretch). Often around ~1.0f initially.
+    float                   InitStretchWeightOrWidth;       // Value passed to TableSetupColumn(). For Width it is a content width (_without padding_).
+    ImRect                  ClipRect;                       // Clipping rectangle for the column
+    ImGuiID                 UserID;                         // Optional, value passed to TableSetupColumn()
+    float                   WorkMinX;                       // Contents region min ~(MinX + CellPaddingX + CellSpacingX1) == cursor start position when entering column
+    float                   WorkMaxX;                       // Contents region max ~(MaxX - CellPaddingX - CellSpacingX2)
+    float                   ItemWidth;                      // Current item width for the column, preserved across rows
     float                   ContentMaxXFrozen;              // Contents maximum position for frozen rows (apart from headers), from which we can infer content width.
     float                   ContentMaxXUnfrozen;
     float                   ContentMaxXHeadersUsed;         // Contents maximum position for headers rows (regardless of freezing). TableHeader() automatically softclip itself + report ideal desired size, to avoid creating extraneous draw calls
@@ -2022,7 +2026,7 @@ struct ImGuiTable
     float                       ResizeLockMinContentsX2;    // Lock minimum contents width while resizing down in order to not create feedback loops. But we allow growing the table.
     float                       RefScale;                   // Reference scale to be able to rescale columns on font/dpi changes.
     ImRect                      OuterRect;                  // Note: for non-scrolling table, OuterRect.Max.y is often FLT_MAX until EndTable(), unless a height has been specified in BeginTable().
-    ImRect                      InnerRect;                  // InnerRect but without decoration. As with OuterRect, for non-scrolling tables, InnerRect.Max.y is 
+    ImRect                      InnerRect;                  // InnerRect but without decoration. As with OuterRect, for non-scrolling tables, InnerRect.Max.y is
     ImRect                      WorkRect;
     ImRect                      InnerClipRect;
     ImRect                      BgClipRect;                 // We use this to cpu-clip cell background color fill
@@ -2035,6 +2039,7 @@ struct ImGuiTable
     ImVec2                      HostBackupPrevLineSize;     // Backup of InnerWindow->DC.PrevLineSize at the end of BeginTable()
     ImVec2                      HostBackupCurrLineSize;     // Backup of InnerWindow->DC.CurrLineSize at the end of BeginTable()
     ImVec2                      HostBackupCursorMaxPos;     // Backup of InnerWindow->DC.CursorMaxPos at the end of BeginTable()
+    ImVec2                      UserOuterSize;              // outer_size.x passed to BeginTable()
     ImVec1                      HostBackupColumnsOffset;    // Backup of OuterWindow->DC.ColumnsOffset at the end of BeginTable()
     float                       HostBackupItemWidth;        // Backup of OuterWindow->DC.ItemWidth at the end of BeginTable()
     int                         HostBackupItemWidthStackSize;// Backup of OuterWindow->DC.ItemWidthStack.Size at the end of BeginTable()
@@ -2051,7 +2056,7 @@ struct ImGuiTable
     ImGuiTableColumnIdx         DeclColumnsCount;           // Count calls to TableSetupColumn()
     ImGuiTableColumnIdx         HoveredColumnBody;          // Index of column whose visible region is being hovered. Important: == ColumnsCount when hovering empty region after the right-most column!
     ImGuiTableColumnIdx         HoveredColumnBorder;        // Index of column whose right-border is being hovered (for resizing).
-    ImGuiTableColumnIdx         AutoFitSingleStretchColumn; // Index of single stretch column requesting auto-fit.
+    ImGuiTableColumnIdx         AutoFitSingleColumn;        // Index of single column requesting auto-fit.
     ImGuiTableColumnIdx         ResizedColumn;              // Index of column being resized. Reset when InstanceCurrent==0.
     ImGuiTableColumnIdx         LastResizedColumn;          // Index of column being resized from previous frame.
     ImGuiTableColumnIdx         HeldHeaderColumn;           // Index of column header being held.
@@ -2080,8 +2085,8 @@ struct ImGuiTable
     bool                        IsDefaultDisplayOrder;      // Set when display order is unchanged from default (DisplayOrder contains 0...Count-1)
     bool                        IsResetAllRequest;
     bool                        IsResetDisplayOrderRequest;
-    bool                        IsUnfrozen;                 // Set when we got past the frozen row.
-    bool                        IsOuterRectAutoFitX;        // Set when outer_size.x == 0.0f in BeginTable(), scrolling is disabled, and there are stretch columns.
+    bool                        IsUnfrozenRows;             // Set when we got past the frozen row.
+    bool                        IsDefaultSizingPolicy;      // Set if user didn't explicitely set a sizing policy in BeginTable()
     bool                        MemoryCompacted;
     bool                        HostSkipItems;              // Backup of InnerWindow->SkipItem at the end of BeginTable(), because we will overwrite InnerWindow->SkipItem on a per-column basis
 
@@ -2146,7 +2151,7 @@ namespace ImGui
     IMGUI_API ImGuiWindow*  FindWindowByID(ImGuiID id);
     IMGUI_API ImGuiWindow*  FindWindowByName(const char* name);
     IMGUI_API void          UpdateWindowParentAndRootLinks(ImGuiWindow* window, ImGuiWindowFlags flags, ImGuiWindow* parent_window);
-    IMGUI_API ImVec2        CalcWindowExpectedSize(ImGuiWindow* window);
+    IMGUI_API ImVec2        CalcWindowNextAutoFitSize(ImGuiWindow* window);
     IMGUI_API bool          IsWindowChildOf(ImGuiWindow* window, ImGuiWindow* potential_parent);
     IMGUI_API bool          IsWindowAbove(ImGuiWindow* potential_above, ImGuiWindow* potential_below);
     IMGUI_API bool          IsWindowNavFocusable(ImGuiWindow* window);
@@ -2403,6 +2408,8 @@ namespace ImGui
     IMGUI_API ImGuiID       GetWindowScrollbarID(ImGuiWindow* window, ImGuiAxis axis);
     IMGUI_API ImGuiID       GetWindowResizeID(ImGuiWindow* window, int n); // 0..3: corners, 4..7: borders
     IMGUI_API void          SeparatorEx(ImGuiSeparatorFlags flags);
+    IMGUI_API bool          CheckboxFlags(const char* label, ImS64* flags, ImS64 flags_value);
+    IMGUI_API bool          CheckboxFlags(const char* label, ImU64* flags, ImU64 flags_value);
 
     // Widgets low-level behaviors
     IMGUI_API bool          ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool* out_held, ImGuiButtonFlags flags = 0);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2021 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -102,8 +102,8 @@ namespace bgfx
 		{  ShadingLang::HLSL,  300,    "s_3_0"      },
 		{  ShadingLang::HLSL,  400,    "s_4_0"      },
 		{  ShadingLang::HLSL,  500,    "s_5_0"      },
-		{  ShadingLang::Metal, 1,      "metal"      },
-		{  ShadingLang::PSSL,  1,      "pssl"       },
+		{  ShadingLang::Metal, 1000,   "metal"      },
+		{  ShadingLang::PSSL,  1000,   "pssl"       },
 		{  ShadingLang::SpirV, 1331,   "spirv13-11" },
 		{  ShadingLang::SpirV, 1411,   "spirv14-11" },
 		{  ShadingLang::SpirV, 1512,   "spirv15-12" },
@@ -949,7 +949,7 @@ namespace bgfx
 
 		bx::printf(
 			  "shaderc, bgfx shader compiler tool, version %d.%d.%d.\n"
-			  "Copyright 2011-2020 Branimir Karadzic. All rights reserved.\n"
+			  "Copyright 2011-2021 Branimir Karadzic. All rights reserved.\n"
 			  "License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause\n\n"
 			, BGFX_SHADERC_VERSION_MAJOR
 			, BGFX_SHADERC_VERSION_MINOR
