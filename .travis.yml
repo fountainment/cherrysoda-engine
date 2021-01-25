@@ -28,6 +28,7 @@ script:
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then source ./emsdk/emsdk_env.sh; fi
   - cmake -E make_directory build
   - cd build
+  - if [ "$TRAVIS_COMPILER" == "emcc" ]; then export PYTHON=`which python3`; fi
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then emcmake cmake ..; else cmake .. -DCHERRYSODA_USE_SSE2=1; fi
   - cmake --build . --config Release
 
