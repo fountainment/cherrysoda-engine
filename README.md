@@ -128,6 +128,4 @@ GameShell: ```cmake .. -DCPI=1```
 
 WebGL version (wasm) of Playground/VoxelExperiment:
 
-https://shenyiwen.itch.io/demo
-
-https://fountainment.gitee.io/VoxelExperiment
+https://fountainment.github.io/demo/VoxelExperiment/
