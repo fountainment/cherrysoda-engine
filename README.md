@@ -49,7 +49,7 @@ First, clone the tracy profiler and put the tracy folder into "Engine" directory
 
 ```sh
 cd Engine
-git clone https://github.com/wolfpld/tracy
+git clone https://github.com/wolfpld/tracy.git
 ```
 
 In this engine, profiling that use tracy profiler is only enabled in "Profile" build:
@@ -68,7 +68,7 @@ Then you can use tracy profiler to monitor performance.
 
 ```sh
 # How to build tracy profiler on Linux
-git clone https://github.com/wolfpld/tracy
+git clone https://github.com/wolfpld/tracy.git
 cd tracy/profiler/build/unix/
 make -j
 ```
@@ -118,8 +118,11 @@ GameShell: ```cmake .. -DCPI=1```
 - Replicated the sprite animation system of Monocle engine
 - Integrated ImGui
 - Added bgfx embedded shader support
-- Ported LD42_BulletJam from C#/XNA
 - Added SIMD compile option
+- Ported sfxr (a simple synthersizer sound effect generator)
+- Added travisCI config
+- Added doxygen config
+
 
 ## Demo
 
