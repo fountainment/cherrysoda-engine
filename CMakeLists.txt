@@ -6,7 +6,7 @@ else()
   cmake_policy(VERSION 3.15)
 endif()
 
-project(CherrySoda VERSION 0.01
+project(CherrySoda VERSION 0.1
                    DESCRIPTION "A C++ Game Engine Based on BGFX and SDL2"
                    LANGUAGES CXX)
 

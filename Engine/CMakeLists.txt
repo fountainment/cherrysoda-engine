@@ -122,7 +122,11 @@ endif()
 
 
 if(WINDOWS)
-  include_directories(../External/bgfx/bx/include/compat/msvc)
+  if(MSVC)
+    include_directories(../External/bgfx/bx/include/compat/msvc)
+  else()
+    include_directories(../External/bgfx/bx/include/compat/mingw)
+  endif()
 endif()
 
 add_library(CherrySoda STATIC ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC} ${SHADER_COMPILE_STAMP})

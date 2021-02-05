@@ -1,5 +1,9 @@
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  include_directories(bx/include/compat/msvc)
+  if(MSVC)
+    include_directories(bx/include/compat/msvc)
+  else()
+    include_directories(bx/include/compat/mingw)
+  endif()
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBGFX_CONFIG_DEBUG=1")
