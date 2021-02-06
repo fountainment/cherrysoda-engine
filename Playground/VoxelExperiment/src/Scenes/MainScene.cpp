@@ -56,8 +56,7 @@ void MainScene::Begin()
 
 	m_skyboxRenderer = new SkyboxRenderer(ms_skyboxTag);
 	m_skyboxRenderer->RenderPass(1);
-	m_skyboxRenderer->GetCamera()->Width(1);
-	m_skyboxRenderer->GetCamera()->Height(1);
+	m_skyboxRenderer->GetCamera()->SetSize(Vec2_One);
 	m_skyboxRenderer->GetCamera()->Position(Math::Vec3(0.5f, 0.5f, 0.5f));
 	m_skyboxRenderer->GetCamera()->FOV(90.f);
 

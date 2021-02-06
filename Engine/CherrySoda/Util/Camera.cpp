@@ -27,7 +27,12 @@ void Camera::UpdateMatrices()
 	if (m_changed) {
 		const Math::Vec3 actualPos = m_position - m_origin;
 		m_viewMatrix = Math_Scale(Math_LookAt(actualPos, actualPos + m_direction, Math_RotateVector(m_upVector, ZRotation(), Vec3_ZUp)), m_zoom);
-		m_projMatrix = Math_Perspective(Math_Radians(m_fov), Ratio(), 0.1f, 10000.f);
+		if (UseOrthoProjection()) {
+			m_projMatrix = Math_Ortho(0.f, m_width, 0.f, m_height, -10000.f, 10000.f);
+		}
+		else {
+			m_projMatrix = Math_Perspective(Math_Radians(m_fov), Ratio(), 0.1f, 10000.f);
+		}
 		m_inverseMatrix = Math_Inverse(m_projMatrix * m_viewMatrix);
 		m_changed = false;
 	}
@@ -50,7 +55,6 @@ void Camera::Approach(const Math::Vec3& pos, float ease)
 
 void Camera::Approach(const Math::Vec3& pos, float ease, float maxDistance)
 {
-
 	Math::Vec3 move = (pos - Position()) * ease;
 	if (Math_Length(move) > maxDistance) {
 		Position(Position() + Math_Normalize(move) * maxDistance);

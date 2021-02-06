@@ -66,9 +66,12 @@
 	inline void NAME##Y(float y) { NAME(cherrysoda::Math::Vec2(VALUE.x, y)); }
 
 #define CHERRYSODA_GETTER_SETTER_OF_BOOL(NAME,VALUE) \
-	inline bool NAME() const { return VALUE; } \
-	inline void NAME(bool v) { VALUE = v; } \
-	inline void Toggle##NAME() { VALUE = !VALUE; }
+	CHERRYSODA_GETTER_SETTER_EX_OF_BOOL(NAME,VALUE,CHERRYSODA_NONE_OP,CHERRYSODA_NONE_OP)
+
+#define CHERRYSODA_GETTER_SETTER_EX_OF_BOOL(NAME,VALUE,EXTRA_GET_OP,EXTRA_SET_OP) \
+	inline bool NAME() const { EXTRA_GET_OP; return VALUE; } \
+	inline void NAME(bool v) { EXTRA_SET_OP; VALUE = v; } \
+	inline void Toggle##NAME() { NAME(!VALUE); }
 
 #define CHERRYSODA_DECLARE_ENUM_FLAG(ENUM_T) \
 inline ENUM_T operator | (ENUM_T lhs, ENUM_T rhs) \

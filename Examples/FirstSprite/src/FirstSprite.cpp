@@ -27,7 +27,10 @@ void FirstSprite::Initialize()
 	entity->Add(sprite);
 	scene->Add(entity);
 
-	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 200.f));
+	auto camera = renderer->GetCamera();
+	camera->UseOrthoProjection(true);
+	camera->Position(Math::Vec3(0.f, 0.f, 200.f));
+	camera->CenterOrigin();
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	scene->Add(renderer);
 
