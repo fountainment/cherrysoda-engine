@@ -135,11 +135,6 @@ def move(src, dest):
         shutil.move(source, dest)
 
 
-def set_environment_variable(env_var, value):
-    command = ['setx', env_var, value]
-    execute_command(command)
-
-
 def write_str_file(s, dest):
     f = open(dest, 'w')
     f.write(s)

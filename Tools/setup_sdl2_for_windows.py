@@ -16,7 +16,6 @@ def main():
     cherry.extract_zip_to(sdl2_zip_filename, cherry.external_path)
     sdl2_dir = cherry.sdl2_path
     cherry.copy(cherry.join_path(cherry.tool_path, 'res\\SDL2\\sdl2-config.cmake'), sdl2_dir)
-    cherry.set_environment_variable('SDL2_DIR', sdl2_dir)
 
 
 if __name__ == '__main__':

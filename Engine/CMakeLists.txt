@@ -160,4 +160,4 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
   target_compile_definitions(CherrySoda PUBLIC CHERRYSODA_USE_TRACY_PROFILER)
 endif()
 
-set_target_properties(CherrySoda PROPERTIES FOLDER Engine)
+cherrysoda_set_target_folder(CherrySoda Engine)
