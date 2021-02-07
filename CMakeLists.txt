@@ -222,6 +222,6 @@ if(NOT CHERRYSODA_LIGHT_BUILD)
   endif()
 endif()
 
-if(EXISTS Projects)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Projects)
   add_subdirectory(Projects)
 endif()
