@@ -130,6 +130,7 @@ if(WINDOWS)
 endif()
 
 add_library(CherrySoda STATIC ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC} ${SHADER_COMPILE_STAMP})
+target_compile_features(CherrySoda PUBLIC cxx_std_14)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC})
 
 if(EMSCRIPTEN)
@@ -147,11 +148,7 @@ set(CHERRYSODA_COMMON_LIBS imgui bgfx bimg bimg_decode bx glm rapidjson ${SDL2_L
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} psapi)
 else()
-  target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} dl GL X11)
-endif()
-target_compile_features(CherrySoda PUBLIC cxx_std_14)
-if(MSVC)
-  target_compile_definitions(CherrySoda PUBLIC _CRT_SECURE_NO_WARNINGS)
+  target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} X11 GL pthread dl)
 endif()
 
 

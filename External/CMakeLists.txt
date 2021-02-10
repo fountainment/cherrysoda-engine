@@ -5,5 +5,5 @@ add_subdirectory(rapidjson)
 
 cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx;imgui" External)
 if(NOT EMSCRIPTEN)
-  cherrysoda_set_targets_folder("fcpp;glslang;spirv-cross;spirv-opt;shaderc" Tools/shaderc)
+  cherrysoda_set_targets_folder("fcpp;glslang;glsl-optimizer;spirv-cross;spirv-opt;shaderc" Tools/shaderc)
 endif()
