@@ -94,6 +94,7 @@ file(GLOB FCPP_SRC ${FCPP_DIR}/*.h
                    ${FCPP_DIR}/cpp6.c)
 add_library(fcpp STATIC ${FCPP_SRC})
 target_compile_definitions(fcpp PRIVATE NINCLUDE=1 NWORK=65535 NBUFF=65535 OLD_PROCESSOR=0)
+target_compile_features(fcpp PRIVATE cxx_std_14)
 if(MSVC)
   target_compile_options(fcpp PRIVATE /wd4055 /wd4244 /wd4701 /wd4706)
 else()
@@ -151,6 +152,7 @@ endif()
 if(LINUX_GCC)
   target_compile_options(glslang PRIVATE -Wno-unused-but-set-variable)
 endif()
+target_compile_features(glslang PRIVATE cxx_std_14)
 # glsl-optimizer
 set(GLSL_OPTIMIZER_SRC ${GLSL_OPTIMIZER}/src/glsl/glcpp/glcpp.h
                        ${GLSL_OPTIMIZER}/src/glsl/glcpp/glcpp-lex.c
@@ -349,6 +351,7 @@ endif()
 if(MINGW OR LINUX_GCC)
   target_compile_options(glsl-optimizer PRIVATE -Wno-misleading-indentation)
 endif()
+target_compile_features(glsl-optimizer PRIVATE cxx_std_14)
 # spirv-cross
 set(SPIRV_CROSS_SRC ${SPIRV_CROSS}/spirv.hpp
                     ${SPIRV_CROSS}/spirv_cfg.cpp
@@ -380,6 +383,7 @@ if(MSVC)
 elseif(MINGW OR LINUX OR MACOSX)
   target_compile_options(spirv-cross PRIVATE -Wno-type-limits)
 endif()
+target_compile_features(spirv-cross PRIVATE cxx_std_14)
 # spirv-tools
 file(GLOB SPIRV_TOOLS_SRC ${SPIRV_TOOLS}/source/opt/*.cpp
                           ${SPIRV_TOOLS}/source/opt/*.h
@@ -499,6 +503,7 @@ endif()
 if(MINGW OR LINUX_GCC)
   target_compile_options(spirv-opt PRIVATE -Wno-misleading-indentation)
 endif()
+target_compile_features(spirv-opt PRIVATE cxx_std_14)
 
 # shaderc
 file(GLOB SHADERC_SRC bgfx/tools/shaderc/*.cpp bgfx/tools/shaderc/*.h bgfx/src/vertexlayout.* bgfx/src/shader_spriv.*)
@@ -526,3 +531,4 @@ if(WINDOWS)
 elseif(LINUX OR MACOSX)
   target_link_libraries(shaderc PRIVATE dl pthread)
 endif()
+target_compile_features(shaderc PRIVATE cxx_std_14)
