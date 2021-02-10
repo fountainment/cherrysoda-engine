@@ -87,7 +87,7 @@ endif()
 
 if(EMSCRIPTEN)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti \
                                           -s USE_SDL=2 \
                                           -s WASM=1 \
                                           -s NO_EXIT_RUNTIME=1 \
@@ -104,6 +104,7 @@ elseif(NOT MSVC)
   if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
   endif()
+  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -pedantic -Wno-pedantic -fPIE ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wall -pedantic -Wno-pedantic -fPIE ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
