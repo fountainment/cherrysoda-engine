@@ -14,9 +14,16 @@ list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/amalgamated.cpp)
 list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/crtnone.cpp)
 
 add_library(bx STATIC ${BX_SRC})
+target_compile_features(bx PRIVATE cxx_std_14)
 target_compile_definitions(bx PRIVATE __STDC_FORMAT_MACROS)
 target_include_directories(bx PRIVATE bx/include bx/3rdparty)
-target_compile_features(bx PRIVATE cxx_std_14)
+if(WINDOWS)
+  if(MSVC)
+    target_include_directories(bx PUBLIC bx/include/compat/msvc)
+  else()
+    target_include_directories(bx PUBLIC bx/include/compat/mingw)
+  endif()
+endif()
 
 
 # bimg
@@ -31,8 +38,8 @@ target_compile_features(bimg PRIVATE cxx_std_14)
 file(GLOB BIMG_DECODE_SRC bimg/include/bimg/*.h bimg/src/image_decode.cpp bimg/src/*.h)
 
 add_library(bimg_decode STATIC ${BIMG_DECODE_SRC})
-target_include_directories(bimg_decode PRIVATE bx/include bimg/include bimg/3rdparty)
 target_compile_features(bimg_decode PRIVATE cxx_std_14)
+target_include_directories(bimg_decode PRIVATE bx/include bimg/include bimg/3rdparty)
 
 
 # bimg_encode
@@ -52,6 +59,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   list(REMOVE_ITEM BGFX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bgfx/src/glcontext_egl.cpp)
 endif()
 add_library(bgfx STATIC ${BGFX_SRC})
+target_compile_features(bgfx PRIVATE cxx_std_14)
 target_compile_definitions(bgfx PRIVATE __STDC_FORMAT_MACROS)
 target_include_directories(bgfx PUBLIC bx/include bimg/include bgfx/include)
 target_include_directories(bgfx PRIVATE bgfx/3rdparty bgfx/3rdparty/dxsdk/include bgfx/3rdparty/khronos)
@@ -70,7 +78,6 @@ if(WINDOWS)
   target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_DIRECT3D9=1)
 endif()
 target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_MAX_VIEWS=8)
-target_compile_features(bgfx PRIVATE cxx_std_14)
 if(BGFX_CONFIG_DEBUG)
   target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_DEBUG=1)
 endif()
