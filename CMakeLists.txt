@@ -8,7 +8,7 @@ endif()
 
 project(CherrySoda VERSION 0.1
                    DESCRIPTION "A C++ Game Engine Based on BGFX and SDL2"
-                   LANGUAGES CXX)
+                   LANGUAGES C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(Documentation)
@@ -87,7 +87,8 @@ endif()
 
 if(EMSCRIPTEN)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 \
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti
+                                          -s USE_SDL=2 \
                                           -s WASM=1 \
                                           -s NO_EXIT_RUNTIME=1 \
                                           -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
@@ -99,16 +100,14 @@ if(EMSCRIPTEN)
   # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
   #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
   #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1")
-  add_compile_options(-fno-exceptions -fno-rtti)
 elseif(NOT MSVC)
   if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
   endif()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wno-pedantic -fPIE ${CHERRYSODA_SIMD}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wall -pedantic -Wno-pedantic -fPIE ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-  add_compile_options(-fno-exceptions -fno-rtti)
 else(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /MP /D_CRT_SECURE_NO_WARNINGS ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DCHERRYSODA_ENABLE_DEBUG")

@@ -4,3 +4,4 @@ add_subdirectory(imgui)
 add_subdirectory(rapidjson)
 
 cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx;imgui" External)
+cherrysoda_set_targets_folder("fcpp;glslang;spirv-cross;spirv-opt;shaderc" Tools/shaderc)

@@ -119,6 +119,18 @@
 					"shell_cmd": "make -j8 crunch"
 				},
 				{
+					"name": "fcpp",
+					"shell_cmd": "make -j8 fcpp"
+				},
+				{
+					"name": "glsl-optimizer",
+					"shell_cmd": "make -j8 glsl-optimizer"
+				},
+				{
+					"name": "glslang",
+					"shell_cmd": "make -j8 glslang"
+				},
+				{
 					"name": "imgui",
 					"shell_cmd": "make -j8 imgui"
 				},
@@ -129,6 +141,18 @@
 				{
 					"name": "sfxr_port",
 					"shell_cmd": "make -j8 sfxr_port"
+				},
+				{
+					"name": "shaderc",
+					"shell_cmd": "make -j8 shaderc"
+				},
+				{
+					"name": "spirv-cross",
+					"shell_cmd": "make -j8 spirv-cross"
+				},
+				{
+					"name": "spirv-opt",
+					"shell_cmd": "make -j8 spirv-opt"
 				}
 			],
 			"working_dir": "${project_path}/build"
