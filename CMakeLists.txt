@@ -20,6 +20,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 option(CHERRYSODA_BUILD_TOOLS      "Build tools"               ON)
+option(CHERRYSODA_BUILD_SHADERC    "Build shaderc"             OFF)
 option(CHERRYSODA_LIGHT_BUILD      "Build only necessaries"    OFF)
 option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
 option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)

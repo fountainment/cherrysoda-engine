@@ -80,6 +80,6 @@ if(BGFX_CONFIG_DEBUG)
   target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_DEBUG=1)
 endif()
 
-if(NOT EMSCRIPTEN)
+if(NOT EMSCRIPTEN AND CHERRYSODA_BUILD_SHADERC)
   include(${CMAKE_CURRENT_SOURCE_DIR}/shaderc.cmake)
 endif()
