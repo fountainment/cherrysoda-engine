@@ -122,6 +122,7 @@ GameShell: ```cmake .. -DCPI=1```
 - Ported sfxr (a simple synthersizer sound effect generator)
 - Added travisCI config
 - Added doxygen config
+- Added CMake config of shaderc
 
 
 ## Demo
