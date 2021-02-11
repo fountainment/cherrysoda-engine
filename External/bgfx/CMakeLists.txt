@@ -15,7 +15,6 @@ list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/crtnone.cpp)
 
 add_library(bx STATIC ${BX_SRC})
 target_compile_features(bx PRIVATE cxx_std_14)
-target_compile_definitions(bx PRIVATE __STDC_FORMAT_MACROS)
 target_include_directories(bx PRIVATE bx/include bx/3rdparty)
 if(WINDOWS)
   if(MSVC)
