@@ -1292,7 +1292,7 @@ int _main_(int _argc, char** _argv)
 
 	bgfx::Init init;
 	init.resolution.width = view.m_width;
-	init.resolution.width = view.m_height;
+	init.resolution.height = view.m_height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
 
 	bgfx::init(init);
@@ -1832,7 +1832,7 @@ int _main_(int _argc, char** _argv)
 							;
 
 						ImGui::PushItemWidth(-1);
-						if (ImGui::ListBoxHeader("##empty", ImVec2(0.0f, listHeight) ) )
+						if (ImGui::BeginListBox("##empty", ImVec2(0.0f, listHeight) ) )
 						{
 							const int32_t itemCount = int32_t(view.m_fileList.size() );
 
@@ -1870,7 +1870,7 @@ int _main_(int _argc, char** _argv)
 
 							clipper.End();
 
-							ImGui::ListBoxFooter();
+							ImGui::EndListBox();
 						}
 
 						ImGui::PopFont();
