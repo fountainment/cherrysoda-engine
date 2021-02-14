@@ -26,6 +26,10 @@ option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
 option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
 option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 
+if(EMSCRIPTEN)
+  set(CHERRYSODA_BUILD_SHADERC OFF)
+endif()
+
 # MIPS
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(mips64)|(MIPS64)")
   add_definitions(-Umips)
