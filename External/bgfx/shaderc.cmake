@@ -455,3 +455,13 @@ if(WINDOWS)
 elseif(LINUX OR MACOSX)
   target_link_libraries(shaderc PRIVATE dl pthread)
 endif()
+
+if(NOT WINDOWS)
+  add_custom_command(TARGET shaderc
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:shaderc>/shaderc ${CHERRYSODA_TOOL_PATH}/bin/shaderc.local)
+else()
+  add_custom_command(TARGET shaderc
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:shaderc>/shaderc.exe ${CHERRYSODA_TOOL_PATH}/bin/shaderc.local.exe)
+endif()

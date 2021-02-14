@@ -45,6 +45,7 @@ tmp_path      = join_path(project_path, 'Tmp')
 bgfx_src_path = join_path(external_path, 'bgfx/bgfx/src')
 
 shaderc = join_path(tool_path, 'bin/shaderc' + executable_suffix)
+shaderc_local = join_path(tool_path, 'bin/shaderc.local' + executable_suffix)
 
 sdl2_version = '2.0.12'
 sdl2_path = join_path(external_path, 'SDL2-' + sdl2_version)
@@ -66,7 +67,8 @@ def execute_command(command):
 
 
 def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None, bin2c_array=None):
-    command = [shaderc, '-f', shader_source, '-o', output, '--platform', platform, '--type', shader_type]
+    shader_compiler = (shaderc, shaderc_local)[exists(shaderc_local)]
+    command = [shader_compiler, '-f', shader_source, '-o', output, '--platform', platform, '--type', shader_type]
     if include_path:
         command += ['-i', include_path]
     if profile:

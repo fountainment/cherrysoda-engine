@@ -37,6 +37,7 @@ build_*/
 # Local
 *.sublime-workspace
 Projects/
+Tools/bin/shaderc.local*
 
 # Temp
 .*.swp
@@ -47,6 +48,6 @@ __pycache__
 *.pyc
 
 # Download
-SDL2-*/
-tracy
-.tracy
+External/SDL2-*/
+Engine/tracy
+Engine/.tracy

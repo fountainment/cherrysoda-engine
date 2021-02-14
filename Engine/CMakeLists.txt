@@ -106,17 +106,16 @@ set(EMBEDDED_SHADER_SRC
 )
 
 # Embedded shader compilation
+set(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE (WINDOWS OR LINUX) AND CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
 set(SHADER_COMPILE_STAMP "")
 if(NOT "${EMBEDDED_SHADER_SRC}" STREQUAL "")
-  if(WINDOWS OR LINUX OR EMSCRIPTEN)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-      set(SHADER_COMPILE_STAMP ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
-      add_custom_command(OUTPUT ${SHADER_COMPILE_STAMP}
-                         COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
-                         COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
-                         DEPENDS ${EMBEDDED_SHADER_SRC}
-                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    endif()
+  if(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE OR CHERRYSODA_BUILD_SHADERC)
+    set(SHADER_COMPILE_STAMP ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
+    add_custom_command(OUTPUT ${SHADER_COMPILE_STAMP}
+                       COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
+                       COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
+                       DEPENDS ${EMBEDDED_SHADER_SRC}
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endif()
 
@@ -132,6 +131,10 @@ endif()
 add_library(CherrySoda STATIC ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC} ${SHADER_COMPILE_STAMP})
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC})
+
+if(CHERRYSODA_BUILD_SHADERC)
+  add_dependencies(CherrySoda shaderc)
+endif()
 
 if(EMSCRIPTEN)
   set(SDL2_INCLUDE_DIRS)
