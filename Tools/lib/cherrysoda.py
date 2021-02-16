@@ -131,6 +131,10 @@ def copytree(src, dest):
     shutil.copytree(src, dest)
 
 
+def rmtree(t):
+    shutil.rmtree(t)
+
+
 def move(src, dest):
     src_list = get_file_list_from_wildcard(src)
     for source in src_list:
