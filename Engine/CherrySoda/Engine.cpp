@@ -108,6 +108,8 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 		Draw();
 	}
 
+	IsActive(true);
+
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(&Engine::MainLoop, -1, 1);
 #else
@@ -147,6 +149,31 @@ void Engine::OnClientSizeChanged(int width, int height)
 void Engine::OnTextInput(const char* text)
 {
 	GUI::TextInput(text);
+}
+
+void Engine::IsActive(bool active)
+{
+	if (m_active != active) {
+		m_active = active;
+		if (m_active)
+			OnActivated();
+		else
+			OnDeactivated();
+	}
+}
+
+void Engine::OnActivated()
+{
+	if (m_scene) {
+		m_scene->GainFocus();
+	}
+}
+
+void Engine::OnDeactivated()
+{
+	if (m_scene) {
+		m_scene->LoseFocus();
+	}
 }
 
 void Engine::ParseArgs(int argc, char* argv[])

@@ -34,6 +34,9 @@ public:
 	virtual void HandleGraphicsReset();
 	virtual void HandleGraphicsCreate();
 
+	virtual void GainFocus();
+	virtual void LoseFocus();
+
 	void Add(Entity* entity);
 	void Remove(Entity* entity);
 	

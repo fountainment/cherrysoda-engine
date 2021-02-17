@@ -119,57 +119,61 @@ void GUI::Update()
 
 	ImGuiIO& io = ImGui::GetIO();
 
-	// Window
+	// Window size update
 	auto winSize = Engine::Instance()->GetWindowSize();	
 	io.DisplaySize.x = winSize.x;
 	io.DisplaySize.y = winSize.y;
 
-	// Keyboard
-	auto keyboardKeys = MInput::GetCurrentKeyboardKeys();
-
+	// Keyboard clear
 	std::memset(io.KeysDown, 0, sizeof(io.KeysDown));
-	for (auto key : keyboardKeys) {
-		io.KeysDown[(int)key] = true;
-	}
+	io.KeyShift = io.KeyCtrl = io.KeyAlt = io.KeySuper = false;
 
-	io.KeyShift = MInput::Keyboard()->Check(Keys::LeftShift, Keys::RightShift);
-	io.KeyCtrl = MInput::Keyboard()->Check(Keys::LeftControl, Keys::RightControl);
-	io.KeyAlt = MInput::Keyboard()->Check(Keys::LeftAlt, Keys::RightAlt);
-	io.KeySuper = false;
-
-	// Mouse
-	if (io.WantSetMousePos) {
-		Engine::Instance()->SetMousePosition(Math::IVec2((int)io.MousePos.x, (int)io.MousePos.y));
-	}
-	else {
-		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-	}
-
-	auto pos = MInput::Mouse()->RawPosition();
-	io.MousePos = ImVec2((float)pos.x, (float)pos.y);	
-	io.MouseDown[0] = MInput::Mouse()->CheckLeftButton();
-	io.MouseDown[1] = MInput::Mouse()->CheckRightButton();
-	io.MouseDown[2] = MInput::Mouse()->CheckMiddleButton();
-	io.MouseWheel += MInput::Mouse()->WheelDelta() / 120;
-
-	// Mouse cursor control
-	if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)) {
-		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-		if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
-		{
-			// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-			SDL_ShowCursor(SDL_FALSE);
+	if (Engine::Instance()->IsActive()) {
+		// Keyboard
+		auto keyboardKeys = MInput::GetCurrentKeyboardKeys();
+		for (auto key : keyboardKeys) {
+			io.KeysDown[(int)key] = true;
 		}
-		else
-		{
-			// Show OS mouse cursor
-			SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-			SDL_ShowCursor(SDL_TRUE);
-		}
-	}
 
-	// GamePad
-	// TODO: Add GamePad support
+		io.KeyShift = MInput::Keyboard()->Check(Keys::LeftShift, Keys::RightShift);
+		io.KeyCtrl = MInput::Keyboard()->Check(Keys::LeftControl, Keys::RightControl);
+		io.KeyAlt = MInput::Keyboard()->Check(Keys::LeftAlt, Keys::RightAlt);
+		io.KeySuper = false;
+
+		// Mouse
+		if (io.WantSetMousePos) {
+			Engine::Instance()->SetMousePosition(Math::IVec2((int)io.MousePos.x, (int)io.MousePos.y));
+		}
+		else {
+			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+		}
+
+		auto pos = MInput::Mouse()->RawPosition();
+		io.MousePos = ImVec2((float)pos.x, (float)pos.y);	
+		io.MouseDown[0] = MInput::Mouse()->CheckLeftButton();
+		io.MouseDown[1] = MInput::Mouse()->CheckRightButton();
+		io.MouseDown[2] = MInput::Mouse()->CheckMiddleButton();
+		io.MouseWheel += MInput::Mouse()->WheelDelta() / 120;
+
+		// Mouse cursor control
+		if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)) {
+			ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+			if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
+			{
+				// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+				SDL_ShowCursor(SDL_FALSE);
+			}
+			else
+			{
+				// Show OS mouse cursor
+				SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
+				SDL_ShowCursor(SDL_TRUE);
+			}
+		}
+
+		// GamePad
+		// TODO: Add GamePad support
+	}
 
 	// Delta time
 	io.DeltaTime = Engine::Instance()->RawDeltaTime();
@@ -184,9 +188,7 @@ void GUI::Render()
 	if (ms_frameStarted) {
 		ms_frameStarted = false;
 	}
-	else if (ms_disable) {
-		return;
-	}
+	else return;
 
 	ImGui::Render();
 

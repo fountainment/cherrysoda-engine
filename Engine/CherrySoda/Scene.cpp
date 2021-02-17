@@ -139,6 +139,14 @@ void Scene::HandleGraphicsReset()
 	m_entities->HandleGraphicsReset();
 }
 
+void Scene::GainFocus()
+{
+}
+
+void Scene::LoseFocus()
+{
+}
+
 void Scene::Add(Entity* entity)
 {
 	m_entities->Add(entity);

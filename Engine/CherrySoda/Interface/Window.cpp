@@ -566,11 +566,15 @@ void cherrysoda::Window::PollEvents()
 			const SDL_WindowEvent& wev = event.window;
 			switch (wev.event)
 			{
+			case SDL_WINDOWEVENT_FOCUS_GAINED:
+				Engine::Instance()->IsActive(true);
+				break;
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				Engine::Instance()->IsActive(false);
+				break;
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
-			{
 				Engine::Instance()->OnClientSizeChanged(wev.data1, wev.data2);
-			}
-			break;
+				break;
 			}
 		}
 		break;
