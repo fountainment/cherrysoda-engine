@@ -144,6 +144,11 @@ set(CHERRYSODA_MODULE_LINKS "")
 set(CHERRYSODA_SHADER_SRC "")
 set(CHERRYSODA_SDL2_PATH ${CHERRYSODA_EXTERNAL_PATH}/SDL2-2.0.12)
 
+set(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE OFF)
+if((WINDOWS OR LINUX) AND CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "(x86_64)|(X86_64)|(amd64)|(AMD64)")
+  set(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE ON)
+endif()
+
 if(WINDOWS)
   if(NOT DEFINED ENV{SDL2_DIR})
     if(NOT EXISTS ${CHERRYSODA_SDL2_PATH})
@@ -202,16 +207,14 @@ function(add_cherrysoda_executable executable_name)
     endif()
   endif()
   if(NOT "${shader_src}" STREQUAL "")
-    if(WINDOWS OR LINUX OR EMSCRIPTEN)
-      if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-        set(shader_compile_stamp ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
-        add_custom_command(OUTPUT ${shader_compile_stamp}
-                           COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
-                           COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
-                           COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders ${CMAKE_CURRENT_BINARY_DIR}/assets/shaders
-                           DEPENDS ${shader_src}
-                           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-      endif()
+    if(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE OR CHERRYSODA_BUILD_SHADERC)
+      set(shader_compile_stamp ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
+      add_custom_command(OUTPUT ${shader_compile_stamp}
+                         COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
+                         COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
+                         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders ${CMAKE_CURRENT_BINARY_DIR}/assets/shaders
+                         DEPENDS ${shader_src}
+                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
   endif()
   add_executable(${executable_name} ${program_src} ${shader_src} ${shader_compile_stamp})
