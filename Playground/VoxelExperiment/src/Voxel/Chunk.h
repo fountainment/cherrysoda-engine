@@ -2,6 +2,7 @@
 #define _VOXELEXPERIMENT_VOXEL_CHUNK_H_
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
@@ -37,7 +38,11 @@ public:
 	void RemoveBlock(const cherrysoda::Math::IVec3& v) { SetBlockType(v, Block::Type::None); }
 	void FillAllBlocks(Block::Type type);
 	cherrysoda::type::UInt8 GetBlockSurrounding(const cherrysoda::Math::IVec3& v);
-	cherrysoda::type::UInt8 GetBlockSurroundingFast(int index);
+	inline cherrysoda::type::UInt8 GetBlockSurroundingFast(int index) const
+	{
+		CHERRYSODA_ASSERT(index >= 0 && index < BlockAmount(), "Block index out of range!\n");
+		return m_blockSurrounding[index];
+	}
 
 	void SetChanged();
 	void NotifyChanged();

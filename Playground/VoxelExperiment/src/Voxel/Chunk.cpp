@@ -66,12 +66,6 @@ cherrysoda::type::UInt8 Chunk::GetBlockSurrounding(const Math::IVec3& v)
 	return result;
 }
 
-cherrysoda::type::UInt8 Chunk::GetBlockSurroundingFast(int index)
-{
-	CHERRYSODA_ASSERT(index >= 0 && index < BlockAmount(), "Block index out of range!\n");
-	return m_blockSurrounding[index];
-}
-
 void Chunk::SetChanged()
 {
 	m_changed = true;
