@@ -1,4 +1,4 @@
-// dear imgui, v1.81
+// dear imgui, v1.82 WIP
 // (internal structures/api)
 
 // You may use this file to debug, understand or extend ImGui features but we don't provide any guarantee of forward compatibility!
@@ -448,6 +448,7 @@ struct IMGUI_API ImRect
     ImVec2      GetSize() const                     { return ImVec2(Max.x - Min.x, Max.y - Min.y); }
     float       GetWidth() const                    { return Max.x - Min.x; }
     float       GetHeight() const                   { return Max.y - Min.y; }
+    float       GetArea() const                     { return (Max.x - Min.x) * (Max.y - Min.y); }
     ImVec2      GetTL() const                       { return Min; }                   // Top-left
     ImVec2      GetTR() const                       { return ImVec2(Max.x, Min.y); }  // Top-right
     ImVec2      GetBL() const                       { return ImVec2(Min.x, Max.y); }  // Bottom-left
@@ -617,10 +618,20 @@ struct IMGUI_API ImChunkStream
 //-----------------------------------------------------------------------------
 
 // ImDrawList: Helper function to calculate a circle's segment count given its radius and a "maximum error" value.
-// FIXME: the minimum number of auto-segment may be undesirably high for very small radiuses (e.g. 1.0f)
-#define IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN                     12
+// Estimation of number of circle segment based on error is derived using method described in https://stackoverflow.com/a/2244088/15194693
+// Number of segments (N) is calculated using equation:
+//   N = ceil ( pi / acos(1 - error / r) )     where r > 0, error <= r
+// Our equation is significantly simpler that one in the post thanks for choosing segment that is
+// perpendicular to X axis. Follow steps in the article from this starting condition and you will
+// will get this result.
+//
+// Rendering circles with an odd number of segments, while mathematically correct will produce
+// asymmetrical results on the raster grid. Therefore we're rounding N to next even number (7->8, 8->8, 9->10 etc.)
+//
+#define IM_ROUNDUP_TO_EVEN(_V)                                  ((((_V) + 1) / 2) * 2)
+#define IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN                     4
 #define IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX                     512
-#define IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(_RAD,_MAXERROR)    ImClamp((int)((IM_PI * 2.0f) / ImAcos(((_RAD) - (_MAXERROR)) / (_RAD))), IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN, IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX)
+#define IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_CALC(_RAD,_MAXERROR)    ImClamp(IM_ROUNDUP_TO_EVEN((int)ImCeil(IM_PI / ImAcos(1 - ImMin((_MAXERROR), (_RAD)) / (_RAD)))), IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MIN, IM_DRAWLIST_CIRCLE_AUTO_SEGMENT_MAX)
 
 // ImDrawList: You may set this to higher values (e.g. 2 or 3) to increase tessellation of fast rounded corners path.
 #ifndef IM_DRAWLIST_ARCFAST_TESSELLATION_MULTIPLIER
@@ -645,7 +656,7 @@ struct IMGUI_API ImDrawListSharedData
     const ImVec4*   TexUvLines;                 // UV of anti-aliased lines in the atlas
 
     ImDrawListSharedData();
-    void SetCircleSegmentMaxError(float max_error);
+    void SetCircleTessellationMaxError(float max_error);
 };
 
 struct ImDrawDataBuilder
@@ -1886,7 +1897,7 @@ struct ImGuiTabBar
     ImGuiTabBarFlags    Flags;
     ImGuiID             ID;                     // Zero for tab-bars used by docking
     ImGuiID             SelectedTabId;          // Selected tab/window
-    ImGuiID             NextSelectedTabId;
+    ImGuiID             NextSelectedTabId;      // Next selected tab/window. Will also trigger a scrolling animation
     ImGuiID             VisibleTabId;           // Can occasionally be != SelectedTabId (e.g. when previewing contents for CTRL+TAB preview)
     int                 CurrFrameVisible;
     int                 PrevFrameVisible;
@@ -2091,9 +2102,10 @@ struct ImGuiTable
     ImGuiTableColumnIdx         HeldHeaderColumn;           // Index of column header being held.
     ImGuiTableColumnIdx         ReorderColumn;              // Index of column being reordered. (not cleared)
     ImGuiTableColumnIdx         ReorderColumnDir;           // -1 or +1
+    ImGuiTableColumnIdx         LeftMostEnabledColumn;      // Index of left-most non-hidden column.
+    ImGuiTableColumnIdx         RightMostEnabledColumn;     // Index of right-most non-hidden column.
     ImGuiTableColumnIdx         LeftMostStretchedColumn;    // Index of left-most stretched column.
     ImGuiTableColumnIdx         RightMostStretchedColumn;   // Index of right-most stretched column.
-    ImGuiTableColumnIdx         RightMostEnabledColumn;     // Index of right-most non-hidden column.
     ImGuiTableColumnIdx         ContextPopupColumn;         // Column right-clicked on, of -1 if opening context menu from a neutral/empty spot
     ImGuiTableColumnIdx         FreezeRowsRequest;          // Requested frozen rows count
     ImGuiTableColumnIdx         FreezeRowsCount;            // Actual frozen row count (== FreezeRowsRequest, or == 0 when no scrolling offset)
@@ -2349,6 +2361,7 @@ namespace ImGui
     IMGUI_API void          TablePopBackgroundChannel();
 
     // Tables: Internals
+    inline    ImGuiTable*   GetCurrentTable() { ImGuiContext& g = *GImGui; return g.CurrentTable; }
     IMGUI_API ImGuiTable*   TableFindByID(ImGuiID id);
     IMGUI_API bool          BeginTableEx(const char* name, ImGuiID id, int columns_count, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0, 0), float inner_width = 0.0f);
     IMGUI_API void          TableBeginInitMemory(ImGuiTable* table, int columns_count);
@@ -2543,11 +2556,11 @@ IMGUI_API void      ImFontAtlasBuildMultiplyRectAlpha8(const unsigned char table
 //-----------------------------------------------------------------------------
 
 #ifdef IMGUI_ENABLE_TEST_ENGINE
-extern void                 ImGuiTestEngineHook_ItemAdd(ImGuiContext* ctx, const ImRect& bb, ImGuiID id);
-extern void                 ImGuiTestEngineHook_ItemInfo(ImGuiContext* ctx, ImGuiID id, const char* label, ImGuiItemStatusFlags flags);
-extern void                 ImGuiTestEngineHook_IdInfo(ImGuiContext* ctx, ImGuiDataType data_type, ImGuiID id, const void* data_id);
-extern void                 ImGuiTestEngineHook_IdInfo(ImGuiContext* ctx, ImGuiDataType data_type, ImGuiID id, const void* data_id, const void* data_id_end);
-extern void                 ImGuiTestEngineHook_Log(ImGuiContext* ctx, const char* fmt, ...);
+extern void         ImGuiTestEngineHook_ItemAdd(ImGuiContext* ctx, const ImRect& bb, ImGuiID id);
+extern void         ImGuiTestEngineHook_ItemInfo(ImGuiContext* ctx, ImGuiID id, const char* label, ImGuiItemStatusFlags flags);
+extern void         ImGuiTestEngineHook_IdInfo(ImGuiContext* ctx, ImGuiDataType data_type, ImGuiID id, const void* data_id);
+extern void         ImGuiTestEngineHook_IdInfo(ImGuiContext* ctx, ImGuiDataType data_type, ImGuiID id, const void* data_id, const void* data_id_end);
+extern void         ImGuiTestEngineHook_Log(ImGuiContext* ctx, const char* fmt, ...);
 #define IMGUI_TEST_ENGINE_ITEM_ADD(_BB,_ID)                 if (g.TestEngineHookItems) ImGuiTestEngineHook_ItemAdd(&g, _BB, _ID)               // Register item bounding box
 #define IMGUI_TEST_ENGINE_ITEM_INFO(_ID,_LABEL,_FLAGS)      if (g.TestEngineHookItems) ImGuiTestEngineHook_ItemInfo(&g, _ID, _LABEL, _FLAGS)   // Register item label and status flags (optional)
 #define IMGUI_TEST_ENGINE_LOG(_FMT,...)                     if (g.TestEngineHookItems) ImGuiTestEngineHook_Log(&g, _FMT, __VA_ARGS__)          // Custom log entry from user land into test log

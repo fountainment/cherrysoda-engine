@@ -1,4 +1,4 @@
-// dear imgui, v1.81
+// dear imgui, v1.82 WIP
 // (main code and documentation)
 
 // Help:
@@ -15,6 +15,7 @@
 // - Glossary              https://github.com/ocornut/imgui/wiki/Glossary
 // - Wiki                  https://github.com/ocornut/imgui/wiki
 // - Issues & support      https://github.com/ocornut/imgui/issues
+// - Discussions           https://github.com/ocornut/imgui/discussions
 
 // Developed by Omar Cornut and every direct or indirect contributors to the GitHub.
 // See LICENSE.txt for copyright and licensing details (standard MIT License).
@@ -375,6 +376,8 @@ CODE
  When you are not sure about a old symbol or function name, try using the Search/Find function of your IDE to look for comments or references in all imgui files.
  You can read releases logs https://github.com/ocornut/imgui/releases for more details.
 
+ - 2021/02/22 (1.82) - win32+mingw: Re-enabled IME functions by default even under MinGW. In July 2016, issue #738 had me incorrectly disable those default functions for MinGW. MinGW users should: either link with -limm32, either set their imconfig file  with '#define IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS'.
+ - 2021/02/17 (1.82) - renamed rarely used style.CircleSegmentMaxError (old default = 1.60f) to style.CircleTessellationMaxError (new default = 0.30f) as the meaning of the value changed.
  - 2021/02/03 (1.81) - renamed ListBoxHeader(const char* label, ImVec2 size) to BeginListBox(). Kept inline redirection function (will obsolete).
                      - removed ListBoxHeader(const char* label, int items_count, int height_in_items = -1) in favor of specifying size. Kept inline redirection function (will obsolete).
                      - renamed ListBoxFooter() to EndListBox(). Kept inline redirection function (will obsolete).
@@ -909,27 +912,33 @@ static void             UpdateViewportsNewFrame();
 // [SECTION] CONTEXT AND MEMORY ALLOCATORS
 //-----------------------------------------------------------------------------
 
+// DLL users:
+// - Heaps and globals are not shared across DLL boundaries!
+// - You will need to call SetCurrentContext() + SetAllocatorFunctions() for each static/DLL boundary you are calling from.
+// - Same apply for hot-reloading mechanisms that are reliant on reloading DLL (note that many hot-reloading mechanism works without DLL).
+// - Using Dear ImGui via a shared library is not recommended, because of function call overhead and because we don't guarantee backward nor forward ABI compatibility.
+// - Confused? In a debugger: add GImGui to your watch window and notice how its value changes depending on your current location (which DLL boundary you are in).
+
 // Current context pointer. Implicitly used by all Dear ImGui functions. Always assumed to be != NULL.
-// ImGui::CreateContext() will automatically set this pointer if it is NULL. Change to a different context by calling ImGui::SetCurrentContext().
-// 1) Important: globals are not shared across DLL boundaries! If you use DLLs or any form of hot-reloading: you will need to call
-//    SetCurrentContext() (with the pointer you got from CreateContext) from each unique static/DLL boundary, and after each hot-reloading.
-//    In your debugger, add GImGui to your watch window and notice how its value changes depending on which location you are currently stepping into.
-// 2) Important: Dear ImGui functions are not thread-safe because of this pointer.
-//    If you want thread-safety to allow N threads to access N different contexts, you can:
-//    - Change this variable to use thread local storage so each thread can refer to a different context, in imconfig.h:
-//          struct ImGuiContext;
-//          extern thread_local ImGuiContext* MyImGuiTLS;
-//          #define GImGui MyImGuiTLS
-//      And then define MyImGuiTLS in one of your cpp file. Note that thread_local is a C++11 keyword, earlier C++ uses compiler-specific keyword.
-//    - Future development aim to make this context pointer explicit to all calls. Also read https://github.com/ocornut/imgui/issues/586
-//    - If you need a finite number of contexts, you may compile and use multiple instances of the ImGui code from different namespace.
+// - ImGui::CreateContext() will automatically set this pointer if it is NULL.
+//   Change to a different context by calling ImGui::SetCurrentContext().
+// - Important: Dear ImGui functions are not thread-safe because of this pointer.
+//   If you want thread-safety to allow N threads to access N different contexts:
+//   - Change this variable to use thread local storage so each thread can refer to a different context, in your imconfig.h:
+//         struct ImGuiContext;
+//         extern thread_local ImGuiContext* MyImGuiTLS;
+//         #define GImGui MyImGuiTLS
+//     And then define MyImGuiTLS in one of your cpp file. Note that thread_local is a C++11 keyword, earlier C++ uses compiler-specific keyword.
+//   - Future development aim to make this context pointer explicit to all calls. Also read https://github.com/ocornut/imgui/issues/586
+//   - If you need a finite number of contexts, you may compile and use multiple instances of the ImGui code from different namespace.
+// - DLL users: read comments above.
 #ifndef GImGui
 ImGuiContext*   GImGui = NULL;
 #endif
 
 // Memory Allocator functions. Use SetAllocatorFunctions() to change them.
-// If you use DLL hotreloading you might need to call SetAllocatorFunctions() after reloading code from this file.
-// Otherwise, you probably don't want to modify them mid-program, and if you use global/static e.g. ImVector<> instances you may need to keep them accessible during program destruction.
+// - You probably don't want to modify those mid-program, and if you use global/static e.g. ImVector<> instances you may need to keep them accessible during program destruction.
+// - DLL users: read comments above.
 #ifndef IMGUI_DISABLE_DEFAULT_ALLOCATORS
 static void*   MallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); return malloc(size); }
 static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); free(ptr); }
@@ -937,10 +946,9 @@ static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_d
 static void*   MallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); IM_UNUSED(size); IM_ASSERT(0); return NULL; }
 static void    FreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); IM_UNUSED(ptr); IM_ASSERT(0); }
 #endif
-
-static void*  (*GImAllocatorAllocFunc)(size_t size, void* user_data) = MallocWrapper;
-static void   (*GImAllocatorFreeFunc)(void* ptr, void* user_data) = FreeWrapper;
-static void*    GImAllocatorUserData = NULL;
+static ImGuiMemAllocFunc*   GImAllocatorAllocFunc = MallocWrapper;
+static ImGuiMemFreeFunc*    GImAllocatorFreeFunc = FreeWrapper;
+static void*                GImAllocatorUserData = NULL;
 
 //-----------------------------------------------------------------------------
 // [SECTION] USER FACING STRUCTURES (ImGuiStyle, ImGuiIO)
@@ -986,7 +994,7 @@ ImGuiStyle::ImGuiStyle()
     AntiAliasedLinesUseTex  = true;             // Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering.
     AntiAliasedFill         = true;             // Enable anti-aliased filled shapes (rounded rectangles, circles, etc.).
     CurveTessellationTol    = 1.25f;            // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
-    CircleSegmentMaxError   = 1.60f;            // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
+    CircleTessellationMaxError = 0.30f;         // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
 
     // Default theme
     ImGui::StyleColorsDark(this);
@@ -3328,11 +3336,19 @@ void ImGui::SetCurrentContext(ImGuiContext* ctx)
 #endif
 }
 
-void ImGui::SetAllocatorFunctions(void* (*alloc_func)(size_t sz, void* user_data), void (*free_func)(void* ptr, void* user_data), void* user_data)
+void ImGui::SetAllocatorFunctions(ImGuiMemAllocFunc* alloc_func, ImGuiMemFreeFunc* free_func, void* user_data)
 {
     GImAllocatorAllocFunc = alloc_func;
     GImAllocatorFreeFunc = free_func;
     GImAllocatorUserData = user_data;
+}
+
+// This is provided to facilitate copying allocators from one static/DLL boundary to another (e.g. retrieve default allocator of your executable address space)
+void ImGui::GetAllocatorFunctions(ImGuiMemAllocFunc** p_alloc_func, ImGuiMemFreeFunc** p_free_func, void** p_user_data)
+{
+    *p_alloc_func = GImAllocatorAllocFunc;
+    *p_free_func = GImAllocatorFreeFunc;
+    *p_user_data = GImAllocatorUserData;
 }
 
 ImGuiContext* ImGui::CreateContext(ImFontAtlas* shared_font_atlas)
@@ -3878,7 +3894,7 @@ void ImGui::NewFrame()
         virtual_space.Add(g.Viewports[n]->GetMainRect());
     g.DrawListSharedData.ClipRectFullscreen = virtual_space.ToVec4();
     g.DrawListSharedData.CurveTessellationTol = g.Style.CurveTessellationTol;
-    g.DrawListSharedData.SetCircleSegmentMaxError(g.Style.CircleSegmentMaxError);
+    g.DrawListSharedData.SetCircleTessellationMaxError(g.Style.CircleTessellationMaxError);
     g.DrawListSharedData.InitialFlags = ImDrawListFlags_None;
     if (g.Style.AntiAliasedLines)
         g.DrawListSharedData.InitialFlags |= ImDrawListFlags_AntiAliasedLines;
@@ -6356,11 +6372,12 @@ void ImGui::FocusWindow(ImGuiWindow* window)
         g.NavWindow = window;
         if (window && g.NavDisableMouseHover)
             g.NavMousePosDirty = true;
-        g.NavInitRequest = false;
         g.NavId = window ? window->NavLastIds[0] : 0; // Restore NavId
         g.NavFocusScopeId = 0;
         g.NavIdIsAlive = false;
         g.NavLayer = ImGuiNavLayer_Main;
+        g.NavInitRequest = g.NavMoveRequest = false;
+        NavUpdateAnyRequestFlag();
         //IMGUI_DEBUG_LOG("FocusWindow(\"%s\")\n", window ? window->Name : NULL);
     }
 
@@ -7056,7 +7073,7 @@ static void ImGui::ErrorCheckNewFrameSanityChecks()
     IM_ASSERT(g.IO.Fonts->Fonts.Size > 0                                && "Font Atlas not built. Did you call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()?");
     IM_ASSERT(g.IO.Fonts->Fonts[0]->IsLoaded()                          && "Font Atlas not built. Did you call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()?");
     IM_ASSERT(g.Style.CurveTessellationTol > 0.0f                       && "Invalid style setting!");
-    IM_ASSERT(g.Style.CircleSegmentMaxError > 0.0f                      && "Invalid style setting!");
+    IM_ASSERT(g.Style.CircleTessellationMaxError  > 0.0f                && "Invalid style setting!");
     IM_ASSERT(g.Style.Alpha >= 0.0f && g.Style.Alpha <= 1.0f            && "Invalid style setting!"); // Allows us to avoid a few clamps in color computations
     IM_ASSERT(g.Style.WindowMinSize.x >= 1.0f && g.Style.WindowMinSize.y >= 1.0f && "Invalid style setting.");
     IM_ASSERT(g.Style.WindowMenuButtonPosition == ImGuiDir_None || g.Style.WindowMenuButtonPosition == ImGuiDir_Left || g.Style.WindowMenuButtonPosition == ImGuiDir_Right);
@@ -9910,14 +9927,8 @@ void ImGui::EndDragDropTarget()
 //-----------------------------------------------------------------------------
 
 // Pass text data straight to log (without being displayed)
-void ImGui::LogText(const char* fmt, ...)
+static inline void LogTextV(ImGuiContext& g, const char* fmt, va_list args)
 {
-    ImGuiContext& g = *GImGui;
-    if (!g.LogEnabled)
-        return;
-
-    va_list args;
-    va_start(args, fmt);
     if (g.LogFile)
     {
         g.LogBuffer.Buf.resize(0);
@@ -9928,7 +9939,27 @@ void ImGui::LogText(const char* fmt, ...)
     {
         g.LogBuffer.appendfv(fmt, args);
     }
+}
+
+void ImGui::LogText(const char* fmt, ...)
+{
+    ImGuiContext& g = *GImGui;
+    if (!g.LogEnabled)
+        return;
+
+    va_list args;
+    va_start(args, fmt);
+    LogTextV(g, fmt, args);
     va_end(args);
+}
+
+void ImGui::LogTextV(const char* fmt, va_list args)
+{
+    ImGuiContext& g = *GImGui;
+    if (!g.LogEnabled)
+        return;
+
+    LogTextV(g, fmt, args);
 }
 
 // Internal version that takes a position to decide on newline placement and pad items according to their depth.
@@ -10621,7 +10652,7 @@ static void SetClipboardTextFn_DefaultImpl(void*, const char* text)
 #endif
 
 // Win32 API IME support (for Asian languages, etc.)
-#if defined(_WIN32) && !defined(__GNUC__) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS) && !defined(IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS)
+#if defined(_WIN32) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS) && !defined(IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCTIONS)
 
 #include <imm.h>
 #ifdef _MSC_VER

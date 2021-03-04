@@ -1,4 +1,4 @@
-// dear imgui, v1.81
+// dear imgui, v1.82 WIP
 // (headers)
 
 // Help:
@@ -15,6 +15,7 @@
 // - Glossary              https://github.com/ocornut/imgui/wiki/Glossary
 // - Wiki                  https://github.com/ocornut/imgui/wiki
 // - Issues & support      https://github.com/ocornut/imgui/issues
+// - Discussions           https://github.com/ocornut/imgui/discussions
 
 /*
 
@@ -59,8 +60,8 @@ Index of this file:
 
 // Version
 // (Integer encoded as XYYZZ for use in #if preprocessor conditionals. Work in progress versions typically starts at XYY99 then bounce up to XYY00, XYY01 etc. when release tagging happens)
-#define IMGUI_VERSION               "1.81"
-#define IMGUI_VERSION_NUM           18100
+#define IMGUI_VERSION               "1.82 WIP"
+#define IMGUI_VERSION_NUM           18101
 #define IMGUI_CHECKVERSION()        ImGui::DebugCheckVersionAndDataLayout(IMGUI_VERSION, sizeof(ImGuiIO), sizeof(ImGuiStyle), sizeof(ImVec2), sizeof(ImVec4), sizeof(ImDrawVert), sizeof(ImDrawIdx))
 #define IMGUI_HAS_TABLE
 
@@ -193,6 +194,8 @@ typedef void* ImTextureID;          // User data for rendering backend to identi
 typedef unsigned int ImGuiID;       // A unique ID used by widgets, typically hashed from a stack of string.
 typedef int (*ImGuiInputTextCallback)(ImGuiInputTextCallbackData* data);    // Callback function for ImGui::InputText()
 typedef void (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);             // Callback function for ImGui::SetNextWindowSizeConstraints()
+typedef void* (ImGuiMemAllocFunc)(size_t sz, void* user_data);              // Function signature for ImGui::SetAllocatorFunctions()
+typedef void (ImGuiMemFreeFunc)(void* ptr, void* user_data);                // Function signature for ImGui::SetAllocatorFunctions()
 
 // Character types
 // (we generally use UTF-8 encoded string in the API. This is storage specifically for a decoded character used for keyboard input and display)
@@ -255,8 +258,9 @@ struct ImVec4
 namespace ImGui
 {
     // Context creation and access
-    // Each context create its own ImFontAtlas by default. You may instance one yourself and pass it to CreateContext() to share a font atlas between imgui contexts.
-    // None of those functions is reliant on the current context.
+    // - Each context create its own ImFontAtlas by default. You may instance one yourself and pass it to CreateContext() to share a font atlas between contexts.
+    // - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()
+    //   for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for details.
     IMGUI_API ImGuiContext* CreateContext(ImFontAtlas* shared_font_atlas = NULL);
     IMGUI_API void          DestroyContext(ImGuiContext* ctx = NULL);   // NULL = destroy current context
     IMGUI_API ImGuiContext* GetCurrentContext();
@@ -701,7 +705,7 @@ namespace ImGui
     // - You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only useful in
     //   some advanced use cases (e.g. adding custom widgets in header row).
     // - Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
-    IMGUI_API void          TableSetupColumn(const char* label, ImGuiTableColumnFlags flags = 0, float init_width_or_weight = 0.0f, ImU32 user_id = 0);
+    IMGUI_API void          TableSetupColumn(const char* label, ImGuiTableColumnFlags flags = 0, float init_width_or_weight = 0.0f, ImGuiID user_id = 0);
     IMGUI_API void          TableSetupScrollFreeze(int cols, int rows); // lock columns/rows so they stay visible when scrolled.
     IMGUI_API void          TableHeadersRow();                          // submit all headers cells based on data provided to TableSetupColumn() + submit context menu
     IMGUI_API void          TableHeader(const char* label);             // submit one header cell manually (rarely used)
@@ -711,7 +715,7 @@ namespace ImGui
     //   since last call, or the first time. Make sure to set 'SpecsDirty = false' after sorting, else you may
     //   wastefully sort your data every frame!
     // - Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable().
-    IMGUI_API ImGuiTableSortSpecs* TableGetSortSpecs();                        // get latest sort specs for the table (NULL if not sorting).
+    IMGUI_API ImGuiTableSortSpecs*  TableGetSortSpecs();                        // get latest sort specs for the table (NULL if not sorting).
     // Tables: Miscellaneous functions
     // - Functions args 'int column_n' treat the default value of -1 as the same as passing the current column index.
     IMGUI_API int                   TableGetColumnCount();                      // return number of columns (value passed to BeginTable)
@@ -748,6 +752,7 @@ namespace ImGui
     IMGUI_API void          LogFinish();                                                        // stop logging (close file, etc.)
     IMGUI_API void          LogButtons();                                                       // helper to display buttons for logging to tty/file/clipboard
     IMGUI_API void          LogText(const char* fmt, ...) IM_FMTARGS(1);                        // pass text data straight to log (without being displayed)
+    IMGUI_API void          LogTextV(const char* fmt, va_list args) IM_FMTLIST(1);
 
     // Drag and Drop
     // - If you stop calling BeginDragDropSource() the payload is preserved however it won't have a preview tooltip (we currently display a fallback "..." tooltip as replacement)
@@ -867,9 +872,11 @@ namespace ImGui
     IMGUI_API bool          DebugCheckVersionAndDataLayout(const char* version_str, size_t sz_io, size_t sz_style, size_t sz_vec2, size_t sz_vec4, size_t sz_drawvert, size_t sz_drawidx); // This is called by IMGUI_CHECKVERSION() macro.
 
     // Memory Allocators
-    // - All those functions are not reliant on the current context.
-    // - If you reload the contents of imgui.cpp at runtime, you may need to call SetCurrentContext() + SetAllocatorFunctions() again because we use global storage for those.
-    IMGUI_API void          SetAllocatorFunctions(void* (*alloc_func)(size_t sz, void* user_data), void (*free_func)(void* ptr, void* user_data), void* user_data = NULL);
+    // - Those functions are not reliant on the current context.
+    // - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()
+    //   for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for more details.
+    IMGUI_API void          SetAllocatorFunctions(ImGuiMemAllocFunc* alloc_func, ImGuiMemFreeFunc* free_func, void* user_data = NULL);
+    IMGUI_API void          GetAllocatorFunctions(ImGuiMemAllocFunc** p_alloc_func, ImGuiMemFreeFunc** p_free_func, void** p_user_data);
     IMGUI_API void*         MemAlloc(size_t size);
     IMGUI_API void          MemFree(void* ptr);
 
@@ -1723,7 +1730,7 @@ struct ImGuiStyle
     bool        AntiAliasedLinesUseTex;     // Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering. Latched at the beginning of the frame (copied to ImDrawList).
     bool        AntiAliasedFill;            // Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).
     float       CurveTessellationTol;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
-    float       CircleSegmentMaxError;      // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
+    float       CircleTessellationMaxError; // Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.
     ImVec4      Colors[ImGuiCol_COUNT];
 
     IMGUI_API ImGuiStyle();
@@ -2463,6 +2470,7 @@ struct ImDrawList
     IMGUI_API void  _OnChangedClipRect();
     IMGUI_API void  _OnChangedTextureID();
     IMGUI_API void  _OnChangedVtxOffset();
+    IMGUI_API int   _CalcCircleAutoSegmentCount(float radius) const;
 };
 
 // All draw data to render a Dear ImGui frame
@@ -2631,11 +2639,12 @@ struct ImFontAtlas
     //-------------------------------------------
 
     // You can request arbitrary rectangles to be packed into the atlas, for your own purposes.
-    // After calling Build(), you can query the rectangle position and render your pixels.
-    // You can also request your rectangles to be mapped as font glyph (given a font + Unicode point),
-    // so you can render e.g. custom colorful icons and use them as regular glyphs.
-    // Read docs/FONTS.md for more details about using colorful icons.
-    // Note: this API may be redesigned later in order to support multi-monitor varying DPI settings.
+    // - After calling Build(), you can query the rectangle position and render your pixels.
+    // - If you render colored output, set 'atlas->TexPixelsUseColors = true' as this may help some backends decide of prefered texture format.
+    // - You can also request your rectangles to be mapped as font glyph (given a font + Unicode point),
+    //   so you can render e.g. custom colorful icons and use them as regular glyphs.
+    // - Read docs/FONTS.md for more details about using colorful icons.
+    // - Note: this API may be redesigned later in order to support multi-monitor varying DPI settings.
     IMGUI_API int               AddCustomRectRegular(int width, int height);
     IMGUI_API int               AddCustomRectFontGlyph(ImFont* font, ImWchar id, int width, int height, float advance_x, const ImVec2& offset = ImVec2(0, 0));
     ImFontAtlasCustomRect*      GetCustomRectByIndex(int index) { IM_ASSERT(index >= 0); return &CustomRects[index]; }
@@ -2648,14 +2657,15 @@ struct ImFontAtlas
     // Members
     //-------------------------------------------
 
-    bool                        Locked;             // Marked as Locked by ImGui::NewFrame() so attempt to modify the atlas will assert.
     ImFontAtlasFlags            Flags;              // Build flags (see ImFontAtlasFlags_)
     ImTextureID                 TexID;              // User data to refer to the texture once it has been uploaded to user's graphic systems. It is passed back to you during rendering via the ImDrawCmd structure.
     int                         TexDesiredWidth;    // Texture width desired by user before Build(). Must be a power-of-two. If have many glyphs your graphics API have texture size restrictions you may want to increase texture width to decrease height.
     int                         TexGlyphPadding;    // Padding between glyphs within texture in pixels. Defaults to 1. If your rendering method doesn't rely on bilinear filtering you may set this to 0.
+    bool                        Locked;             // Marked as Locked by ImGui::NewFrame() so attempt to modify the atlas will assert.
 
     // [Internal]
     // NB: Access texture data via GetTexData*() calls! Which will setup a default font for you.
+    bool                        TexPixelsUseColors; // Tell whether our texture data is known to use colors (rather than just alpha channel), in order to help backend select a format.
     unsigned char*              TexPixelsAlpha8;    // 1 component per pixel, each component is unsigned 8-bit. Total size = TexWidth * TexHeight
     unsigned int*               TexPixelsRGBA32;    // 4 component per pixel, each component is unsigned 8-bit. Total size = TexWidth * TexHeight * 4
     int                         TexWidth;           // Texture width calculated during Build().
