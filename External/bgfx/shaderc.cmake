@@ -429,7 +429,7 @@ if(MINGW OR LINUX_GCC)
 endif()
 
 # shaderc
-file(GLOB SHADERC_SRC bgfx/tools/shaderc/*.cpp bgfx/tools/shaderc/*.h bgfx/src/vertexlayout.* bgfx/src/shader_spirv.*)
+file(GLOB SHADERC_SRC bgfx/tools/shaderc/*.cpp bgfx/tools/shaderc/*.h bgfx/src/vertexlayout.* bgfx/src/shader*)
 add_executable(shaderc ${SHADERC_SRC})
 target_compile_features(shaderc PRIVATE cxx_std_14)
 target_include_directories(shaderc PRIVATE bx/include bimg/include bgfx/include)
