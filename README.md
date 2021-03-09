@@ -81,7 +81,7 @@ You need to install the CMakeBuilder plugin first
 
 ### To Pack Texture Atlas
 
-You need to use Tools/crunch (use the built binary in Tools/bin or build it youself)
+You need to use Tools/crunch (build it youself)
 
 The recommended parameters for crunch is: ```-j -p -u -t -s2048 -p8```
 
@@ -101,11 +101,15 @@ You can use Bench/MathBench to see how glm's performance changes.
 
 Curently, there are cmake options provided for these devices:
 
-Lemote Fuloong 2.0: ```cmake .. -DLOONGSON=1```
+Lemote Fuloong 2.0: ```cmake .. -DLOONGSON=1``` (use GALLIUM_DRIVER=softpipe)
 
 PocketCHIP: ```cmake .. -DCHIP=1```
 
 GameShell: ```cmake .. -DCPI=1```
+
+### To Use Shader Compiler on Non-x86_64 Platform
+
+You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 
 ## Current Status
 
