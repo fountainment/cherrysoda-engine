@@ -22,6 +22,11 @@ public:
 	static Entity* First(const Entity* a, const STL::List<Entity*>& b);
 
 	static const STL::List<Entity*> All(const Entity* a, const STL::List<Entity*>& b);
+
+	static inline bool RectToPoint(float rX, float rY, float rW, float rH, const Math::Vec2& point)
+	{
+		return point.x >= rX && point.y >= rY && point.x < rX + rW && point.y < rY + rH;
+	}
 };
 
 } // namespace cherrysoda

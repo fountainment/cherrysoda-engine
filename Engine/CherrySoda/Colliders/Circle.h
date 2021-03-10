@@ -22,6 +22,7 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, Radius, m_radius);
 
 	bool Collide(const Circle* circle) const override;
+	bool Collide(const Hitbox* hitbox) const override;
 	bool Collide(const Math::Vec2& point) const override;
 	void Render(const Camera* camera, const Color& color) const override;
 

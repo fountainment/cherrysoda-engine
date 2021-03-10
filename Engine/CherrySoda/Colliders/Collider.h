@@ -22,6 +22,7 @@ class Circle;
 class Color;
 class Camera;
 class Component;
+class Hitbox;
 
 class Collider
 {
@@ -38,6 +39,7 @@ public:
 
 	bool Collide(const Collider* collider) const;
 	virtual bool Collide(const Circle* circle) const = 0;
+	virtual bool Collide(const Hitbox* hitbox) const = 0;
 	virtual bool Collide(const Math::Vec2& point) const = 0;
 
 	inline Math::Vec2 AbsolutePosition2D() const

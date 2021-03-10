@@ -8,6 +8,7 @@
 #include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/Collider.h>
+#include <CherrySoda/Colliders/Hitbox.h>
 
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>

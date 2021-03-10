@@ -16,6 +16,12 @@ bool Circle::Collide(const Circle* circle) const
 	return Math_LengthSq(vec) <= (Radius() + circle->Radius()) * (Radius() + circle->Radius());
 }
 
+bool Circle::Collide(const Hitbox* hitbox) const
+{
+	// TODO
+	return false;
+}
+
 bool Circle::Collide(const Math::Vec2& point) const
 {
 	const Math::Vec2 vec = AbsolutePosition2D() - point;
@@ -24,5 +30,5 @@ bool Circle::Collide(const Math::Vec2& point) const
 
 void Circle::Render(const Camera* camera, const Color& color) const
 {
-	// TODO:
+	// TODO
 }

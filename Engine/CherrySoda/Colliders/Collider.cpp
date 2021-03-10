@@ -1,6 +1,7 @@
 #include <CherrySoda/Colliders/Collider.h>
 
 #include <CherrySoda/Colliders/Circle.h>
+#include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
@@ -16,7 +17,11 @@ using cherrysoda::Math;
 
 bool Collider::Collide(const Collider* collider) const
 {
-	if (collider->TypeID() == Circle::ColliderTypeID()) {
+	const auto typeID = collider->TypeID();
+	if (typeID == Hitbox::ColliderTypeID()) {
+		return Collide(static_cast<const Hitbox*>(collider));
+	}
+	else if (typeID == Circle::ColliderTypeID()) {
 		return Collide(static_cast<const Circle*>(collider));
 	}
 	return false;
