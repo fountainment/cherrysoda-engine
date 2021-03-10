@@ -2,10 +2,17 @@
 
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/Circle.h>
+#include <CherrySoda/Util/Camera.h>
+#include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Math.h>
 
 using cherrysoda::Hitbox;
 
+using cherrysoda::Camera;
+using cherrysoda::Circle;
 using cherrysoda::Collide;
+using cherrysoda::Color;
+using cherrysoda::Math;
 
 bool Hitbox::Collide(const Circle* circle) const
 {

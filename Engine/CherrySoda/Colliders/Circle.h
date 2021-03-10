@@ -7,6 +7,7 @@ namespace cherrysoda {
 
 class Camera;
 class Color;
+class Hitbox;
 
 class Circle : public Collider
 {

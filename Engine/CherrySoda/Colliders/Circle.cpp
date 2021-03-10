@@ -1,5 +1,7 @@
 #include <CherrySoda/Colliders/Circle.h>
 
+#include <CherrySoda/Colliders/Collide.h>
+#include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
@@ -7,7 +9,9 @@
 using cherrysoda::Circle;
 
 using cherrysoda::Camera;
+using cherrysoda::Collide;
 using cherrysoda::Color;
+using cherrysoda::Hitbox;
 using cherrysoda::Math;
 
 bool Circle::Collide(const Circle* circle) const
