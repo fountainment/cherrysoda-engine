@@ -1028,7 +1028,7 @@ VK_IMPORT_DEVICE
 		{
 		}
 
-		VkResult createSurface()
+		VkResult createSurface(const Resolution& _resolution)
 		{
 			VkResult result = VK_SUCCESS;
 
@@ -1099,7 +1099,7 @@ VK_IMPORT_DEVICE
 					NSView* contentView = (NSView*)window.contentView;
 					CAMetalLayer* layer = [CAMetalLayer layer];
 
-					if (_init.resolution.reset & BGFX_RESET_HIDPI)
+					if (_resolution.reset & BGFX_RESET_HIDPI)
 					{
 						layer.contentsScale = [window backingScaleFactor];
 					}
@@ -1122,6 +1122,7 @@ VK_IMPORT_DEVICE
 #else
 #	error "Figure out KHR surface..."
 #endif // BX_PLATFORM_
+			BX_UNUSED(_resolution);
 
 			m_needToRecreateSurface = false;
 
@@ -2188,7 +2189,7 @@ VK_IMPORT_DEVICE
 
 			errorState = ErrorState::CommandQueueCreated;
 
-			result = createSurface();
+			result = createSurface(_init.resolution);
 
 			if (VK_SUCCESS != result)
 			{
@@ -3430,7 +3431,7 @@ VK_IMPORT_DEVICE
 					if (m_needToRecreateSurface)
 					{
 						vkDestroySurfaceKHR(m_instance, m_surface, m_allocatorCb);
-						VkResult result = createSurface();
+						VkResult result = createSurface(_resolution);
 
 						if (VK_SUCCESS != result)
 						{
@@ -6957,6 +6958,12 @@ VK_DESTROY
 				, &blitInfo
 				, filter
 				);
+
+			setMemoryBarrier(
+				  m_commandBuffer
+				, VK_PIPELINE_STAGE_TRANSFER_BIT
+				, VK_PIPELINE_STAGE_TRANSFER_BIT
+				);
 		}
 
 		if (oldSrcLayout != VK_IMAGE_LAYOUT_UNDEFINED)
@@ -7130,8 +7137,8 @@ VK_DESTROY
 					}
 
 					// renderpass external subpass dependencies handle graphics -> compute and compute -> graphics
-					// but not compute -> compute
-					if (wasCompute && isCompute)
+					// but not compute -> compute (possibly also across views if they contain no draw calls)
+					if (wasCompute)
 					{
 						setMemoryBarrier(
 							  m_commandBuffer
