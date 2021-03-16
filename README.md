@@ -134,4 +134,5 @@ You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 WebGL version (wasm) of Playground/VoxelExperiment:
 
 https://fountainment.github.io/demo/VoxelExperiment/
-https://fountainment.gitee.io/VoxelExperiment
+
+https://fountainment.gitee.io/VoxelExperiment/
