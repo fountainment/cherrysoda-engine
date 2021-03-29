@@ -466,7 +466,14 @@ void cherrysoda::Window::CreateWindow()
 	int windowWidth = Engine::Instance()->GetWindowWidth();
 	int windowHeight = Engine::Instance()->GetWindowHeight();
 	String title = Engine::Instance()->GetTitle();
+#ifdef ANDROID
+	SDL_DisplayMode mode;
+    SDL_GetDesktopDisplayMode(0, &mode);
+	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mode.w, mode.h, SDL_WINDOW_SHOWN);
+    SDL_SetWindowFullscreen(m_mainWindow, SDL_TRUE);
+#else
 	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
+#endif
 	entry::sdlSetWindow(m_mainWindow);
 }
 
