@@ -367,11 +367,13 @@ namespace entry {
 #ifndef __EMSCRIPTEN__
 		if (!SDL_GetWindowWMInfo(_window, &wmi))
 		{
-			return NULL;
+			return nullptr;
 		}
 #endif // __EMSCRIPTEN__
 
-#	if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
+#	if BX_PLATFORM_ANDROID
+		return (void*)wmi.info.android.window;
+#	elif BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #		if ENTRY_CONFIG_USE_WAYLAND
 		wl_egl_window* win_impl = (wl_egl_window*)SDL_GetWindowData(_window, "wl_egl_window");
 		if (!win_impl)
@@ -398,6 +400,7 @@ namespace entry {
 #ifdef __EMSCRIPTEN__
 		return (void*)canvas_id;
 #endif // __EMSCRIPTEN__
+		return nullptr;
 	}
 
 	inline bool sdlSetWindow(SDL_Window* _window)
@@ -422,12 +425,13 @@ namespace entry {
 		pd.ndt = NULL;
 #	elif BX_PLATFORM_WINDOWS
 		pd.ndt = NULL;
+#   elif BX_PLATFORM_EMSCRIPTEN
+		pd.ndt = NULL;
+#   elif BX_PLATFORM_ANDROID
+		pd.ndt = NULL;
 #	elif BX_PLATFORM_STEAMLINK
 		pd.ndt = wmi.info.vivante.display;
 #	endif // BX_PLATFORM_
-#ifdef __EMSCRIPTEN__
-		pd.ndt = NULL;
-#endif // __EMSCRIPTEN__
 		pd.nwh = sdlNativeWindowHandle(_window);
 
 		pd.context = NULL;
@@ -467,10 +471,14 @@ void cherrysoda::Window::CreateWindow()
 	int windowHeight = Engine::Instance()->GetWindowHeight();
 	String title = Engine::Instance()->GetTitle();
 #ifdef ANDROID
+	SDL_SetHint(SDL_HINT_VIDEO_EXTERNAL_CONTEXT, "1");
 	SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(0, &mode);
-	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mode.w, mode.h, SDL_WINDOW_SHOWN);
-    SDL_SetWindowFullscreen(m_mainWindow, SDL_TRUE);
+    windowWidth  = mode.w;
+    windowHeight = mode.h;
+	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
+	SetFullscreen(true);
+	Engine::Instance()->SetWindowSize(windowWidth, windowHeight);
 #else
 	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
 #endif

@@ -30,6 +30,10 @@ if(EMSCRIPTEN)
   set(CHERRYSODA_BUILD_SHADERC OFF)
 endif()
 
+if(ANDROID)
+  set(CHERRYSODA_LIGHT_BUILD ON)
+endif()
+
 # MIPS
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(mips64)|(MIPS64)")
   add_definitions(-Umips)
