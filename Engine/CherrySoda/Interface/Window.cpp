@@ -425,9 +425,9 @@ namespace entry {
 		pd.ndt = NULL;
 #	elif BX_PLATFORM_WINDOWS
 		pd.ndt = NULL;
-#   elif BX_PLATFORM_EMSCRIPTEN
+#	elif BX_PLATFORM_EMSCRIPTEN
 		pd.ndt = NULL;
-#   elif BX_PLATFORM_ANDROID
+#	elif BX_PLATFORM_ANDROID
 		pd.ndt = NULL;
 #	elif BX_PLATFORM_STEAMLINK
 		pd.ndt = wmi.info.vivante.display;
@@ -473,9 +473,9 @@ void cherrysoda::Window::CreateWindow()
 #ifdef ANDROID
 	SDL_SetHint(SDL_HINT_VIDEO_EXTERNAL_CONTEXT, "1");
 	SDL_DisplayMode mode;
-    SDL_GetDesktopDisplayMode(0, &mode);
-    windowWidth  = mode.w;
-    windowHeight = mode.h;
+	SDL_GetDesktopDisplayMode(0, &mode);
+	windowWidth  = mode.w;
+	windowHeight = mode.h;
 	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
 	SetFullscreen(true);
 	Engine::Instance()->SetWindowSize(windowWidth, windowHeight);
