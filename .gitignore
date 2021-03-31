@@ -51,3 +51,12 @@ __pycache__
 External/SDL2-*/
 Engine/tracy
 Engine/.tracy
+
+# Android Project Temp
+External/android-project/.gradle/
+External/android-project/.idea/
+External/android-project/app/.cxx/
+
+# Android Project Local
+External/android-project/app/jni/SDL/
+External/android-project/local.properties

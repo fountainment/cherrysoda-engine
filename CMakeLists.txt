@@ -31,6 +31,7 @@ if(EMSCRIPTEN)
 endif()
 
 if(ANDROID)
+  set(CHERRYSODA_BUILD_TOOLS OFF)
   set(CHERRYSODA_LIGHT_BUILD ON)
 endif()
 
