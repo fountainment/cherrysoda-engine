@@ -26,13 +26,22 @@ option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
 option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
 option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 
+set(OUTSIDE_PROJECTS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../cherrysoda-projects)
+set(OUTSIDE_PROJECTS_FOLDER_EXISTS OFF)
+if(EXISTS ${OUTSIDE_PROJECTS_FOLDER}/CMakeLists.txt)
+  set(OUTSIDE_PROJECTS_FOLDER_EXISTS ON)
+endif()
+
+if(OUTSIDE_PROJECTS_FOLDER_EXISTS OR ANDROID)
+  set(CHERRYSODA_LIGHT_BUILD ON)
+endif()
+
 if(EMSCRIPTEN)
   set(CHERRYSODA_BUILD_SHADERC OFF)
 endif()
 
 if(ANDROID)
   set(CHERRYSODA_BUILD_TOOLS OFF)
-  set(CHERRYSODA_LIGHT_BUILD ON)
 endif()
 
 # MIPS
@@ -255,6 +264,8 @@ if(NOT CHERRYSODA_LIGHT_BUILD)
   endif()
 endif()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Projects)
+if(OUTSIDE_PROJECTS_FOLDER_EXISTS)
+  add_subdirectory(${OUTSIDE_PROJECTS_FOLDER} build)
+elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Projects/CMakeLists.txt)
   add_subdirectory(Projects)
 endif()
