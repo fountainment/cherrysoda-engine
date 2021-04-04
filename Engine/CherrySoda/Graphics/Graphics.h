@@ -62,11 +62,11 @@ public:
 		type::UInt32 m_abgr;
 
 		static void Init();
-		static const PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
+		static inline const PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
 		{
 			return { p[0], p[1], p[2], c };
 		}
-		static const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c = Color::White)
+		static inline const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c = Color::White)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR() };
 		}
@@ -79,11 +79,11 @@ public:
 		type::UInt32 m_normal;
 
 		static void Init();
-		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
+		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
 		{
 			return { p[0], p[1], p[2], c, EncodeNormalU32(n) };
 		}
-		static const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n)
+		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n) };
 		}
@@ -96,11 +96,11 @@ public:
 		float m_u, m_v;
 
 		static void Init();
-		static const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
+		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
 		{
 			return { p[0], p[1], p[2], c, uv[0], uv[1] };
 		}
-		static const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv)
+		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR(), uv[0], uv[1] };
 		}
