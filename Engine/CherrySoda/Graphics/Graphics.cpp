@@ -544,7 +544,7 @@ void Graphics::UpdateView()
 
 void Graphics::SetRenderTarget(RenderTarget2D* renderTarget)
 {
-	bgfx::FrameBufferHandle handle = { bgfx::kInvalidHandle };
+	bgfx::FrameBufferHandle handle = BGFX_INVALID_HANDLE;
 	if (renderTarget != nullptr) {
 		handle = { renderTarget->GetFrameBuffer() };
 	}

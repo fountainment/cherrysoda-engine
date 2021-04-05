@@ -14,13 +14,13 @@ using cherrysoda::Scene;
 
 void RendererBase::BeforeRender(Scene* scene)
 {
-	Graphics::UseRenderPass(RenderPass())->SetRenderTarget(GetRenderTarget());
 	Math::IVec2 renderTargetSize = Graphics::GetRenderTargetSize(GetRenderTarget());
-	Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, renderTargetSize.x, renderTargetSize.y);
 	if (!FixedCameraSize()) {
 		GetCamera()->SetSize(renderTargetSize);
 		if (KeepCameraCenterOrigin()) {
 			GetCamera()->CenterOrigin();
 		}
 	}
+	Graphics::UseRenderPass(RenderPass())->SetRenderTarget(GetRenderTarget());
+	Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, renderTargetSize.x, renderTargetSize.y);
 }
