@@ -20,11 +20,6 @@ public:
 	{
 		SetEffect(GameApp::ms_skyboxShader);
 	}
-
-	void BeforeRender(Scene* scene) override
-	{
-		Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
-	}
 };
 
 class VoxelRenderer : public SingleTagRenderer
@@ -36,11 +31,6 @@ public:
 	: base(tag)
 	{
 		SetEffect(GameApp::ms_voxelShader);
-	}
-
-	void BeforeRender(Scene* scene) override
-	{
-		Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight());
 	}
 };
 
@@ -59,6 +49,7 @@ void MainScene::Begin()
 	m_skyboxRenderer->GetCamera()->SetSize(Vec2_One);
 	m_skyboxRenderer->GetCamera()->Position(Math::Vec3(0.5f, 0.5f, 0.5f));
 	m_skyboxRenderer->GetCamera()->FOV(90.f);
+	m_skyboxRenderer->FixedCameraSize(true);
 
 	m_voxelRenderer = new VoxelRenderer(ms_voxelTag);
 	m_voxelRenderer->RenderPass(2);

@@ -15,6 +15,7 @@ namespace cherrysoda {
 class Camera;
 class Effect;
 class MeshInterface;
+class RenderTarget2D;
 class Texture;
 class Texture2D;
 class TextureCube;
@@ -124,6 +125,7 @@ public:
 
 	using HandleType = type::UInt16;
 	using BufferHandle = HandleType;
+	using FrameBufferHandle = HandleType;
 	using VertexBufferHandle = HandleType;
 	using IndexBufferHandle  = HandleType;
 	using DynamicVertexBufferHandle = HandleType;
@@ -153,7 +155,12 @@ public:
 	static inline Graphics* UseCurrentRenderPass() { return Instance(); }
 	static inline type::UInt16 MaxRenderPassCount() { return ms_maxRenderPassCount; }
 
+	static Math::IVec2 GetRenderTargetSize(RenderTarget2D* renderTarget);
+
 	static void UpdateView();
+	static void SetLinearTextureSampling();
+	static void SetPointTextureSampling();
+	void SetRenderTarget(RenderTarget2D* renderTarget);
 	void SetClearColor(const Color& color);
 	void SetClearDiscard();
 	static void SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder);
@@ -171,7 +178,6 @@ public:
 	static void SetDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer, size_t vertexAmount);
 	static void SetDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer, size_t indexAmount);
 	static void SetTransientVertexBuffer(TransientVertexBufferHandle vertexBuffer);
-	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer);
 	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer, size_t startIndex, size_t indexAmount);
 	static void SetStateDefault(BlendFunction blendFunc = BlendFunction::Default, PrimitiveType = PrimitiveType::Triangles);
 	static void SetStateNoDepth(BlendFunction blendFunc = BlendFunction::Default, PrimitiveType = PrimitiveType::Triangles);
@@ -198,6 +204,9 @@ public:
 
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
 	static TextureHandle CreateTexture2DFromRGBA(void* data, int width, int height);
+	static TextureHandle CreateTexture2DForRenderTarget(int width, int height);
+
+	static FrameBufferHandle CreateFrameBuffer(int num, const TextureHandle* handles);
 
 	static UniformHandle CreateUniformVec4(const String& uniform, type::UInt16 num = 1U);
 	static UniformHandle CreateUniformMat4(const String& uniform);

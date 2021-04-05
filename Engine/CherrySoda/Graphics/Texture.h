@@ -25,6 +25,7 @@ class Texture2D : public Texture
 public:
 	static Texture2D FromFile(const String& filename);
 	static Texture2D FromRGBA(void* data, int width, int height);
+	static Texture2D ForRenderTarget(int width, int height);
 
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }

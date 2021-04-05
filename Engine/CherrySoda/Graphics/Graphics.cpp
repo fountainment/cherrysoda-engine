@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Mesh.h>
+#include <CherrySoda/Graphics/RenderTarget.h>
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Camera.h>
@@ -33,15 +34,38 @@ using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Math;
 using cherrysoda::MeshInterface;
-using cherrysoda::Texture;
-using cherrysoda::Texture2D;
-using cherrysoda::TextureCube;
+using cherrysoda::RenderTarget2D;
 using cherrysoda::STL;
 using cherrysoda::String;
 using cherrysoda::StringID;
 using cherrysoda::StringUtil;
+using cherrysoda::Texture;
+using cherrysoda::Texture2D;
+using cherrysoda::TextureCube;
 
 namespace type = cherrysoda::type;
+
+static uint64_t s_defaultTextureSamplerFlags = 0
+	| BGFX_SAMPLER_U_CLAMP
+	| BGFX_SAMPLER_V_CLAMP;
+
+static constexpr uint64_t s_linearTextureSamplerFlags = 0
+	| BGFX_SAMPLER_U_CLAMP
+	| BGFX_SAMPLER_V_CLAMP;
+
+static constexpr uint64_t s_pointTextureSamplerFlags = 0
+	| BGFX_SAMPLER_MIN_POINT
+	| BGFX_SAMPLER_MAG_POINT
+	| BGFX_SAMPLER_MIP_POINT
+	| BGFX_SAMPLER_U_CLAMP
+	| BGFX_SAMPLER_V_CLAMP;
+
+static inline uint64_t GetTextureSamplerFlags()
+{
+	return s_defaultTextureSamplerFlags;
+}
+
+static bgfx::TextureFormat::Enum s_defaultDepthFormat = bgfx::TextureFormat::Enum::D24;
 
 static const bgfx::EmbeddedShader s_embeddedShaders[] =
 {
@@ -393,12 +417,7 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 	return handle;
 }
 
-bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL)
-{
-	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
-}
-
-bgfx::TextureHandle loadTexture(const char* _name, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL, uint64_t _flags = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE, uint8_t _skip = 0)
+inline bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = s_defaultTextureSamplerFlags, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL)
 {
 	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
 }
@@ -418,6 +437,7 @@ void Graphics::Initialize()
 
 	bgfx::init(init);
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
+	// bgfx::setDebug(BGFX_DEBUG_STATS);
 
 	ms_blendFunctions[(int)Graphics::BlendFunction::Default]  = BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_INV_SRC_ALPHA);
 	ms_blendFunctions[(int)Graphics::BlendFunction::Alpha]    = BGFX_STATE_BLEND_FUNC_SEPARATE(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA, BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_INV_SRC_ALPHA);
@@ -436,6 +456,11 @@ void Graphics::Initialize()
 	PosColorNormalVertex::Init();
 	PosColorTexCoord0Vertex::Init();
 	ImGuiVertex::Init();
+
+	s_defaultDepthFormat =
+		  bgfx::isTextureValid(0, false, 1, bgfx::TextureFormat::D32F, BGFX_TEXTURE_RT | s_pointTextureSamplerFlags)
+		? bgfx::TextureFormat::D32F
+		: bgfx::TextureFormat::D24;
 
 	// Default GUI renderpass
 	// TODO: Move it to GUI::Initialize
@@ -494,9 +519,36 @@ void Graphics::RenderFrame()
 	STL::Clear(s_transientIndexBufferStack);
 }
 
+void Graphics::SetLinearTextureSampling()
+{
+	s_defaultTextureSamplerFlags = s_linearTextureSamplerFlags;
+}
+
+void Graphics::SetPointTextureSampling()
+{
+	s_defaultTextureSamplerFlags = s_pointTextureSamplerFlags;
+}
+
+Math::IVec2 Graphics::GetRenderTargetSize(RenderTarget2D* renderTarget)
+{
+	if (renderTarget) {
+		return Math::IVec2(renderTarget->Width(), renderTarget->Height()); 
+	}
+	else return Engine::Instance()->GetViewSize();
+}
+
 void Graphics::UpdateView()
 {
 	bgfx::reset(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight(), ms_vsyncEnabled ? BGFX_RESET_VSYNC | BGFX_RESET_FLIP_AFTER_RENDER : BGFX_RESET_NONE);
+}
+
+void Graphics::SetRenderTarget(RenderTarget2D* renderTarget)
+{
+	bgfx::FrameBufferHandle handle = { bgfx::kInvalidHandle };
+	if (renderTarget != nullptr) {
+		handle = { renderTarget->GetFrameBuffer() };
+	}
+	bgfx::setViewFrameBuffer(RenderPass(), handle);
 }
 
 void Graphics::SetClearColor(const Color& color)
@@ -797,7 +849,7 @@ const Effect Graphics::GetEmbeddedEffect(const StringID name)
 Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics::TextureInfo* info/* = nullptr */)
 {
 	bgfx::TextureInfo bInfo;
-	Graphics::TextureHandle tex = loadTexture(texture.c_str(), &bInfo).idx;
+	Graphics::TextureHandle tex = loadTexture(texture.c_str(), GetTextureSamplerFlags(), 0, &bInfo).idx;
 	if (info != nullptr) {
 		*info = { bInfo.width, bInfo.height, bInfo.cubeMap };
 	}
@@ -807,7 +859,19 @@ Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics:
 
 Graphics::TextureHandle Graphics::CreateTexture2DFromRGBA(void* data, int width, int height)
 {
-	return bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::Enum::RGBA8, 0, bgfx::copy(data, width * height * 4)).idx;
+	const bgfx::Memory* mem = data != nullptr ? bgfx::copy(data, width * height * 4) : nullptr;
+	return bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::Enum::RGBA8, GetTextureSamplerFlags(), mem).idx;
+}
+
+Graphics::TextureHandle Graphics::CreateTexture2DForRenderTarget(int width, int height)
+{
+	uint64_t flags = GetTextureSamplerFlags() | BGFX_TEXTURE_RT;
+	return bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::Enum::BGRA8, flags).idx;
+}
+
+Graphics::FrameBufferHandle Graphics::CreateFrameBuffer(int num, const Graphics::TextureHandle* handles)
+{
+	return bgfx::createFrameBuffer(num, (const bgfx::TextureHandle*)handles).idx;
 }
 
 Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, type::UInt16 num)

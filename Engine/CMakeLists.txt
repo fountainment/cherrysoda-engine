@@ -41,6 +41,8 @@ set(ENGINE_SRC
   CherrySoda/Graphics/Mesh.h
   CherrySoda/Graphics/MTexture.cpp
   CherrySoda/Graphics/MTexture.h
+  CherrySoda/Graphics/RenderTarget.cpp
+  CherrySoda/Graphics/RenderTarget.h
   CherrySoda/Graphics/SpriteBank.cpp
   CherrySoda/Graphics/SpriteBank.h
   CherrySoda/Graphics/SpriteBatch.cpp
@@ -62,6 +64,8 @@ set(ENGINE_SRC
   CherrySoda/InternalUtilities/TagLists.cpp
   CherrySoda/InternalUtilities/TagLists.h
   CherrySoda/Renderers/Renderer.h
+  CherrySoda/Renderers/RendererBase.cpp
+  CherrySoda/Renderers/RendererBase.h
   CherrySoda/Renderers/EverythingRenderer.cpp
   CherrySoda/Renderers/EverythingRenderer.h
   CherrySoda/Renderers/SingleTagRenderer.cpp

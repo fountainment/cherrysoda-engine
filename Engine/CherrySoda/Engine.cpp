@@ -211,8 +211,7 @@ void Engine::RenderCore()
 	}
 
 	m_graphicsDevice->BeginRenderPass(0);
-	// TODO: add RenderTarget
-	// m_graphicsDevice->SetRenderTarget(nullptr);
+	m_graphicsDevice->SetRenderTarget(nullptr);
 	m_graphicsDevice->SetViewport(0, 0, GetWidth(), GetHeight());
 	m_graphicsDevice->SetClearColor(m_clearColor);
 	m_graphicsDevice->Touch();

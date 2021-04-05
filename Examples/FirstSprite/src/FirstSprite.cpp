@@ -19,6 +19,8 @@ void FirstSprite::Initialize()
 	auto scene = new Scene();
 	auto entity = new Entity();
 
+	Graphics::SetPointTextureSampling();
+
 	auto sprite = new Sprite("assets/atlases/cherry_soda.json");
 	sprite->AddLoop("showcase", "cherrysoda");
 	sprite->Play("showcase");
@@ -30,7 +32,9 @@ void FirstSprite::Initialize()
 	auto camera = renderer->GetCamera();
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 200.f));
+	camera->Scale2D(Math::IVec2(2.0f));
 	camera->CenterOrigin();
+	renderer->KeepCameraCenterOrigin(true);
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	scene->Add(renderer);
 

@@ -254,4 +254,3 @@ void GUI::TextInput(const char* text)
 	ImGuiIO& io = ImGui::GetIO();
 	io.AddInputCharactersUTF8(text);
 }
-
