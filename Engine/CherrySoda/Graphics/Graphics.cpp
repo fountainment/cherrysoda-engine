@@ -450,7 +450,9 @@ void Graphics::Initialize()
 	ms_primitiveTypes[(int)Graphics::PrimitiveType::Lines]     = BGFX_STATE_PT_LINES;
 	ms_primitiveTypes[(int)Graphics::PrimitiveType::Points]    = BGFX_STATE_PT_POINTS;
 
-	ms_texelHalf = bgfx::RendererType::Direct3D9 ==  bgfx::getCaps()->rendererType ? 0.5f : 0.0f;
+	const bgfx::Caps* caps = bgfx::getCaps();
+	ms_originBottomLeft = caps->originBottomLeft;
+	ms_texelHalf = bgfx::RendererType::Direct3D9 == caps->rendererType ? 0.5f : 0.0f;
 
 	PosColorVertex::Init();
 	PosColorNormalVertex::Init();
@@ -1004,6 +1006,7 @@ type::UInt64 Graphics::ms_primitiveTypes[(int)PrimitiveType::Count];
 type::UInt16 Graphics::ms_maxRenderPassCount = BGFX_CONFIG_MAX_VIEWS;
 bool Graphics::ms_vsyncEnabled = true;
 
+bool Graphics::ms_originBottomLeft = false;
 float Graphics::ms_texelHalf = 0.f;
 
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;

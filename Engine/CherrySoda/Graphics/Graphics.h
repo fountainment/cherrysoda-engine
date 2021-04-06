@@ -166,6 +166,7 @@ public:
 	static void SetRenderPassOrder(STL::Vector<type::UInt16> renderPassOrder);
 	void Touch();
 	static void SetVsyncEnabled(bool vsyncEnabled);
+	static inline bool IsOriginBottomLeft() { return ms_originBottomLeft; }
 	static inline float TexelHalf() { return ms_texelHalf; }
 	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(Camera* camera);
@@ -258,6 +259,7 @@ private:
 	static type::UInt16 ms_maxRenderPassCount;
 	static bool ms_vsyncEnabled;
 
+	static bool ms_originBottomLeft;
 	static float ms_texelHalf;
 
 	static ShaderHandle ms_defaultShader;

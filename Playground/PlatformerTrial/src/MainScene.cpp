@@ -61,6 +61,9 @@ void MainScene::Begin()
 	auto screenTex = new Entity();
 	auto image = new Image(MTexture(m_mainScreenTarget->GetTexture2D()));
 	image->CenterOrigin();
+	if (Graphics::IsOriginBottomLeft()) {
+		image->SetSpriteEffects(SpriteEffects::FlipVertically);
+	}
 	screenTex->Tag(s_texture);
 	screenTex->Add(image);
 
