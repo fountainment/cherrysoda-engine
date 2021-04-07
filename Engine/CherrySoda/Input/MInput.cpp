@@ -1,6 +1,7 @@
 #include <CherrySoda/Input/MInput.h>
 
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Util/GUI.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
@@ -15,6 +16,7 @@ using cherrysoda::MInput;
 using cherrysoda::Buttons;
 using cherrysoda::ButtonState;
 using cherrysoda::Engine;
+using cherrysoda::GUI;
 using cherrysoda::Keys;
 using cherrysoda::Math;
 using cherrysoda::STL;
@@ -150,8 +152,14 @@ void MInput::Update()
 		ms_internalDevices[0] = (void*)SDL_GameControllerOpen(0);
 	}
 
-	ms_keyboard->Update();
-	ms_mouse->Update();
+	if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleFocused()) {
+		ms_keyboard->UpdateNull();
+		ms_mouse->UpdateNull ();
+	}
+	else {
+		ms_keyboard->Update();
+		ms_mouse->Update();
+	}
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->Update();
 	}

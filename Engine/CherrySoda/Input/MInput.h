@@ -228,6 +228,7 @@ class MInput
 {
 public:
 	friend class Engine;
+	friend class GUI;
 	friend class Window;
 
 	// Game Pad
@@ -594,12 +595,12 @@ public:
 
 	static MouseData* Mouse() { return ms_mouse; }
 
-	// For GUI
-	static const STL::List<Keys>& GetCurrentKeyboardKeys() { return ms_keyboardKeys; }
-
 	static void Initialize();
 
 private:
+	// For GUI
+	static const STL::List<Keys>& GetCurrentKeyboardKeys() { return ms_keyboardKeys; }
+
 	static void Shutdown();
 	static void Update();
 	static void UpdateNull();

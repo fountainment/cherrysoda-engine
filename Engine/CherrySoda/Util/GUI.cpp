@@ -14,6 +14,7 @@
 
 using cherrysoda::GUI;
 
+using cherrysoda::ButtonState;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Graphics;
@@ -29,6 +30,7 @@ Texture2D GUI::ms_fontTexture;
 type::UInt16 GUI::ms_guiRenderPass = 0;
 bool GUI::ms_disable = false;
 bool GUI::ms_frameStarted = false;
+bool GUI::ms_consoleFocused = false;
 
 static SDL_Cursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
 
@@ -135,9 +137,9 @@ void GUI::Update()
 			io.KeysDown[(int)key] = true;
 		}
 
-		io.KeyShift = MInput::Keyboard()->Check(Keys::LeftShift, Keys::RightShift);
-		io.KeyCtrl = MInput::Keyboard()->Check(Keys::LeftControl, Keys::RightControl);
-		io.KeyAlt = MInput::Keyboard()->Check(Keys::LeftAlt, Keys::RightAlt);
+		io.KeyShift = io.KeysDown[(int)Keys::LeftShift] || io.KeysDown[(int)Keys::RightShift];
+		io.KeyCtrl = io.KeysDown[(int)Keys::LeftControl] || io.KeysDown[(int)Keys::RightControl];
+		io.KeyAlt = io.KeysDown[(int)Keys::LeftAlt] || io.KeysDown[(int)Keys::RightAlt];
 		io.KeySuper = false;
 
 		// Mouse
@@ -148,12 +150,14 @@ void GUI::Update()
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 		}
 
-		auto pos = MInput::Mouse()->RawPosition();
-		io.MousePos = ImVec2((float)pos.x, (float)pos.y);	
-		io.MouseDown[0] = MInput::Mouse()->CheckLeftButton();
-		io.MouseDown[1] = MInput::Mouse()->CheckRightButton();
-		io.MouseDown[2] = MInput::Mouse()->CheckMiddleButton();
-		io.MouseWheel += MInput::Mouse()->WheelDelta() / 120;
+		MInput::MouseState mouse = MInput::GetMouseState();
+		io.MousePos = ImVec2((float)mouse.m_x, (float)mouse.m_y);
+		io.MouseDown[0] = mouse.m_leftButton == ButtonState::Pressed;
+		io.MouseDown[1] = mouse.m_rightButton == ButtonState::Pressed;
+		io.MouseDown[2] = mouse.m_middleButton == ButtonState::Pressed;
+		static int s_previousWheel = mouse.m_scrollWheelValue;
+		io.MouseWheel += (mouse.m_scrollWheelValue - s_previousWheel) / 120;
+		s_previousWheel = mouse.m_scrollWheelValue;
 
 		// Mouse cursor control
 		if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)) {
@@ -183,6 +187,7 @@ void GUI::Update()
 	ms_frameStarted = true;
 
 	// Debug Console GUI
+	ms_consoleFocused = false;
 	if (Engine::Instance()->ConsoleOpened()) {
 		static char s_consoleText[1024 * 16] = "";
 		static char s_command[512] = "";
@@ -201,8 +206,12 @@ void GUI::Update()
 				}
 			}
 			ImGui::EndChild();
-			if ((ImGui::IsWindowFocused() || isLogOutputFocused) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
-				ImGui::SetKeyboardFocusHere(0);
+			if (ImGui::IsWindowFocused() || isLogOutputFocused) {
+				ms_consoleFocused = true;
+				if (!ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)) {
+					ImGui::SetKeyboardFocusHere(0);
+				}
+			}
 			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 4);
 			bool commandInput = ImGui::InputText("", s_command, IM_ARRAYSIZE(s_command), ImGuiInputTextFlags_EnterReturnsTrue);
 			ImGui::PopItemWidth();
