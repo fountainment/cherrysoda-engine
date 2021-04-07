@@ -154,7 +154,7 @@ void MInput::Update()
 
 	if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleFocused()) {
 		ms_keyboard->UpdateNull();
-		ms_mouse->UpdateNull ();
+		ms_mouse->UpdateNull();
 	}
 	else {
 		ms_keyboard->Update();
