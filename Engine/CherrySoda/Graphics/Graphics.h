@@ -205,7 +205,8 @@ public:
 
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
 	static TextureHandle CreateTexture2DFromRGBA(void* data, int width, int height);
-	static TextureHandle CreateTexture2DForRenderTarget(int width, int height);
+	static TextureHandle CreateTexture2DForColorBuffer(int width, int height);
+	static TextureHandle CreateTexture2DForDepthBuffer(int width, int height);
 
 	static FrameBufferHandle CreateFrameBuffer(int num, const TextureHandle* handles);
 

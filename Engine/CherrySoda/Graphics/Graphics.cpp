@@ -865,10 +865,16 @@ Graphics::TextureHandle Graphics::CreateTexture2DFromRGBA(void* data, int width,
 	return bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::Enum::RGBA8, GetTextureSamplerFlags(), mem).idx;
 }
 
-Graphics::TextureHandle Graphics::CreateTexture2DForRenderTarget(int width, int height)
+Graphics::TextureHandle Graphics::CreateTexture2DForColorBuffer(int width, int height)
 {
 	uint64_t flags = GetTextureSamplerFlags() | BGFX_TEXTURE_RT;
 	return bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::Enum::BGRA8, flags).idx;
+}
+
+Graphics::TextureHandle Graphics::CreateTexture2DForDepthBuffer(int width, int height)
+{
+	uint64_t flags = GetTextureSamplerFlags() | BGFX_TEXTURE_RT;
+	return bgfx::createTexture2D(width, height, false, 1, s_defaultDepthFormat, flags).idx;
 }
 
 Graphics::FrameBufferHandle Graphics::CreateFrameBuffer(int num, const Graphics::TextureHandle* handles)
