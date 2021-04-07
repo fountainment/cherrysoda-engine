@@ -182,12 +182,11 @@ void GUI::Update()
 
 	ms_frameStarted = true;
 
-	// Debug Console
+	// Debug Console GUI
 	if (Engine::Instance()->ConsoleOpened()) {
-		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_ReadOnly;
 		static char s_consoleText[1024 * 16] = "";
 		static char s_command[512] = "";
-		static bool s_consoleScrollNeeded = false;
+		static bool s_consoleOutputScrollNeeded = false;
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300, 180), ImVec2(INT_MAX, INT_MAX));
 		ImGui::Begin("Console", nullptr);
 		{
@@ -195,11 +194,11 @@ void GUI::Update()
 			ImGui::BeginChild("LogOutput", ImVec2(0, -ImGui::GetTextLineHeight() * 2), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
-				if (s_consoleScrollNeeded) {
-					ImGui::SetScrollY(ImGui::GetScrollMaxY() + ImGui::GetTextLineHeight());
-					s_consoleScrollNeeded = false;
-				}
 				ImGui::TextUnformatted(s_consoleText);
+				if (s_consoleOutputScrollNeeded) {
+					ImGui::SetScrollY(ImGui::GetScrollMaxY() + ImGui::GetTextLineHeight());
+					s_consoleOutputScrollNeeded = false;
+				}
 			}
 			ImGui::EndChild();
 			if ((ImGui::IsWindowFocused() || isLogOutputFocused) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
@@ -215,7 +214,7 @@ void GUI::Update()
 					std::strcat(s_consoleText, s_command);
 					std::strcat(s_consoleText, "\n");
 					// TODO: Add command processing
-					s_consoleScrollNeeded = true;
+					s_consoleOutputScrollNeeded = true;
 					s_command[0] = '\0';
 				}
 			}
