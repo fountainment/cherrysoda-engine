@@ -14,17 +14,15 @@ using cherrysoda::Scene;
 
 void EverythingRenderer::Render(Scene* scene)
 {
-	// TODO: RenderState stuffs
 	Graphics::BeginRenderPass(RenderPass());
 	Graphics::SetEffect(GetEffect());
 	Graphics::UseCurrentRenderPass()->SetCamera(GetCamera());
 	Draw::GetSpriteBatch()->Begin();
 	scene->Entities()->Render();
-	// TODO: Add DebugRender
-	// if (Engine::Instance()->ConsoleOpened())
-	// 	scene->Entities()->DebugRender(GetCamera());
+	if (Engine::Instance()->ConsoleOpened())
+		scene->Entities()->DebugRender(GetCamera());
 	Draw::GetSpriteBatch()->End();
 	Graphics::SetEffect(nullptr);
+	Graphics::Discard(); // TODO: Move discard to EndRenderPass?
 	Graphics::EndRenderPass(RenderPass());
-	Graphics::Discard();
 }

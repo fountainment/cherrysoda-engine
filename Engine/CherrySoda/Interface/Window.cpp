@@ -554,12 +554,15 @@ void cherrysoda::Window::PollEvents()
 			Engine::Instance()->Exit();
 			break;
 		case SDL_KEYDOWN:
-			switch (event.key.keysym.sym) {
-			case SDLK_ESCAPE:
+			switch (event.key.keysym.scancode) {
+			case SDL_SCANCODE_ESCAPE:
 				Engine::Instance()->Exit();
 				break;
-			case SDLK_F11:
+			case SDL_SCANCODE_F11:
 				ToggleFullscreen();
+				break;
+			case SDL_SCANCODE_GRAVE:
+				Engine::Instance()->ToggleConsole();
 				break;
 			}
 			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.keysym.scancode, key)) {

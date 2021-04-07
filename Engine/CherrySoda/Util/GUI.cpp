@@ -181,6 +181,47 @@ void GUI::Update()
 	ImGui::NewFrame();
 
 	ms_frameStarted = true;
+
+	// Debug Console
+	if (Engine::Instance()->ConsoleOpened()) {
+		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_ReadOnly;
+		static char s_consoleText[1024 * 16] = "";
+		static char s_command[512] = "";
+		static bool s_consoleScrollNeeded = false;
+		ImGui::SetNextWindowSizeConstraints(ImVec2(300, 180), ImVec2(INT_MAX, INT_MAX));
+		ImGui::Begin("Console", nullptr);
+		{
+			bool isLogOutputFocused = false;
+			ImGui::BeginChild("LogOutput", ImVec2(0, -ImGui::GetTextLineHeight() * 2), true);
+			{
+				isLogOutputFocused = ImGui::IsWindowFocused();
+				if (s_consoleScrollNeeded) {
+					ImGui::SetScrollY(ImGui::GetScrollMaxY() + ImGui::GetTextLineHeight());
+					s_consoleScrollNeeded = false;
+				}
+				ImGui::TextUnformatted(s_consoleText);
+			}
+			ImGui::EndChild();
+			if ((ImGui::IsWindowFocused() || isLogOutputFocused) && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
+				ImGui::SetKeyboardFocusHere(0);
+			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 4);
+			bool commandInput = ImGui::InputText("", s_command, IM_ARRAYSIZE(s_command), ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGui::PopItemWidth();
+			ImGui::SameLine(); commandInput |= ImGui::Button("Enter");
+			if (commandInput) {
+				std::string cmd(s_command);
+				if (!cmd.empty()) {
+					std::strcat(s_consoleText, "# ");
+					std::strcat(s_consoleText, s_command);
+					std::strcat(s_consoleText, "\n");
+					// TODO: Add command processing
+					s_consoleScrollNeeded = true;
+					s_command[0] = '\0';
+				}
+			}
+		}
+		ImGui::End();
+	}
 }
 
 void GUI::Render()

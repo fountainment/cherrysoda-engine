@@ -51,6 +51,7 @@ public:
 	inline double TimeRate() const { return m_timeRate; }
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
 	inline int FPS() { return m_FPS; }
+	inline bool ConsoleOpened() { return m_consoleOpened; }
 
 	void Run(int argc = 0, char* argv[] = {});
 	void Exit();
@@ -88,6 +89,8 @@ private:
 	inline void SetWindowSize(int width, int height) { m_windowWidth = width; m_windowHeight = height; }
 	inline void SetViewSize(int width, int height) { m_width = width; m_height = height; }
 
+	inline void ToggleConsole() { m_consoleOpened = !m_consoleOpened; }
+
 	void IsActive(bool active);
 
 	int m_width;
@@ -102,6 +105,7 @@ private:
 	bool m_initialized = false;
 	bool m_resizing = false;
 	bool m_active = false;
+	bool m_consoleOpened = false;
 
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;
