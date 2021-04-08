@@ -196,7 +196,7 @@ void GUI::Update()
 		ImGui::Begin("Console", nullptr);
 		{
 			bool isLogOutputFocused = false;
-			ImGui::BeginChild("LogOutput", ImVec2(0, -ImGui::GetTextLineHeight() * 2), true);
+			ImGui::BeginChild("LogOutput", ImVec2(0, -ImGui::GetTextLineHeight() - 13), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
 				ImGui::TextUnformatted(s_consoleText);
@@ -212,7 +212,7 @@ void GUI::Update()
 					ImGui::SetKeyboardFocusHere(0);
 				}
 			}
-			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 4);
+			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 2 - 26);
 			bool commandInput = ImGui::InputText("", s_command, IM_ARRAYSIZE(s_command), ImGuiInputTextFlags_EnterReturnsTrue);
 			ImGui::PopItemWidth();
 			ImGui::SameLine(); commandInput |= ImGui::Button("Enter");
