@@ -7,6 +7,19 @@ using main::MainScene;
 
 static const BitTag s_texture("screen_texture");
 
+class HollowRect : public GraphicsComponent
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(HollowRect, GraphicsComponent);
+
+	HollowRect() : base(false) {}
+
+	void Render() override
+	{
+		Draw::HollowRect(0, 0, 10, 10);
+	}
+};
+
 void MainScene::Begin()
 {
 	Graphics::SetPointTextureSampling();
@@ -46,6 +59,10 @@ void MainScene::Begin()
 	screenTex->Add(image);
 
 	Add(screenTex);
+
+	auto entity = new Entity();
+	entity->Add(new HollowRect);
+	Add(entity);
 
 	base::Begin();
 }

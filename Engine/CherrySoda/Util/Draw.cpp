@@ -48,12 +48,12 @@ void Draw::Line(const Math::Vec2& start, const Math::Vec2& end, const Color& col
 	LineAngle(start, Calc::Angle(end - start), Math_Length(end - start), color, thickness);
 }
 
-void Draw::HollowRect(float x, float y, float width, float height, const Color& color)
+void Draw::HollowRect(float x, float y, float width, float height, const Color& color/* = Color::White*/)
 {
 	LineAngle(Math::Vec2(x, y), 0, width, color);
-	LineAngle(Math::Vec2(x, y), Math::PiHalf, height, color);
-	LineAngle(Math::Vec2(x + width, y + height), -Math::PiHalf, height, color);
+	LineAngle(Math::Vec2(x + width, y), Math::PiHalf, height, color);
 	LineAngle(Math::Vec2(x + width, y + height), Math::Pi, width, color);
+	LineAngle(Math::Vec2(x, y + height), Math::PiHalf * 3.f, height, color);
 }
 
 void Draw::Circle(const Math::Vec2& position, float radius, const Color& color/* = Color::White*/, float resolution/* = 4.f*/)

@@ -26,7 +26,7 @@ public:
 	static void LineAngle(const Math::Vec2& start, float angle, float length, const Color& color = Color::White, float thickness = 1.f);
 	static void Line(const Math::Vec2& start, const Math::Vec2& end, const Color& color = Color::White, float thickness = 1.f);
 
-	static void HollowRect(float x, float y, float width, float height, const Color& color);
+	static void HollowRect(float x, float y, float width, float height, const Color& color = Color::White);
 	static void Circle(const Math::Vec2& pos, float radius, const Color& color = Color::White, float thickness = 4.f);
 
 private:
