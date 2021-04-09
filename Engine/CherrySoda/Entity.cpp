@@ -159,7 +159,7 @@ void Entity::Depth(int depth)
 void Entity::DebugRender(Camera* camera)
 {
 	if (GetCollider() != nullptr)
-		GetCollider()->Render(camera, Collidable() ? Color::Red : Color::DarkRed);
+		GetCollider()->Render(camera, Collidable() ? Color::Yellow : Color::DarkYellow);
 	m_components->DebugRender(camera);
 }
 

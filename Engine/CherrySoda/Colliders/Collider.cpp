@@ -41,5 +41,5 @@ void Collider::Added(Entity* entity)
 
 void Collider::Render(const Camera* camera) const
 {
-	Render(camera, Color::Red);
+	Render(camera, Color::Yellow);
 }

@@ -4,6 +4,7 @@
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
 using cherrysoda::MTexture;
@@ -13,6 +14,8 @@ using cherrysoda::Math;
 using cherrysoda::SpriteEffects;
 using cherrysoda::String;
 using cherrysoda::Texture2D;
+
+namespace type = cherrysoda::type;
 
 MTexture MTexture::FromFile(const String& filename)
 {
@@ -58,6 +61,22 @@ MTexture::MTexture(const MTexture& parent, const String& atlasPath, const Math::
 
 	ClipRect(parent.GetRelativeRect(clipRect));
 	DrawOffset(drawOffset);
+	Width(width);
+	Height(height);
+	SetUtil();
+}
+
+MTexture::MTexture(int width, int height, const Color& color)
+{
+	unsigned char* data = new unsigned char[width * height * 4];
+	type::UInt32 colorValue = color.U32ABGR();
+	for (int i = 0; i < width * height; ++i) {
+		*((type::UInt32*)(data + (i << 2))) = colorValue;
+	}
+	m_texture = Texture2D::FromRGBA(data, width, height);
+	delete [] data;
+	ClipRect({ IVec2_Zero, Math::IVec2(width, height) });
+	DrawOffset(IVec2_Zero);
 	Width(width);
 	Height(height);
 	SetUtil();

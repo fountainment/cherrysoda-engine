@@ -4,6 +4,7 @@
 #include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
 
 using cherrysoda::Circle;
@@ -11,6 +12,7 @@ using cherrysoda::Circle;
 using cherrysoda::Camera;
 using cherrysoda::Collide;
 using cherrysoda::Color;
+using cherrysoda::Draw;
 using cherrysoda::Hitbox;
 using cherrysoda::Math;
 
@@ -34,5 +36,5 @@ bool Circle::Collide(const Math::Vec2& point) const
 
 void Circle::Render(const Camera* camera, const Color& color) const
 {
-	// TODO
+	Draw::Circle(AbsolutePosition2D(), Radius(), color, 4.f);
 }

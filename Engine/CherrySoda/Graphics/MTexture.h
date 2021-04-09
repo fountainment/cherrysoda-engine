@@ -2,6 +2,7 @@
 #define _CHERRYSODA_GRAPHICS_MTEXTURE_H_
 
 #include <CherrySoda/Graphics/Texture.h>
+#include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
@@ -22,6 +23,7 @@ public:
 	MTexture(const MTexture& parent, const Math::IRectangle& clipRect);
 	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect);
 	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height);
+	MTexture(int width, int height, const Color& color);
 
 	Math::IRectangle GetRelativeRect(int x, int y, int width, int height) const;
 	Math::IRectangle GetRelativeRect(const Math::IRectangle& rect) const;
@@ -41,12 +43,12 @@ public:
 
 	inline bool IsValid() const { return Texture().IsValid(); }
 
+	inline const Texture2D& Texture() const { return m_texture; }
 private:
 	inline void ClipRect(const Math::IRectangle& rect) { m_clipRect = rect; }
 	inline void DrawOffset(const Math::Vec2& drawOffset) { m_drawOffset = drawOffset; }
 	inline void Width(int width) { m_width = width; }
 	inline void Height(int height) { m_height = height; }
-	inline const Texture2D& Texture() const { return m_texture; }
 
 	Texture2D m_texture;
 	Math::IRectangle m_clipRect = { IVec2_Zero, IVec2_Zero };
