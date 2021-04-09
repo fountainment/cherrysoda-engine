@@ -22,10 +22,13 @@ def main():
     cherry.copytree(local_bimg_path, engine_bimg_path)
     cherry.copytree(local_bx_path,   engine_bx_path)
 
+    cherry.rmtree(cherry.join_path(engine_bgfx_path, '.git'))
     cherry.rmtree(cherry.join_path(engine_bgfx_path, '.github'))
     cherry.rmtree(cherry.join_path(engine_bgfx_path, 'bindings'))
     cherry.rmtree(cherry.join_path(engine_bgfx_path, 'examples'))
+    cherry.rmtree(cherry.join_path(engine_bimg_path, '.git'))
     cherry.rmtree(cherry.join_path(engine_bimg_path, 'tools'))
+    cherry.rmtree(cherry.join_path(engine_bx_path,   '.git'))
     cherry.rmtree(cherry.join_path(engine_bx_path,   'tests'))
 
 
