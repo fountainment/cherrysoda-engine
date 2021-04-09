@@ -9,7 +9,7 @@ using platformertrial::PlatformerTrial;
 using namespace cherrysoda;
 
 PlatformerTrial::PlatformerTrial()
-	: base(800, 600, 800, 600, "PlatformerTrial", false)
+	: base(960, 540, 960, 540, "PlatformerTrial", false)
 {
 	SetClearColor(Color::Black);
 }
@@ -36,4 +36,3 @@ void PlatformerTrial::LoadContent()
 
 	// Load textures, sprites, shaders and other resources here
 }
-

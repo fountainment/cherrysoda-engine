@@ -5,41 +5,18 @@
 using namespace cherrysoda;
 using main::MainScene;
 
-static const BitTag s_triangle("triangle");
-static const BitTag s_texture("texture");
-
-class Triangle : public MeshGraphicsComponent<Graphics::PosColorVertex>
-{
-public:
-	CHERRYSODA_DECLARE_COMPONENT(Triangle, MeshGraphicsComponent<VertexType>);
-
-	Triangle() : base(true)
-	{
-		GetMesh()->Clear();
-		GetMesh()->AddTriangle(
-			MK_VERT(Math::Vec3( 0.0f,   1.0f, 0.0f), Color::Red),
-			MK_VERT(Math::Vec3(-0.87f, -0.5f, 0.0f), Color::Green),
-			MK_VERT(Math::Vec3( 0.87f, -0.5f, 0.0f), Color::Blue)
-		);
-		GetMesh()->SubmitBuffer();
-	}
-
-	void Update() override
-	{
-		// RotateOnZ(Engine::Instance()->DeltaTime());
-	}
-};
+static const BitTag s_texture("screen_texture");
 
 void MainScene::Begin()
 {
-	// Add scene initialization here
 	Graphics::SetPointTextureSampling();
 	Graphics::SetRenderPassOrder({ 0, 1, 2 });
 
 	Graphics::UseRenderPass(1)->SetClearColor(Color::Orange);
+	Graphics::UseRenderPass(2)->SetClearDiscard();
 
 	m_mainScreenTarget = new RenderTarget2D(320.0f, 180.0f);
-	m_mainRenderer = new SingleTagRenderer(s_triangle);
+	m_mainRenderer = new TagExcludeRenderer(s_texture);
 	m_screenTexRenderer = new SingleTagRenderer(s_texture);
 
 	m_mainRenderer->RenderPass(1);
@@ -48,15 +25,16 @@ void MainScene::Begin()
 	m_mainRenderer->SetRenderTarget(m_mainScreenTarget);
 	m_screenTexRenderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 
-	m_mainRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 4.f));
-	m_screenTexRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 175.f));
+	m_mainRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 1.f));
+	m_mainRenderer->GetCamera()->UseOrthoProjection(true);
+
+	m_screenTexRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 1.f));
+	m_screenTexRenderer->GetCamera()->UseOrthoProjection(true);
+	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(3.f));
+	m_screenTexRenderer->KeepCameraCenterOrigin(true);
 
 	Add(m_mainRenderer);
 	Add(m_screenTexRenderer);
-
-	auto triangle = new Entity();
-	triangle->Tag(s_triangle);
-	triangle->Add(new Triangle);
 
 	auto screenTex = new Entity();
 	auto image = new Image(MTexture(m_mainScreenTarget->GetTexture2D()));
@@ -67,7 +45,6 @@ void MainScene::Begin()
 	screenTex->Tag(s_texture);
 	screenTex->Add(image);
 
-	Add(triangle);
 	Add(screenTex);
 
 	base::Begin();
@@ -75,7 +52,9 @@ void MainScene::Begin()
 
 void MainScene::Update()
 {
-	// Add scene update here
+	auto viewSize = Engine::Instance()->GetViewSize();
+	int cameraScale = Math_Min(Math_Max(1.f, viewSize.x / 320.f), Math_Max(1.f, viewSize.y / 180.f));
+	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(cameraScale));
 
 	base::Update();
 }
