@@ -1,11 +1,13 @@
 #include <CherrySoda/Util/Camera.h>
 
 #include <CherrySoda/Engine.h>
+#include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Math.h>
 
 using cherrysoda::Camera;
 
 using cherrysoda::Engine;
+using cherrysoda::Graphics;
 using cherrysoda::Math;
 
 // TODO: finish Camera class
@@ -26,8 +28,10 @@ void Camera::UpdateMatrices()
 {
 	if (m_changed) {
 		if (UseOrthoProjection()) {
+			// This assume that the ratio between camera coordinate and pixel coordinate is 1
+			Math::Vec2 texelHalfVec = Math::Vec2(Graphics::TexelHalf() / ScaleX(), Graphics::TexelHalf() / ScaleY());
 			m_viewMatrix = Math_Translate(Math_Scale(Math_Rotate(Math_Translate(Math_Identity<Math::Mat4>(), Origin()), -ZRotation(), Vec3_ZUp), Scale()), -Position());
-			m_projMatrix = Math_Ortho(0.f, m_width, 0.f, m_height, -10000.f, 10000.f);
+			m_projMatrix = Math_Ortho(texelHalfVec.x, m_width + texelHalfVec.x, -texelHalfVec.y, m_height - texelHalfVec.y, -10000.f, 10000.f);
 		}
 		else {
 			const Math::Vec3 actualPos = Position() - Origin();

@@ -33,12 +33,10 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 			}
 		}
 	}
-	// TexelHalf is a hack for d3d9's different pixel coordinate
-	// TODO: Consider moving this hack to camera
-	float leftUV   = ((float)rect.Left()   + Graphics::TexelHalf()) / (float)tex.Width();
-	float rightUV  = ((float)rect.Right()  + Graphics::TexelHalf()) / (float)tex.Width();
-	float bottomUV = ((float)rect.Top()    + Graphics::TexelHalf()) / (float)tex.Height();
-	float topUV    = ((float)rect.Bottom() + Graphics::TexelHalf()) / (float)tex.Height();
+	float leftUV   = (float)rect.Left()   / (float)tex.Width();
+	float rightUV  = (float)rect.Right()  / (float)tex.Width();
+	float bottomUV = (float)rect.Top()    / (float)tex.Height();
+	float topUV    = (float)rect.Bottom() / (float)tex.Height();
 	if ((effects & SpriteEffects::FlipVertically) == SpriteEffects::FlipVertically) {
 		STL::Swap(bottomUV, topUV);
 	}

@@ -721,7 +721,7 @@ void Graphics::Discard()
 	bgfx::discard();
 }
 
-void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf/* = 0.f*/, bool _originBottomLeft/* = false*/, float _width/* = 1.0f*/, float _height/* = 1.0f*/)
+void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft/* = false*/, float _width/* = 1.0f*/, float _height/* = 1.0f*/)
 {
 	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosColorTexCoord0Definition::s_layout)) {
 		bgfx::TransientVertexBuffer vb;
@@ -735,13 +735,11 @@ void Graphics::ScreenSpaceQuad(float _textureWidth, float _textureHeight, float 
 		const float miny = 0.0f;
 		const float maxy = _height*2.0f;
 
-		const float texelHalfW = _texelHalf / _textureWidth;
-		const float texelHalfH = _texelHalf / _textureHeight;
-		const float minu = -1.0f + texelHalfW;
-		const float maxu =  1.0f + texelHalfW;
+		const float minu = -1.0f;
+		const float maxu =  1.0f;
 
-		float minv = texelHalfH;
-		float maxv = 2.0f + texelHalfH;
+		float minv = 0.f;
+		float maxv = 2.0f;
 
 		if (_originBottomLeft)
 		{

@@ -44,7 +44,7 @@ public:
 
 	inline void CenterOrigin()
 	{
-		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera with perspective projection has its center same as its position by default.\n");
+		CHERRYSODA_ASSERT(UseOrthoProjection(), "Shouldn't call CenterOrigin() on perspective camera.\n");
 		Origin(GetSize() * 0.5f);
 	}
 	inline void RoundPosition() { Position(Math_Round(Position())); }

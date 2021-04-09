@@ -33,7 +33,8 @@ public:
 	void Render() override
 	{
 		Graphics::SetTexture(&m_texture);
-		Graphics::ScreenSpaceQuad(m_texture.Width(), m_texture.Height(), Graphics::TexelHalf() / Draw::GetRenderer()->GetCamera()->ScaleX(), !Graphics::IsOriginBottomLeft(), m_texture.Width(), m_texture.Height());
+		Graphics::ScreenSpaceQuad(m_texture.Width(), m_texture.Height(), \
+			!Graphics::IsOriginBottomLeft(), m_texture.Width(), m_texture.Height());
 		Graphics::SetStateNoDepth();
 		Graphics::SubmitOnCurrentRenderPass();
 	}
@@ -65,6 +66,7 @@ void MainScene::Begin()
 
 	m_screenTexRenderer->GetCamera()->Position(Math::Vec3(m_mainScreenTarget->Width() * 0.5f, m_mainScreenTarget->Height() * 0.5f, 1.f));
 	m_screenTexRenderer->GetCamera()->UseOrthoProjection(true);
+	m_screenTexRenderer->GetCamera()->CenterOrigin();
 	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(3.f));
 	m_screenTexRenderer->KeepCameraCenterOrigin(true);
 
@@ -88,7 +90,8 @@ void MainScene::Begin()
 void MainScene::Update()
 {
 	auto viewSize = Engine::Instance()->GetViewSize();
-	int cameraScale = Math_Min(Math_Max(1.f, viewSize.x / 320.f), Math_Max(1.f, viewSize.y / 180.f));
+	int cameraScale = Math_Min(Math_Max(1.f, viewSize.x / (float)m_mainScreenTarget->Width()), \
+		Math_Max(1.f, viewSize.y / (float)m_mainScreenTarget->Height()));
 	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(cameraScale));
 
 	base::Update();
