@@ -7,17 +7,39 @@ using main::MainScene;
 
 static const BitTag s_texture("screen_texture");
 
-class HollowRect : public GraphicsComponent
+class HollowRectGraphicsComponent : public GraphicsComponent
 {
 public:
-	CHERRYSODA_DECLARE_COMPONENT(HollowRect, GraphicsComponent);
+	CHERRYSODA_DECLARE_COMPONENT(HollowRectGraphicsComponent, GraphicsComponent);
 
-	HollowRect() : base(false) {}
+	HollowRectGraphicsComponent() : base(false) {}
 
 	void Render() override
 	{
 		Draw::HollowRect(0, 0, 10, 10);
 	}
+};
+
+class ScreenSpaceQuadGraphicsComponent : public GraphicsComponent
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(ScreenSpaceQuadGraphicsComponent, GraphicsComponent);
+
+	ScreenSpaceQuadGraphicsComponent(const Texture2D& texture)
+		: base(false)
+		, m_texture(texture)
+	{}
+
+	void Render() override
+	{
+		Graphics::SetTexture(&m_texture);
+		Graphics::ScreenSpaceQuad(m_texture.Width(), m_texture.Height(), Graphics::TexelHalf() / Draw::GetRenderer()->GetCamera()->ScaleX(), !Graphics::IsOriginBottomLeft(), m_texture.Width(), m_texture.Height());
+		Graphics::SetStateNoDepth();
+		Graphics::SubmitOnCurrentRenderPass();
+	}
+
+private:
+	Texture2D m_texture;
 };
 
 void MainScene::Begin()
@@ -41,7 +63,7 @@ void MainScene::Begin()
 	m_mainRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 1.f));
 	m_mainRenderer->GetCamera()->UseOrthoProjection(true);
 
-	m_screenTexRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 1.f));
+	m_screenTexRenderer->GetCamera()->Position(Math::Vec3(m_mainScreenTarget->Width() * 0.5f, m_mainScreenTarget->Height() * 0.5f, 1.f));
 	m_screenTexRenderer->GetCamera()->UseOrthoProjection(true);
 	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(3.f));
 	m_screenTexRenderer->KeepCameraCenterOrigin(true);
@@ -50,18 +72,14 @@ void MainScene::Begin()
 	Add(m_screenTexRenderer);
 
 	auto screenTex = new Entity();
-	auto image = new Image(MTexture(m_mainScreenTarget->GetTexture2D()));
-	image->CenterOrigin();
-	if (Graphics::IsOriginBottomLeft()) {
-		image->SetSpriteEffects(SpriteEffects::FlipVertically);
-	}
+	auto screenSpaceQuad = new ScreenSpaceQuadGraphicsComponent(m_mainScreenTarget->GetTexture2D());
 	screenTex->Tag(s_texture);
-	screenTex->Add(image);
+	screenTex->Add(screenSpaceQuad);
 
 	Add(screenTex);
 
 	auto entity = new Entity();
-	entity->Add(new HollowRect);
+	entity->Add(new HollowRectGraphicsComponent);
 	Add(entity);
 
 	base::Begin();

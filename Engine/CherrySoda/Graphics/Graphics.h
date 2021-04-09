@@ -192,7 +192,7 @@ public:
 
 	static void Discard();
 
-	static void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
+	static void ScreenSpaceQuad(float _textureWidth, float _textureHeight, float _texelHalf = 0.f, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
 
 	static IndexBufferHandle CreateIndexBuffer(STL::Vector<type::UInt16>& indices);
 	static DynamicIndexBufferHandle CreateDynamicIndexBuffer(STL::Vector<type::UInt16>& indices);
