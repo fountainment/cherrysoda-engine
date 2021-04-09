@@ -70,6 +70,8 @@ set(ENGINE_SRC
   CherrySoda/Renderers/EverythingRenderer.h
   CherrySoda/Renderers/SingleTagRenderer.cpp
   CherrySoda/Renderers/SingleTagRenderer.h
+  CherrySoda/Renderers/TagExcludeRenderer.cpp
+  CherrySoda/Renderers/TagExcludeRenderer.h
   CherrySoda/Util/BitTag.cpp
   CherrySoda/Util/BitTag.h
   CherrySoda/Util/Calc.cpp

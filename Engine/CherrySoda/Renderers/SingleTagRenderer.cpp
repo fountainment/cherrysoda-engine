@@ -18,11 +18,17 @@ void SingleTagRenderer::Render(Scene* scene)
 	Graphics::SetEffect(GetEffect());
 	Graphics::UseCurrentRenderPass()->SetCamera(GetCamera());
 	Draw::GetSpriteBatch()->Begin();
-	scene->Entities()->RenderOnly(m_tag);
-	if (Engine::Instance()->ConsoleOpened())
-		scene->Entities()->DebugRender(GetCamera());
+	for (auto entity : (*scene)[m_tag]) {
+		if (entity->Visible()) {
+			entity->Render();
+		}
+	}
+	if (Engine::Instance()->ConsoleOpened()) {
+		for (auto entity : (*scene)[m_tag]) {
+			entity->DebugRender(GetCamera());
+		}
+	}
 	Draw::GetSpriteBatch()->End();
 	Graphics::SetEffect(nullptr);
-	Graphics::Discard(); // TODO: Move discard to EndRenderPass?
 	Graphics::EndRenderPass(RenderPass());
 }

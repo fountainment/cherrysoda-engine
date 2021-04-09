@@ -148,6 +148,7 @@ public:
 	static inline void EndRenderPass(type::UInt16 renderPassId)
 	{
 		CHERRYSODA_ASSERT_FORMAT(Instance()->RenderPass() == renderPassId, "Current RenderPass %u != %u!\n", Instance()->RenderPass(), renderPassId);
+		Discard();
 		Instance()->RenderPass(0);
 	}
 	static inline type::UInt16 CurrentRenderPass() { return Instance()->m_renderPassId; }

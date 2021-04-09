@@ -81,7 +81,7 @@ protected:
 
 	virtual void RenderCore();
 
-	virtual void OnSceneTransition(Scene* from, Scene* to); 
+	virtual void OnSceneTransition(Scene* from, Scene* to);
 
 private:
 	friend class Window;

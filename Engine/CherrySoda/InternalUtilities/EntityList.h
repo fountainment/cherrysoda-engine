@@ -57,6 +57,7 @@ private:
 
 	Scene* m_scene = nullptr;
 
+public:
 	CHERRYSODA_ITERABLE(m_entities);
 };
 

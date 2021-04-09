@@ -35,6 +35,7 @@ private:
 	IterableRenderers m_removing;
 	Scene* m_scene = nullptr;
 
+public:
 	CHERRYSODA_ITERABLE(m_renderers);
 };
 

@@ -42,6 +42,7 @@
 
 #include <CherrySoda/Renderers/EverythingRenderer.h>
 #include <CherrySoda/Renderers/SingleTagRenderer.h>
+#include <CherrySoda/Renderers/TagExcludeRenderer.h>
 
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Calc.h>
