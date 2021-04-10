@@ -4,6 +4,7 @@ import glob
 import os
 import platform
 import shutil
+import stat
 import subprocess
 import sys
 import zipfile
@@ -131,8 +132,14 @@ def copytree(src, dest):
     shutil.copytree(src, dest)
 
 
+def readonly_handler(func, path, execinfo):
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
 def rmtree(t):
-    shutil.rmtree(t)
+    if exists(t):
+        shutil.rmtree(t, onerror=readonly_handler)
 
 
 def move(src, dest):
