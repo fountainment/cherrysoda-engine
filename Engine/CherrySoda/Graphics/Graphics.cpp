@@ -67,16 +67,6 @@ static inline uint64_t GetTextureSamplerFlags()
 
 static bgfx::TextureFormat::Enum s_defaultDepthFormat = bgfx::TextureFormat::Enum::D24;
 
-static const bgfx::EmbeddedShader s_embeddedShaders[] =
-{
-	BGFX_EMBEDDED_SHADER(vs_basic),
-	BGFX_EMBEDDED_SHADER(fs_basic),
-	BGFX_EMBEDDED_SHADER(vs_sprite),
-	BGFX_EMBEDDED_SHADER(fs_sprite),
-
-	BGFX_EMBEDDED_SHADER_END()
-};
-
 static STL::HashMap<StringID,Effect> s_embeddedEffects;
 
 class PosColorDefinition
@@ -468,9 +458,10 @@ void Graphics::Initialize()
 	// TODO: Move it to GUI::Initialize
 	bgfx::setViewMode(MaxRenderPassCount() - 1, bgfx::ViewMode::Sequential);
 
-	ms_defaultShader = Graphics::CreateShaderProgramFromEmbedded("vs_basic", "fs_basic");
-	s_embeddedEffects["basic"]  = Effect(ms_defaultShader);
-	s_embeddedEffects["sprite"] = Effect::LoadEffectFromEmbedded("sprite");
+	for (auto shaderName : s_embeddedShaderNameList) {
+		s_embeddedEffects[shaderName] = Effect::LoadEffectFromEmbedded(shaderName);
+	}
+	ms_defaultShader = s_embeddedEffects["basic"].GetShader();
 
 	ms_samplerTex        = CreateUniformSampler("s_tex");
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");

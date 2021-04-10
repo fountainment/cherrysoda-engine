@@ -12,4 +12,20 @@
 #include "embedded_shaders/fs_sprite.dx.bin.h"
 #endif // _WIN32
 
+static const bgfx::EmbeddedShader s_embeddedShaders[] =
+{
+	BGFX_EMBEDDED_SHADER(vs_basic),
+	BGFX_EMBEDDED_SHADER(fs_basic),
+	BGFX_EMBEDDED_SHADER(vs_sprite),
+	BGFX_EMBEDDED_SHADER(fs_sprite),
+
+	BGFX_EMBEDDED_SHADER_END()
+};
+
+static const cherrysoda::STL::Vector<cherrysoda::String> s_embeddedShaderNameList =
+{
+	"basic",
+	"sprite"
+};
+
 #endif // _CHERRYSODA_EMBEDDED_SHADERS_H_

@@ -135,6 +135,19 @@ def generate_embedded_shader_header(shader_dir):
         header_file.write('#include "embedded_shaders/fs_%s.dx.bin.h"\n' % (shader,))
     header_file.write('#endif // _WIN32\n') 
     header_file.write('\n')
+    header_file.write('static const bgfx::EmbeddedShader s_embeddedShaders[] =\n{\n')
+    for shader in shader_names:
+        header_file.write('\tBGFX_EMBEDDED_SHADER(vs_%s),\n' % (shader,))
+        header_file.write('\tBGFX_EMBEDDED_SHADER(fs_%s),\n' % (shader,))
+    header_file.write('\n\tBGFX_EMBEDDED_SHADER_END()\n};\n')
+    header_file.write('\n')
+    header_file.write('static const cherrysoda::STL::Vector<cherrysoda::String> s_embeddedShaderNameList =\n{\n')
+    for shader in shader_names[:-1]:
+        header_file.write('\t"%s",\n' % (shader,))
+    if shader_names:
+        header_file.write('\t"%s"\n' % (shader_names[-1],))
+    header_file.write('};\n')
+    header_file.write('\n')
     header_file.write('#endif // _CHERRYSODA_EMBEDDED_SHADERS_H_\n') 
     header_file.close()
 
