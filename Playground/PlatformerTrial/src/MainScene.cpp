@@ -33,8 +33,7 @@ public:
 	void Render() override
 	{
 		Graphics::SetTexture(&m_texture);
-		Graphics::ScreenSpaceQuad(m_texture.Width(), m_texture.Height(), \
-			!Graphics::IsOriginBottomLeft(), m_texture.Width(), m_texture.Height());
+		Graphics::ScreenSpaceQuad(m_texture.Width(), m_texture.Height(), Graphics::IsOriginBottomLeft());
 		Graphics::SetStateNoDepth();
 		Graphics::SubmitOnCurrentRenderPass();
 	}

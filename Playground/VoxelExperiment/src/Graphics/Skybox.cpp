@@ -9,7 +9,7 @@ using cherrysoda::Graphics;
 void Skybox::Render()
 {
 	Graphics::SetTextureCube(&GameApp::ms_texCube);
-	Graphics::ScreenSpaceQuad(1.f, 1.f);
+	Graphics::ScreenSpaceQuad(1.f, 1.f, true);
 	Graphics::SetStateNoDepth();
 	Graphics::SubmitOnCurrentRenderPass();
 }
