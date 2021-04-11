@@ -152,18 +152,26 @@ void MInput::Update()
 		ms_internalDevices[0] = (void*)SDL_GameControllerOpen(0);
 	}
 
-	if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleFocused()) {
-		ms_keyboard->UpdateNull();
-		ms_mouse->UpdateNull();
+	if (Engine::Instance()->IsActive()) {
+		if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleFocused()) {
+			ms_keyboard->UpdateNull();
+			ms_mouse->UpdateNull();
+		}
+		else {
+			ms_keyboard->Update();
+			ms_mouse->Update();
+		}
+		for (int i = 0; i < 4; ++i) {
+			ms_gamePads[i]->Update();
+		}
 	}
 	else {
-		ms_keyboard->Update();
-		ms_mouse->Update();
+		ms_keyboard->UpdateNull();
+		ms_mouse->UpdateNull();
+		for (int i = 0; i < 4; ++i) {
+			ms_gamePads[i]->UpdateNull();
+		}
 	}
-	for (int i = 0; i < 4; ++i) {
-		ms_gamePads[i]->Update();
-	}
-	// TODO: UpdateNull when !IsActive
 	// TODO: VirtualInputs
 }
 
