@@ -8,6 +8,9 @@ set(CHERRYSODA_EXECUTABLE_SRC
 )
 
 set(CHERRYSODA_SHADER_SRC
+  shaders/varying.def.sc
+  shaders/vs_screenspacequad.sc
+  shaders/fs_screenspacequad.sc
 )
 
 add_cherrysoda_executable(PlatformerTrial)

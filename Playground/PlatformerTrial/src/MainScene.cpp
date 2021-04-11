@@ -16,7 +16,7 @@ public:
 
 	void Render() override
 	{
-		Draw::HollowRect(0, 0, 10, 10);
+		Draw::HollowRect(RenderPosition().x, RenderPosition().y, 10, 10);
 	}
 };
 
@@ -58,7 +58,7 @@ void MainScene::Begin()
 	m_screenTexRenderer->RenderPass(2);
 
 	m_mainRenderer->SetRenderTarget(m_mainScreenTarget);
-	m_screenTexRenderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
+	m_screenTexRenderer->SetEffect(Effect::LoadEffectFromFile("screenspacequad"));
 
 	m_mainRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 1.f));
 	m_mainRenderer->GetCamera()->UseOrthoProjection(true);

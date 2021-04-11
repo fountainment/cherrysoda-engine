@@ -724,13 +724,13 @@ void Graphics::ScreenSpaceQuad(float _width/* = 1.0f*/, float _height/* = 1.0f*/
 		const float minx = -_width;
 		const float maxx =  _width;
 		const float miny = 0.0f;
-		const float maxy = _height*2.0f;
+		const float maxy = _height * 2.0f;
 
 		const float minu = -1.0f;
 		const float maxu =  1.0f;
 
-		const float minv = _originBottomLeft ? 0.f :  1.0f;
-		const float maxv = _originBottomLeft ? 2.f : -1.0f;
+		const float minv = _originBottomLeft ? 0.0f :  1.0f;
+		const float maxv = _originBottomLeft ? 2.0f : -1.0f;
 
 		vertex[0].m_x = minx;
 		vertex[0].m_y = miny;
