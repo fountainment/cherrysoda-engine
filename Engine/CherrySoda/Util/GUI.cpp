@@ -192,7 +192,7 @@ void GUI::Update()
 		static char s_consoleText[1024 * 16] = "";
 		static char s_command[512] = "";
 		static bool s_consoleOutputScrollNeeded = false;
-		ImGui::SetNextWindowSizeConstraints(ImVec2(300, 180), ImVec2(INT_MAX, INT_MAX));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(300, 180), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console", nullptr);
 		{
 			bool isLogOutputFocused = false;

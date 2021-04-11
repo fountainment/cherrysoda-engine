@@ -27,7 +27,7 @@ constexpr type::Int32 GetHashBKDR(const char* str)
 	type::Int32 seed = 131;
 	type::Int32 hash = 0;
 	for (int i = 0; str[i]; ++i) {
-		hash = hash * seed + str[i];
+		hash = static_cast<type::Int32>(static_cast<type::Int64>(hash) * seed + str[i]);
 	}
 	return hash & 0x7fffffff;
 }
