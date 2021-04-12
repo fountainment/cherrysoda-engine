@@ -22,6 +22,7 @@ public:
 	void Update() override;
 
 	cherrysoda::RenderTarget2D* m_mainScreenTarget = nullptr;
+	cherrysoda::SingleTagRenderer* m_backgroundRenderer = nullptr;
 	cherrysoda::TagExcludeRenderer* m_mainRenderer = nullptr;
 	cherrysoda::SingleTagRenderer* m_screenTexRenderer = nullptr;
 };
