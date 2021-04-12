@@ -21,7 +21,7 @@ public:
 	inline void SetEffect(const Effect& effect) { *GetEffect() = effect; }
 	inline void SetRenderTarget(RenderTarget2D* renderTarget) { m_renderTarget = renderTarget; }
 
-	void BeforeRender(Scene* scene) override;
+	void RenderPrepare(Scene* scene) override;
 
 	inline type::UInt16 RenderPass() { return m_renderPass; };
 	inline void RenderPass(type::UInt16 renderPass) { m_renderPass = renderPass; }

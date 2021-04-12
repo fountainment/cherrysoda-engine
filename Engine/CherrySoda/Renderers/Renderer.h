@@ -12,6 +12,7 @@ class Renderer
 public:
 	virtual void Update(Scene* scene) {}
 	virtual void BeforeRender(Scene* scene) {}
+	virtual void RenderPrepare(Scene* scene) {}
 	virtual void Render(Scene* scene) = 0;
 	virtual void AfterRender(Scene* scene) {}
 

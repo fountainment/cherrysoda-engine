@@ -17,6 +17,7 @@ public:
 	static void Terminate();
 
 	static void UseDebugPixelTexture();
+	static void DestroyDebugPixelTexture();
 
 	static inline Renderer* GetRenderer() { return ms_renderer; }
 	static inline void SetRenderer(Renderer* renderer) { ms_renderer = renderer; } 
@@ -27,7 +28,7 @@ public:
 	static void Line(const Math::Vec2& start, const Math::Vec2& end, const Color& color = Color::White, float thickness = 1.f);
 
 	static void HollowRect(float x, float y, float width, float height, const Color& color = Color::White);
-	static void Circle(const Math::Vec2& pos, float radius, const Color& color = Color::White, float thickness = 4.f);
+	static void Circle(const Math::Vec2& pos, float radius, const Color& color = Color::White, float resolution = 4.f);
 
 private:
 	static MTexture ms_pixel;

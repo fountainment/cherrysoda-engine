@@ -40,6 +40,7 @@ executable_suffix = ('', '.exe')[is_windows_system()]
 
 project_path  = abspath(join_path(get_file_path(__file__), '../..'))
 engine_path   = join_path(project_path, 'Engine')
+shader_path   = join_path(engine_path, 'CherrySoda/Graphics/shaders')
 tool_path     = join_path(project_path, 'Tools')
 external_path = join_path(project_path, 'External')
 tmp_path      = join_path(project_path, 'Tmp')
@@ -67,11 +68,12 @@ def execute_command(command):
     subprocess.call(command)
 
 
-def compile_shader(shader_source, output, platform, shader_type, include_path=None, profile=None, opt_level=None, bin2c_array=None):
+def compile_shader(shader_source, output, platform, shader_type, include_paths=None, profile=None, opt_level=None, bin2c_array=None):
     shader_compiler = (shaderc, shaderc_local)[exists(shaderc_local)]
     command = [shader_compiler, '-f', shader_source, '-o', output, '--platform', platform, '--type', shader_type]
-    if include_path:
-        command += ['-i', include_path]
+    if include_paths:
+        for include_path in include_paths:
+            command += ['-i', include_path]
     if profile:
         command += ['--profile', profile]
     if opt_level:

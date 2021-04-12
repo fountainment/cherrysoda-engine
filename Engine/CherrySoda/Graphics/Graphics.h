@@ -80,11 +80,11 @@ public:
 		type::UInt32 m_normal;
 
 		static void Init();
-		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n)
+		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n = Vec3_ZUp)
 		{
 			return { p[0], p[1], p[2], c, EncodeNormalU32(n) };
 		}
-		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n)
+		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n = Vec3_ZUp)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n) };
 		}
@@ -97,11 +97,11 @@ public:
 		float m_u, m_v;
 
 		static void Init();
-		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv)
+		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv = Vec2_Zero)
 		{
 			return { p[0], p[1], p[2], c, uv[0], uv[1] };
 		}
-		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv)
+		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv = Vec2_Zero)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR(), uv[0], uv[1] };
 		}
@@ -223,7 +223,6 @@ public:
 	static void DestroyDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer);
 	static void DestroyShader(ShaderHandle shader);
 	static void DestroyTexture(TextureHandle texture);
-	static void DestroyUniform(UniformHandle uniform);
 
 	static void SetScissor(int x, int y, int w, int h);
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
@@ -234,6 +233,8 @@ public:
 	static void SetTexture(const Texture* texture);
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
+	static void SetUniform(StringID uniformName, const void* value, type::UInt16 size = 1U);
+	static void SetUniformTime();
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit = true);
@@ -267,10 +268,13 @@ private:
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;
 	
+	static STL::HashMap<StringID, UniformHandle> ms_uniformHashMap;
+
 	static UniformHandle ms_samplerTex;
 	static UniformHandle ms_samplerTexCube;
 	static UniformHandle ms_samplerTexCubeIrr;
 
+	static UniformHandle ms_uniformTime;
 	static UniformHandle ms_uniformCamPos;
 	static UniformHandle ms_uniformLights;
 	static UniformHandle ms_uniformMaterial;

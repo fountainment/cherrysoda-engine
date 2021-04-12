@@ -13,7 +13,7 @@ def compile_shader_program(shader_dir, shader_name):
     frag_shader = cherry.join_path(shader_dir, 'shaders/fs_' + shader_name + '.sc')
     vert_out    = cherry.join_path(shader_dir, '%s/vs_' + shader_name + '.bin')
     frag_out    = cherry.join_path(shader_dir, '%s/fs_' + shader_name + '.bin')
-    include_dir = cherry.bgfx_src_path
+    include_dirs= [cherry.bgfx_src_path, cherry.shader_path]
 
     shader_out_dir = 'assets/shaders'
 
@@ -35,8 +35,8 @@ def compile_shader_program(shader_dir, shader_name):
     for info_arr in compile_info:
         platform, profile, opt_level, shader_id = info_arr
         folder    = cherry.join_path(shader_out_dir, shader_id)
-        cherry.compile_shader(vert_shader, vert_out % folder, platform, 'vertex',   include_dir, profile[0], opt_level)
-        cherry.compile_shader(frag_shader, frag_out % folder, platform, 'fragment', include_dir, profile[1], opt_level)
+        cherry.compile_shader(vert_shader, vert_out % folder, platform, 'vertex',   include_dirs, profile[0], opt_level)
+        cherry.compile_shader(frag_shader, frag_out % folder, platform, 'fragment', include_dirs, profile[1], opt_level)
 
 
 def compile_embedded_shader_program(shader_dir, shader_name):
@@ -47,7 +47,7 @@ def compile_embedded_shader_program(shader_dir, shader_name):
     frag_out    = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '.bin.h')
     dx_vert_out = cherry.join_path(shader_dir, 'embedded_shaders/vs_' + shader_name + '.dx.bin.h')
     dx_frag_out = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '.dx.bin.h')
-    include_dir = cherry.bgfx_src_path
+    include_dirs= [cherry.bgfx_src_path, cherry.shader_path]
     shader_tmp  = cherry.join_path(cherry.tmp_path, 'shader.tmp')
 
     compile_info = [
@@ -75,9 +75,9 @@ def compile_embedded_shader_program(shader_dir, shader_name):
         profile   = info_dict.get('profile', [None, None])
         opt_level = info_dict.get('opt_level')
         suffix    = info_dict.get('suffix', '')
-        cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dir, profile[0], opt_level, 'vs_' + shader_name + '_' + suffix)
+        cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dirs, profile[0], opt_level, 'vs_' + shader_name + '_' + suffix)
         vs_file.write(cherry.read_file(shader_tmp))
-        cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dir, profile[1], opt_level, 'fs_' + shader_name + '_' + suffix)
+        cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dirs, profile[1], opt_level, 'fs_' + shader_name + '_' + suffix)
         fs_file.write(cherry.read_file(shader_tmp))
     vs_file.write('extern const uint8_t* vs_' + shader_name + '_pssl;\n')
     vs_file.write('extern const uint32_t vs_' + shader_name + '_pssl_size;\n')
@@ -107,9 +107,9 @@ def compile_embedded_shader_program(shader_dir, shader_name):
             profile   = info_dict.get('profile', [None, None])
             opt_level = info_dict.get('opt_level')
             suffix    = info_dict.get('suffix', '')
-            cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dir, profile[0], opt_level, 'vs_' + shader_name + '_' + suffix)
+            cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dirs, profile[0], opt_level, 'vs_' + shader_name + '_' + suffix)
             vs_file.write(cherry.read_file(shader_tmp))
-            cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dir, profile[1], opt_level, 'fs_' + shader_name + '_' + suffix)
+            cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dirs, profile[1], opt_level, 'fs_' + shader_name + '_' + suffix)
             fs_file.write(cherry.read_file(shader_tmp))
         vs_file.close()
         fs_file.close()

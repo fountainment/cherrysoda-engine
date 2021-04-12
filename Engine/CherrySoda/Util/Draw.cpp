@@ -28,6 +28,7 @@ void Draw::Initialize()
 
 void Draw::Terminate()
 {
+	DestroyDebugPixelTexture();
 	delete ms_spriteBatch;
 }
 
@@ -36,6 +37,12 @@ void Draw::UseDebugPixelTexture()
 	MTexture texture = MTexture(2, 2, Color::White);
 	ms_pixel = MTexture(texture, 0, 0, 1, 1);
 	ms_particle = MTexture(texture, 0, 0, 2, 2);
+}
+
+void Draw::DestroyDebugPixelTexture()
+{
+	// TODO: use a more elegant way to do this, consider texture ref count?
+	Graphics::DestroyTexture(ms_pixel.Texture().GetHandle());
 }
 
 void Draw::LineAngle(const Math::Vec2& start, float angle, float length, const Color& color/* = Color::White*/, float thickness/* = 1.f*/)

@@ -46,6 +46,8 @@ public:
 	Math::IVec2 GetWindowPosition();
 	void SetMousePosition(const Math::IVec2& pos);
 
+	inline float RawGameTime() const { return static_cast<float>(m_rawGameTime); }
+	inline float GameTime() const { return static_cast<float>(m_gameTime); }
 	inline float RawDeltaTime() const { return static_cast<float>(m_rawDeltaTime); }
 	inline float DeltaTime() const { return static_cast<float>(m_deltaTime); }
 	inline double TimeRate() const { return m_timeRate; }
@@ -110,6 +112,8 @@ private:
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;
 	double m_deltaTime = 0.0;
+	double m_rawGameTime = 0.0;
+	double m_gameTime = 0.0;
 	double m_currentTime = 0.0;
 	double m_lastFrameTime = 0.0;
 	double m_counterElapsed = 0.0;

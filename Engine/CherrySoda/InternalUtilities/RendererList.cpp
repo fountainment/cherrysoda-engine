@@ -66,6 +66,7 @@ void RendererList::Render()
 	for (auto renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
 		Draw::SetRenderer(renderer);
+		renderer->RenderPrepare(m_scene);
 		renderer->Render(m_scene);
 	}
 }

@@ -467,6 +467,7 @@ void Graphics::Initialize()
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
 	ms_samplerTexCubeIrr = CreateUniformSampler("s_texCubeIrr");
 
+	ms_uniformTime     = CreateUniformVec4("u_times");
 	ms_uniformCamPos   = CreateUniformVec4("u_camPos");
 	ms_uniformMaterial = CreateUniformVec4("u_material", 2);
 	ms_uniformLights   = CreateUniformVec4("u_lights", 8);
@@ -476,16 +477,18 @@ void Graphics::Initialize()
 	ms_renderPassHelperInstance = new Graphics();
 }
 
+inline void DestroyUniform(Graphics::UniformHandle handle)
+{
+	bgfx::UniformHandle hdl = { handle };
+	bgfx::destroy(hdl);
+}
+
 void Graphics::Terminate()
 {
-	DestroyUniform(ms_samplerTex);
-	DestroyUniform(ms_samplerTexCube);
-	DestroyUniform(ms_samplerTexCubeIrr);
-
-	DestroyUniform(ms_uniformCamPos);
-	DestroyUniform(ms_uniformMaterial);
-	DestroyUniform(ms_uniformLights);
-	DestroyUniform(ms_uniformParams);
+	for (auto& uniform : ms_uniformHashMap) {
+		DestroyUniform(uniform.second);
+	}
+	STL::Clear(ms_uniformHashMap);
 
 	for (auto& embeddedEffect : s_embeddedEffects) {
 		DestroyShader(embeddedEffect.second.GetShader());
@@ -862,17 +865,26 @@ Graphics::FrameBufferHandle Graphics::CreateFrameBuffer(int num, const Graphics:
 
 Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, type::UInt16 num)
 {
-	return bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Vec4, num).idx;
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_uniformHashMap, uniform), "Uniform '%s' already exists.\n", uniform.c_str());
+	Graphics::UniformHandle handle = bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Vec4, num).idx;
+	ms_uniformHashMap[uniform] = handle;
+	return handle;
 }
 
 Graphics::UniformHandle Graphics::CreateUniformMat4(const String& uniform)
 {
-	return bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Mat4).idx;
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_uniformHashMap, uniform), "Uniform '%s' already exists.\n", uniform.c_str());
+	Graphics::UniformHandle handle = bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Mat4).idx;
+	ms_uniformHashMap[uniform] = handle;
+	return handle;
 }
 
 Graphics::UniformHandle Graphics::CreateUniformSampler(const String& sampler)
 {
-	return bgfx::createUniform(sampler.c_str(), bgfx::UniformType::Sampler).idx;
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_uniformHashMap, sampler), "Uniform '%s' already exists.\n", sampler.c_str());
+	Graphics::UniformHandle handle = bgfx::createUniform(sampler.c_str(), bgfx::UniformType::Sampler).idx;
+	ms_uniformHashMap[sampler] = handle;
+	return handle;
 }
 
 void Graphics::DestroyVertexBuffer(VertexBufferHandle handle)
@@ -911,12 +923,6 @@ void Graphics::DestroyTexture(TextureHandle handle)
 	bgfx::destroy(hdl);
 }
 
-void Graphics::DestroyUniform(UniformHandle handle)
-{
-	bgfx::UniformHandle hdl = { handle };
-	bgfx::destroy(hdl);
-}
-
 void Graphics::SetScissor(int x, int y, int w, int h)
 {
 	bgfx::setScissor(x, y, w, h);
@@ -945,6 +951,19 @@ void Graphics::SetTexture(const Texture* texture)
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, type::UInt16 size/* = 1U*/)
 {
 	bgfx::setUniform({ uniform }, value, size);
+}
+
+void Graphics::SetUniform(StringID uniformName, const void* value, type::UInt16 size/* = 1U*/)
+{
+	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(ms_uniformHashMap, uniformName), "Uniform '%s' doesn't exist.\n", uniformName.GetStr().c_str());
+	bgfx::setUniform({ ms_uniformHashMap[uniformName] }, value, size);
+}
+
+void Graphics::SetUniformTime()
+{
+	auto inst = Engine::Instance();
+	Math::Vec4 timeVec4 = Math::Vec4(inst->GameTime(), inst->DeltaTime(), inst->RawGameTime(), inst->RawDeltaTime());
+	bgfx::setUniform({ ms_uniformTime }, &timeVec4);
 }
 
 void Graphics::SetUniformCamPos(const Math::Vec3& camPos)
@@ -996,10 +1015,13 @@ float Graphics::ms_texelHalf = 0.f;
 Graphics::ShaderHandle Graphics::ms_defaultShader         = Graphics::InvalidHandle;
 Graphics::ShaderHandle Graphics::ms_defaultShaderOverride = Graphics::InvalidHandle;
 
+STL::HashMap<StringID, Graphics::UniformHandle> Graphics::ms_uniformHashMap;
+
 Graphics::UniformHandle Graphics::ms_samplerTex        = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCube    = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCubeIrr = Graphics::InvalidHandle;
 
+Graphics::UniformHandle Graphics::ms_uniformTime     = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformCamPos   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformLights   = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;

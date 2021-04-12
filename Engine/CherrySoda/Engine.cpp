@@ -96,6 +96,8 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 	Initialize();
 	LoadContent();
 
+	m_gameTime = 0.0;
+	m_rawGameTime = 0.0;
 	m_lastFrameTime = Time::GetSystemTime();
 
 	if (!m_shouldExit) {
@@ -240,6 +242,8 @@ void Engine::Update()
 	// Avoid big deltatime
 	if (m_rawDeltaTime > 0.1) m_rawDeltaTime = 0.1;
 	m_deltaTime = m_rawDeltaTime * m_timeRate;
+	m_rawGameTime += m_rawDeltaTime;
+	m_gameTime += m_deltaTime;
 	m_lastFrameTime = m_currentTime;
 
 	// Update input

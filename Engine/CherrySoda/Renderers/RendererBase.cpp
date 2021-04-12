@@ -12,8 +12,9 @@ using cherrysoda::Graphics;
 using cherrysoda::Math;
 using cherrysoda::Scene;
 
-void RendererBase::BeforeRender(Scene* scene)
+void RendererBase::RenderPrepare(Scene* scene)
 {
+	CHERRYSODA_ASSERT(!(RenderPass() == 0 && GetRenderTarget() != nullptr), "Renderpass 0 is preserved to use screen render target.\n");
 	Math::IVec2 renderTargetSize = Graphics::GetRenderTargetSize(GetRenderTarget());
 	if (!FixedCameraSize()) {
 		GetCamera()->SetSize(renderTargetSize);
@@ -24,4 +25,5 @@ void RendererBase::BeforeRender(Scene* scene)
 	Graphics::UseRenderPass(RenderPass())->SetRenderTarget(GetRenderTarget());
 	Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, renderTargetSize.x, renderTargetSize.y);
 	Graphics::UseRenderPass(RenderPass())->Touch();
+	Graphics::SetUniformTime();
 }
