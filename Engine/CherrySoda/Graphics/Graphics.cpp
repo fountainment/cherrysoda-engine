@@ -760,7 +760,6 @@ void Graphics::ScreenSpaceQuad(float _width/* = 1.0f*/, float _height/* = 1.0f*/
 	}
 }
 
-
 Graphics::IndexBufferHandle Graphics::CreateIndexBuffer(STL::Vector<type::UInt16>& indices)
 {
 	return bgfx::createIndexBuffer(

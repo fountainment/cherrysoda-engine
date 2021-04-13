@@ -26,8 +26,29 @@ public:
 
 	void Update() override
 	{
-		MovePosition2D(MInput::GamePads(0)->GetLeftStick(0.2f) * 100.f * Engine::Instance()->DeltaTime());
+		float deltaTime = Engine::Instance()->DeltaTime();
+		GetEntity()->MovePositionX(MInput::GamePads(0)->GetLeftStick(0.2f).x * 100.f * deltaTime);
+		if (MInput::GamePads(0)->Pressed(Buttons::A) && m_jumpAbility) {
+			Jump();
+			m_jumpAbility--;
+		}
+		GetEntity()->MovePositionY(m_upSpeed * deltaTime);
+		m_upSpeed -= 500.f * deltaTime;
+		if (GetEntity()->PositionY() < 0.f) {
+			GetEntity()->PositionY(0.f);
+			m_upSpeed = 0.f;
+			m_jumpAbility = 2;
+		}
 	}
+
+	void Jump()
+	{
+		m_upSpeed = 200.f;
+	}
+
+private:
+	int m_jumpAbility = 2;
+	float m_upSpeed = 0.f;
 };
 
 class ScreenSpaceQuadGraphicsComponent : public GraphicsComponent
@@ -101,6 +122,7 @@ void MainScene::Begin()
 
 	auto rectEntity = new Entity();
 	rectEntity->Add(new HollowRectGraphicsComponent);
+	rectEntity->SetCollider(new Hitbox(12, 16));
 	Add(rectEntity);
 
 	auto screenTex = new Entity();
