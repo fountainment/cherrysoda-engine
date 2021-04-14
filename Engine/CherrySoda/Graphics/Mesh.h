@@ -182,7 +182,7 @@ public:
 				Graphics::DestroyIndexBuffer(m_indexBuffer);
 				break;
 			case Graphics::BufferType::Dynamic:
-				Graphics::DestroyDynamicIndexBuffer(m_vertexBuffer);
+				Graphics::DestroyDynamicIndexBuffer(m_indexBuffer);
 				break;
 			case Graphics::BufferType::Transient:
 				break;
