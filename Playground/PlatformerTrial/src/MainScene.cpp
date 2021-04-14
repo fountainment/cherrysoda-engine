@@ -10,9 +10,9 @@ static const BitTag s_screenTextureTag("screen_texture");
 
 static Pool<Hitbox, 1024> s_hitboxPool;
 
-constexpr int kBackgroundPass = 1;
-constexpr int kMainPass = 2;
-constexpr int kScreenTexturePass = 3;
+constexpr type::UInt16 kBackgroundPass = 1;
+constexpr type::UInt16 kMainPass = 2;
+constexpr type::UInt16 kScreenTexturePass = 3;
 
 class HollowRectGraphicsComponent : public GraphicsComponent
 {
