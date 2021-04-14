@@ -94,6 +94,7 @@ set(ENGINE_SRC
   CherrySoda/Util/Math.cpp
   CherrySoda/Util/Math.h
   CherrySoda/Util/NumType.h
+  CherrySoda/Util/Pool.h
   CherrySoda/Util/Profile.cpp
   CherrySoda/Util/Profile.h
   CherrySoda/Util/Json.cpp

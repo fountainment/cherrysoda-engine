@@ -58,6 +58,7 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>

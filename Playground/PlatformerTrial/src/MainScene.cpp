@@ -8,6 +8,8 @@ using main::MainScene;
 static const BitTag s_backgroundTag("background");
 static const BitTag s_screenTextureTag("screen_texture");
 
+static Pool<Hitbox, 1024> s_hitboxPool;
+
 constexpr int kBackgroundPass = 1;
 constexpr int kMainPass = 2;
 constexpr int kScreenTexturePass = 3;
@@ -122,7 +124,7 @@ void MainScene::Begin()
 
 	auto rectEntity = new Entity();
 	rectEntity->Add(new HollowRectGraphicsComponent);
-	rectEntity->SetCollider(new Hitbox(12, 16));
+	rectEntity->SetCollider(s_hitboxPool.Create(12, 16));
 	Add(rectEntity);
 
 	auto screenTex = new Entity();

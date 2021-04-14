@@ -5,6 +5,7 @@
 #include <functional>
 #include <list>
 #include <map>
+#include <queue>
 #include <random>
 #include <set>
 #include <stack>
@@ -47,6 +48,9 @@ public:
 	}
 
 	// Container
+	template <typename T>
+	using Queue = std::queue<T>;
+
 	template <typename T, typename U>
 	using HashMap = std::unordered_map<T,U>;
 
@@ -132,9 +136,17 @@ public:
 	}
 
 	template <typename T>
-	static inline auto Pop(T& container)
+	static inline auto Pop(Stack<T>& container)
 	{
 		auto element = container.top();
+		container.pop();
+		return element;
+	}
+
+	template <typename T>
+	static inline auto Pop(Queue<T>& container)
+	{
+		auto element = container.front();
 		container.pop();
 		return element;
 	}
