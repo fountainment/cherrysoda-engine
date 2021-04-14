@@ -14,8 +14,8 @@ public:
 
 	Pool()
 	{
-		for (SizeT i = Size; i != 0; --i) {
-			STL::Push(m_available, i - 1);
+		for (SizeT i = 0;i < Size; ++i) {
+			STL::Push(m_available, i);
 		}
 	}
 
@@ -47,7 +47,7 @@ public:
 	}
 
 private:
-	STL::Queue<SizeT> m_available;
+	STL::PriorityQueueMinTop<SizeT> m_available;
 	char m_buffer[Size * sizeof(ElementType)] = { 0 };
 };
 

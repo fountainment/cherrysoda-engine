@@ -51,6 +51,12 @@ public:
 	template <typename T>
 	using Queue = std::queue<T>;
 
+	template <typename T>
+	using PriorityQueue = std::priority_queue<T, std::vector<T>, std::less<T>>;
+
+	template <typename T>
+	using PriorityQueueMinTop = std::priority_queue<T, std::vector<T>, std::greater<T>>;
+
 	template <typename T, typename U>
 	using HashMap = std::unordered_map<T,U>;
 
@@ -147,6 +153,22 @@ public:
 	static inline auto Pop(Queue<T>& container)
 	{
 		auto element = container.front();
+		container.pop();
+		return element;
+	}
+
+	template <typename T>
+	static inline auto Pop(PriorityQueue<T>& container)
+	{
+		auto element = container.top();
+		container.pop();
+		return element;
+	}
+
+	template <typename T>
+	static inline auto Pop(PriorityQueueMinTop<T>& container)
+	{
+		auto element = container.top();
 		container.pop();
 		return element;
 	}
