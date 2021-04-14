@@ -6,49 +6,50 @@
 
 namespace cherrysoda {
 
-template <typename ElementType, type::UInt16 Size>
-class Pool
+template <typename T, type::UInt16 SIZE>
+class alignas(128) Pool
 {
 public:
-	typedef type::UInt16 SizeT;
+	typedef type::UInt16 SizeType;
+	typedef STL::Stack<SizeType> ContainerType;
 
 	Pool()
 	{
-		for (SizeT i = 0;i < Size; ++i) {
-			STL::Push(m_available, i);
+		for (SizeType i = SIZE; i != 0; --i) {
+			STL::Push(m_available, i - 1);
 		}
 	}
 
 	~Pool()
 	{
-		bool available[Size] = { 0 };
+		bool available[SIZE] = { 0 };
 		while (!m_available.empty()) {
 			available[STL::Pop(m_available)] = true;
 		}
-		for (int loc = 0; loc < Size; ++loc) {
+		for (int loc = 0; loc < SIZE; ++loc) {
 			if (!available[loc]) {
-				((ElementType*)m_buffer + loc)->~ElementType();
+				((T*)m_buffer + loc)->~T();
 			}
 		}
 	}
 
-	template <typename... T>
-	ElementType* Create(T... Ts)
+	template <typename... TT>
+	T* Create(TT... TTs)
 	{
 		CHERRYSODA_ASSERT(STL::IsNotEmpty(m_available), "Pool is full!\n");
-		SizeT loc = STL::Pop(m_available);
-		return new((ElementType*)m_buffer + loc) ElementType(Ts...);
+		SizeType loc = STL::Pop(m_available);
+		return new((T*)m_buffer + loc) T(TTs...);
 	}
 
 	void Destroy(void* ptr)
 	{
-		((ElementType*)ptr)->~ElementType();
-		STL::Push(m_available, (ElementType*)ptr - (ElementType*)m_buffer);
+		((T*)ptr)->~T();
+		STL::Push(m_available, (T*)ptr - (T*)m_buffer);
 	}
 
 private:
-	STL::PriorityQueueMinTop<SizeT> m_available;
-	char m_buffer[Size * sizeof(ElementType)] = { 0 };
+	alignas(64) ContainerType m_available;
+	alignas(64) char m_buffer[SIZE * sizeof(T)] = { 0 };
 };
 
 } // namespace cherrysoda
