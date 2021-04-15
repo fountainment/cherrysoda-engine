@@ -112,6 +112,12 @@ public:
 	}
 
 	template <typename T>
+	static inline void Add(Set<T>& container, const T& element)
+	{
+		container.emplace(element);
+	}
+
+	template <typename T>
 	static inline void Add(HashSet<T>& container, const T& element)
 	{
 		container.emplace(element);

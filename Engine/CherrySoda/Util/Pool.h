@@ -11,7 +11,6 @@ class alignas(128) Pool
 {
 public:
 	typedef type::UInt16 SizeType;
-	typedef STL::Stack<SizeType> ContainerType;
 
 	Pool()
 	{
@@ -22,15 +21,7 @@ public:
 
 	~Pool()
 	{
-		bool available[SIZE] = { 0 };
-		while (!m_available.empty()) {
-			available[STL::Pop(m_available)] = true;
-		}
-		for (int loc = 0; loc < SIZE; ++loc) {
-			if (!available[loc]) {
-				((T*)m_buffer + loc)->~T();
-			}
-		}
+		Clear();
 	}
 
 	template <typename... TT>
@@ -38,17 +29,38 @@ public:
 	{
 		CHERRYSODA_ASSERT(STL::IsNotEmpty(m_available), "Pool is full!\n");
 		SizeType loc = STL::Pop(m_available);
+		STL::Add(m_allocated, loc);
 		return new((T*)m_buffer + loc) T(TTs...);
 	}
 
 	void Destroy(void* ptr)
 	{
+		SizeType loc = (T*)ptr - (T*)m_buffer;
+		CHERRYSODA_ASSERT(STL::Contains(m_allocated, loc), "Element not exist in this pool!\n")
 		((T*)ptr)->~T();
-		STL::Push(m_available, (T*)ptr - (T*)m_buffer);
+		STL::Push(m_available, loc);
+		STL::Remove(m_allocated, loc);
+	}
+
+	void Traverse(STL::Action<T*> action)
+	{
+		for (SizeType loc : m_allocated) {
+			action((T*)m_buffer + loc);
+		}
+	}
+
+	void Clear()
+	{
+		for (SizeType loc : m_allocated) {
+			((T*)m_buffer + loc)->~T();
+			STL::Push(m_available, loc);
+		}
+		STL::Clear(m_allocated);
 	}
 
 private:
-	alignas(64) ContainerType m_available;
+	alignas(64) STL::Stack<SizeType> m_available;
+	alignas(64) STL::Set<SizeType> m_allocated;
 	alignas(64) char m_buffer[SIZE * sizeof(T)] = { 0 };
 };
 
