@@ -14,43 +14,230 @@ constexpr type::UInt16 kBackgroundPass = 1;
 constexpr type::UInt16 kMainPass = 2;
 constexpr type::UInt16 kScreenTexturePass = 3;
 
+class alignas(64) Simple2DPhysicsComponent : public Component
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(Simple2DPhysicsComponent, Component);
+
+	static const BitTag StaticTag;
+
+	Simple2DPhysicsComponent()
+	: base(true, false)
+	{}
+
+	void Added(Entity* entity) override
+	{
+		base::Added(entity);
+
+		entity->AddTag(DynamicTag);
+	}
+
+	inline void Move(const Math::Vec2& v)
+	{
+		m_pendingMove += v;
+	}
+
+	inline bool IsOnGround() const
+	{
+		return m_isOnGround;
+	}
+
+	inline bool IsThingAbove() const
+	{
+		return m_isThingAbove;
+	}
+
+	Math::Vec2 ActualMove(bool passive = false)
+	{
+		if (passive) {
+			m_pendingMove *= m_pushability;
+		}
+		m_remainder += m_pendingMove;
+		m_pendingMove = Vec2_Zero;
+
+		int moveX = (int)Math_Round(m_remainder.x);
+		int moveY = (int)Math_Round(m_remainder.y);
+
+		auto entity = GetEntity();
+
+		Math::Vec2 oldPosition = entity->Position2D();
+		Math::Vec2 actualMove(moveX, moveY);
+
+		if (moveX != 0 || moveY != 0) {
+
+			entity->Collidable(false);
+
+			if (moveX != 0) {
+				m_remainder.x -= moveX;
+				entity->MovePositionX(moveX);
+
+				bool collideWithStatics = false;
+
+				for (auto staticEntity : (*GetScene())[StaticTag]) {
+					if (entity->CollideCheck(staticEntity)) {
+						if (moveX > 0) {
+							entity->Right(staticEntity->Left());
+						}
+						else {
+							entity->Left(staticEntity->Right());
+						}
+						float deltaX = entity->PositionX() - oldPosition.x;
+						actualMove.x = Math_Abs(deltaX) < Math_Abs(actualMove.x) ? deltaX : actualMove.x;
+
+						collideWithStatics = true;
+					}
+				}
+
+				if (!collideWithStatics) {
+					for (auto dynamicEntity : (*GetScene())[DynamicTag]) {
+						if (entity->CollideCheck(dynamicEntity)) {
+							auto dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
+							Math::Vec2 oldDynamicPendingMove = dynamic->m_pendingMove;
+							float pushMoveX = moveX > 0 ? entity->Right() - dynamicEntity->Left() : entity->Left() - dynamicEntity->Right();
+							dynamic->m_pendingMove = Math::Vec2(pushMoveX, 0.f);
+							Math::Vec2 dynamicActualMove = dynamic->ActualMove(true);
+							dynamic->m_pendingMove = oldDynamicPendingMove;
+
+							float deltaX = dynamicActualMove.x + moveX - pushMoveX;
+							actualMove.x = Math_Abs(deltaX) < Math_Abs(actualMove.x) ? deltaX : actualMove.x;
+						}
+					}
+					entity->MovePositionX(actualMove.x - moveX);
+				}
+			}
+
+			if (moveY != 0) {
+				m_remainder.y -= moveY;
+				entity->MovePositionY(moveY);
+
+				bool collideWithStatics = false;
+
+				for (auto staticEntity : (*GetScene())[StaticTag]) {
+					if (entity->CollideCheck(staticEntity)) {
+						if (moveY > 0) {
+							entity->Top(staticEntity->Bottom());
+						}
+						else {
+							entity->Bottom(staticEntity->Top());
+						}
+						float deltaY = entity->PositionY() - oldPosition.y;
+						actualMove.y = Math_Abs(deltaY) < Math_Abs(actualMove.y) ? deltaY : actualMove.y;
+
+						collideWithStatics = true;
+					}
+				}
+
+				if (!collideWithStatics) {
+					for (auto dynamicEntity : (*GetScene())[DynamicTag]) {
+						if (entity->CollideCheck(dynamicEntity)) {
+							auto dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
+							Math::Vec2 oldDynamicPendingMove = dynamic->m_pendingMove;
+							float pushMoveY = moveY > 0 ? entity->Top() - dynamicEntity->Bottom() : entity->Bottom() - dynamicEntity->Top();
+							dynamic->m_pendingMove = Math::Vec2(0.f, pushMoveY);
+							Math::Vec2 dynamicActualMove = dynamic->ActualMove(true);
+							dynamic->m_pendingMove = oldDynamicPendingMove;
+
+							float deltaY = dynamicActualMove.y + moveY - pushMoveY;
+							actualMove.y = Math_Abs(deltaY) < Math_Abs(actualMove.y) ? deltaY : actualMove.y;
+						}
+					}
+					entity->MovePositionY(actualMove.y - moveY);
+				}
+			}
+		}
+
+		m_isOnGround = false;
+		if (entity->CollideCheck(StaticTag, entity->Position2D() - Vec2_YUp) || entity->CollideCheck(DynamicTag, entity->Position2D() - Vec2_YUp)) {
+			m_isOnGround = true;
+		}
+		m_isThingAbove = false;
+		if (entity->CollideCheck(StaticTag, entity->Position2D() + Vec2_YUp) || entity->CollideCheck(DynamicTag, entity->Position2D() + Vec2_YUp)) {
+			m_isThingAbove = true;
+		}
+
+		entity->Collidable(true);
+
+		return actualMove;
+	}
+
+private:
+	static const BitTag DynamicTag;
+
+	Math::Vec2 m_pendingMove = Vec2_Zero;
+	Math::Vec2 m_remainder = Vec2_Zero;
+	bool m_isOnGround = false;
+	bool m_isThingAbove = false;
+
+	float m_pushability = 0.3f;
+};
+
+const BitTag Simple2DPhysicsComponent::StaticTag("SPC_static");
+const BitTag Simple2DPhysicsComponent::DynamicTag("SPC_dynamic");
+
+static Pool<Simple2DPhysicsComponent, 100> s_physCompPool;
+
 class HollowRectGraphicsComponent : public GraphicsComponent
 {
 public:
 	CHERRYSODA_DECLARE_COMPONENT(HollowRectGraphicsComponent, GraphicsComponent);
 
-	HollowRectGraphicsComponent() : base(true) {}
+	HollowRectGraphicsComponent(int width, int height)
+	: base(false)
+	, m_width(width)
+	, m_height(height)
+	{}
 
 	void Render() override
 	{
-		Draw::HollowRect(RenderPosition().x, RenderPosition().y, 12, 16, GetColor());
+		Draw::HollowRect(RenderPosition().x, RenderPosition().y, m_width, m_height, GetColor());
 	}
+
+private:
+	int m_width;
+	int m_height;
+};
+
+class PlayerControl : public Component
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(PlayerControl, Component);
+
+	PlayerControl() : base(true, false) {}
 
 	void Update() override
 	{
+		auto entity = GetEntity();
+		auto physComp = entity->Get<Simple2DPhysicsComponent>();
 		float deltaTime = Engine::Instance()->DeltaTime();
-		GetEntity()->MovePositionX(MInput::GamePads(0)->GetLeftStick(0.2f).x * 100.f * deltaTime);
+		if (physComp->IsOnGround()) {
+			m_jumpAbility = 1;
+			m_speedY = 0.f;
+		}
+		else {
+			m_speedY -= 600.f * deltaTime;
+		}
 		if (MInput::GamePads(0)->Pressed(Buttons::A) && m_jumpAbility) {
 			Jump();
 			m_jumpAbility--;
 		}
-		GetEntity()->MovePositionY(m_upSpeed * deltaTime);
-		m_upSpeed -= 500.f * deltaTime;
-		if (GetEntity()->PositionY() < 0.f) {
-			GetEntity()->PositionY(0.f);
-			m_upSpeed = 0.f;
-			m_jumpAbility = 2;
+		if (physComp->IsThingAbove()) {
+			if (m_speedY > 0.f) {
+				m_speedY = 0.f;
+			}
 		}
+		float speedX = MInput::GamePads(0)->GetLeftStick(0.2f).x * 100.f;
+		physComp->Move(Math::Vec2(speedX, m_speedY) * deltaTime);
 	}
 
 	void Jump()
 	{
-		m_upSpeed = 200.f;
+		m_speedY = 200.f;
 	}
 
 private:
-	int m_jumpAbility = 2;
-	float m_upSpeed = 0.f;
+	int m_jumpAbility = 1;
+	float m_speedY = 0.f;
+
 };
 
 class ScreenSpaceQuadGraphicsComponent : public GraphicsComponent
@@ -123,9 +310,33 @@ void MainScene::Begin()
 	Add(backgroundEntity);
 
 	auto rectEntity = new Entity();
-	rectEntity->Add(new HollowRectGraphicsComponent);
-	rectEntity->SetCollider(s_hitboxPool.Create(12, 16));
+	rectEntity->Position2D(Math::Vec2(0.f, 1.f));
+	rectEntity->Add(new HollowRectGraphicsComponent(8, 12));
+	rectEntity->Add(new PlayerControl);
+	rectEntity->Add(s_physCompPool.Create());
+	rectEntity->SetCollider(s_hitboxPool.Create(8, 12));
 	Add(rectEntity);
+
+	auto ground = new Entity();
+	ground->Position2D(Math::Vec2(0.f, 0.f));
+	ground->Add(new HollowRectGraphicsComponent(320, 1));
+	ground->SetCollider(s_hitboxPool.Create(320, 1));
+	ground->Tag(Simple2DPhysicsComponent::StaticTag);
+	Add(ground);
+
+	auto wall = new Entity();
+	wall->Position2D(Math::Vec2(50.f, 35.f));
+	wall->Add(new HollowRectGraphicsComponent(10, 10));
+	wall->SetCollider(s_hitboxPool.Create(10, 10));
+	wall->Tag(Simple2DPhysicsComponent::StaticTag);
+	Add(wall);
+
+	auto brick = new Entity();
+	brick->Position2D(Math::Vec2(150.f, 1.f));
+	brick->Add(new HollowRectGraphicsComponent(10, 10));
+	brick->Add(s_physCompPool.Create());
+	brick->SetCollider(s_hitboxPool.Create(10, 10));
+	Add(brick);
 
 	auto screenTex = new Entity();
 	auto screenSpaceQuad = new ScreenSpaceQuadGraphicsComponent(m_mainScreenTarget->GetTexture2D());
@@ -138,6 +349,8 @@ void MainScene::Begin()
 
 void MainScene::Update()
 {
+	s_physCompPool.Traverse([](Simple2DPhysicsComponent* ptr) { ptr->ActualMove(); });
+
 	auto viewSize = Engine::Instance()->GetViewSize();
 	int cameraScale = Math_Min(Math_Max(1.f, viewSize.x / (float)m_mainScreenTarget->Width()), \
 		Math_Max(1.f, viewSize.y / (float)m_mainScreenTarget->Height()));

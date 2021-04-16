@@ -104,6 +104,12 @@ bool Entity::CollideCheck(const BitTag& tag) const
 	return Collide::Check(this, (*m_scene)[tag]);
 }
 
+bool Entity::CollideCheck(const BitTag& tag, const Math::Vec2& at)
+{
+	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	return Collide::Check(this, (*m_scene)[tag], at);
+}
+
 bool Entity::CollideCheck(const Entity* other) const
 {
 	return Collide::Check(this, other);
@@ -124,6 +130,51 @@ Entity* Entity::CollideFirst(const BitTag& tag) const
 {
 	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::First(this, (*m_scene)[tag]);
+}
+
+float Entity::Left() const { return GetCollider() ? PositionX() + GetCollider()->Left() : PositionX(); }
+float Entity::Right() const { return GetCollider() ? PositionX() + GetCollider()->Right() : PositionX(); }
+float Entity::Bottom() const { return GetCollider() ? PositionY() + GetCollider()->Bottom() : PositionY(); }
+float Entity::Top() const { return GetCollider() ? PositionY() + GetCollider()->Top() : PositionY(); }
+
+void Entity::Left(float left)
+{
+	if (GetCollider()) {
+		PositionX(left - GetCollider()->Left());
+	}
+	else {
+		PositionX(left);
+	}
+}
+
+void Entity::Right(float right)
+{
+	if (GetCollider()) {
+		PositionX(right - GetCollider()->Right());
+	}
+	else {
+		PositionX(right);
+	}
+}
+
+void Entity::Bottom(float bottom)
+{
+	if (GetCollider()) {
+		PositionY(bottom - GetCollider()->Bottom());
+	}
+	else {
+		PositionY(bottom);
+	}
+}
+
+void Entity::Top(float top)
+{
+	if (GetCollider()) {
+		PositionY(top - GetCollider()->Top());
+	}
+	else {
+		PositionY(top);
+	}
 }
 
 void Entity::Add(Component* component)

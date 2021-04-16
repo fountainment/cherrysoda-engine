@@ -12,8 +12,10 @@ class Collide
 {
 public:
 	static bool Check(const Entity* a, const Entity* b);
+	static bool Check(Entity* a, const Entity* b, const Math::Vec2& at);
 
 	static bool Check(const Entity* a, const STL::List<Entity*>& b);
+	static bool Check(Entity* a, const STL::List<Entity*>& b, const Math::Vec2& at);
 
 	static bool CheckPoint(const Entity* a, const Math::Vec2& point);
 

@@ -26,15 +26,15 @@ public:
 	bool Collide(const Math::Vec2& point) const override;
 	void Render(const Camera* camera, const Color& color) const override;
 
-	inline float Left() const { return PositionX(); }
-	inline float Right() const { return PositionX() + m_width; }
-	inline float Bottom() const { return PositionY(); }
-	inline float Top() const { return PositionY() + m_height; }
+	float Left() const override { return InternalLeft(); }
+	float Right() const override { return InternalRight(); }
+	float Bottom() const override { return InternalBottom(); }
+	float Top() const override { return InternalTop(); }
 
-	inline float AbsoluteLeft() const { return GetEntity() ? Left() + GetEntity()->PositionX() : Left(); }
-	inline float AbsoluteRight() const { return GetEntity() ? Right() + GetEntity()->PositionX() : Right(); }
-	inline float AbsoluteBottom() const { return GetEntity() ? Bottom() + GetEntity()->PositionY() : Bottom(); }
-	inline float AbsoluteTop() const { return GetEntity() ? Top() + GetEntity()->PositionY() : Top(); }
+	inline float AbsoluteLeft() const { return GetEntity() ? InternalLeft() + GetEntity()->PositionX() : InternalLeft(); }
+	inline float AbsoluteRight() const { return GetEntity() ? InternalRight() + GetEntity()->PositionX() : InternalRight(); }
+	inline float AbsoluteBottom() const { return GetEntity() ? InternalBottom() + GetEntity()->PositionY() : InternalBottom(); }
+	inline float AbsoluteTop() const { return GetEntity() ? InternalTop() + GetEntity()->PositionY() : InternalTop(); }
 
 	void CenterOrigin()
 	{
@@ -50,6 +50,11 @@ public:
 	}
 
 private:
+	inline float InternalLeft() const { return PositionX(); }
+	inline float InternalRight() const { return PositionX() + m_width; }
+	inline float InternalBottom() const { return PositionY(); }
+	inline float InternalTop() const { return PositionY() + m_height; }
+
 	float m_width;
 	float m_height;
 };

@@ -42,6 +42,11 @@ public:
 	virtual bool Collide(const Hitbox* hitbox) const = 0;
 	virtual bool Collide(const Math::Vec2& point) const = 0;
 
+	virtual float Left() const = 0;
+	virtual float Right() const = 0;
+	virtual float Bottom() const = 0;
+	virtual float Top() const = 0;
+
 	inline Math::Vec2 AbsolutePosition2D() const
 	{
 		return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D();

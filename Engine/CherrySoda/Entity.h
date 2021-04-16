@@ -12,7 +12,6 @@ namespace cherrysoda {
 class Camera;
 class Collider;
 class Component;
-class ComponentList;
 class Scene;
 
 class Entity
@@ -51,10 +50,20 @@ public:
 
 	const STL::List<Entity*> CollideAll(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag) const;
+	bool CollideCheck(const BitTag& tag, const Math::Vec2& at);
 	bool CollideCheck(const Entity* other) const;
 	bool CollidePoint(const Math::Vec2& point) const;
 	int CollideCount(const BitTag& tag) const;
 	Entity* CollideFirst(const BitTag& tag) const;
+
+	float Left() const;
+	float Right() const;
+	float Bottom() const;
+	float Top() const;
+	void Left(float left);
+	void Right(float right);
+	void Bottom(float bottom);
+	void Top(float top);
 
 	void Add(Component* component); 
 	void Remove(Component* component);

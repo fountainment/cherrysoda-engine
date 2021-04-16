@@ -20,6 +20,15 @@ bool Collide::Check(const Entity* a, const Entity* b)
 	return a != b && b->Collidable() && a->GetCollider()->Collide(b);
 }
 
+bool Collide::Check(Entity* a, const Entity* b, const Math::Vec2& at)
+{
+	Math::Vec2 position = a->Position2D();
+	a->Position2D(at);
+	bool result = Check(a, b);
+	a->Position2D(position);
+	return result;
+}
+
 bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();
@@ -29,6 +38,16 @@ bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)
 		}
 	}	
 	return false;
+}
+
+bool Collide::Check(Entity* a, const STL::List<Entity*>& b, const Math::Vec2& at)
+{
+	CHERRYSODA_PROFILE_FUNCTION();
+	Math::Vec2 position = a->Position2D();
+	a->Position2D(at);
+	bool result = Check(a, b);
+	a->Position2D(position);
+	return result;
 }
 
 bool Collide::CheckPoint(const Entity* a, const Math::Vec2& point)
