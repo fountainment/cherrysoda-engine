@@ -42,9 +42,9 @@ public:
 		return m_isOnGround;
 	}
 
-	inline bool IsThingAbove() const
+	inline bool IsAnythingAbove() const
 	{
-		return m_isThingAbove;
+		return m_isAnythingAbove;
 	}
 
 	Math::Vec2 ActualMove(bool passive = false)
@@ -54,6 +54,9 @@ public:
 		}
 		m_remainder += m_pendingMove;
 		m_pendingMove = Vec2_Zero;
+
+		if (Math_Abs(m_remainder.x) == 0.5f) m_remainder.x -= Math_Sign(m_remainder.x) * Math::epsf;
+		if (Math_Abs(m_remainder.y) == 0.5f) m_remainder.y -= Math_Sign(m_remainder.y) * Math::epsf;
 
 		int moveX = (int)Math_Round(m_remainder.x);
 		int moveY = (int)Math_Round(m_remainder.y);
@@ -150,9 +153,9 @@ public:
 		if (entity->CollideCheck(StaticTag, entity->Position2D() - Vec2_YUp) || entity->CollideCheck(DynamicTag, entity->Position2D() - Vec2_YUp)) {
 			m_isOnGround = true;
 		}
-		m_isThingAbove = false;
+		m_isAnythingAbove = false;
 		if (entity->CollideCheck(StaticTag, entity->Position2D() + Vec2_YUp) || entity->CollideCheck(DynamicTag, entity->Position2D() + Vec2_YUp)) {
-			m_isThingAbove = true;
+			m_isAnythingAbove = true;
 		}
 
 		entity->Collidable(true);
@@ -166,9 +169,9 @@ private:
 	Math::Vec2 m_pendingMove = Vec2_Zero;
 	Math::Vec2 m_remainder = Vec2_Zero;
 	bool m_isOnGround = false;
-	bool m_isThingAbove = false;
+	bool m_isAnythingAbove = false;
 
-	float m_pushability = 0.3f;
+	float m_pushability = 0.5f;
 };
 
 const BitTag Simple2DPhysicsComponent::StaticTag("SPC_static");
@@ -209,18 +212,22 @@ public:
 		auto entity = GetEntity();
 		auto physComp = entity->Get<Simple2DPhysicsComponent>();
 		float deltaTime = Engine::Instance()->DeltaTime();
+		bool jumpButtonPressed = MInput::GamePads(0)->Pressed(Buttons::A);
+		bool jumpButtonCheck = MInput::GamePads(0)->Check(Buttons::A);
+		float extraDropSpeed = -Math_Min(MInput::GamePads(0)->GetLeftStick().y, 0.f) * 300.f;
+		if (jumpButtonCheck) {
+			extraDropSpeed -= 400.f;
+		}
 		if (physComp->IsOnGround()) {
-			m_jumpAbility = 1;
 			m_speedY = 0.f;
+			if (jumpButtonPressed) {
+				Jump();
+			}
 		}
 		else {
-			m_speedY -= 600.f * deltaTime;
+			m_speedY -= (1000.f + extraDropSpeed) * deltaTime;
 		}
-		if (MInput::GamePads(0)->Pressed(Buttons::A) && m_jumpAbility) {
-			Jump();
-			m_jumpAbility--;
-		}
-		if (physComp->IsThingAbove()) {
+		if (physComp->IsAnythingAbove()) {
 			if (m_speedY > 0.f) {
 				m_speedY = 0.f;
 			}
@@ -235,7 +242,6 @@ public:
 	}
 
 private:
-	int m_jumpAbility = 1;
 	float m_speedY = 0.f;
 
 };
