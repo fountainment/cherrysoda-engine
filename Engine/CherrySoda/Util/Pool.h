@@ -24,10 +24,13 @@ public:
 		Clear();
 	}
 
+	inline bool IsFull() { return STL::IsEmpty(m_available); }
+
 	template <typename... TT>
 	T* Create(TT... TTs)
 	{
-		CHERRYSODA_ASSERT(STL::IsNotEmpty(m_available), "Pool is full!\n");
+		CHERRYSODA_ASSERT(!IsFull(), "Pool is full!\n");
+		if (IsFull()) return nullptr;
 		SizeType loc = STL::Pop(m_available);
 		STL::Add(m_allocated, loc);
 		return new((T*)m_buffer + loc) T(TTs...);
