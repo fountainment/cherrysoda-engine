@@ -83,7 +83,7 @@ void Sprite::Update()
 				SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
 			}
 		}
-	}	
+	}
 }
 
 void Sprite::SetFrame(MTexture texture)

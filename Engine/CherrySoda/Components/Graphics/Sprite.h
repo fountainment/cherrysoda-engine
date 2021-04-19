@@ -6,6 +6,7 @@
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Util/Chooser.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
@@ -91,6 +92,8 @@ public:
 	Sprite* CloneInto(Sprite* sprite);
 
 private:
+	CHERRYSODA_FRIEND_CLASS_POOL;
+
 	Sprite() : base(MTexture(), true) {}
 
 	struct Animation

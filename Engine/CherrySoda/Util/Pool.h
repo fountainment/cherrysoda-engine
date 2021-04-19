@@ -69,4 +69,6 @@ private:
 
 } // namespace cherrysoda
 
+#define CHERRYSODA_FRIEND_CLASS_POOL template <typename T, type::UInt16 SIZE> friend class Pool
+
 #endif // _CHERRYSODA_UTIL_POOL_H_
