@@ -246,6 +246,9 @@ void Entity::Removed(Scene* scene)
 		component->EntityRemoved(scene);
 	}
 	m_scene = nullptr;
+	if (m_onRemoved) {
+		m_onRemoved(this, scene);
+	}
 }
 
 void Entity::SetCollider(Collider* collider)

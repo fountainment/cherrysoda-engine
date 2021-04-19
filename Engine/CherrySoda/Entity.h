@@ -70,6 +70,8 @@ public:
 	void Add(ComponentList::IterableComponents& components); 
 	void Remove(ComponentList::IterableComponents& components);
 
+	void OnRemoved(STL::Action<Entity*, Scene*> onRemoved) { m_onRemoved = onRemoved; }
+
 	void Depth(int depth);
 	inline int Depth() const { return m_depth; }
 
@@ -107,6 +109,8 @@ private:
 
 	int m_depth = 0;
 	double m_actualDepth = 0.0;
+
+	STL::Action<Entity*, Scene*> m_onRemoved;
 };
 
 } // namespace cherrysoda
