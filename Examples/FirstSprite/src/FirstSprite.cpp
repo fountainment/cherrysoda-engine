@@ -24,6 +24,8 @@ void FirstSprite::Initialize()
 	auto sprite = new Sprite("assets/atlases/cherry_soda.json");
 	sprite->AddLoop("showcase", "cherrysoda");
 	sprite->Play("showcase");
+	sprite->CenterOrigin();
+	sprite->Justify(Math::Vec2(0.5f));
 	auto renderer = new EverythingRenderer();
 
 	entity->Add(sprite);

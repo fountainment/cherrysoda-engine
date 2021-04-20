@@ -104,7 +104,7 @@ private:
 	};
 
 	float m_rate = 1.f;
-	Math::Vec2 m_justify = Math::Vec2(.5f);
+	Math::Vec2 m_justify = Vec2_Zero;
 	bool m_useRawDeltaTime = false;
 	STL::Action<StringID> m_onFinish;
 	STL::Action<StringID> m_onLoop;
