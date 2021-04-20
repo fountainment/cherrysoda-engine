@@ -583,6 +583,8 @@ public:
 		const Math::IVec2 RawPosition() const { return Math::IVec2(m_currentState.m_x, m_currentState.m_y); }
 		void RawPosition(const Math::IVec2& pos) { SetMousePosition(pos); }
 
+		const Math::IVec2 RawPositionDelta() const { return Math::IVec2(m_currentState.m_x - m_previousState.m_x, m_currentState.m_y - m_previousState.m_y); }
+
 		int RawX() const { return RawPosition().x; }
 		int RawY() const { return RawPosition().y; }
 
