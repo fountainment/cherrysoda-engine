@@ -38,7 +38,10 @@ Scene::Scene()
 Scene::~Scene()
 {
 	delete m_entities;
+	delete m_tagLists;
 	delete m_rendererList;
+
+	delete m_helperEntity;
 }
 
 void Scene::Begin()

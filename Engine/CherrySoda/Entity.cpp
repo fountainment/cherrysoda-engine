@@ -8,8 +8,8 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/TagLists.h>
 #include <CherrySoda/Util/BitTag.h>
-#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
 using cherrysoda::Entity;
@@ -29,6 +29,12 @@ Entity::Entity(const Math::Vec3& position)
 {
 	m_position = position;
 	m_components = new ComponentList(this);
+}
+
+Entity::~Entity()
+{
+	delete m_components;
+	m_components = nullptr;
 }
 
 void Entity::SceneBegin(Scene* scene)

@@ -19,7 +19,7 @@ class Entity
 public:
 	Entity() : Entity(Math::Vec3(0.f)) {}
 	Entity(const Math::Vec3& position);
-	virtual ~Entity() {}
+	virtual ~Entity();
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);

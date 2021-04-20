@@ -112,7 +112,7 @@ void ComponentList::Update()
 {
 	LockMode(ComponentList::LockModes::Locked);
 	for (auto component : m_components) {
-		if (component->m_active) {
+		if (component->Active()) {
 			component->Update();
 		}
 	}
@@ -123,7 +123,7 @@ void ComponentList::Render()
 {
 	LockMode(ComponentList::LockModes::Error);
 	for (auto component : m_components) {
-		if (component->m_visible) {
+		if (component->Visible()) {
 			component->Render();
 		}
 	}
