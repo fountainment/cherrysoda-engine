@@ -234,7 +234,9 @@ public:
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniform(StringID uniformName, const void* value, type::UInt16 size = 1U);
-	static void SetUniformTime();
+
+	static void SetupEngineUniforms();
+
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
 	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit = true);
@@ -275,10 +277,11 @@ private:
 	static UniformHandle ms_samplerTexCubeIrr;
 
 	static UniformHandle ms_uniformTime;
+	static UniformHandle ms_uniformResolution;
+
 	static UniformHandle ms_uniformCamPos;
 	static UniformHandle ms_uniformLights;
 	static UniformHandle ms_uniformMaterial;
-	static UniformHandle ms_uniformParams;
 
 	static Graphics* ms_instance;
 	static Graphics* ms_renderPassHelperInstance;

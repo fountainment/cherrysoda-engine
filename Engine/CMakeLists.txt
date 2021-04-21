@@ -107,6 +107,7 @@ set(ENGINE_SRC
 )
 
 set(EMBEDDED_SHADER_SRC
+  CherrySoda/Graphics/shaders/cherrysoda_uniforms.sh
   CherrySoda/Graphics/shaders/varying.def.sc
   CherrySoda/Graphics/shaders/vs_basic.sc
   CherrySoda/Graphics/shaders/fs_basic.sc

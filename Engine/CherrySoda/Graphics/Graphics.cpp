@@ -1,11 +1,13 @@
 #include <CherrySoda/Graphics/Graphics.h>
 
+#include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Mesh.h>
 #include <CherrySoda/Graphics/RenderTarget.h>
 #include <CherrySoda/Graphics/Texture.h>
-#include <CherrySoda/Engine.h>
+#include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Util/Camera.h>
+#include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
@@ -30,6 +32,7 @@ using cherrysoda::Graphics;
 
 using cherrysoda::Camera;
 using cherrysoda::Color;
+using cherrysoda::Draw;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Math;
@@ -467,11 +470,11 @@ void Graphics::Initialize()
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
 	ms_samplerTexCubeIrr = CreateUniformSampler("s_texCubeIrr");
 
-	ms_uniformTime     = CreateUniformVec4("u_times");
-	ms_uniformCamPos   = CreateUniformVec4("u_camPos");
-	ms_uniformMaterial = CreateUniformVec4("u_material", 2);
-	ms_uniformLights   = CreateUniformVec4("u_lights", 8);
-	ms_uniformParams   = CreateUniformVec4("u_params", 16);
+	ms_uniformTime       = CreateUniformVec4("u_timev");
+	ms_uniformResolution = CreateUniformVec4("u_resolutionv");
+	ms_uniformCamPos     = CreateUniformVec4("u_camPos");
+	ms_uniformMaterial   = CreateUniformVec4("u_material", 2);
+	ms_uniformLights     = CreateUniformVec4("u_lights", 8);
 
 	ms_instance = new Graphics();
 	ms_renderPassHelperInstance = new Graphics();
@@ -958,11 +961,16 @@ void Graphics::SetUniform(StringID uniformName, const void* value, type::UInt16 
 	bgfx::setUniform({ ms_uniformHashMap[uniformName] }, value, size);
 }
 
-void Graphics::SetUniformTime()
+void Graphics::SetupEngineUniforms()
 {
 	auto inst = Engine::Instance();
+	auto renderer = Draw::GetRenderer();
+	Math::Vec2 resolution = Math::Vec2(Graphics::GetRenderTargetSize(renderer->GetRenderTarget()));
+	Math::Vec2 surfaceSize = Math::Vec2(resolution.x / resolution.y, 1.f);
 	Math::Vec4 timeVec4 = Math::Vec4(inst->GameTime(), inst->DeltaTime(), inst->RawGameTime(), inst->RawDeltaTime());
-	bgfx::setUniform({ ms_uniformTime }, &timeVec4);
+	Math::Vec4 resolutionVec4 = Math::Vec4(resolution, surfaceSize);
+	bgfx::setUniform({ ms_uniformTime },       &timeVec4);
+	bgfx::setUniform({ ms_uniformResolution }, &resolutionVec4);
 }
 
 void Graphics::SetUniformCamPos(const Math::Vec3& camPos)
@@ -1020,11 +1028,11 @@ Graphics::UniformHandle Graphics::ms_samplerTex        = Graphics::InvalidHandle
 Graphics::UniformHandle Graphics::ms_samplerTexCube    = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCubeIrr = Graphics::InvalidHandle;
 
-Graphics::UniformHandle Graphics::ms_uniformTime     = Graphics::InvalidHandle;
-Graphics::UniformHandle Graphics::ms_uniformCamPos   = Graphics::InvalidHandle;
-Graphics::UniformHandle Graphics::ms_uniformLights   = Graphics::InvalidHandle;
-Graphics::UniformHandle Graphics::ms_uniformMaterial = Graphics::InvalidHandle;
-Graphics::UniformHandle Graphics::ms_uniformParams   = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformTime       = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformResolution = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformCamPos     = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformLights     = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_uniformMaterial   = Graphics::InvalidHandle;
 
 Graphics* Graphics::ms_instance = nullptr;
 Graphics* Graphics::ms_renderPassHelperInstance = nullptr;

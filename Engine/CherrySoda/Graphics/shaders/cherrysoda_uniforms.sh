@@ -13,9 +13,16 @@ uniform vec4 u_lights[8];
 #define u_lightPositions(i) u_lights[i*2].xyz
 #define u_lightColors(i)    u_lights[i*2+1].xyz
 
-// times
-uniform vec4 u_times;
-#define u_time     u_times.x
-#define u_delta    u_times.y
-#define u_rawTime  u_times.z
-#define u_rawDelta u_times.w
+// time value
+uniform vec4 u_timev;
+#define u_time     u_timev.x
+#define u_delta    u_timev.y
+#define u_rawTime  u_timev.z
+#define u_rawDelta u_timev.w
+
+// resolution value
+uniform vec4 u_resolutionv;
+#define u_resolution  u_resolutionv.xy
+#define u_surfaceSize u_resolutionv.zw
+#define u_ratio       u_resolutionv.z
+

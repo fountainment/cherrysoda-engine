@@ -25,5 +25,5 @@ void RendererBase::RenderPrepare(Scene* scene)
 	Graphics::UseRenderPass(RenderPass())->SetRenderTarget(GetRenderTarget());
 	Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, renderTargetSize.x, renderTargetSize.y);
 	Graphics::UseRenderPass(RenderPass())->Touch();
-	Graphics::SetUniformTime();
+	Graphics::SetupEngineUniforms();
 }

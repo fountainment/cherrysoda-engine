@@ -3,8 +3,6 @@ $input v_color0, v_texcoord0
 #include <bgfx_shader.sh>
 #include <cherrysoda_uniforms.sh>
 
-// uniform vec2 u_resolution;
-
 // a raymarching experiment by kabuto
 
 #define R_FACTOR 5.
@@ -30,7 +28,6 @@ vec3 field(vec3 p)
 
 void main()
 {
-	const vec2 u_resolution = vec2(320., 180.);
 	vec3 dir = normalize(vec3((gl_FragCoord.xy-u_resolution*.5)/u_resolution.x*0.5,1.));
 	vec3 pos = vec3(.5, .4, u_time / 2.);
 	vec3 color = vec3_splat(0.);
