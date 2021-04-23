@@ -69,6 +69,10 @@ if(CPI)
   add_definitions(-mcpu=cortex-a7 -ftree-vectorize -ffast-math)
 endif()
 
+if(APPLE AND NOT XCODE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ObjC++")
+endif()
+
 set(CHERRYSODA_SIMD "")
 if(NOT EMSCRIPTEN)
   if(NOT MSVC)

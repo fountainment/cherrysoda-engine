@@ -60,3 +60,7 @@ External/android-project/app/.cxx/
 # Android Project Local
 External/android-project/app/jni/SDL/
 External/android-project/local.properties
+
+# MacOS
+.DS_Store
+
