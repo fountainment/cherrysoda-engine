@@ -75,6 +75,7 @@ elseif(ANDROID OR NOT CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64
 endif()
 target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_MULTITHREADED=0)
 # target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_OPENGL=1)
+# target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_VULKAN=1)
 target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_OPENGL_MIN_VERSION=32)
 if(EMSCRIPTEN)
   # Targeting WebGL2

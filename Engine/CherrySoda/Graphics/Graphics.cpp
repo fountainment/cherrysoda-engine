@@ -538,7 +538,12 @@ Math::IVec2 Graphics::GetRenderTargetSize(RenderTarget2D* renderTarget)
 
 void Graphics::UpdateView()
 {
-	bgfx::reset(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight(), ms_vsyncEnabled ? BGFX_RESET_VSYNC | BGFX_RESET_FLIP_AFTER_RENDER : BGFX_RESET_NONE);
+#if BGFX_CONFIG_RENDERER_METAL // Temporary fix of the stuck in bgfx::shutdown() on MacOS
+	constexpr uint32_t vsyncFlag = BGFX_RESET_VSYNC;
+#else
+	constexpr uint32_t vsyncFlag = BGFX_RESET_VSYNC | BGFX_RESET_FLIP_AFTER_RENDER;
+#endif
+	bgfx::reset(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight(), ms_vsyncEnabled ? vsyncFlag : BGFX_RESET_NONE);
 }
 
 void Graphics::SetRenderTarget(RenderTarget2D* renderTarget)
