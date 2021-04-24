@@ -13,6 +13,7 @@
 #	include "renderer.h"
 #	include "debug_renderdoc.h"
 #	include "emscripten.h"
+#	include "shader_spirv.h"
 
 #	if BX_PLATFORM_ANDROID
 #		define VK_USE_PLATFORM_ANDROID_KHR
@@ -64,16 +65,16 @@ namespace bgfx { namespace webgpu
 	template <> wgpu::PipelineLayoutDescriptor     defaultDescriptor() { return { NULL, "", 0, NULL }; }
 	template <> wgpu::TextureViewDescriptor        defaultDescriptor() { return {}; }
 
-	template <> wgpu::RenderPassColorAttachmentDescriptor defaultDescriptor() { return { {}, {}, wgpu::LoadOp::Clear, wgpu::StoreOp::Store, { 0.0f, 0.0f, 0.0f, 0.0f } }; }
-	template <> wgpu::RenderPassDepthStencilAttachmentDescriptor defaultDescriptor() { return { {}, wgpu::LoadOp::Clear, wgpu::StoreOp::Store, 1.0f, false, wgpu::LoadOp::Clear, wgpu::StoreOp::Store, 0, false }; }
+	template <> wgpu::RenderPassColorAttachment defaultDescriptor() { return { {}, {}, wgpu::LoadOp::Clear, wgpu::StoreOp::Store, { 0.0f, 0.0f, 0.0f, 0.0f } }; }
+	template <> wgpu::RenderPassDepthStencilAttachment defaultDescriptor() { return { {}, wgpu::LoadOp::Clear, wgpu::StoreOp::Store, 1.0f, false, wgpu::LoadOp::Clear, wgpu::StoreOp::Store, 0, false }; }
 
 	RenderPassDescriptor::RenderPassDescriptor()
 	{
-		depthStencilAttachment = defaultDescriptor<wgpu::RenderPassDepthStencilAttachmentDescriptor>();
+		depthStencilAttachment = defaultDescriptor<wgpu::RenderPassDepthStencilAttachment>();
 
 		for(uint32_t i = 0; i < kMaxColorAttachments; ++i)
 		{
-			colorAttachments[i] = defaultDescriptor<wgpu::RenderPassColorAttachmentDescriptor>();
+			colorAttachments[i] = defaultDescriptor<wgpu::RenderPassColorAttachment>();
 		}
 
 		desc = defaultDescriptor<wgpu::RenderPassDescriptor>();
@@ -1144,7 +1145,7 @@ namespace bgfx { namespace webgpu
 														 );
 
 				RenderPassDescriptor renderPassDescriptor;
-				wgpu::RenderPassColorAttachmentDescriptor& color = renderPassDescriptor.colorAttachments[0];
+				wgpu::RenderPassColorAttachment& color = renderPassDescriptor.colorAttachments[0];
 
 				setFrameBuffer(renderPassDescriptor, fbh);
 
@@ -1317,7 +1318,7 @@ namespace bgfx { namespace webgpu
 			// first two bindings are always uniform buffer (vertex/fragment)
 			if (0 < program.m_vsh->m_gpuSize)
 			{
-				bindings.m_entries[0].binding = 0;
+				bindings.m_entries[0].binding = kSpirvVertexBinding;
 				bindings.m_entries[0].offset = 0;
 				bindings.m_entries[0].size = program.m_vsh->m_gpuSize;
 				bindings.m_entries[0].buffer = scratchBuffer.m_buffer;
@@ -1327,7 +1328,7 @@ namespace bgfx { namespace webgpu
 			if (NULL != program.m_fsh
 			&& 0 < program.m_fsh->m_gpuSize)
 			{
-				bindings.m_entries[1].binding = 48;
+				bindings.m_entries[1].binding = kSpirvFragmentBinding;
 				bindings.m_entries[1].offset = 0;
 				bindings.m_entries[1].size = program.m_fsh->m_gpuSize;
 				bindings.m_entries[1].buffer = scratchBuffer.m_buffer;
@@ -1379,6 +1380,13 @@ namespace bgfx { namespace webgpu
 						wgpu::BindGroupEntry& entry = b.m_entries[b.numEntries++];
 						entry.binding = bindInfo.m_binding;
 						entry.textureView = texture.getTextureMipLevel(bind.m_mip);
+
+						if (Access::Read == bind.m_access)
+						{
+							wgpu::BindGroupEntry& samplerEntry = b.m_entries[b.numEntries++];
+							samplerEntry.binding = bindInfo.m_binding + 16;
+							samplerEntry.sampler = texture.m_sampler;
+						}
 					}
 					break;
 
@@ -1399,7 +1407,7 @@ namespace bgfx { namespace webgpu
 							textureEntry.textureView = texture.m_ptr.CreateView(&viewDesc);
 
 							wgpu::BindGroupEntry& samplerEntry = b.m_entries[b.numEntries++];
-							samplerEntry.binding = bindInfo.m_binding + 16;
+							samplerEntry.binding = bindInfo.m_binding + kSpirvSamplerShift;
 							samplerEntry.sampler = 0 == (BGFX_SAMPLER_INTERNAL_DEFAULT & flags)
 								? getSamplerState(flags)
 								: texture.m_sampler;
@@ -1677,7 +1685,7 @@ namespace bgfx { namespace webgpu
 					: m_frameBuffers[_fbh.idx].m_swapChain
 					;
 
-				_renderPassDescriptor.colorAttachments[0] = defaultDescriptor<wgpu::RenderPassColorAttachmentDescriptor>();
+				_renderPassDescriptor.colorAttachments[0] = defaultDescriptor<wgpu::RenderPassColorAttachment>();
 				_renderPassDescriptor.desc.colorAttachmentCount = 1;
 
 				// Force 1 array layers for attachments
@@ -1686,16 +1694,16 @@ namespace bgfx { namespace webgpu
 
 				if (swapChain->m_backBufferColorMsaa)
 				{
-					_renderPassDescriptor.colorAttachments[0].attachment    = swapChain->m_backBufferColorMsaa.CreateView(&desc);
+					_renderPassDescriptor.colorAttachments[0].view    = swapChain->m_backBufferColorMsaa.CreateView(&desc);
 					_renderPassDescriptor.colorAttachments[0].resolveTarget = swapChain->current();
 				}
 				else
 				{
-					_renderPassDescriptor.colorAttachments[0].attachment = swapChain->current();
+					_renderPassDescriptor.colorAttachments[0].view = swapChain->current();
 				}
 
-				_renderPassDescriptor.depthStencilAttachment = defaultDescriptor<wgpu::RenderPassDepthStencilAttachmentDescriptor>();
-				_renderPassDescriptor.depthStencilAttachment.attachment = swapChain->m_backBufferDepth.CreateView();
+				_renderPassDescriptor.depthStencilAttachment = defaultDescriptor<wgpu::RenderPassDepthStencilAttachment>();
+				_renderPassDescriptor.depthStencilAttachment.view = swapChain->m_backBufferDepth.CreateView();
 				_renderPassDescriptor.desc.depthStencilAttachment = &_renderPassDescriptor.depthStencilAttachment;
 			}
 			else
@@ -1710,8 +1718,8 @@ namespace bgfx { namespace webgpu
 
 					const wgpu::TextureViewDescriptor desc = attachmentView(frameBuffer.m_colorAttachment[ii], texture);
 
-					_renderPassDescriptor.colorAttachments[ii] = defaultDescriptor<wgpu::RenderPassColorAttachmentDescriptor>();
-					_renderPassDescriptor.colorAttachments[ii].attachment = texture.m_ptrMsaa
+					_renderPassDescriptor.colorAttachments[ii] = defaultDescriptor<wgpu::RenderPassColorAttachment>();
+					_renderPassDescriptor.colorAttachments[ii].view = texture.m_ptrMsaa
 						? texture.m_ptrMsaa.CreateView(&desc)
 						: texture.m_ptr.CreateView(&desc)
 						;
@@ -1726,8 +1734,8 @@ namespace bgfx { namespace webgpu
 					const TextureWgpu& texture = m_textures[frameBuffer.m_depthHandle.idx];
 					const wgpu::TextureViewDescriptor desc = attachmentView(frameBuffer.m_depthAttachment, texture);
 
-					_renderPassDescriptor.depthStencilAttachment = defaultDescriptor<wgpu::RenderPassDepthStencilAttachmentDescriptor>();
-					_renderPassDescriptor.depthStencilAttachment.attachment = texture.m_ptrMsaa
+					_renderPassDescriptor.depthStencilAttachment = defaultDescriptor<wgpu::RenderPassDepthStencilAttachment>();
+					_renderPassDescriptor.depthStencilAttachment.view = texture.m_ptrMsaa
 						? texture.m_ptrMsaa.CreateView(&desc)
 						: texture.m_ptr.CreateView(&desc)
 						;
@@ -2277,7 +2285,7 @@ namespace bgfx { namespace webgpu
 			{
 				for(uint32_t ii = 0; ii < g_caps.limits.maxFBAttachments; ++ii)
 				{
-					wgpu::RenderPassColorAttachmentDescriptor& color = renderPassDescriptor.colorAttachments[ii];
+					wgpu::RenderPassColorAttachment& color = renderPassDescriptor.colorAttachments[ii];
 
 					if(0 != (BGFX_CLEAR_COLOR & clr.m_flags))
 					{
@@ -2307,13 +2315,13 @@ namespace bgfx { namespace webgpu
 						color.loadOp = wgpu::LoadOp::Load;
 					}
 
-					//desc.storeOp = desc.attachment.sampleCount > 1 ? wgpu::StoreOp::MultisampleResolve : wgpu::StoreOp::Store;
+					//desc.storeOp = desc.view.sampleCount > 1 ? wgpu::StoreOp::MultisampleResolve : wgpu::StoreOp::Store;
 					color.storeOp = wgpu::StoreOp::Store;
 				}
 
-				wgpu::RenderPassDepthStencilAttachmentDescriptor& depthStencil = renderPassDescriptor.depthStencilAttachment;
+				wgpu::RenderPassDepthStencilAttachment& depthStencil = renderPassDescriptor.depthStencilAttachment;
 
-				if(depthStencil.attachment)
+				if(depthStencil.view)
 				{
 					depthStencil.clearDepth = clr.m_depth;
 					depthStencil.depthLoadOp = 0 != (BGFX_CLEAR_DEPTH & clr.m_flags)
@@ -2340,16 +2348,16 @@ namespace bgfx { namespace webgpu
 			{
 				for(uint32_t ii = 0; ii < g_caps.limits.maxFBAttachments; ++ii)
 				{
-					wgpu::RenderPassColorAttachmentDescriptor& color = renderPassDescriptor.colorAttachments[ii];
-					if(color.attachment)
+					wgpu::RenderPassColorAttachment& color = renderPassDescriptor.colorAttachments[ii];
+					if(color.view)
 					{
 						color.loadOp = wgpu::LoadOp::Load;
 					}
 				}
 
-				wgpu::RenderPassDepthStencilAttachmentDescriptor& depthStencil = renderPassDescriptor.depthStencilAttachment;
+				wgpu::RenderPassDepthStencilAttachment& depthStencil = renderPassDescriptor.depthStencilAttachment;
 
-				if(depthStencil.attachment)
+				if(depthStencil.view)
 				{
 					depthStencil.depthLoadOp = wgpu::LoadOp::Load;
 					depthStencil.depthStoreOp = wgpu::StoreOp::Store;
@@ -2515,7 +2523,7 @@ namespace bgfx { namespace webgpu
 		const bool fragment = isShaderType(magic, 'F');
 		uint8_t fragmentBit = fragment ? kUniformFragmentBit : 0;
 
-		BX_ASSERT(!isShaderVerLess(magic, 7), "WebGPU backend supports only shader binary version >= 7");
+		BX_ASSERT(!isShaderVerLess(magic, 11), "WebGPU backend supports only shader binary version >= 11");
 
 		if (0 < count)
 		{
@@ -2546,6 +2554,9 @@ namespace bgfx { namespace webgpu
 				uint8_t texDimension;
 				bx::read(&reader, texDimension);
 
+				uint16_t texFormat = 0;
+				bx::read(&reader, texFormat);
+
 				const char* kind = "invalid";
 
 				PredefinedUniform::Enum predefined = nameToPredefinedUniformEnum(name);
@@ -2563,7 +2574,8 @@ namespace bgfx { namespace webgpu
 					const bool buffer = idToDescriptorType(regCount) == DescriptorType::StorageBuffer;
 					const bool readonly = (type & kUniformReadOnlyBit) != 0;
 
-					const uint8_t stage = regIndex - (buffer ? 16 : 32) - (fragment ? 48 : 0);
+					const uint8_t reverseShift = kSpirvBindShift;
+					const uint8_t stage = regIndex - reverseShift;
 
 					m_bindInfo[stage].m_index = m_numBuffers;
 					m_bindInfo[stage].m_binding = regIndex;
@@ -2584,6 +2596,8 @@ namespace bgfx { namespace webgpu
 						m_buffers[m_numBuffers].storageTexture.access = readonly
 							? wgpu::StorageTextureAccess::ReadOnly
 							: wgpu::StorageTextureAccess::WriteOnly;
+
+						m_buffers[m_numBuffers].storageTexture.format = s_textureFormat[texFormat].m_fmt;
 					}
 
 					m_numBuffers++;
@@ -2595,7 +2609,8 @@ namespace bgfx { namespace webgpu
 					const UniformRegInfo* info = s_renderWgpu->m_uniformReg.find(name);
 					BX_ASSERT(NULL != info, "User defined uniform '%s' is not found, it won't be set.", name);
 
-					const uint8_t stage = regIndex - 16 - (fragment ? 48 : 0);
+					const uint8_t reverseShift = kSpirvBindShift;
+					const uint8_t stage = regIndex - reverseShift;
 
 					m_bindInfo[stage].m_index = m_numSamplers;
 					m_bindInfo[stage].m_binding = regIndex;
@@ -2635,7 +2650,7 @@ namespace bgfx { namespace webgpu
 					const bool comparisonSampler = (type & kUniformCompareBit) != 0;
 
 					m_samplers[m_numSamplers] = wgpu::BindGroupLayoutEntry();
-					m_samplers[m_numSamplers].binding = regIndex + 16;
+					m_samplers[m_numSamplers].binding = regIndex + kSpirvSamplerShift;
 					m_samplers[m_numSamplers].visibility = shaderStage;
 					m_samplers[m_numSamplers].sampler.type = comparisonSampler
 						? wgpu::SamplerBindingType::Comparison
@@ -2805,7 +2820,7 @@ namespace bgfx { namespace webgpu
 
 		if (_vsh->m_size > 0)
 		{
-			bindings[numBindings].binding = 0;
+			bindings[numBindings].binding = kSpirvVertexBinding;
 			bindings[numBindings].visibility = _vsh->m_stage;
 			bindings[numBindings].buffer.type = wgpu::BufferBindingType::Uniform;
 			bindings[numBindings].buffer.hasDynamicOffset = true;
@@ -2814,7 +2829,7 @@ namespace bgfx { namespace webgpu
 
 		if (NULL != _fsh && _fsh->m_size > 0)
 		{
-			bindings[numBindings].binding = 48;
+			bindings[numBindings].binding = kSpirvFragmentBinding;
 			bindings[numBindings].visibility = wgpu::ShaderStage::Fragment;
 			bindings[numBindings].buffer.type = wgpu::BufferBindingType::Uniform;
 			bindings[numBindings].buffer.hasDynamicOffset = true;
