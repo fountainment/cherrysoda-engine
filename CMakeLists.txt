@@ -14,8 +14,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(Documentation)
 include(SysDetect)
 
-find_package(Python3)
-if(NOT Python3_FOUND)
+find_package(Python)
+if(NOT Python_FOUND)
   message(FATAL_ERROR "Please install python3 first!")
 endif()
 
@@ -179,7 +179,7 @@ if(WINDOWS)
   if(NOT DEFINED ENV{SDL2_DIR})
     if(NOT EXISTS ${CHERRYSODA_SDL2_PATH})
       if(MSVC AND CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-        execute_process(COMMAND ${Python3_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/setup_sdl2_for_windows.py
+        execute_process(COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/setup_sdl2_for_windows.py
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       endif()
     endif()
@@ -210,7 +210,7 @@ function(add_cherrysoda_executable executable_name)
   if(WINDOWS)
     if(NOT EXISTS ${CHERRYSODA_SDL2_PATH})
       if(MSVC AND CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
-        execute_process(COMMAND ${Python3_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/setup_sdl2_for_windows.py
+        execute_process(COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/setup_sdl2_for_windows.py
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       endif()
     endif()
@@ -231,7 +231,7 @@ function(add_cherrysoda_executable executable_name)
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/index.html)
       file(COPY index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
     else()
-      execute_process(COMMAND ${Python3_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/generate_index_html.py ${executable_name} ./index.html
+      execute_process(COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/generate_index_html.py ${executable_name} ./index.html
                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
   endif()
