@@ -239,7 +239,7 @@ function(add_cherrysoda_executable executable_name)
     if(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE OR CHERRYSODA_BUILD_SHADERC)
       set(shader_compile_stamp ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
       add_custom_command(OUTPUT ${shader_compile_stamp}
-                         COMMAND ${Python3_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
+                         COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
                          COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
                          COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders ${CMAKE_CURRENT_BINARY_DIR}/assets/shaders
                          DEPENDS ${shader_src}
