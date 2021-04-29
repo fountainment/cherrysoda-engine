@@ -10,6 +10,18 @@
 
 A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
+## Example Projects
+
+[BulletHellJam2021-BulletHellTrial](https://github.com/fountainment/bullethelljam2021-bullethelltrial)
+
+## Demo
+
+**WebGL version (wasm) of Playground/VoxelExperiment:**
+
+[VoxelExperiment](https://fountainment.github.io/demo/VoxelExperiment/)
+
+[VoxelExperiment](https://fountainment.gitee.io/VoxelExperiment/) (国内访问较快)
+
 ## Requirements
 
 - CMake >=3.12
@@ -133,11 +145,3 @@ You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 - Added doxygen config
 - Added CMake config of shaderc
 
-
-## Demo
-
-WebGL version (wasm) of Playground/VoxelExperiment:
-
-https://fountainment.github.io/demo/VoxelExperiment/
-
-https://fountainment.gitee.io/VoxelExperiment/
