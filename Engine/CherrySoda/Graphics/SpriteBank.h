@@ -15,6 +15,7 @@ class SpriteBank
 {
 public:
 	SpriteBank(Atlas* atlas, const String& jsonPath);
+	SpriteBank(const String& atlasPath, const String& jsonPath);
 	~SpriteBank();
 
 	bool Has(const StringID& id);
@@ -23,6 +24,7 @@ public:
 
 private:
 	Atlas* m_atlas;
+	bool m_ownAtlas = false;
 	json::Document m_json;
 	STL::HashMap<StringID, SpriteData*> m_spriteData;	
 };

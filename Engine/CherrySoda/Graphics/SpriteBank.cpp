@@ -39,12 +39,21 @@ SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 	}
 }
 
+SpriteBank::SpriteBank(const String& atlasPath, const String& jsonPath)
+: SpriteBank(Atlas::FromAtlas(atlasPath), jsonPath)
+{
+	m_ownAtlas = true;
+}
+
 SpriteBank::~SpriteBank()
 {
 	for (auto& data : m_spriteData) {
 		delete data.second;
 	}
 	STL::Clear(m_spriteData);
+	if (m_ownAtlas) {
+		delete m_atlas;
+	}
 }
 
 bool SpriteBank::Has(const StringID& id)
