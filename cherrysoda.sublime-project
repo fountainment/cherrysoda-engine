@@ -132,6 +132,92 @@
 				}
 			],
 			"working_dir": "${project_path}/build"
+		},
+		{
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"name": "cherrysoda (OSX)",
+			"shell_cmd": "make -j8",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "clean",
+					"shell_cmd": "make -j8 clean"
+				},
+				{
+					"name": "rebuild_cache",
+					"shell_cmd": "make -j8 rebuild_cache"
+				},
+				{
+					"name": "CherrySoda",
+					"shell_cmd": "make -j8 CherrySoda"
+				},
+				{
+					"name": "EaseFunction",
+					"shell_cmd": "make -j8 EaseFunction"
+				},
+				{
+					"name": "FirstSprite",
+					"shell_cmd": "make -j8 FirstSprite"
+				},
+				{
+					"name": "FirstTriangle",
+					"shell_cmd": "make -j8 FirstTriangle"
+				},
+				{
+					"name": "MathBench",
+					"shell_cmd": "make -j8 MathBench"
+				},
+				{
+					"name": "Minimal",
+					"shell_cmd": "make -j8 Minimal"
+				},
+				{
+					"name": "Noise",
+					"shell_cmd": "make -j8 Noise"
+				},
+				{
+					"name": "PlatformerTrial",
+					"shell_cmd": "make -j8 PlatformerTrial"
+				},
+				{
+					"name": "VoxelExperiment",
+					"shell_cmd": "make -j8 VoxelExperiment"
+				},
+				{
+					"name": "bgfx",
+					"shell_cmd": "make -j8 bgfx"
+				},
+				{
+					"name": "bimg",
+					"shell_cmd": "make -j8 bimg"
+				},
+				{
+					"name": "bimg_decode",
+					"shell_cmd": "make -j8 bimg_decode"
+				},
+				{
+					"name": "bx",
+					"shell_cmd": "make -j8 bx"
+				},
+				{
+					"name": "crunch",
+					"shell_cmd": "make -j8 crunch"
+				},
+				{
+					"name": "imgui",
+					"shell_cmd": "make -j8 imgui"
+				},
+				{
+					"name": "libcrunch",
+					"shell_cmd": "make -j8 libcrunch"
+				},
+				{
+					"name": "sfxr_port",
+					"shell_cmd": "make -j8 sfxr_port"
+				}
+			],
+			"working_dir": "${project_path}/build"
 		}
 	],
 	"folders":
