@@ -276,6 +276,7 @@ if(NOT CHERRYSODA_LIGHT_BUILD)
   endif()
 endif()
 
+set(CHERRYSODA_EXECUTABLE_FOLDER Projects)
 if(OUTSIDE_PROJECTS_FOLDER_EXISTS)
   add_subdirectory(${OUTSIDE_PROJECTS_FOLDER} Projects)
 elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Projects/CMakeLists.txt)

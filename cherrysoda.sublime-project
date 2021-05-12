@@ -2,52 +2,6 @@
 	"build_systems":
 	[
 		{
-			"file_regex": "^  (.+)\\((\\d+)\\)(): ((?:fatal )?(?:error|warning) \\w+\\d\\d\\d\\d: .*) \\[.*$",
-			"name": "cherry-soda (Windows)",
-			"shell_cmd": "cmake --build .",
-			"syntax": "Packages/CMakeBuilder/Syntax/Visual_Studio.sublime-syntax",
-			"variants":
-			[
-				{
-					"name": "ALL_BUILD",
-					"shell_cmd": "cmake --build . --target ALL_BUILD"
-				},
-				{
-					"name": "ZERO_CHECK",
-					"shell_cmd": "cmake --build . --target ZERO_CHECK"
-				},
-				{
-					"name": "Engine/CherrySoda",
-					"shell_cmd": "cmake --build . --target Engine/CherrySoda"
-				},
-				{
-					"name": "External/bgfx/bgfx",
-					"shell_cmd": "cmake --build . --target External/bgfx/bgfx"
-				},
-				{
-					"name": "External/bgfx/bimg",
-					"shell_cmd": "cmake --build . --target External/bgfx/bimg"
-				},
-				{
-					"name": "External/bgfx/bx",
-					"shell_cmd": "cmake --build . --target External/bgfx/bx"
-				},
-				{
-					"name": "External/glm-0.9.9.6/ALL_BUILD",
-					"shell_cmd": "cmake --build . --target External/glm-0.9.9.6/ALL_BUILD"
-				},
-				{
-					"name": "External/glm-0.9.9.6/glm/glm_static",
-					"shell_cmd": "cmake --build . --target External/glm-0.9.9.6/glm/glm_static"
-				},
-				{
-					"name": "Playground/VoxelExperiment/VoxelExperiment",
-					"shell_cmd": "cmake --build . --target Playground/VoxelExperiment/VoxelExperiment"
-				}
-			],
-			"working_dir": "${project_path}/build"
-		},
-		{
 			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
 			"name": "cherrysoda (Linux)",
 			"shell_cmd": "make -j8",
@@ -215,6 +169,96 @@
 				{
 					"name": "sfxr_port",
 					"shell_cmd": "make -j8 sfxr_port"
+				}
+			],
+			"working_dir": "${project_path}/build"
+		},
+		{
+			"file_regex": "^  (.+)\\((\\d+)\\)(): ((?:fatal )?(?:error|warning) \\w+\\d\\d\\d\\d: .*) \\[.*$",
+			"name": "cherrysoda (Windows)",
+			"shell_cmd": "cmake --build .",
+			"syntax": "Packages/CMakeBuilder/Syntax/Visual_Studio.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "ALL_BUILD",
+					"shell_cmd": "cmake --build . --target ALL_BUILD"
+				},
+				{
+					"name": "ZERO_CHECK",
+					"shell_cmd": "cmake --build . --target ZERO_CHECK"
+				},
+				{
+					"name": "Bench/MathBench/MathBench",
+					"shell_cmd": "cmake --build . --target Bench/MathBench/MathBench"
+				},
+				{
+					"name": "Engine/CherrySoda",
+					"shell_cmd": "cmake --build . --target Engine/CherrySoda"
+				},
+				{
+					"name": "Examples/EaseFunction/EaseFunction",
+					"shell_cmd": "cmake --build . --target Examples/EaseFunction/EaseFunction"
+				},
+				{
+					"name": "Examples/FirstSprite/FirstSprite",
+					"shell_cmd": "cmake --build . --target Examples/FirstSprite/FirstSprite"
+				},
+				{
+					"name": "Examples/FirstTriangle/FirstTriangle",
+					"shell_cmd": "cmake --build . --target Examples/FirstTriangle/FirstTriangle"
+				},
+				{
+					"name": "Examples/Minimal/Minimal",
+					"shell_cmd": "cmake --build . --target Examples/Minimal/Minimal"
+				},
+				{
+					"name": "External/bgfx/bgfx",
+					"shell_cmd": "cmake --build . --target External/bgfx/bgfx"
+				},
+				{
+					"name": "External/bgfx/bimg",
+					"shell_cmd": "cmake --build . --target External/bgfx/bimg"
+				},
+				{
+					"name": "External/bgfx/bimg_decode",
+					"shell_cmd": "cmake --build . --target External/bgfx/bimg_decode"
+				},
+				{
+					"name": "External/bgfx/bx",
+					"shell_cmd": "cmake --build . --target External/bgfx/bx"
+				},
+				{
+					"name": "External/glm/ALL_BUILD",
+					"shell_cmd": "cmake --build . --target External/glm/ALL_BUILD"
+				},
+				{
+					"name": "External/imgui/imgui",
+					"shell_cmd": "cmake --build . --target External/imgui/imgui"
+				},
+				{
+					"name": "Playground/Noise/Noise",
+					"shell_cmd": "cmake --build . --target Playground/Noise/Noise"
+				},
+				{
+					"name": "Playground/PlatformerTrial/PlatformerTrial",
+					"shell_cmd": "cmake --build . --target Playground/PlatformerTrial/PlatformerTrial"
+				},
+				{
+					"name": "Playground/VoxelExperiment/VoxelExperiment",
+					"shell_cmd": "cmake --build . --target Playground/VoxelExperiment/VoxelExperiment"
+				},
+				{
+					"name": "Tools/crunch/crunch",
+					"shell_cmd": "cmake --build . --target Tools/crunch/crunch"
+				},
+				{
+					"name": "Tools/crunch/libcrunch",
+					"shell_cmd": "cmake --build . --target Tools/crunch/libcrunch"
+				},
+				{
+					"name": "Tools/sfxr_port/sfxr_port",
+					"shell_cmd": "cmake --build . --target Tools/sfxr_port/sfxr_port"
 				}
 			],
 			"working_dir": "${project_path}/build"
