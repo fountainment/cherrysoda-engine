@@ -16,7 +16,9 @@ jobs:
       run: cmake -E make_directory ${{github.workspace}}/build
 
     - name: Configure Dependencies
-      run: sudo apt-get install build-essential libgl1-mesa-dev x11proto-core-dev libx11-dev libsdl2-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential libgl1-mesa-dev x11proto-core-dev libx11-dev libsdl2-dev
 
     - name: Configure CMake
       shell: bash
