@@ -18,9 +18,9 @@ A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
 
 **WebGL version (wasm) of Playground/VoxelExperiment:**
 
-[VoxelExperiment](https://fountainment.github.io/demo/VoxelExperiment/)
+[VoxelExperiment](https://fountainment.github.io/demo/VoxelExperiment/) (github.io)
 
-[VoxelExperiment](https://fountainment.gitee.io/VoxelExperiment/) (国内访问较快)
+[VoxelExperiment](https://fountainment.gitee.io/VoxelExperiment/) (gitee.io)
 
 ## Requirements
 
