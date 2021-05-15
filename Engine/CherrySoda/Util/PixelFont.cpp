@@ -66,7 +66,7 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, const cherrysoda:
 	}
 
 	// get kerning
-	if (data["kerning"].IsArray()) {
+	if (data.HasMember("kerning") && data["kerning"].IsArray()) {
 		// TODO: add kerning reading
 	}
 
