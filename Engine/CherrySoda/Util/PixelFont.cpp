@@ -24,7 +24,7 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, Atlas* atlas/* = 
 	return AddFontSize(path, &json, atlas, outline);
 }
 
-const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
+const PixelFontSize PixelFont::AddFontSize(const String& path, const cherrysoda::json::Value* jsonValue, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
 {
 	// check if size already exists
 	auto data = jsonValue->GetObject();
