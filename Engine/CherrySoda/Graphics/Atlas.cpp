@@ -23,6 +23,14 @@ Atlas::~Atlas()
 	}
 }
 
+const MTexture Atlas::GetOrDefault(const StringID& id, const MTexture& defaultTexture)
+{
+	if (id.IsEmpty() || !Has(id)) {
+		return defaultTexture;
+	}
+	return m_textures[id];
+}
+
 const STL::Vector<MTexture> Atlas::GetAtlasSubtextures(const String& key)
 {
 	STL::Vector<MTexture> list;
@@ -53,7 +61,7 @@ const MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index)
 	}
 }
 
-const MTexture Atlas::GetAtlasSubtextureFromCacheAt(const String& key, int index)
+const MTexture Atlas::GetAtlasSubtextureFromCacheAt(const StringID& key, int index)
 {
 	return m_orderedTexturesCache[key][index];
 }
@@ -87,7 +95,7 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 		const auto& at = doc["textures"];
 		CHERRYSODA_ASSERT_FORMAT(at.IsArray(), "Atlas json parse failed: \"textures\" scope is not an array in \"%s\"!\n");
 		for (const auto& tex : at.GetArray()) {
-			String texturePath = path.substr(0, path.find_last_of("/\\") + 1) + tex["name"].GetString() + ".png";
+			String texturePath = StringUtil::Path_GetDirectoryName(path) + tex["name"].GetString() + ".png";
 			auto texture = Texture2D::FromFile(texturePath);
 			auto mTexture = MTexture(texture);
 			STL::Add(atlas->m_sources, texture);

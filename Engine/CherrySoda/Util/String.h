@@ -42,6 +42,14 @@ public:
 
 	static float ToFloat(const String& s) { return std::stof(s); }
 	static int ToInt(const String& s) { return std::stoi(s); }
+
+	// path utils
+	static const String Path_GetDirectoryName(const String& path);
+	static const String Path_GetFileName(const String& path);
+	static const String Path_GetFileNameWithoutExtension(const String& path);
+
+	// converter utils
+	static const STL::Vector<type::UInt32> Utf8ToUnicode32(const String& text);
 };
 
 class StringID
@@ -54,6 +62,7 @@ public:
 	constexpr type::Int32 GetID() const { return m_id; }
 	constexpr operator type::Int32() const { return GetID(); }
 	constexpr bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }
+	constexpr bool IsEmpty() const { return GetID() == 0; }
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
 public:

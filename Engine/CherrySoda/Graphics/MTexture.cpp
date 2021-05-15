@@ -1,6 +1,7 @@
 #include <CherrySoda/Graphics/MTexture.h>
 
 #include <CherrySoda/Graphics/SpriteBatch.h>
+#include <CherrySoda/Graphics/SpriteEffects.h>
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
@@ -16,6 +17,7 @@ using cherrysoda::String;
 using cherrysoda::Texture2D;
 
 namespace type = cherrysoda::type;
+
 
 MTexture MTexture::FromFile(const String& filename)
 {
@@ -100,12 +102,17 @@ Math::IRectangle MTexture::GetRelativeRect(const Math::IRectangle& rect) const
 	return GetRelativeRect(rect.X(), rect.Y(), rect.Width(), rect.Height());
 }
 
-MTexture MTexture::GetSubtexture(const Math::IRectangle& rect)
+MTexture MTexture::GetSubtexture(int x, int y, int width, int height) const
 {
-	return MTexture(Texture(), rect);
+	return MTexture(*this, x, y, width, height);
 }
 
-void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin, const Color& color, const Math::Vec3& scale, float zRotation, SpriteEffects flip)
+MTexture MTexture::GetSubtexture(const Math::IRectangle& rect) const
+{
+	return MTexture(*this, rect);
+}
+
+void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin/* = Vec3_Zero*/, const Color& color/* = Color::White*/, const Math::Vec3& scale/* = Vec3_One*/, float zRotation/* = 0.f*/, SpriteEffects flip/* = SpriteEffects::None*/) const
 {
 	Draw::GetSpriteBatch()->Draw(Texture(), Math::Vec2(renderPosition), ClipRect(), color, zRotation, Math::Vec2(origin) - DrawOffset(), Math::Vec2(scale), flip, 0.f);
 }

@@ -14,6 +14,7 @@
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Image.h>
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
+#include <CherrySoda/Components/Graphics/PixelText.h>
 #include <CherrySoda/Components/Graphics/Sprite.h>
 #include <CherrySoda/Components/Logic/Alarm.h>
 #include <CherrySoda/Components/Logic/Shaker.h>
@@ -30,6 +31,7 @@
 #include <CherrySoda/Graphics/SpriteBank.h>
 #include <CherrySoda/Graphics/SpriteBatch.h>
 #include <CherrySoda/Graphics/SpriteData.h>
+#include <CherrySoda/Graphics/SpriteEffects.h>
 #include <CherrySoda/Graphics/Texture.h>
 
 #include <CherrySoda/Input/MInput.h>
@@ -58,6 +60,7 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/PixelFont.h>
 #include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>

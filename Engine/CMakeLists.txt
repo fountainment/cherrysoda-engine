@@ -21,6 +21,8 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/GraphicsComponent.h
   CherrySoda/Components/Graphics/Image.h
   CherrySoda/Components/Graphics/MeshGraphicsComponent.h
+  CherrySoda/Components/Graphics/PixelText.cpp
+  CherrySoda/Components/Graphics/PixelText.h
   CherrySoda/Components/Graphics/Sprite.cpp
   CherrySoda/Components/Graphics/Sprite.h
   CherrySoda/Components/Logic/Alarm.cpp
@@ -49,6 +51,7 @@ set(ENGINE_SRC
   CherrySoda/Graphics/SpriteBatch.h
   CherrySoda/Graphics/SpriteData.cpp
   CherrySoda/Graphics/SpriteData.h
+  CherrySoda/Graphics/SpriteEffects.h
   CherrySoda/Graphics/Texture.cpp
   CherrySoda/Graphics/Texture.h
   CherrySoda/Input/MInput.cpp
@@ -94,6 +97,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Math.cpp
   CherrySoda/Util/Math.h
   CherrySoda/Util/NumType.h
+  CherrySoda/Util/PixelFont.cpp
+  CherrySoda/Util/PixelFont.h
   CherrySoda/Util/Pool.h
   CherrySoda/Util/Profile.cpp
   CherrySoda/Util/Profile.h

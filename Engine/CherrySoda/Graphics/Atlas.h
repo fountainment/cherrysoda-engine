@@ -24,19 +24,24 @@ public:
 	Atlas() = default;
 	~Atlas();
 
+	const MTexture operator [] (const StringID& id) { return m_textures[id]; }
+
+	inline bool Has(const StringID& id) const { return STL::ContainsKey(m_textures, id); }
+	const MTexture GetOrDefault(const StringID& id, const MTexture& defaultTexture);
+
 	const STL::Vector<MTexture> GetAtlasSubtextures(const String& key);
 	const MTexture GetAtlasSubtextureAt(const String& key, int index);
+
 	static Atlas* FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
 	{
 		Atlas* atlas = new Atlas;
 		ReadAtlasData(atlas, path, format);
 		return atlas;
 	}
-
 	static void ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format);
 
 private:
-	const MTexture GetAtlasSubtextureFromCacheAt(const String& key, int index);
+	const MTexture GetAtlasSubtextureFromCacheAt(const StringID& key, int index);
 	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index);
 
 	STL::List<Texture2D> m_sources;

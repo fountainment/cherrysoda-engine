@@ -73,7 +73,7 @@ public:
 	using Pair = std::pair<T,U>;
 
 	template <typename T, typename U>
-	static constexpr Pair<T,U> MakePair(T&& t, U&& u)
+	static constexpr Pair<T,U> MakePair(T t, U u)
 	{
 		return std::make_pair(t, u);
 	}
@@ -145,6 +145,18 @@ public:
 	static inline void AddRange(T& container, const U& iterable)
 	{
 		container.insert(std::end(container), std::begin(iterable), std::end(iterable));
+	}
+
+	template <typename T>
+	static inline auto Front(T& container)
+	{
+		return container.front();
+	}
+
+	template <typename T>
+	static inline auto Back(T& container)
+	{
+		return container.back();
 	}
 
 	template <typename T>
@@ -319,6 +331,16 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+	template <typename T>
+	static inline const typename T::mapped_type* GetValueAddress(const T& container, const typename T::key_type& key)
+	{
+		auto it = FindKey(container, key);
+		if (it != container.end()) {
+			return &it->second;
+		}
+		return nullptr;
 	}
 
 	template <typename T>
