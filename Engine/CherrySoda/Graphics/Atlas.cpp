@@ -15,6 +15,7 @@ using cherrysoda::Math;
 using cherrysoda::MTexture;
 using cherrysoda::STL;
 using cherrysoda::String;
+using cherrysoda::StringID;
 
 Atlas::~Atlas()
 {
