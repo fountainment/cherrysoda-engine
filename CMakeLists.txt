@@ -175,6 +175,11 @@ if((WINDOWS OR LINUX) AND CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "(x86_64)|(X86_64)
   set(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE ON)
 endif()
 
+set(CHERRYSODA_SHADERC_EXECUTABLE)
+if(CHERRYSODA_BUILD_SHADERC)
+  set(CHERRYSODA_SHADERC_EXECUTABLE shaderc)
+endif()
+
 if(WINDOWS)
   if(NOT DEFINED ENV{SDL2_DIR})
     if(NOT EXISTS ${CHERRYSODA_SDL2_PATH})
@@ -242,7 +247,7 @@ function(add_cherrysoda_executable executable_name)
                          COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}" --file-list \"${shader_src}\"
                          COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
                          COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders ${CMAKE_CURRENT_BINARY_DIR}/assets/shaders
-                         DEPENDS ${shader_src}
+                         DEPENDS ${shader_src} ${CHERRYSODA_SHADERC_EXECUTABLE}
                          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
   endif()

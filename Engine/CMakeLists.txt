@@ -120,6 +120,7 @@ set(EMBEDDED_SHADER_SRC
   CherrySoda/Graphics/shaders/fs_sprite.sc
 )
 
+
 # Embedded shader compilation
 set(SHADER_COMPILE_STAMP "")
 if(NOT "${EMBEDDED_SHADER_SRC}" STREQUAL "")
@@ -128,7 +129,7 @@ if(NOT "${EMBEDDED_SHADER_SRC}" STREQUAL "")
     add_custom_command(OUTPUT ${SHADER_COMPILE_STAMP}
                        COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
                        COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
-                       DEPENDS ${EMBEDDED_SHADER_SRC}
+                       DEPENDS ${EMBEDDED_SHADER_SRC} ${CHERRYSODA_SHADERC_EXECUTABLE}
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endif()
@@ -145,10 +146,6 @@ endif()
 add_library(CherrySoda STATIC ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC} ${SHADER_COMPILE_STAMP})
 target_compile_features(CherrySoda PUBLIC cxx_std_14)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC})
-
-if(CHERRYSODA_BUILD_SHADERC)
-  add_dependencies(CherrySoda shaderc)
-endif()
 
 if(EMSCRIPTEN)
   set(SDL2_INCLUDE_DIRS)
