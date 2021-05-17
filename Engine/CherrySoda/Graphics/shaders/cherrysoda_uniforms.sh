@@ -25,4 +25,3 @@ uniform vec4 u_resolutionv;
 #define u_resolution  u_resolutionv.xy
 #define u_surfaceSize u_resolutionv.zw
 #define u_ratio       u_resolutionv.z
-
