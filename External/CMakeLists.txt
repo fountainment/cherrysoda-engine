@@ -2,6 +2,8 @@ add_subdirectory(bgfx)
 add_subdirectory(glm)
 add_subdirectory(imgui)
 add_subdirectory(rapidjson)
+add_subdirectory(stb)
+add_subdirectory(cmixer)
 
 cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx;imgui" External)
 if(CHERRYSODA_BUILD_SHADERC)

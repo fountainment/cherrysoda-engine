@@ -6,4 +6,3 @@ project(glm VERSION ${GLM_VERSION} LANGUAGES CXX)
 
 add_subdirectory(glm)
 add_library(glm::glm ALIAS glm)
-

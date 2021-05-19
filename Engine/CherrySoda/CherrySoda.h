@@ -5,6 +5,8 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Scene.h>
 
+#include <CherrySoda/Audio/Audio.h>
+
 #include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/Collider.h>

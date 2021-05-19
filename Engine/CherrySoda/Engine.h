@@ -76,6 +76,7 @@ protected:
 
 	virtual void ParseArgs(int argc, char* argv[]);
 	virtual void Initialize();
+	virtual void Terminate();
 	virtual void LoadContent();
 
 	virtual void Update();

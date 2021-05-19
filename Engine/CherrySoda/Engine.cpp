@@ -1,6 +1,7 @@
 #include <CherrySoda/Engine.h>
 
 #include <CherrySoda/Scene.h>
+#include <CherrySoda/Audio/Audio.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Interface/Window.h>
@@ -18,6 +19,7 @@
 
 using cherrysoda::Engine;
 
+using cherrysoda::Audio;
 using cherrysoda::Color;
 using cherrysoda::Draw;
 using cherrysoda::Graphics;
@@ -27,6 +29,7 @@ using cherrysoda::MInput;
 using cherrysoda::Scene;
 using cherrysoda::String;
 using cherrysoda::Time;
+
 
 #ifdef __EMSCRIPTEN__
 void Engine::MainLoop()
@@ -123,12 +126,7 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 	}	
 #endif // __EMSCRIPTEN__
 
-	GUI::Terminate();
-	Draw::Terminate();
-	Graphics::Terminate();
-
-	m_window->DestroyWindow();
-	Window::Terminate();
+	Terminate();
 }
 
 void Engine::SetScene(Scene* scene)
@@ -196,8 +194,20 @@ void Engine::Initialize()
 	Graphics::UpdateView();
 	Draw::Initialize();
 	GUI::Initialize();
+	Audio::Initialize();
+
 	m_graphicsDevice = Graphics::Instance();
 	m_initialized = true;
+}
+
+void Engine::Terminate()
+{
+	GUI::Terminate();
+	Draw::Terminate();
+	Graphics::Terminate();
+
+	m_window->DestroyWindow();
+	Window::Terminate();
 }
 
 void Engine::LoadContent()
