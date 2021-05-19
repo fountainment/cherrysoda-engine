@@ -41,8 +41,8 @@ using namespace cherrysoda;
 typedef type::UInt32 DWORD;
 typedef type::UInt16 WORD;
 
-SDL_AudioSpec des;
-bool firstPlay = true;
+bool first_play = true;
+bool mute_stream = true;
 
 #define rnd(n) (std::rand()%(n+1))
 
@@ -286,10 +286,9 @@ void ResetSample(bool restart)
 
 void PlaySample()
 {
-	if (firstPlay) {
-		SDL_OpenAudio(&des, nullptr);
-		SDL_PauseAudio(0);
-		firstPlay = false;
+	if (first_play) {
+		mute_stream = false;
+		first_play = false;
 	}
 	ResetSample(false);
 	playing_sample=true;
@@ -462,8 +461,6 @@ void SynthSample(int length, float* buffer, FILE* file)
 		}
 	}
 }
-
-bool mute_stream;
 
 //lets use SDL instead
 static void SDLAudioCallback(void *userdata, Uint8 *stream, int len)
@@ -1054,10 +1051,14 @@ void SfxrInit()
 
 	ResetParams();
 
+	SDL_AudioSpec des;
 	des.freq = 44100;
 	des.format = AUDIO_S16SYS;
 	des.channels = 1;
 	des.samples = 512;
 	des.callback = SDLAudioCallback;
 	des.userdata = nullptr;
+
+	SDL_OpenAudio(&des, nullptr);
+	SDL_PauseAudio(0);
 }
