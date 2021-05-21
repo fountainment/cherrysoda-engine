@@ -12,6 +12,7 @@
 using cherrysoda::Audio;
 
 using cherrysoda::STL;
+using cherrysoda::String;
 using cherrysoda::StringID;
 
 
