@@ -87,6 +87,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Chooser.h
   CherrySoda/Util/Color.cpp
   CherrySoda/Util/Color.h
+  CherrySoda/Util/Commands.cpp
+  CherrySoda/Util/Commands.h
   CherrySoda/Util/Draw.cpp
   CherrySoda/Util/Draw.h
   CherrySoda/Util/Ease.cpp

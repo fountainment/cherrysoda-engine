@@ -45,6 +45,8 @@ public:
 	void SetClearColor(const Color& color);
 	Math::IVec2 GetWindowPosition();
 	void SetMousePosition(const Math::IVec2& pos);
+	void SetFullscreen();
+	void SetWindowed();
 
 	inline float RawGameTime() const { return static_cast<float>(m_rawGameTime); }
 	inline float GameTime() const { return static_cast<float>(m_gameTime); }

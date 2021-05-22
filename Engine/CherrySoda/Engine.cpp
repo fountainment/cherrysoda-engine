@@ -93,6 +93,20 @@ void Engine::SetMousePosition(const Math::IVec2& pos)
 	}
 }
 
+void Engine::SetFullscreen()
+{
+	if (m_window) {
+		m_window->SetFullscreen(true);
+	}
+}
+
+void Engine::SetWindowed()
+{
+	if (m_window) {
+		m_window->SetFullscreen(false);
+	}
+}
+
 void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 {
 	ParseArgs(argc, argv);

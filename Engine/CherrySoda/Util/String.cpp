@@ -2,6 +2,8 @@
 
 #include <CherrySoda/Util/STL.h>
 
+#include <algorithm>
+#include <cctype>
 #include <cstdarg>
 #include <sstream>
 #include <string>
@@ -13,6 +15,15 @@ using cherrysoda::StringID;
 using cherrysoda::StringUtil;
 
 namespace type = cherrysoda::type;
+
+
+#ifdef CHERRYSODA_ENABLE_DEBUG
+STL::Map<type::Int32,String>& StringID::INTERNAL_GetHashCollisionCheckMap()
+{
+	static STL::Map<type::Int32,String> hashCollisionCheckMap;
+	return hashCollisionCheckMap;	
+}
+#endif // CHERRYSODA_ENABLE_DEBUG
 
 const String StringUtil::Format(const char* format, ...)
 {
@@ -43,6 +54,21 @@ const String StringUtil::Trim(const String& s, char trim/* = ' '*/)
 	return s.substr(li, ri - li + 1);
 }
 
+const String StringUtil::ToLower(const String& s)
+{
+	String ret = s;
+	std::transform(s.begin(), s.end(), ret.begin(),
+		[](unsigned char c){ return std::tolower(c); });
+	return ret;
+}
+
+const String StringUtil::ToUpper(const String& s)
+{
+	String ret = s;
+	std::transform(s.begin(), s.end(), ret.begin(),
+		[](unsigned char c){ return std::toupper(c); });
+	return ret;
+}
 
 const String StringUtil::Path_GetDirectoryName(const String& path)
 {

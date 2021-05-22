@@ -5,6 +5,7 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <sstream>
 #include <string>
 
 #define CHERRYSODA_FORMAT cherrysoda::StringUtil::Format
@@ -43,6 +44,26 @@ public:
 	static float ToFloat(const String& s) { return std::stof(s); }
 	static int ToInt(const String& s) { return std::stoi(s); }
 
+	template <typename T>
+	static const String ToString(T t) { return std::to_string(t); }
+
+	template <typename T>
+	static bool SafeTo(const String& s, T& t)
+	{
+		T val;
+		std::stringstream ss;
+		ss << s;
+		ss >> val;
+		if(ss.fail()) {
+			return false;
+		}
+		t = val;
+		return true;
+	}
+
+	static const String ToLower(const String& s);
+	static const String ToUpper(const String& s);
+
 	// path utils
 	static const String Path_GetDirectoryName(const String& path);
 	static const String Path_GetFileName(const String& path);
@@ -70,15 +91,15 @@ public:
 	: m_id(GetHashBKDR(str))
 	, m_str(String(str))
 	{
-		static STL::Map<type::Int32,String> s_hashCollisionCheckMap;
-		auto it = STL::FindKey(s_hashCollisionCheckMap, m_id);
-		if (it != s_hashCollisionCheckMap.end()) {
-			CHERRYSODA_ASSERT_FORMAT( it->second == m_str, \
+		STL::Map<type::Int32,String>& hashCollisionCheckMap = INTERNAL_GetHashCollisionCheckMap();
+		auto it = STL::FindKey(hashCollisionCheckMap, m_id);
+		if (it != hashCollisionCheckMap.end()) {
+			CHERRYSODA_ASSERT_FORMAT(it->second == m_str, \
 				"StringID Hash Collision: \"%s\" collide with \"%s\" at %d!", \
 				m_str.c_str(), it->second.c_str(), m_id);
 		}
 		else {
-			s_hashCollisionCheckMap[m_id] = m_str;
+			hashCollisionCheckMap[m_id] = m_str;
 		}
 	}
 
@@ -97,6 +118,8 @@ private:
 	type::Int32 m_id;
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
+	static STL::Map<type::Int32,String>& INTERNAL_GetHashCollisionCheckMap();
+
 	String m_str;
 #endif // CHERRYSODA_ENABLE_DEBUG
 };

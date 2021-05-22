@@ -54,6 +54,7 @@
 #include <CherrySoda/Util/ChoiceSet.h>
 #include <CherrySoda/Util/Chooser.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Ease.h>
 #include <CherrySoda/Util/GUI.h>

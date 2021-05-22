@@ -3,6 +3,7 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Input/MInput.h>
+#include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Graphics/Texture.h>
@@ -15,6 +16,7 @@
 using cherrysoda::GUI;
 
 using cherrysoda::ButtonState;
+using cherrysoda::Commands;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Graphics;
@@ -188,21 +190,22 @@ void GUI::Update()
 
 	// Debug Console GUI
 	ms_consoleFocused = false;
-	if (Engine::Instance()->ConsoleOpened()) {
-		static char s_consoleText[1024 * 16] = "";
-		static char s_command[512] = "";
-		static bool s_consoleOutputScrollNeeded = false;
-		ImGui::SetNextWindowSizeConstraints(ImVec2(300, 180), ImVec2(FLT_MAX, FLT_MAX));
+	if (Engine::Instance()->ConsoleOpened()) {	
+		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console", nullptr);
 		{
 			bool isLogOutputFocused = false;
-			ImGui::BeginChild("LogOutput", ImVec2(0, -ImGui::GetTextLineHeight() - 13), true);
+			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 13.f), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
-				ImGui::TextUnformatted(s_consoleText);
-				if (s_consoleOutputScrollNeeded) {
-					ImGui::SetScrollY(ImGui::GetScrollMaxY() + ImGui::GetTextLineHeight());
-					s_consoleOutputScrollNeeded = false;
+				for (auto c : Commands::ms_drawCommands) {
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(c.first.R(), c.first.G(), c.first.B(), c.first.A()));
+					ImGui::TextUnformatted(c.second.c_str());
+					ImGui::PopStyleColor();
+				}
+				if (Commands::ms_consoleTextScrollNeeded) {
+					ImGui::SetScrollHereY();
+				 	Commands::ms_consoleTextScrollNeeded = false;
 				}
 			}
 			ImGui::EndChild();
@@ -212,20 +215,12 @@ void GUI::Update()
 					ImGui::SetKeyboardFocusHere(0);
 				}
 			}
-			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 2 - 26);
-			bool commandInput = ImGui::InputText("", s_command, IM_ARRAYSIZE(s_command), ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 2.f - 26.f);
+			bool commandInput = ImGui::InputText("", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), ImGuiInputTextFlags_EnterReturnsTrue);
 			ImGui::PopItemWidth();
 			ImGui::SameLine(); commandInput |= ImGui::Button("Enter");
-			if (commandInput) {
-				std::string cmd(s_command);
-				if (!cmd.empty()) {
-					std::strcat(s_consoleText, "# ");
-					std::strcat(s_consoleText, s_command);
-					std::strcat(s_consoleText, "\n");
-					// TODO: Add command processing
-					s_consoleOutputScrollNeeded = true;
-					s_command[0] = '\0';
-				}
+			if (commandInput && Commands::ms_currentText[0] != '\0') {
+				Commands::ExecuteCommand();
 			}
 		}
 		ImGui::End();
