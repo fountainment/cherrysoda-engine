@@ -30,9 +30,9 @@ class Commands
 public:
 	friend class GUI;
 
-	static inline void Register(const StringID& command, STL::Action<const STL::Vector<String>&> action, const String& help)
+	static inline void Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 	{
-		INTERNAL_GetCommands()[command] = { action, help };
+		INTERNAL_GetCommands()[command] = { action, command, help };
 	}
 
 	static void ExecuteCommand();
@@ -47,6 +47,7 @@ private:
 	struct CommandInfo
 	{
 		STL::Action<const STL::Vector<String>&> action;
+		String name;
 		String help;
 	};
 
@@ -60,7 +61,7 @@ private:
 class CommandRegisterHelper
 {
 public:
-	CommandRegisterHelper(const StringID& command, STL::Action<const STL::Vector<String>&> action, const String& help)
+	CommandRegisterHelper(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 	{
 		Commands::Register(command, action, help);
 	}

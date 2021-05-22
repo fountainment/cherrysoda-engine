@@ -52,7 +52,10 @@ void Commands::ClearLog()
 
 void Commands::ShowHelp()
 {
-	// TODO: List commands
+	for (auto& p : INTERNAL_GetCommands()) {
+		Log(p.second.name);
+		Log(p.second.help, Color::Gray);
+	}
 }
 
 void Commands::ShowHelp(const String& command)
