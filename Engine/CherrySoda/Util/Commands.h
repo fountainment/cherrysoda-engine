@@ -10,20 +10,18 @@ static TYPE VAR=VALUE; \
 static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##VAR(#VAR, \
 [](const cherrysoda::STL::Vector<cherrysoda::String>& args) \
 { \
-	if (cherrysoda::STL::Count(args) == 0) \
-		cherrysoda::Commands::Log(cherrysoda::StringUtil::ToString(VAR)); \
-	else \
+	if (cherrysoda::STL::Count(args) >= 1) \
 		cherrysoda::StringUtil::SafeTo<TYPE>(args[0],VAR); \
-	return 0; \
+	cherrysoda::Commands::Log(cherrysoda::StringUtil::ToString(VAR)); \
 },HELP);
 
 #define CHERRYSODA_REGISTER_COMMAND(COMMAND,FUNC,HELP) \
 static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##COMMAND(#COMMAND,FUNC,HELP);
 
 #define CHERRYSODA_COMMAND(COMMAND,HELP) \
-int CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \
+void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \
 CHERRYSODA_REGISTER_COMMAND(COMMAND,CherrySodaCommand_##COMMAND,HELP); \
-int CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args)
+void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args)
 
 namespace cherrysoda {
 
@@ -32,12 +30,12 @@ class Commands
 public:
 	friend class GUI;
 
-	static inline void Register(const StringID& command, STL::Func<int, const STL::Vector<String>&> func, const String& help)
+	static inline void Register(const StringID& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 	{
-		INTERNAL_GetCommands()[command] = { func, help };
+		INTERNAL_GetCommands()[command] = { action, help };
 	}
 
-	static int ExecuteCommand();
+	static void ExecuteCommand();
 	static void Log(const String& str, const Color& color = Color::White);
 
 	static void ClearLog();
@@ -48,7 +46,7 @@ public:
 private:
 	struct CommandInfo
 	{
-		STL::Func<int, STL::Vector<String>> func;
+		STL::Action<const STL::Vector<String>&> action;
 		String help;
 	};
 
@@ -62,9 +60,9 @@ private:
 class CommandRegisterHelper
 {
 public:
-	CommandRegisterHelper(const StringID& command, STL::Func<int, const STL::Vector<String>&> func, const String& help)
+	CommandRegisterHelper(const StringID& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 	{
-		Commands::Register(command, func, help);
+		Commands::Register(command, action, help);
 	}
 };
 
