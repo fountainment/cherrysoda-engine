@@ -142,7 +142,7 @@ void GUI::Update()
 		io.KeyShift = io.KeysDown[(int)Keys::LeftShift] || io.KeysDown[(int)Keys::RightShift];
 		io.KeyCtrl = io.KeysDown[(int)Keys::LeftControl] || io.KeysDown[(int)Keys::RightControl];
 		io.KeyAlt = io.KeysDown[(int)Keys::LeftAlt] || io.KeysDown[(int)Keys::RightAlt];
-		io.KeySuper = false;
+		io.KeySuper = io.KeysDown[(int)Keys::LeftSuper] || io.KeysDown[(int)Keys::RightSuper];
 
 		// Mouse
 		if (io.WantSetMousePos) {
@@ -251,8 +251,6 @@ void GUI::Render()
 
 	Graphics::BeginRenderPass(ms_guiRenderPass);
 	Graphics::UseCurrentRenderPass()->SetViewport(0, 0, fbWidth, fbHeight);
-	// TexelHalf is a hack for d3d9's different pixel coordinate
-	// TODO: Consider moving this hack to camera
 	Graphics::UseCurrentRenderPass()->SetViewProjectionMatrix(Math_Identity<Math::Mat4>(), Math_Ortho(Graphics::TexelHalf(), io.DisplaySize.x + Graphics::TexelHalf(), io.DisplaySize.y + Graphics::TexelHalf(), Graphics::TexelHalf(), -1000.f, 1000.f));
 	for (int n = 0; n < drawData->CmdListsCount; ++n) {
 		const ImDrawList* drawList = drawData->CmdLists[n];
