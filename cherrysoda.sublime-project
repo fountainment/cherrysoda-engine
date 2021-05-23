@@ -10,82 +10,82 @@
 			[
 				{
 					"name": "clean",
-					"shell_cmd": "make -j8 clean"
+					"shell_cmd": "make -j8 clean",
 				},
 				{
 					"name": "rebuild_cache",
-					"shell_cmd": "make -j8 rebuild_cache"
+					"shell_cmd": "make -j8 rebuild_cache",
 				},
 				{
 					"name": "doc",
-					"shell_cmd": "make -j8 doc"
+					"shell_cmd": "make -j8 doc",
 				},
 				{
 					"name": "CherrySoda",
-					"shell_cmd": "make -j8 CherrySoda"
+					"shell_cmd": "make -j8 CherrySoda",
 				},
 				{
 					"name": "EaseFunction",
-					"shell_cmd": "make -j8 EaseFunction"
+					"shell_cmd": "make -j8 EaseFunction",
 				},
 				{
 					"name": "FirstSprite",
-					"shell_cmd": "make -j8 FirstSprite"
+					"shell_cmd": "make -j8 FirstSprite",
 				},
 				{
 					"name": "FirstTriangle",
-					"shell_cmd": "make -j8 FirstTriangle"
+					"shell_cmd": "make -j8 FirstTriangle",
 				},
 				{
 					"name": "MathBench",
-					"shell_cmd": "make -j8 MathBench"
+					"shell_cmd": "make -j8 MathBench",
 				},
 				{
 					"name": "Minimal",
-					"shell_cmd": "make -j8 Minimal"
+					"shell_cmd": "make -j8 Minimal",
 				},
 				{
 					"name": "Noise",
-					"shell_cmd": "make -j8 Noise"
+					"shell_cmd": "make -j8 Noise",
 				},
 				{
 					"name": "VoxelExperiment",
-					"shell_cmd": "make -j8 VoxelExperiment"
+					"shell_cmd": "make -j8 VoxelExperiment",
 				},
 				{
 					"name": "bgfx",
-					"shell_cmd": "make -j8 bgfx"
+					"shell_cmd": "make -j8 bgfx",
 				},
 				{
 					"name": "bimg",
-					"shell_cmd": "make -j8 bimg"
+					"shell_cmd": "make -j8 bimg",
 				},
 				{
 					"name": "bimg_decode",
-					"shell_cmd": "make -j8 bimg_decode"
+					"shell_cmd": "make -j8 bimg_decode",
 				},
 				{
 					"name": "bx",
-					"shell_cmd": "make -j8 bx"
+					"shell_cmd": "make -j8 bx",
 				},
 				{
 					"name": "crunch",
-					"shell_cmd": "make -j8 crunch"
+					"shell_cmd": "make -j8 crunch",
 				},
 				{
 					"name": "imgui",
-					"shell_cmd": "make -j8 imgui"
+					"shell_cmd": "make -j8 imgui",
 				},
 				{
 					"name": "libcrunch",
-					"shell_cmd": "make -j8 libcrunch"
+					"shell_cmd": "make -j8 libcrunch",
 				},
 				{
 					"name": "sfxr_port",
-					"shell_cmd": "make -j8 sfxr_port"
+					"shell_cmd": "make -j8 sfxr_port",
 				}
 			],
-			"working_dir": "${project_path}/build"
+			"working_dir": "${project_path}/build",
 		},
 		{
 			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
@@ -96,71 +96,79 @@
 			[
 				{
 					"name": "clean",
-					"shell_cmd": "make -j8 clean"
+					"shell_cmd": "make -j8 clean",
 				},
 				{
 					"name": "rebuild_cache",
-					"shell_cmd": "make -j8 rebuild_cache"
+					"shell_cmd": "make -j8 rebuild_cache",
+				},
+				{
+					"name": "doc",
+					"shell_cmd": "make -j8 doc",
 				},
 				{
 					"name": "CherrySoda",
-					"shell_cmd": "make -j8 CherrySoda"
+					"shell_cmd": "make -j8 CherrySoda",
 				},
 				{
 					"name": "EaseFunction",
-					"shell_cmd": "make -j8 EaseFunction"
+					"shell_cmd": "make -j8 EaseFunction",
 				},
 				{
 					"name": "FirstSprite",
-					"shell_cmd": "make -j8 FirstSprite"
+					"shell_cmd": "make -j8 FirstSprite",
 				},
 				{
 					"name": "FirstTriangle",
-					"shell_cmd": "make -j8 FirstTriangle"
+					"shell_cmd": "make -j8 FirstTriangle",
 				},
 				{
 					"name": "MathBench",
-					"shell_cmd": "make -j8 MathBench"
+					"shell_cmd": "make -j8 MathBench",
 				},
 				{
 					"name": "Minimal",
-					"shell_cmd": "make -j8 Minimal"
+					"shell_cmd": "make -j8 Minimal",
 				},
 				{
 					"name": "Noise",
-					"shell_cmd": "make -j8 Noise"
+					"shell_cmd": "make -j8 Noise",
 				},
 				{
 					"name": "PlatformerTrial",
-					"shell_cmd": "make -j8 PlatformerTrial"
+					"shell_cmd": "make -j8 PlatformerTrial",
 				},
 				{
 					"name": "VoxelExperiment",
-					"shell_cmd": "make -j8 VoxelExperiment"
+					"shell_cmd": "make -j8 VoxelExperiment",
 				},
 				{
 					"name": "bgfx",
-					"shell_cmd": "make -j8 bgfx"
+					"shell_cmd": "make -j8 bgfx",
 				},
 				{
 					"name": "bimg",
-					"shell_cmd": "make -j8 bimg"
+					"shell_cmd": "make -j8 bimg",
 				},
 				{
 					"name": "bimg_decode",
-					"shell_cmd": "make -j8 bimg_decode"
+					"shell_cmd": "make -j8 bimg_decode",
 				},
 				{
 					"name": "bx",
-					"shell_cmd": "make -j8 bx"
+					"shell_cmd": "make -j8 bx",
+				},
+				{
+					"name": "cmixer",
+					"shell_cmd": "make -j8 cmixer",
 				},
 				{
 					"name": "crunch",
-					"shell_cmd": "make -j8 crunch"
+					"shell_cmd": "make -j8 crunch",
 				},
 				{
 					"name": "imgui",
-					"shell_cmd": "make -j8 imgui"
+					"shell_cmd": "make -j8 imgui",
 				},
 				{
 					"name": "libcrunch",
@@ -169,9 +177,13 @@
 				{
 					"name": "sfxr_port",
 					"shell_cmd": "make -j8 sfxr_port"
-				}
+				},
+				{
+					"name": "stb_vorbis",
+					"shell_cmd": "make -j8 stb_vorbis"
+				},
 			],
-			"working_dir": "${project_path}/build"
+			"working_dir": "${project_path}/build",
 		},
 		{
 			"file_regex": "^  (.+)\\((\\d+)\\)(): ((?:fatal )?(?:error|warning) \\w+\\d\\d\\d\\d: .*) \\[.*$",
@@ -182,99 +194,99 @@
 			[
 				{
 					"name": "ALL_BUILD",
-					"shell_cmd": "cmake --build . --target ALL_BUILD"
+					"shell_cmd": "cmake --build . --target ALL_BUILD",
 				},
 				{
 					"name": "ZERO_CHECK",
-					"shell_cmd": "cmake --build . --target ZERO_CHECK"
+					"shell_cmd": "cmake --build . --target ZERO_CHECK",
 				},
 				{
 					"name": "Bench/MathBench/MathBench",
-					"shell_cmd": "cmake --build . --target Bench/MathBench/MathBench"
+					"shell_cmd": "cmake --build . --target Bench/MathBench/MathBench",
 				},
 				{
 					"name": "Engine/CherrySoda",
-					"shell_cmd": "cmake --build . --target Engine/CherrySoda"
+					"shell_cmd": "cmake --build . --target Engine/CherrySoda",
 				},
 				{
 					"name": "Examples/EaseFunction/EaseFunction",
-					"shell_cmd": "cmake --build . --target Examples/EaseFunction/EaseFunction"
+					"shell_cmd": "cmake --build . --target Examples/EaseFunction/EaseFunction",
 				},
 				{
 					"name": "Examples/FirstSprite/FirstSprite",
-					"shell_cmd": "cmake --build . --target Examples/FirstSprite/FirstSprite"
+					"shell_cmd": "cmake --build . --target Examples/FirstSprite/FirstSprite",
 				},
 				{
 					"name": "Examples/FirstTriangle/FirstTriangle",
-					"shell_cmd": "cmake --build . --target Examples/FirstTriangle/FirstTriangle"
+					"shell_cmd": "cmake --build . --target Examples/FirstTriangle/FirstTriangle",
 				},
 				{
 					"name": "Examples/Minimal/Minimal",
-					"shell_cmd": "cmake --build . --target Examples/Minimal/Minimal"
+					"shell_cmd": "cmake --build . --target Examples/Minimal/Minimal",
 				},
 				{
 					"name": "External/bgfx/bgfx",
-					"shell_cmd": "cmake --build . --target External/bgfx/bgfx"
+					"shell_cmd": "cmake --build . --target External/bgfx/bgfx",
 				},
 				{
 					"name": "External/bgfx/bimg",
-					"shell_cmd": "cmake --build . --target External/bgfx/bimg"
+					"shell_cmd": "cmake --build . --target External/bgfx/bimg",
 				},
 				{
 					"name": "External/bgfx/bimg_decode",
-					"shell_cmd": "cmake --build . --target External/bgfx/bimg_decode"
+					"shell_cmd": "cmake --build . --target External/bgfx/bimg_decode",
 				},
 				{
 					"name": "External/bgfx/bx",
-					"shell_cmd": "cmake --build . --target External/bgfx/bx"
+					"shell_cmd": "cmake --build . --target External/bgfx/bx",
 				},
 				{
 					"name": "External/glm/ALL_BUILD",
-					"shell_cmd": "cmake --build . --target External/glm/ALL_BUILD"
+					"shell_cmd": "cmake --build . --target External/glm/ALL_BUILD",
 				},
 				{
 					"name": "External/imgui/imgui",
-					"shell_cmd": "cmake --build . --target External/imgui/imgui"
+					"shell_cmd": "cmake --build . --target External/imgui/imgui",
 				},
 				{
 					"name": "Playground/Noise/Noise",
-					"shell_cmd": "cmake --build . --target Playground/Noise/Noise"
+					"shell_cmd": "cmake --build . --target Playground/Noise/Noise",
 				},
 				{
 					"name": "Playground/PlatformerTrial/PlatformerTrial",
-					"shell_cmd": "cmake --build . --target Playground/PlatformerTrial/PlatformerTrial"
+					"shell_cmd": "cmake --build . --target Playground/PlatformerTrial/PlatformerTrial",
 				},
 				{
 					"name": "Playground/VoxelExperiment/VoxelExperiment",
-					"shell_cmd": "cmake --build . --target Playground/VoxelExperiment/VoxelExperiment"
+					"shell_cmd": "cmake --build . --target Playground/VoxelExperiment/VoxelExperiment",
 				},
 				{
 					"name": "Tools/crunch/crunch",
-					"shell_cmd": "cmake --build . --target Tools/crunch/crunch"
+					"shell_cmd": "cmake --build . --target Tools/crunch/crunch",
 				},
 				{
 					"name": "Tools/crunch/libcrunch",
-					"shell_cmd": "cmake --build . --target Tools/crunch/libcrunch"
+					"shell_cmd": "cmake --build . --target Tools/crunch/libcrunch",
 				},
 				{
 					"name": "Tools/sfxr_port/sfxr_port",
-					"shell_cmd": "cmake --build . --target Tools/sfxr_port/sfxr_port"
+					"shell_cmd": "cmake --build . --target Tools/sfxr_port/sfxr_port",
 				}
 			],
-			"working_dir": "${project_path}/build"
+			"working_dir": "${project_path}/build",
 		}
 	],
 	"folders":
 	[
 		{
-			"path": "."
+			"path": ".",
 		}
 	],
 	"settings":
 	{
 		"cmake":
 		{
-			"build_folder": "${project_path}/build"
-		}
-	}
+			"build_folder": "${project_path}/build",
+		},
+	},
 }
