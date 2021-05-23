@@ -17,13 +17,73 @@ using cherrysoda::StringID;
 using cherrysoda::StringUtil;
 
 
+struct CommandTrieNode {
+	STL::Map<char,CommandTrieNode*> next;
+	bool exists = false;
+};
+
+static CommandTrieNode* GetCommandTrieRoot()
+{
+	static CommandTrieNode* commandTrieRoot = new CommandTrieNode;
+	return commandTrieRoot;
+}
+
+static void CommandTrieInsert(const String& command)
+{
+	CommandTrieNode* node = GetCommandTrieRoot();
+	for (char c : command) {
+		if (!STL::ContainsKey(node->next, c)) {
+			node->next[c] = new CommandTrieNode;
+		}
+		node = node->next[c];
+	}
+	node->exists = true;
+}
+
+static void CommandTrieTraverse(CommandTrieNode* node, String current, STL::Vector<String>& result)
+{
+	if (node->exists) {
+		STL::Add(result, current);
+	}
+	for (auto& p : node->next) {
+		CommandTrieTraverse(p.second, current + p.first, result);
+	}
+}
+
+static STL::Vector<String> CommandTrieFindPrefix(const String& prefix)
+{
+	STL::Vector<String> ret;
+	CommandTrieNode* node = GetCommandTrieRoot();
+	for (auto c : prefix) {
+		if (!STL::ContainsKey(node->next, c)) {
+			return ret;
+		}
+		node = node->next[c];
+	}
+	CommandTrieTraverse(node, "", ret);
+	return ret;
+}
+
 char Commands::ms_currentText[512] = "";
 STL::Vector<STL::Pair<Color,String>> Commands::ms_drawCommands;
 bool Commands::ms_consoleTextScrollNeeded = false;
 
+STL::Vector<String> Commands::ms_commandHistory;
+int Commands::ms_commandHistoryIndex = -1;
+
+void Commands::Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
+{
+	String lowerCommand = StringUtil::ToLower(command);
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(INTERNAL_GetCommands(), lowerCommand), "Command alreay exists: %s\n", lowerCommand.c_str());
+	INTERNAL_GetCommands()[command] = { action, lowerCommand, help };
+	CommandTrieInsert(command);
+}
+
 void Commands::ExecuteCommand()
 {
 	String currentText(ms_currentText);
+	STL::Add(ms_commandHistory, currentText);
+	ms_commandHistoryIndex = -1;
 	ms_currentText[0] = '\0';
 	auto data = StringUtil::Split(currentText);
 	Log("cherrysoda # " + currentText);
@@ -43,6 +103,70 @@ void Commands::Log(const String& str, const Color& color/* = Color::White*/)
 		STL::Add(ms_drawCommands, STL::MakePair(color, line));
 	}
 	ms_consoleTextScrollNeeded = true;
+}
+
+void Commands::ClearCommand()
+{
+	ms_currentText[0] = '\0';
+}
+
+String Commands::GetCompletionSuffix(const String& prefix)
+{
+	if (prefix == "") return "";
+	auto suffixes = CommandTrieFindPrefix(prefix);
+	int suffixCount = STL::Count(suffixes);
+	if (suffixCount == 0) {
+		return "";
+	}
+	else if (suffixCount == 1) {
+		return suffixes[0] + " ";
+	}
+	else {
+		for (auto& suffix : suffixes) {
+			Log(prefix + suffix);
+		}
+		return "";
+	}
+}
+
+void Commands::CompleteCommand()
+{
+	String prefix = ms_currentText;
+	String suffix = GetCompletionSuffix(prefix);
+	String result = prefix + suffix;
+	for (int i = 0; i < STL::Count(result); ++i) {
+		ms_currentText[i] = result[i];
+	}
+	ms_currentText[STL::Count(result)] = '\0';
+}
+
+String Commands::GetBackwardHistory()
+{
+	if (ms_commandHistoryIndex == -1) {
+		ms_commandHistoryIndex = STL::Count(ms_commandHistory) - 1;
+		if (ms_commandHistoryIndex == -1) {
+			return ms_currentText;
+		}
+	}
+	else if (ms_commandHistoryIndex > 0) {
+		ms_commandHistoryIndex--;
+	}
+	return ms_commandHistory[ms_commandHistoryIndex];
+}
+
+String Commands::GetForwardHistory()
+{
+	if (ms_commandHistoryIndex == -1) {
+		return ms_currentText;
+	}
+	else if (ms_commandHistoryIndex < STL::Count(ms_commandHistory) - 1) {
+		ms_commandHistoryIndex++;
+	}
+	else {
+		ms_commandHistoryIndex = -1;
+		return "";
+	}
+	return ms_commandHistory[ms_commandHistoryIndex];
 }
 
 void Commands::ClearLog()

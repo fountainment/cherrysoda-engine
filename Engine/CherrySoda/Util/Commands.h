@@ -30,13 +30,16 @@ class Commands
 public:
 	friend class GUI;
 
-	static inline void Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
-	{
-		INTERNAL_GetCommands()[command] = { action, command, help };
-	}
+	static void Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help);
 
 	static void ExecuteCommand();
 	static void Log(const String& str, const Color& color = Color::White);
+	static void ClearCommand();
+	static String GetCompletionSuffix(const String& prefix);
+	static void CompleteCommand();
+
+	static String GetBackwardHistory();
+	static String GetForwardHistory();
 
 	static void ClearLog();
 
@@ -56,6 +59,9 @@ private:
 	static char ms_currentText[512];
 	static STL::Vector<STL::Pair<Color,String>> ms_drawCommands;
 	static bool ms_consoleTextScrollNeeded;
+
+	static STL::Vector<String> ms_commandHistory;
+	static int ms_commandHistoryIndex;
 };
 
 class CommandRegisterHelper

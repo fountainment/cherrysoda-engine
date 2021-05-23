@@ -6,6 +6,7 @@
 #include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Graphics/Texture.h>
 
 #include <imgui.h>
@@ -23,6 +24,7 @@ using cherrysoda::Graphics;
 using cherrysoda::Keys;
 using cherrysoda::Math;
 using cherrysoda::MInput;
+using cherrysoda::String;
 using cherrysoda::Texture2D;
 
 namespace type = cherrysoda::type;
@@ -190,7 +192,7 @@ void GUI::Update()
 
 	// Debug Console GUI
 	ms_consoleFocused = false;
-	if (Engine::Instance()->ConsoleOpened()) {	
+	if (Engine::Instance()->ConsoleOpened()) {
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console", nullptr);
 		{
@@ -205,7 +207,7 @@ void GUI::Update()
 				}
 				if (Commands::ms_consoleTextScrollNeeded) {
 					ImGui::SetScrollHereY();
-				 	Commands::ms_consoleTextScrollNeeded = false;
+					Commands::ms_consoleTextScrollNeeded = false;
 				}
 			}
 			ImGui::EndChild();
@@ -215,8 +217,37 @@ void GUI::Update()
 					ImGui::SetKeyboardFocusHere(0);
 				}
 			}
+			struct Funcs
+			{
+				static int InputTextCallback(ImGuiInputTextCallbackData* data)
+				{
+					if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion) {
+						String suffix = Commands::GetCompletionSuffix(String(data->Buf, data->BufTextLen));
+						data->InsertChars(data->BufTextLen, suffix.c_str());
+					}
+					else if (data->EventFlag == ImGuiInputTextFlags_CallbackHistory)
+					{
+						if (data->EventKey == ImGuiKey_UpArrow)
+						{
+							String command = Commands::GetBackwardHistory();
+							data->DeleteChars(0, data->BufTextLen);
+							data->InsertChars(0, command.c_str());
+							data->SelectAll();
+						}
+						else if (data->EventKey == ImGuiKey_DownArrow)
+						{
+							String command = Commands::GetForwardHistory();
+							data->DeleteChars(0, data->BufTextLen);
+							data->InsertChars(0, command.c_str());
+							data->SelectAll();
+						}
+					}
+					return 0;
+				}
+			};
 			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 2.f - 26.f);
-			bool commandInput = ImGui::InputText("", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), ImGuiInputTextFlags_EnterReturnsTrue);
+			const ImGuiInputTextFlags inputTextFlag = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
+			bool commandInput = ImGui::InputText("", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), inputTextFlag, Funcs::InputTextCallback);
 			ImGui::PopItemWidth();
 			ImGui::SameLine(); commandInput |= ImGui::Button("Enter");
 			if (commandInput && Commands::ms_currentText[0] != '\0') {
