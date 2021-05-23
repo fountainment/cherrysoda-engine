@@ -223,8 +223,6 @@ typedef void           (GL_APIENTRYP PFNGLVERTEXATTRIBIPOINTERPROC) (GLuint inde
 typedef void           (GL_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 typedef void           (GL_APIENTRYP PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC)(GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *source);
-typedef void           (GL_APIENTRYP PFNGLSTRINGMARKERGREMEDYPROC) (GLsizei len, const void *string);
-typedef void           (GL_APIENTRYP PFNGLFRAMETERMINATORGREMEDYPROC) (void);
 
 typedef void           (GL_APIENTRYP PFNGLINSERTEVENTMARKEREXTPROC) (GLsizei length, const GLchar *marker);
 typedef void           (GL_APIENTRYP PFNGLPUSHGROUPMARKEREXTPROC) (GLsizei length, const GLchar *marker);
@@ -447,6 +445,10 @@ GL_IMPORT_ARB__(true,  PFNGLVERTEXATTRIBDIVISORPROC,               glVertexAttri
 GL_IMPORT_ARB__(true,  PFNGLDRAWARRAYSINSTANCEDPROC,               glDrawArraysInstanced);
 GL_IMPORT_ARB__(true,  PFNGLDRAWELEMENTSINSTANCEDPROC,             glDrawElementsInstanced);
 
+GL_IMPORT______(true,  PFNGLVERTEXATTRIBDIVISORPROC,               glVertexAttribDivisorNV);
+GL_IMPORT______(true,  PFNGLDRAWARRAYSINSTANCEDPROC,               glDrawArraysInstancedNV);
+GL_IMPORT______(true,  PFNGLDRAWELEMENTSINSTANCEDPROC,             glDrawElementsInstancedNV);
+
 GL_IMPORT_ARB__(true,  PFNGLDRAWBUFFERSPROC,                       glDrawBuffers);
 
 GL_IMPORT_ARB__(true,  PFNGLINVALIDATEFRAMEBUFFERPROC,             glInvalidateFramebuffer);
@@ -491,8 +493,6 @@ GL_IMPORT______(true,  PFNGLGETINTERNALFORMATIVPROC,               glGetInternal
 GL_IMPORT______(true,  PFNGLGETINTERNALFORMATI64VPROC,             glGetInternalformati64v);
 #endif // BGFX_USE_GL_DYNAMIC_LIB
 
-GL_IMPORT______(true,  PFNGLSTRINGMARKERGREMEDYPROC,               glStringMarkerGREMEDY);
-GL_IMPORT______(true,  PFNGLFRAMETERMINATORGREMEDYPROC,            glFrameTerminatorGREMEDY);
 GL_IMPORT______(true,  PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC,    glGetTranslatedShaderSourceANGLE);
 
 #if !BGFX_CONFIG_RENDERER_OPENGL
@@ -547,11 +547,19 @@ GL_IMPORT_OES__(true,  PFNGLPROGRAMBINARYPROC,                     glProgramBina
 GL_IMPORT_EXT__(true,  PFNGLVERTEXATTRIBDIVISORPROC,               glVertexAttribDivisor);
 GL_IMPORT_EXT__(true,  PFNGLDRAWARRAYSINSTANCEDPROC,               glDrawArraysInstanced);
 GL_IMPORT_EXT__(true,  PFNGLDRAWELEMENTSINSTANCEDPROC,             glDrawElementsInstanced);
+#elif BX_PLATFORM_EMSCRIPTEN
+GL_IMPORT_ANGLE(true,  PFNGLVERTEXATTRIBDIVISORPROC,               glVertexAttribDivisor);
+GL_IMPORT_ANGLE(true,  PFNGLDRAWARRAYSINSTANCEDPROC,               glDrawArraysInstanced);
+GL_IMPORT_ANGLE(true,  PFNGLDRAWELEMENTSINSTANCEDPROC,             glDrawElementsInstanced);
 #else
 GL_IMPORT_OES__(true,  PFNGLVERTEXATTRIBDIVISORPROC,               glVertexAttribDivisor);
 GL_IMPORT_OES__(true,  PFNGLDRAWARRAYSINSTANCEDPROC,               glDrawArraysInstanced);
 GL_IMPORT_OES__(true,  PFNGLDRAWELEMENTSINSTANCEDPROC,             glDrawElementsInstanced);
 #endif // BX_PLATFORM_IOS
+
+GL_IMPORT______(true,  PFNGLVERTEXATTRIBDIVISORPROC,               glVertexAttribDivisorNV);
+GL_IMPORT______(true,  PFNGLDRAWARRAYSINSTANCEDPROC,               glDrawArraysInstancedNV);
+GL_IMPORT______(true,  PFNGLDRAWELEMENTSINSTANCEDPROC,             glDrawElementsInstancedNV);
 
 GL_IMPORT_OES__(true,  PFNGLBINDVERTEXARRAYPROC,                   glBindVertexArray);
 GL_IMPORT_OES__(true,  PFNGLDELETEVERTEXARRAYSPROC,                glDeleteVertexArrays);
