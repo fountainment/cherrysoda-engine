@@ -134,10 +134,11 @@ void Commands::CompleteCommand()
 	String prefix = ms_currentText;
 	String suffix = GetCompletionSuffix(prefix);
 	String result = prefix + suffix;
-	for (int i = 0; i < STL::Count(result); ++i) {
+	int resultLen = result.length();
+	for (int i = 0; i < resultLen; ++i) {
 		ms_currentText[i] = result[i];
 	}
-	ms_currentText[STL::Count(result)] = '\0';
+	ms_currentText[resultLen] = '\0';
 }
 
 String Commands::GetBackwardHistory()
@@ -159,7 +160,7 @@ String Commands::GetForwardHistory()
 	if (ms_commandHistoryIndex == -1) {
 		return ms_currentText;
 	}
-	else if (ms_commandHistoryIndex < STL::Count(ms_commandHistory) - 1) {
+	else if (ms_commandHistoryIndex < static_cast<int>(STL::Count(ms_commandHistory)) - 1) {
 		ms_commandHistoryIndex++;
 	}
 	else {
