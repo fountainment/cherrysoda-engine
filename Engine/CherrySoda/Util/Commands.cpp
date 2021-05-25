@@ -104,7 +104,7 @@ void Commands::ExecuteCommand(const String& command)
 		info.action(STL::Vector<String>(data.begin() + 1, data.end()));
 	}
 	else {
-		Log(StringUtil::Format("Command not found: %s", data[0].c_str()), Color::Orange);
+		Log(StringUtil::Format("command not found: %s", data[0].c_str()), Color::Orange);
 	}
 }
 
@@ -242,7 +242,7 @@ void Commands::ShowHelp(const String& command)
 		}
 	}
 	else {
-		Log(StringUtil::Format("Command not found: %s", command.c_str()), Color::Orange);
+		Log(StringUtil::Format("command not found: %s", command.c_str()), Color::Orange);
 	}
 }
 
@@ -275,11 +275,11 @@ CHERRYSODA_COMMAND(vsync, "Enables or disables vertical sync")
 	if (STL::IsEmpty(args)) return;
 	if (args[0] == "0" || args[0] == "false") {
 		Graphics::SetVsyncEnabled(false);
-		Commands::Log("Vertical Sync Disabled!", Color::Green);
+		Commands::Log("vertical sync disabled!", Color::Green);
 	}
 	else if (args[0] == "1" || args[0] == "true") {
 		Graphics::SetVsyncEnabled(true);
-		Commands::Log("Vertical Sync Enabled!", Color::Green);
+		Commands::Log("vertical sync enabled!", Color::Green);
 	}
 }
 
@@ -325,13 +325,14 @@ CHERRYSODA_COMMAND(addslider, "Adds parameter slider")
 		StringUtil::SafeTo<float>(args[1], l);
 		StringUtil::SafeTo<float>(args[2], r);
 		if (l > r) {
-			Commands::Log("Min value is larger than max value", Color::Orange);
+			Commands::Log("min value is larger than max value", Color::Orange);
 			return;
 		}
 		if (argnum >= 4) {
 			StringUtil::SafeTo<float>(args[3], d);
 			if (d < l || d > r) {
-				Commands::Log("Default value not in range", Color::Orange);
+				Commands::Log("default value not in range", Color::Orange);
+				return;
 			}
 		}
 		else {
