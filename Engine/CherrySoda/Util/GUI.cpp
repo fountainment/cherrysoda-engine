@@ -25,6 +25,7 @@ using cherrysoda::Keys;
 using cherrysoda::Math;
 using cherrysoda::MInput;
 using cherrysoda::String;
+using cherrysoda::StringUtil;
 using cherrysoda::Texture2D;
 
 namespace type = cherrysoda::type;
@@ -194,7 +195,7 @@ void GUI::Update()
 	ms_consoleFocused = false;
 	if (Engine::Instance()->ConsoleOpened()) {
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
-		ImGui::Begin("Console", nullptr);
+		ImGui::Begin("Console");
 		{
 			bool isLogOutputFocused = false;
 			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 13.f), true);
@@ -225,17 +226,14 @@ void GUI::Update()
 						String suffix = Commands::GetCompletionSuffix(String(data->Buf, data->BufTextLen));
 						data->InsertChars(data->BufTextLen, suffix.c_str());
 					}
-					else if (data->EventFlag == ImGuiInputTextFlags_CallbackHistory)
-					{
-						if (data->EventKey == ImGuiKey_UpArrow)
-						{
+					else if (data->EventFlag == ImGuiInputTextFlags_CallbackHistory) {
+						if (data->EventKey == ImGuiKey_UpArrow) {
 							String command = Commands::GetBackwardHistory();
 							data->DeleteChars(0, data->BufTextLen);
 							data->InsertChars(0, command.c_str());
 							data->SelectAll();
 						}
-						else if (data->EventKey == ImGuiKey_DownArrow)
-						{
+						else if (data->EventKey == ImGuiKey_DownArrow) {
 							String command = Commands::GetForwardHistory();
 							data->DeleteChars(0, data->BufTextLen);
 							data->InsertChars(0, command.c_str());
@@ -255,6 +253,17 @@ void GUI::Update()
 			}
 		}
 		ImGui::End();
+		if (STL::IsNotEmpty(Commands::ms_sliderInfo)) {
+			ImGui::Begin("Sliders");
+			{
+				for (auto& slider : Commands::ms_sliderInfo) {
+					if (ImGui::SliderFloat(slider.param.c_str(), &slider.value, slider.minValue, slider.maxValue)) {
+						Commands::ExecuteCommand(slider.param + " " + StringUtil::ToString(slider.value));
+					}
+				}
+			}
+			ImGui::End();
+		}
 	}
 }
 
@@ -288,12 +297,10 @@ void GUI::Render()
 		auto vb = Graphics::CreateTransientVertexBuffer(reinterpret_cast<Graphics::ImGuiVertex*>(drawList->VtxBuffer.Data), drawList->VtxBuffer.Size);
 		auto ib = Graphics::CreateTransientIndexBuffer(drawList->IdxBuffer.Data, drawList->IdxBuffer.Size);
 		for (const ImDrawCmd* cmd = drawList->CmdBuffer.begin(), *cmdEnd = drawList->CmdBuffer.end(); cmd != cmdEnd; ++cmd) {
-			if (cmd->UserCallback)
-			{
+			if (cmd->UserCallback) {
 				cmd->UserCallback(drawList, cmd);
 			}
-			else if (0 != cmd->ElemCount)
-			{
+			else if (0 != cmd->ElemCount) {
 				ImVec4 clipRect;
 				clipRect.x = (cmd->ClipRect.x - clipOff.x) * clipScale.x;
 				clipRect.y = (cmd->ClipRect.y - clipOff.y) * clipScale.y;

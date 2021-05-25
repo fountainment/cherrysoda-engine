@@ -3,6 +3,7 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
@@ -64,12 +65,16 @@ static STL::Vector<String> CommandTrieFindPrefix(const String& prefix)
 	return ret;
 }
 
+Commands::ReturnValue Commands::ms_returnValue;
+
 char Commands::ms_currentText[512] = "";
 STL::Vector<STL::Pair<Color,String>> Commands::ms_drawCommands;
 bool Commands::ms_consoleTextScrollNeeded = false;
 
 STL::Vector<String> Commands::ms_commandHistory;
 int Commands::ms_commandHistoryIndex = -1;
+
+STL::List<Commands::SliderInfo> Commands::ms_sliderInfo;
 
 void Commands::Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 {
@@ -85,8 +90,15 @@ void Commands::ExecuteCommand()
 	STL::Add(ms_commandHistory, currentText);
 	ms_commandHistoryIndex = -1;
 	ms_currentText[0] = '\0';
-	auto data = StringUtil::Split(currentText);
 	Log("cherrysoda # " + currentText);
+	ExecuteCommand(currentText);	
+}
+
+void Commands::ExecuteCommand(const String& command)
+{
+	ms_returnValue = { false, 0.f, 0, "" };
+
+	auto data = StringUtil::Split(command);
 	Commands::CommandInfo info;
 	if (STL::TryGetValue(INTERNAL_GetCommands(), StringUtil::ToLower(data[0]), info)) {
 		info.action(STL::Vector<String>(data.begin() + 1, data.end()));
@@ -103,6 +115,44 @@ void Commands::Log(const String& str, const Color& color/* = Color::White*/)
 		STL::Add(ms_drawCommands, STL::MakePair(color, line));
 	}
 	ms_consoleTextScrollNeeded = true;
+}
+
+void Commands::Return(float f)
+{
+	ms_returnValue.floatValue = f;
+	ms_returnValue.hasReturnValue = true;
+}
+
+void Commands::Return(int i)
+{
+	ms_returnValue.intValue = i;
+	ms_returnValue.hasReturnValue = true;
+}
+
+void Commands::Return(const String& s)
+{
+	ms_returnValue.stringValue = s;
+	ms_returnValue.hasReturnValue = true;
+}
+
+bool Commands::HasReturnValue()
+{
+	return ms_returnValue.hasReturnValue;
+}
+
+float Commands::GetReturnedFloat()
+{
+	return ms_returnValue.floatValue;
+}
+
+int Commands::GetReturnedInt()
+{
+	return ms_returnValue.intValue;
+}
+
+String Commands::GetReturnedString()
+{
+	return ms_returnValue.stringValue;
 }
 
 void Commands::ClearCommand()
@@ -196,6 +246,11 @@ void Commands::ShowHelp(const String& command)
 	}
 }
 
+void Commands::AddParamSlider(const String& param, float minValue, float maxValue, float defaultValue)
+{
+	STL::Add(ms_sliderInfo, Commands::SliderInfo{ param, minValue, maxValue, defaultValue });
+}
+
 STL::HashMap<StringID, Commands::CommandInfo>& Commands::INTERNAL_GetCommands()
 {
 	static STL::HashMap<StringID, Commands::CommandInfo> commands;
@@ -240,7 +295,7 @@ CHERRYSODA_COMMAND(window, "Switches to window mode")
 
 CHERRYSODA_COMMAND(help, "Shows usage help for a given command")
 {
-	if (STL::Count(args) < 1) {
+	if (STL::IsEmpty(args)) {
 		Commands::ShowHelp();
 	}
 	else {
@@ -250,11 +305,43 @@ CHERRYSODA_COMMAND(help, "Shows usage help for a given command")
 
 CHERRYSODA_COMMAND(timerate, "Sets the global time rate")
 {
-	if (STL::Count(args) >= 1) {
+	if (STL::IsNotEmpty(args)) {
 		float r = 1.f;
 		if (StringUtil::SafeTo<float>(args[0], r)) {
 			Engine::Instance()->TimeRate(r);
 		}
 	}
-	Commands::Log(StringUtil::ToString(Engine::Instance()->TimeRate()));
+	float timerate = Engine::Instance()->TimeRate();
+	Commands::Log(StringUtil::ToString(timerate));
+	Commands::Return(timerate);
+}
+
+CHERRYSODA_COMMAND(addslider, "Adds parameter slider")
+{
+	if (STL::IsEmpty(args)) return;
+	float l = 0.f, r = 1.f, d = 1.f;
+	int argnum = STL::Count(args);
+	if (argnum >= 3) {
+		StringUtil::SafeTo<float>(args[1], l);
+		StringUtil::SafeTo<float>(args[2], r);
+		if (l > r) {
+			Commands::Log("Min value is larger than max value", Color::Orange);
+			return;
+		}
+		if (argnum >= 4) {
+			StringUtil::SafeTo<float>(args[3], d);
+			if (d < l || d > r) {
+				Commands::Log("Default value not in range", Color::Orange);
+			}
+		}
+		else {
+			Commands::ExecuteCommand(args[0]);
+			if (Commands::HasReturnValue()) {
+				d = Commands::GetReturnedFloat();
+			}
+			d = Math_Clamp(d, l, r);
+		}
+	}
+	Commands::ExecuteCommand(args[0] + " " + StringUtil::ToString(d));
+	Commands::AddParamSlider(args[0], l, r, d);
 }

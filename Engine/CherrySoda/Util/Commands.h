@@ -13,6 +13,7 @@ static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##VA
 	if (cherrysoda::STL::Count(args) >= 1) \
 		cherrysoda::StringUtil::SafeTo<TYPE>(args[0],VAR); \
 	cherrysoda::Commands::Log(cherrysoda::StringUtil::ToString(VAR)); \
+	cherrysoda::Commands::Return(static_cast<float>(VAR)); \
 },HELP);
 
 #define CHERRYSODA_REGISTER_COMMAND(COMMAND,FUNC,HELP) \
@@ -33,7 +34,18 @@ public:
 	static void Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help);
 
 	static void ExecuteCommand();
+	static void ExecuteCommand(const String& command);
+
 	static void Log(const String& str, const Color& color = Color::White);
+
+	static void Return(float f);
+	static void Return(int i);
+	static void Return(const String& s);
+	static bool HasReturnValue();
+	static float GetReturnedFloat();
+	static int GetReturnedInt();
+	static String GetReturnedString();
+
 	static void ClearCommand();
 	static String GetCompletionSuffix(const String& prefix);
 	static void CompleteCommand();
@@ -46,6 +58,8 @@ public:
 	static void ShowHelp();
 	static void ShowHelp(const String& command);
 
+	static void AddParamSlider(const String& param, float minValue, float maxValue, float defaultValue);
+
 private:
 	struct CommandInfo
 	{
@@ -54,7 +68,25 @@ private:
 		String help;
 	};
 
+	struct SliderInfo
+	{
+		String param;
+		float minValue;
+		float maxValue;
+		float value;
+	};
+
+	struct ReturnValue
+	{
+		bool hasReturnValue = false;
+		float floatValue = 0.f;
+		int intValue = 0;
+		String stringValue = "";
+	};
+
 	static STL::HashMap<StringID, CommandInfo>& INTERNAL_GetCommands();
+
+	static ReturnValue ms_returnValue;
 
 	static char ms_currentText[512];
 	static STL::Vector<STL::Pair<Color,String>> ms_drawCommands;
@@ -62,12 +94,14 @@ private:
 
 	static STL::Vector<String> ms_commandHistory;
 	static int ms_commandHistoryIndex;
+
+	static STL::List<SliderInfo> ms_sliderInfo;
 };
 
 class CommandRegisterHelper
 {
 public:
-	CommandRegisterHelper(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
+	inline CommandRegisterHelper(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 	{
 		Commands::Register(command, action, help);
 	}
