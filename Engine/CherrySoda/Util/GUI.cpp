@@ -254,6 +254,7 @@ void GUI::Update()
 		}
 		ImGui::End();
 		if (STL::IsNotEmpty(Commands::ms_sliderInfo)) {
+			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f, 170.f), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Sliders");
 			{
 				for (auto& slider : Commands::ms_sliderInfo) {
