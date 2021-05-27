@@ -4,11 +4,9 @@
 [![Linux](https://github.com/fountainment/cherrysoda-engine/actions/workflows/linux.yml/badge.svg)](https://github.com/fountainment/cherrysoda-engine/actions/workflows/linux.yml)
 [![MacOS](https://github.com/fountainment/cherrysoda-engine/actions/workflows/macos.yml/badge.svg)](https://github.com/fountainment/cherrysoda-engine/actions/workflows/macos.yml)
 [![Emscripten](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml/badge.svg)](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml)
-
-
 [![Licence](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
 
-A C++ game engine based on bgfx and SDL2 (hobby project at early stage)
+A small C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
 ## Example Projects
 
@@ -144,4 +142,3 @@ You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 - Added travisCI config
 - Added doxygen config
 - Added CMake config of shaderc
-
