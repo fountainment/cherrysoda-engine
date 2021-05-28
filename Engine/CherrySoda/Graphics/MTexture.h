@@ -7,7 +7,6 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
-#include <CherrySoda/Util/Draw.h>
 
 
 namespace cherrysoda {
@@ -17,7 +16,7 @@ class MTexture
 public:
 	static MTexture FromFile(const String& filename);
 
-	MTexture() {}
+	MTexture() = default;
 	MTexture(const Texture2D& texture);
 	MTexture(const MTexture& parent, int x, int y, int width, int height);
 	MTexture(const MTexture& parent, const Math::IRectangle& clipRect);
@@ -38,6 +37,7 @@ public:
 	inline Math::Vec2 DrawOffset() const { return m_drawOffset; }
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
+	inline Math::Vec2 Center() const { return m_center; }
 	inline Math::IVec2 Size() const { return Math::IVec2(m_width, m_height); }
 
 	void SetUtil();

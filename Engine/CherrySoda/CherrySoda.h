@@ -16,6 +16,7 @@
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Image.h>
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
+#include <CherrySoda/Components/Graphics/ParticleEmitter.h>
 #include <CherrySoda/Components/Graphics/PixelText.h>
 #include <CherrySoda/Components/Graphics/Sprite.h>
 #include <CherrySoda/Components/Logic/Alarm.h>
@@ -47,6 +48,10 @@
 #include <CherrySoda/Renderers/EverythingRenderer.h>
 #include <CherrySoda/Renderers/SingleTagRenderer.h>
 #include <CherrySoda/Renderers/TagExcludeRenderer.h>
+
+#include <CherrySoda/Particles/Particle.h>
+#include <CherrySoda/Particles/ParticleSystem.h>
+#include <CherrySoda/Particles/ParticleType.h>
 
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Calc.h>

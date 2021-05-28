@@ -17,6 +17,22 @@ type::UInt32 Random::TrueRandomNext()
 	return STL::RandomNext(random);
 }
 
+Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float maxMove)
+{
+	if (maxMove <= 0.f || val == target) {
+		return val;
+	}
+	Math::Vec2 diff = target - val;
+	float lengthSq = Math_LengthSq(diff);
+	if (lengthSq < maxMove * maxMove) {
+		return target;	
+	}
+	else {
+		diff = Math_Normalize(diff);
+		return val + diff * maxMove;
+	}
+}
+
 Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 {
 	if (vec == Vec2_Zero)

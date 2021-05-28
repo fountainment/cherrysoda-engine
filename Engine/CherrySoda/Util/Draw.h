@@ -1,12 +1,12 @@
 #ifndef _CHERRYSODA_UTIL_DRAW_H_
 #define _CHERRYSODA_UTIL_DRAW_H_
 
+#include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
 
-class MTexture;
 class Renderer;
 class SpriteBatch;
 
@@ -29,6 +29,9 @@ public:
 
 	static void HollowRect(float x, float y, float width, float height, const Color& color = Color::White);
 	static void Circle(const Math::Vec2& pos, float radius, const Color& color = Color::White, float resolution = 4.f);
+
+	static const MTexture& Pixel() { return ms_pixel; }
+	static const MTexture& Particle() { return ms_particle; }
 
 private:
 	static MTexture ms_pixel;

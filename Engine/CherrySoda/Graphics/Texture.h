@@ -12,6 +12,8 @@ class Texture
 public:
 	static Texture FromFile(const String& filename);
 
+	Texture() = default;
+
 	inline Graphics::TextureHandle GetHandle() const { return m_texture; }
 	inline bool IsValid() const { return m_texture != Graphics::InvalidHandle; }
 	inline void Dispose() { if (IsValid()) { Graphics::DestroyTexture(GetHandle()); m_texture = Graphics::InvalidHandle; } }
@@ -27,6 +29,8 @@ public:
 	static Texture2D FromRGBA(void* data, int width, int height);
 	static Texture2D ForColorBuffer(int width, int height);
 	static Texture2D ForDepthBuffer(int width, int height);
+
+	Texture2D() = default;
 
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
@@ -47,6 +51,8 @@ class TextureCube : public Texture
 {
 public:
 	static TextureCube FromFile(const String& filename);
+
+	TextureCube() = default;
 };
 
 } // namespace cherrysoda

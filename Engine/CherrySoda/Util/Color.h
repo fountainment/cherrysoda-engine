@@ -39,8 +39,17 @@ public:
 	inline void B(int v) { B(v / 255.f); }
 	inline void A(int v) { A(v / 255.f); }
 
+	constexpr Color operator + (const Color& other) const { return Color(m_r + other.m_r, m_g + other.m_g, m_b + other.m_b, m_a + other.m_a); }
+	constexpr Color operator - (const Color& other) const { return Color(m_r - other.m_r, m_g - other.m_g, m_b - other.m_b, m_a - other.m_a); }
 	constexpr Color operator * (float scale) const { return Color(m_r * scale, m_g * scale, m_b * scale, m_a * scale); }
+	constexpr void operator *= (float scale) { *this = *this * scale; }
 
+	static constexpr Color Lerp(const Color& color1, const Color& color2, float ease)
+	{
+		return color1 + (color2 - color1) * ease;
+	}
+
+	static const Color Transparent;
 	static const Color Black;
 	static const Color White;
 	static const Color Red;

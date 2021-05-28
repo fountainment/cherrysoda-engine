@@ -11,6 +11,7 @@
 using cherrysoda::MTexture;
 
 using cherrysoda::Color;
+using cherrysoda::Draw;
 using cherrysoda::Math;
 using cherrysoda::SpriteEffects;
 using cherrysoda::String;

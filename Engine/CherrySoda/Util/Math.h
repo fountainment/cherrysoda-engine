@@ -139,6 +139,7 @@ inline ENUM_T operator - (ENUM_T lhs, ENUM_T rhs) \
 #define Math_LengthSq   glm::length2
 #define Math_Min        glm::min 
 #define Math_Max        glm::max 
+#define Math_Mod        glm::mod
 #define Math_Normalize  glm::normalize
 #define Math_Pow        glm::pow
 #define Math_Round      glm::round

@@ -30,6 +30,11 @@ public:
 		return Math::Vec2(shakeVectorOffsets[Next(4)], shakeVectorOffsets[Next(4)]);
 	}
 
+	template <typename T>
+	inline T Choose(const T& a, const T& b) { return Next(2) ? a : b; }
+
+	inline Math::Vec2 Range(const Math::Vec2& min, const Math::Vec2& max) { return min + Math::Vec2(NextFloat(max.x - min.x), NextFloat(max.y - min.y)); }
+
 	static type::UInt32 TrueRandomNext();
 
 private:
@@ -49,6 +54,9 @@ public:
 	{
 		return Math::Vec2((float)Math_Cos(angleRadians) * length, (float)Math_Sin(angleRadians) * length);
 	}
+
+	static Math::Vec2 Approach(const Math::Vec2& val, const Math::Vec2& target, float maxMove);
+
 	static Math::Vec2 EightWayNormal(Math::Vec2 vec);
 
 	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec, const Math::Vec2& ifZero)
@@ -58,6 +66,8 @@ public:
 	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec) { return SafeNormalize(vec, Vec2_Zero); }
 
 	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return Math::Vec2(vec.y, -vec.x); }
+
+	static inline bool BetweenInterval(float val, float interval) { return Math_Mod(val, interval * 2.f) >= interval; }
 
 private:
 	static STL::Stack<Random> ms_randomStack;

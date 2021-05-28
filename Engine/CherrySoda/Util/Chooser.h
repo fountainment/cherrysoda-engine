@@ -18,7 +18,7 @@ private:
 		T m_value;
 		float m_weight = 0.f;
 
-		Choice() {}
+		Choice() = default;
 
 		Choice(const T& value, float weight)
 		: m_value(value)

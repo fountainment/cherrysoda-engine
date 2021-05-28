@@ -23,6 +23,8 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/GraphicsComponent.h
   CherrySoda/Components/Graphics/Image.h
   CherrySoda/Components/Graphics/MeshGraphicsComponent.h
+  CherrySoda/Components/Graphics/ParticleEmitter.cpp
+  CherrySoda/Components/Graphics/ParticleEmitter.h
   CherrySoda/Components/Graphics/PixelText.cpp
   CherrySoda/Components/Graphics/PixelText.h
   CherrySoda/Components/Graphics/Sprite.cpp
@@ -68,6 +70,11 @@ set(ENGINE_SRC
   CherrySoda/InternalUtilities/RendererList.h
   CherrySoda/InternalUtilities/TagLists.cpp
   CherrySoda/InternalUtilities/TagLists.h
+  CherrySoda/Particles/Particle.cpp
+  CherrySoda/Particles/Particle.h
+  CherrySoda/Particles/ParticleSystem.h
+  CherrySoda/Particles/ParticleType.cpp
+  CherrySoda/Particles/ParticleType.h
   CherrySoda/Renderers/Renderer.h
   CherrySoda/Renderers/RendererBase.cpp
   CherrySoda/Renderers/RendererBase.h
