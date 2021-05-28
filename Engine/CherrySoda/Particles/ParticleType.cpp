@@ -10,6 +10,7 @@ using cherrysoda::ParticleType;
 using cherrysoda::Calc;
 using cherrysoda::Color;
 using cherrysoda::Draw;
+using cherrysoda::Entity;
 using cherrysoda::Math;
 using cherrysoda::Particle;
 

@@ -12,6 +12,7 @@
 
 using cherrysoda::Particle;
 
+using cherrysoda::Calc;
 using cherrysoda::Color;
 using cherrysoda::Draw;
 using cherrysoda::Ease;

@@ -3,11 +3,10 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Entity.h>
 
-#include <CherrySoda/Util/Commands.h>
-
 using cherrysoda::ParticleEmitter;
 
 using cherrysoda::Engine;
+using cherrysoda::Entity;
 using cherrysoda::Math;
 using cherrysoda::ParticleSystem;
 using cherrysoda::ParticleType;
