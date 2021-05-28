@@ -1,4 +1,4 @@
-// dear imgui, v1.83 WIP
+// dear imgui, v1.84 WIP
 // (widgets code)
 
 /*
@@ -1578,7 +1578,9 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
 
     bool hovered, held;
     bool pressed = ButtonBehavior(frame_bb, id, &hovered, &held);
-    bool popup_open = IsPopupOpen(id, ImGuiPopupFlags_None);
+
+    const ImGuiID popup_id = ImHashStr("##ComboPopup", 0, id);
+    bool popup_open = IsPopupOpen(popup_id, ImGuiPopupFlags_None);
 
     const ImU32 frame_col = GetColorU32(hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     const float value_x2 = ImMax(frame_bb.Min.x, frame_bb.Max.x - arrow_size);
@@ -1608,7 +1610,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     {
         if (window->DC.NavLayerCurrent == 0)
             window->NavLastIds[0] = id;
-        OpenPopupEx(id, ImGuiPopupFlags_None);
+        OpenPopupEx(popup_id, ImGuiPopupFlags_None);
         popup_open = true;
     }
 
@@ -7763,7 +7765,7 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
     tab->Flags = flags;
 
     // Append name with zero-terminator
-    tab->NameOffset = (ImS16)tab_bar->TabsNames.size();
+    tab->NameOffset = (ImS32)tab_bar->TabsNames.size();
     tab_bar->TabsNames.append(label, label + strlen(label) + 1);
 
     // Update selected tab
