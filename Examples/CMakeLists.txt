@@ -1,6 +1,7 @@
 set(CHERRYSODA_EXECUTABLE_FOLDER Examples)
 add_subdirectory(EaseFunction)
 add_subdirectory(FirstFont)
+add_subdirectory(FirstParticle)
 add_subdirectory(FirstSprite)
 add_subdirectory(FirstTriangle)
 add_subdirectory(Minimal)
