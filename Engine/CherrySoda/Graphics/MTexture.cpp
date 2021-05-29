@@ -31,6 +31,7 @@ MTexture::MTexture(const Texture2D& texture)
 	m_texture = texture;
 	ClipRect({ IVec2_Zero, Math::IVec2(texture.Width(), texture.Height()) });
 	DrawOffset(IVec2_Zero);
+	ActualDrawOffset(IVec2_Zero);
 	Width(ClipRect().Width());
 	Height(ClipRect().Height());
 	SetUtil();
@@ -41,6 +42,7 @@ MTexture::MTexture(const MTexture& parent, int x, int y, int width, int height)
 	m_texture = parent.Texture();
 	ClipRect(parent.GetRelativeRect(x, y, width, height));
 	DrawOffset(Math::Vec2(-Math_Min(x - parent.DrawOffset().x, 0.f), -Math_Min(y - parent.DrawOffset().y, 0.f)));
+	ActualDrawOffset(Math::Vec2(DrawOffset().x, -DrawOffset().y));
 	Width(ClipRect().Width());
 	Height(ClipRect().Height());
 	SetUtil();
@@ -64,6 +66,7 @@ MTexture::MTexture(const MTexture& parent, const String& atlasPath, const Math::
 
 	ClipRect(parent.GetRelativeRect(clipRect));
 	DrawOffset(drawOffset);
+	ActualDrawOffset(Math::Vec2(drawOffset.x, height - clipRect.Height() - drawOffset.y));
 	Width(width);
 	Height(height);
 	SetUtil();
@@ -80,6 +83,7 @@ MTexture::MTexture(int width, int height, const Color& color)
 	delete [] data;
 	ClipRect({ IVec2_Zero, Math::IVec2(width, height) });
 	DrawOffset(IVec2_Zero);
+	ActualDrawOffset(IVec2_Zero);
 	Width(width);
 	Height(height);
 	SetUtil();
@@ -115,7 +119,7 @@ MTexture MTexture::GetSubtexture(const Math::IRectangle& rect) const
 
 void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin/* = Vec3_Zero*/, const Color& color/* = Color::White*/, const Math::Vec3& scale/* = Vec3_One*/, float zRotation/* = 0.f*/, SpriteEffects flip/* = SpriteEffects::None*/) const
 {
-	Draw::GetSpriteBatch()->Draw(Texture(), Math::Vec2(renderPosition), ClipRect(), color, zRotation, Math::Vec2(origin) - DrawOffset(), Math::Vec2(scale), flip, 0.f);
+	Draw::GetSpriteBatch()->Draw(Texture(), Math::Vec2(renderPosition), ClipRect(), color, zRotation, Math::Vec2(origin) - ActualDrawOffset(), Math::Vec2(scale), flip, 0.f);
 }
 
 void MTexture::SetUtil()

@@ -45,9 +45,13 @@ public:
 	inline bool IsValid() const { return Texture().IsValid(); }
 
 	inline const Texture2D& Texture() const { return m_texture; }
+
 private:
+	inline Math::Vec2 ActualDrawOffset() const { return m_actualDrawOffset; }
+
 	inline void ClipRect(const Math::IRectangle& rect) { m_clipRect = rect; }
 	inline void DrawOffset(const Math::Vec2& drawOffset) { m_drawOffset = drawOffset; }
+	inline void ActualDrawOffset(const Math::Vec2& drawOffset) { m_actualDrawOffset = m_drawOffset; }
 	inline void Width(int width) { m_width = width; }
 	inline void Height(int height) { m_height = height; }
 
@@ -55,6 +59,7 @@ private:
 	Math::IRectangle m_clipRect = { IVec2_Zero, IVec2_Zero };
 	String m_atlasPath = "";
 	Math::Vec2 m_drawOffset = Vec2_Zero;
+	Math::Vec2 m_actualDrawOffset = Vec2_Zero;
 	int m_width = 0;
 	int m_height = 0;
 	Math::Vec2 m_center = Vec2_Zero;
