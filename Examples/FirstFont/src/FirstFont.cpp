@@ -27,6 +27,8 @@ void FirstFont::Initialize()
 	// Initialize and set scene here
 	auto scene = new Scene();
 
+	Engine::SetClearColor(Color::Gray);
+
 	auto entity = new Entity();
 	auto renderer = new EverythingRenderer();
 
