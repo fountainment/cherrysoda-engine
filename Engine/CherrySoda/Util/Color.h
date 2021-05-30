@@ -4,6 +4,8 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
+#include <cstring>
+
 namespace cherrysoda {
 
 class Color
