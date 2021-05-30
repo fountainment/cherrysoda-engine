@@ -23,19 +23,39 @@ namespace cherrysoda {
 
 typedef std::string String;
 
-constexpr type::Int32 GetHashBKDR(const char* str)
-{
-	type::Int32 seed = 131;
-	type::Int32 hash = 0;
-	for (int i = 0; str[i]; ++i) {
-		hash = static_cast<type::Int32>(static_cast<type::Int64>(hash) * seed + str[i]);
-	}
-	return hash & 0x7fffffff;
-}
-
 class StringUtil
 {
 public:
+	static constexpr type::Int32 GetHashBKDR(const char* str, int len = -1)
+	{
+		type::Int32 seed = 131;
+		type::Int32 hash = 0;
+		for (int i = 0; (len == -1 || i < len) && str[i]; ++i) {
+			hash = static_cast<type::Int32>(static_cast<type::Int64>(hash) * seed + str[i]);
+		}
+		return hash & 0x7fffffff;
+	}
+
+	static constexpr type::UInt32 HexStrToUInt32(const char* str, int len = -1)
+	{
+		type::UInt32 ans = 0;
+		for (int i = 0; (len == -1 || i < len) && str[i]; ++i) {
+			ans <<= 4;
+			int tmp = 0;
+			if (str[i] >= 'a' && str[i] <= 'f') {
+				tmp = str[i] - 'a' + 10;
+			} else if (str[i] >= 'A' && str[i] <= 'F') {
+				tmp = str[i] - 'A' + 10;
+			} else if (str[i] >= '0' && str[i] <= '9') {
+				tmp = str[i] - '0';
+			} else {
+				CHERRYSODA_ASSERT(false, "Hex string invalid.\n");
+			}
+			ans |= tmp;
+		}
+		return ans;
+	}
+
 	static const String Format(const char* format, ...);
 	static const STL::Vector<String> Split(const String& s, char delim = ' ');
 	static inline int IndexOf(const String& s, char c) { return s.find(c, 0); }
@@ -88,7 +108,7 @@ public:
 #ifdef CHERRYSODA_ENABLE_DEBUG
 public:
 	StringID(const char* str)
-	: m_id(GetHashBKDR(str))
+	: m_id(StringUtil::GetHashBKDR(str))
 	, m_str(String(str))
 	{
 		STL::Map<type::Int32,String>& hashCollisionCheckMap = INTERNAL_GetHashCollisionCheckMap();
@@ -108,7 +128,7 @@ public:
 #else // CHERRYSODA_ENABLE_DEBUG
 public:
 	constexpr StringID(const char* str)
-	: m_id(GetHashBKDR(str))
+	: m_id(StringUtil::GetHashBKDR(str))
 	{}
 
 	inline String GetStr() const { return ""; }

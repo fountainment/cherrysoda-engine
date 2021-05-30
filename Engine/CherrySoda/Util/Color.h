@@ -2,6 +2,7 @@
 #define _CHERRYSODA_UTIL_COLOR_H_
 
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
@@ -18,6 +19,48 @@ public:
 	constexpr Color(int r, int g, int b) : Color(r, g, b, 255) {}
 	constexpr Color(int r, int g, int b, int a)
 		: Color(r/255.f, g/255.f, b/255.f, a/255.f) {}
+
+	constexpr Color(const char* str)
+		: Color(0.0f)
+	{
+		int len = std::strlen(str);
+		CHERRYSODA_ASSERT(len > 3 && str[0] == '#', "Color string invalid!\n");
+		type::UInt32 r = 255;
+		type::UInt32 g = 255;
+		type::UInt32 b = 255;
+		type::UInt32 a = 255;
+		switch (len) {
+		case 4:
+			r = StringUtil::HexStrToUInt32(str + 1, 1); r = (r << 4) | r;
+			g = StringUtil::HexStrToUInt32(str + 2, 1); g = (g << 4) | g;
+			b = StringUtil::HexStrToUInt32(str + 3, 1); b = (b << 4) | b;
+			break;
+		case 5:
+			r = StringUtil::HexStrToUInt32(str + 1, 1); r = (r << 4) | r;
+			g = StringUtil::HexStrToUInt32(str + 2, 1); g = (g << 4) | g;
+			b = StringUtil::HexStrToUInt32(str + 3, 1); b = (b << 4) | b;
+			a = StringUtil::HexStrToUInt32(str + 4, 1); a = (a << 4) | a;
+			break;
+		case 7:
+			r = StringUtil::HexStrToUInt32(str + 1, 2);
+			g = StringUtil::HexStrToUInt32(str + 3, 2);
+			b = StringUtil::HexStrToUInt32(str + 5, 2);
+			break;
+		case 9:
+			r = StringUtil::HexStrToUInt32(str + 1, 2);
+			g = StringUtil::HexStrToUInt32(str + 3, 2);
+			b = StringUtil::HexStrToUInt32(str + 5, 2);
+			a = StringUtil::HexStrToUInt32(str + 7, 2);
+			break;
+		default:
+			CHERRYSODA_ASSERT(false, "Color string length incorrect!\n");
+			break;
+		}
+		m_r = r / 255.f;
+		m_g = g / 255.f;
+		m_b = b / 255.f;
+		m_a = a / 255.f;
+	}
 
 	constexpr float R() const { return m_r; }
 	constexpr float G() const { return m_g; }
