@@ -4,8 +4,6 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
-#include <cstring>
-
 namespace cherrysoda {
 
 class Color
@@ -25,7 +23,8 @@ public:
 	constexpr Color(const char* str)
 		: Color(0.0f)
 	{
-		int len = std::strlen(str);
+		int len = 0;
+		while (str[len] != '\0') len++;
 		CHERRYSODA_ASSERT(len > 3 && str[0] == '#', "Color string invalid!\n");
 		type::UInt32 r = 255;
 		type::UInt32 g = 255;
