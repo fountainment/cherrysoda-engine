@@ -556,13 +556,7 @@ void cherrysoda::Window::PollEvents()
 		case SDL_KEYDOWN:
 		{
 			SDL_Scancode scancode = event.key.keysym.scancode;
-			if (scancode == SDL_SCANCODE_ESCAPE) {
-				Engine::Instance()->Exit();
-			}
-			else if (scancode == SDL_SCANCODE_F11) {
-				ToggleFullscreen();
-			}
-			else if (scancode == SDL_SCANCODE_GRAVE) {
+			if (scancode == SDL_SCANCODE_GRAVE) {
 				Engine::Instance()->ToggleConsole();
 			}
 			if (STL::TryGetValue(s_scancodeToKeys, (int)scancode, key)) {
