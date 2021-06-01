@@ -61,6 +61,8 @@ void GUI::Initialize()
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 	io.BackendPlatformName = "imgui_impl_cherrysoda";
 
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
 	io.KeyMap[ImGuiKey_Tab] = (int)Keys::Tab;
 	io.KeyMap[ImGuiKey_LeftArrow] = (int)Keys::Left;
