@@ -6,10 +6,8 @@ if(WINDOWS)
   endif()
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBGFX_CONFIG_DEBUG=1")
-
 # bx
-file(GLOB BX_SRC bx/include/bx/*.h bx/include/bx/inline/*.inl bx/src/*.cpp )
+file(GLOB BX_SRC bx/include/bx/*.h bx/include/bx/inline/*.inl bx/src/*.cpp bx/scriptes/*.natvis)
 list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/amalgamated.cpp)
 list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/crtnone.cpp)
 
@@ -25,6 +23,11 @@ if(WINDOWS)
 endif()
 if(MACOSX)
   target_include_directories(bx PUBLIC bx/include/compat/osx)
+endif()
+
+target_compile_definitions(bx PRIVATE "$<$<CONFIG:Debug>:BX_CONFIG_DEBUG=1>")
+if(BGFX_CONFIG_DEBUG)
+  target_compile_definitions(bx PRIVATE BX_CONFIG_DEBUG=1)
 endif()
 
 # bimg
@@ -82,6 +85,8 @@ if(WINDOWS)
   target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_DIRECT3D9=1)
 endif()
 target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_MAX_VIEWS=8)
+
+target_compile_definitions(bgfx PRIVATE "$<$<CONFIG:Debug>:BGFX_CONFIG_DEBUG=1>")
 if(BGFX_CONFIG_DEBUG)
   target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_DEBUG=1)
 endif()
