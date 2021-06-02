@@ -48,6 +48,7 @@ bgfx_src_path = join_path(external_path, 'bgfx/bgfx/src')
 
 shaderc = join_path(tool_path, 'bin/shaderc' + executable_suffix)
 shaderc_local = join_path(tool_path, 'bin/shaderc.local' + executable_suffix)
+shaderc_show_command = False
 
 sdl2_version = '2.0.14'
 sdl2_path = join_path(external_path, 'SDL2-' + sdl2_version)
@@ -81,6 +82,8 @@ def compile_shader(shader_source, output, platform, shader_type, include_paths=N
     if bin2c_array:
         command += ['--bin2c', bin2c_array]
     make_sure_folder_exist(output)
+    if shaderc_show_command:
+        print(' '.join(command))
     execute_command(command)
 
 
