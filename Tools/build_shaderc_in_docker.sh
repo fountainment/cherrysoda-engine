@@ -10,4 +10,4 @@ apt install libsd2-dev
 mkdir ~/cherrysoda-engine/build
 cd ~/cherrysoda-engine/build
 cmake .. -DCHERRYSODA_BUILD_SHADERC=1 -DCHERRYSODA_USE_SSE2=1
-make -j8
+make shaderc -j8
