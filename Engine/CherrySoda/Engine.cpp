@@ -208,7 +208,9 @@ void Engine::Initialize()
 	Graphics::UpdateView();
 	Draw::Initialize();
 	GUI::Initialize();
-	Audio::Initialize();
+	if (m_enableInternalAudio) {
+		Audio::Initialize();
+	}
 
 	m_graphicsDevice = Graphics::Instance();
 	m_initialized = true;

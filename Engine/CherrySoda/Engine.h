@@ -2,6 +2,7 @@
 #define _CHERRYSODA_ENGINE_H_
 
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
@@ -57,6 +58,12 @@ public:
 	inline int FPS() { return m_FPS; }
 	inline bool ConsoleOpened() { return m_consoleOpened; }
 
+	inline void DisableInternalAudio()
+	{
+		CHERRYSODA_ASSERT(!m_initialized, "Internel audio can only be disabled before engine initialization.\n");
+		m_enableInternalAudio = false;
+	}
+
 	void Run(int argc = 0, char* argv[] = {});
 	void Exit();
 
@@ -111,6 +118,7 @@ private:
 	bool m_resizing = false;
 	bool m_active = false;
 	bool m_consoleOpened = false;
+	bool m_enableInternalAudio = true;
 
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;

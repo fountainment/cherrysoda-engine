@@ -13,6 +13,7 @@ Sfxr_port::Sfxr_port()
 {
 	SetTitle("sfxr_port");
 	SetClearColor(Color::Black);
+	DisableInternalAudio();
 }
 
 void Sfxr_port::Update()
