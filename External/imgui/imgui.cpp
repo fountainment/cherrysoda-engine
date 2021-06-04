@@ -6108,13 +6108,15 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         window_just_activated_by_user |= (window->PopupId != popup_ref.PopupId); // We recycle popups so treat window as activated if popup id changed
         window_just_activated_by_user |= (window != popup_ref.Window);
     }
-    window->Appearing = window_just_activated_by_user;
-    if (window->Appearing)
-        SetWindowConditionAllowFlags(window, ImGuiCond_Appearing, true);
 
     // Update Flags, LastFrameActive, BeginOrderXXX fields
+    const bool window_was_appearing = window->Appearing;
     if (first_begin_of_the_frame)
     {
+        window->Appearing = window_just_activated_by_user;
+        if (window->Appearing)
+            SetWindowConditionAllowFlags(window, ImGuiCond_Appearing, true);
+
         window->FlagsPreviousFrame = window->Flags;
         window->Flags = (ImGuiWindowFlags)flags;
         window->LastFrameActive = current_frame;
@@ -6147,13 +6149,17 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
 
             // Docking currently override constraints
             g.NextWindowData.Flags &= ~ImGuiNextWindowDataFlags_HasSizeConstraint;
-        }
 
-        // Update the Appearing flag (again)
-        if (window->DockTabIsVisible && !dock_tab_was_visible && dock_node_was_visible && !window->Appearing)
+            // Amend the Appearing flag
+            if (window->DockTabIsVisible && !dock_tab_was_visible && dock_node_was_visible && !window->Appearing && !window_was_appearing)
+            {
+                window->Appearing = true;
+                SetWindowConditionAllowFlags(window, ImGuiCond_Appearing, true);
+            }
+        }
+        else
         {
-            window->Appearing = true;
-            SetWindowConditionAllowFlags(window, ImGuiCond_Appearing, true);
+            window->DockIsActive = window->DockNodeIsVisible = window->DockTabIsVisible = false;
         }
     }
 
@@ -6936,6 +6942,12 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
             if (window->AutoFitFramesX <= 0 && window->AutoFitFramesY <= 0 && window->HiddenFramesCannotSkipItems <= 0)
                 skip_items = true;
         window->SkipItems = skip_items;
+
+        // Sanity check: there are two spots which can set Appearing = true
+        // - when 'window_just_activated_by_user' is set -> HiddenFramesCannotSkipItems is set -> SkipItems always false
+        // - in BeginDocked() path when DockNodeIsVisible == DockTabIsVisible == true -> hidden _should_ be all zero // FIXME: Not formally proven, hence the assert.
+        if (window->SkipItems && !window->Appearing)
+            IM_ASSERT(window->Appearing == false); // Please report on GitHub if this triggers: https://github.com/ocornut/imgui/issues/4177
     }
 
     return !window->SkipItems;
@@ -14015,11 +14027,11 @@ static void ImGui::DockNodeUpdateTabBar(ImGuiDockNode* node, ImGuiWindow* host_w
             PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_Text] * ImVec4(1.0f,1.0f,1.0f,0.4f));
         }
         if (CloseButton(host_window->GetID("#CLOSE"), close_button_pos))
-            if (ImGuiTabItem* tab = TabBarFindTabByID(tab_bar, tab_bar->VisibleTabId))
-            {
-                node->WantCloseTabId = tab->ID;
-                TabBarCloseTab(tab_bar, tab);
-            }
+        {
+            node->WantCloseAll = true;
+            for (int n = 0; n < tab_bar->Tabs.Size; n++)
+                TabBarCloseTab(tab_bar, &tab_bar->Tabs[n]);
+        }
         //if (IsItemActive())
         //    focus_tab_id = tab_bar->SelectedTabId;
         if (!close_button_is_enabled)
@@ -15457,6 +15469,9 @@ void ImGui::BeginDocked(ImGuiWindow* window, bool* p_open)
     ImGuiContext* ctx = GImGui;
     ImGuiContext& g = *ctx;
 
+    // Clear fields ahead so most early-out paths don't have to do it
+    window->DockIsActive = window->DockNodeIsVisible = window->DockTabIsVisible = false;
+
     const bool auto_dock_node = GetWindowAlwaysWantOwnTabBar(window);
     if (auto_dock_node)
     {
@@ -15506,14 +15521,9 @@ void ImGui::BeginDocked(ImGuiWindow* window, bool* p_open)
         // If the window has been orphaned, transition the docknode to an implicit node processed in DockContextNewFrameUpdateDocking()
         ImGuiDockNode* root_node = DockNodeGetRootNode(node);
         if (root_node->LastFrameAlive < g.FrameCount)
-        {
             DockContextProcessUndockWindow(ctx, window);
-        }
         else
-        {
             window->DockIsActive = true;
-            window->DockNodeIsVisible = window->DockTabIsVisible = false;
-        }
         return;
     }
 
@@ -15526,8 +15536,8 @@ void ImGui::BeginDocked(ImGuiWindow* window, bool* p_open)
     // FIXME-DOCK: replace ->HostWindow NULL compare with something more explicit (~was initially intended as a first frame test)
     if (node->HostWindow == NULL)
     {
-        window->DockIsActive = (node->State == ImGuiDockNodeState_HostWindowHiddenBecauseWindowsAreResizing);
-        window->DockNodeIsVisible = window->DockTabIsVisible = false;
+        if (node->State == ImGuiDockNodeState_HostWindowHiddenBecauseWindowsAreResizing)
+            window->DockIsActive = true;
         if (node->Windows.Size > 1)
             DockNodeHideWindowDuringHostWindowCreation(window);
         return;
