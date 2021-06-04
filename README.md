@@ -6,7 +6,7 @@
 [![Emscripten](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml/badge.svg)](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml)
 [![Licence](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
 
-A small C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
+A tiny C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
 ## Example Projects
 
