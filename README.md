@@ -8,13 +8,9 @@
 
 A tiny C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
-## Example Projects
+## HTML5 Demos
 
-[BulletHellJam2021-BulletHellTrial](https://github.com/fountainment/bullethelljam2021-bullethelltrial)
-
-## Demo
-
-**WebGL version (wasm) of Playground/VoxelExperiment:**
+**Web Assembly of Playground/VoxelExperiment:**
 
 [VoxelExperiment](https://fountainment.github.io/demo/VoxelExperiment/) (github.io)
 
@@ -35,7 +31,7 @@ A tiny C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 ## How to Build
 
 ```sh
-# Native on Linux or Windows
+# Native on Linux, Windows or MacOS
 git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
 cmake -E make_directory build
@@ -45,7 +41,7 @@ cmake --build . --config Release
 ```
 
 ```sh
-# Wasm on Linux
+# Web Assembly on Linux or MacOS
 git clone https://github.com/emscripten-core/emsdk.git
 ./emsdk/emsdk install latest
 ./emsdk/emsdk activate latest
@@ -126,22 +122,50 @@ GameShell: ```cmake .. -DCPI=1```
 
 You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 
-## Current Status
+## Current Features 
 
-- Finished the integration of bgfx and SDL2
-- Replicated the simple ECS of Monocle engine
-- Did some test on the bgfx shader, added a python script for shader compilation
-- Added emscripten support
-- Integrated tracy profiler
-- Integrated rapidjson
-- Replicated the sprite animation system of Monocle engine
-- Integrated ImGui
-- Added bgfx embedded shader support
-- Added SIMD compile option
-- Ported sfxr (a simple synthersizer sound effect generator)
-- Added travisCI config
-- Added doxygen config
-- Added CMake config of shaderc
+- BGFX Integrated for Cross-Platform Graphics Rendering
+- SDL2 Integrated for Cross-Platform Window and Audio
+- GLM Intergrated for Math
+- STB Intergrated (for now only) for OGG Audio File Loading
+- ImGui Integrated for Engine GUI
+- TracyProfiler Integrated for Profiling
+- RapidJSON Integrated for Json Parsing
+- CMixer Integrated for Audio Mixing
+- Simple Entity-Component System
+- Simple Sprite System (quite handy imo)
+- Minimalism 2D Collision Detection (too simple but useful in common situations)
+- BMFont File Loading and Pixel Font Rendering
+- Simple 2D Particle System
+- Audio Play (support wav and ogg loading)
+- SIMD Compile Option
+- HTML5 Support
+
+## Licence
+
+```
+MIT License
+
+Copyright (c) 2019-2021 C.Even
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## Licence of Monocle Engine
 
