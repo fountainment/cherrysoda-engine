@@ -45,6 +45,8 @@ void FirstFont::Initialize()
 
 	auto font = new PixelFont("test");
 	auto atlas = Atlas::FromAtlas("assets/atlases/atlas.json");
+
+	// Use Tools/bmfont_to_json.py to convert bmfont's fnt file to json file 
 	font->AddFontSize("assets/fonts/font.json", atlas);
 
 	auto pixelText = new PixelText(font, u8"你好, 世界!\nHello, World!", Color::White);
