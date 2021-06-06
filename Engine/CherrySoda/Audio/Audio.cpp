@@ -17,6 +17,9 @@ using cherrysoda::StringID;
 
 
 double Audio::ms_masterVolume = 0.5;
+bool Audio::ms_initialized = false;
+
+static SDL_AudioDeviceID s_sdlAudioDev;
 
 static int s_instanceCount = 0;
 static STL::HashMap<StringID, Audio::EventDescription> s_descriptions;
@@ -53,7 +56,6 @@ static void audio_callback(void* udata, cherrysoda::type::UInt8* stream, int siz
 
 void Audio::Initialize()
 {
-	SDL_AudioDeviceID dev;
 	SDL_AudioSpec fmt, got;
 
 	/* Init SDL */
@@ -68,8 +70,8 @@ void Audio::Initialize()
 	fmt.samples   = 1024;
 	fmt.callback  = audio_callback;	
 
-	dev = SDL_OpenAudioDevice(NULL, 0, &fmt, &got, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
-	CHERRYSODA_ASSERT_FORMAT(dev, "Error: failed to open audio device '%s'\n", SDL_GetError());
+	s_sdlAudioDev = SDL_OpenAudioDevice(NULL, 0, &fmt, &got, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
+	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioDev, "Error: failed to open audio device '%s'\n", SDL_GetError());
 
 	/* Init library */
 	cm_init(got.freq);
@@ -77,7 +79,18 @@ void Audio::Initialize()
 	cm_set_master_gain(ms_masterVolume);
 
 	/* Start audio */
-	SDL_PauseAudioDevice(dev, 0);
+	SDL_PauseAudioDevice(s_sdlAudioDev, 0);
+
+	ms_initialized = true;
+}
+
+void Audio::Terminate()
+{
+	if (ms_initialized) {
+		SDL_CloseAudioDevice(s_sdlAudioDev);
+		s_sdlAudioDev = 0;
+		ms_initialized = false;
+	}
 }
 
 void Audio::MasterVolume(double volume)

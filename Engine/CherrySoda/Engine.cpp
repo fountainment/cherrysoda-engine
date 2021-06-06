@@ -218,6 +218,7 @@ void Engine::Initialize()
 
 void Engine::Terminate()
 {
+	Audio::Terminate();
 	GUI::Terminate();
 	Draw::Terminate();
 	Graphics::Terminate();

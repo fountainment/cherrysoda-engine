@@ -27,6 +27,7 @@ public:
 	};
 
 	static void Initialize();
+	static void Terminate();
 
 	static void LoadFile(const StringID& path, const String& filePath);
 	static void LoadFileFromMemory(const StringID& path, void* data, int size);
@@ -49,6 +50,7 @@ public:
 
 private:
 	static double ms_masterVolume;
+	static bool ms_initialized;
 };
 
 } // namespace cherrysoda
