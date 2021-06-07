@@ -53,7 +53,12 @@ def compile_embedded_shader_program(shader_dir, shader_name):
     compile_info = [
         {
             'platform': 'linux',
+            'profile': ['120', '120'],
             'suffix': 'glsl'
+        },
+        {
+            'platform': 'android',
+            'suffix': 'essl'
         },
         {
             'platform': 'linux',
