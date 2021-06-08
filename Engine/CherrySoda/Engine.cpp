@@ -5,6 +5,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Interface/Window.h>
+#include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/GUI.h>
@@ -21,6 +22,8 @@ using cherrysoda::Engine;
 
 using cherrysoda::Audio;
 using cherrysoda::Color;
+using cherrysoda::Commands;
+using cherrysoda::CommandBatches;
 using cherrysoda::Draw;
 using cherrysoda::Graphics;
 using cherrysoda::GUI;
@@ -211,6 +214,7 @@ void Engine::Initialize()
 	if (m_enableInternalAudio) {
 		Audio::Initialize();
 	}
+	Commands::Initialize();
 
 	m_graphicsDevice = Graphics::Instance();
 	m_initialized = true;
@@ -218,6 +222,7 @@ void Engine::Initialize()
 
 void Engine::Terminate()
 {
+	Commands::Terminate();
 	Audio::Terminate();
 	GUI::Terminate();
 	Draw::Terminate();
@@ -278,6 +283,9 @@ void Engine::Update()
 
 	// Update GUI
 	GUI::Update();
+
+	// Update command batches
+	CommandBatches::Update();
 
 	// Update current scene
 	if (m_scene != nullptr) {

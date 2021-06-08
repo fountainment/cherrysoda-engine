@@ -8,6 +8,7 @@
 #include <CherrySoda/Util/String.h>
 
 using cherrysoda::Commands;
+using cherrysoda::CommandBatches;
 
 using cherrysoda::Color;
 using cherrysoda::Engine;
@@ -51,6 +52,14 @@ static void CommandTrieTraverse(CommandTrieNode* node, String current, STL::Vect
 	}
 }
 
+static void CommandTrieDelete(CommandTrieNode* node)
+{
+	for (auto& p : node->next) {
+		CommandTrieDelete(p.second);
+	}
+	delete node;
+}
+
 static STL::Vector<String> CommandTrieFindPrefix(const String& prefix)
 {
 	STL::Vector<String> ret;
@@ -76,12 +85,20 @@ int Commands::ms_commandHistoryIndex = -1;
 
 STL::List<Commands::SliderInfo> Commands::ms_sliderInfo;
 
+STL::HashMap<StringID, String> CommandBatches::ms_commandBatches;
+STL::List<STL::Stack<CommandBatches::CommandBatchInfo>> CommandBatches::ms_pendingCommands;
+
+bool CommandBatches::ms_inBatchExecution = false;
+
+CommandBatches::CommandBatchInfo* CommandBatches::ms_currentBatch = nullptr;
+STL::Stack<CommandBatches::CommandBatchInfo>* CommandBatches::ms_currentExecutionStack = nullptr;
+
 void Commands::Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 {
 	String lowerCommand = StringUtil::ToLower(command);
 	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(INTERNAL_GetCommands(), lowerCommand), "Command alreay exists: %s\n", lowerCommand.c_str());
-	INTERNAL_GetCommands()[command] = { action, lowerCommand, help };
-	CommandTrieInsert(command);
+	INTERNAL_GetCommands()[lowerCommand] = { action, lowerCommand, help };
+	CommandTrieInsert(lowerCommand);
 }
 
 void Commands::ExecuteCommand()
@@ -97,14 +114,20 @@ void Commands::ExecuteCommand()
 void Commands::ExecuteCommand(const String& command)
 {
 	ms_returnValue = { false, 0.f, 0, "" };
-
-	auto data = StringUtil::Split(command);
-	Commands::CommandInfo info;
-	if (STL::TryGetValue(INTERNAL_GetCommands(), StringUtil::ToLower(data[0]), info)) {
-		info.action(STL::Vector<String>(data.begin() + 1, data.end()));
-	}
-	else {
-		Log(StringUtil::Format("command not found: %s", data[0].c_str()), Color::Orange);
+	auto coms = StringUtil::Split(StringUtil::Trim(command), ';');
+	for (auto& com : coms) {
+		auto data = StringUtil::Split(StringUtil::Trim(com));
+		String lowerCom = StringUtil::ToLower(data[0]);
+		Commands::CommandInfo info;
+		if (STL::TryGetValue(INTERNAL_GetCommands(), lowerCom, info)) {
+			info.action(STL::Vector<String>(data.begin() + 1, data.end()));
+		}
+		else if (CommandBatches::Exists(lowerCom)) {
+			CommandBatches::ExecuteBatch(lowerCom);
+		}
+		else {
+			Log(StringUtil::Format("command not found: %s", data[0].c_str()), Color::Orange);
+		}
 	}
 }
 
@@ -257,6 +280,78 @@ STL::HashMap<StringID, Commands::CommandInfo>& Commands::INTERNAL_GetCommands()
 	return commands;
 }
 
+void Commands::Initialize()
+{
+	// TODO: Add command batch file loading
+}
+
+void Commands::Terminate()
+{
+	CommandTrieNode* node = GetCommandTrieRoot();
+	CommandTrieDelete(node);
+}
+
+
+void CommandBatches::Register(const String& alias, const String& commandBatch)
+{
+	String lowerAlias = StringUtil::ToLower(alias);
+	CHERRYSODA_ASSERT_FORMAT(!Commands::Exists(lowerAlias), "Command alreay exists: %s\n", lowerAlias.c_str());
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_commandBatches, lowerAlias), "Alias alreay exists: %s\n", lowerAlias.c_str());
+	ms_commandBatches[lowerAlias] = commandBatch;
+	CommandTrieInsert(lowerAlias);
+}
+
+void CommandBatches::ExecuteBatch(const String& batch)
+{
+	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(ms_commandBatches, batch), "Batch \"%s\" doesn't exist\n", batch.c_str());
+	auto commands = StringUtil::Split(ms_commandBatches[batch], '\n');
+	if (InBatchExecution()) {
+		STL::Push(*ms_currentExecutionStack, CommandBatches::CommandBatchInfo{ commands });
+	}
+	else {
+		STL::Add(ms_pendingCommands, STL::Stack<CommandBatches::CommandBatchInfo>({{ commands }}));
+	}
+}
+
+void CommandBatches::INTERNAL_Delay(float seconds)
+{
+	ms_currentBatch->delay += seconds;
+	ms_currentBatch->isRawDelay = false;
+}
+
+void CommandBatches::INTERNAL_RawDelay(float seconds)
+{
+	ms_currentBatch->delay += seconds;
+	ms_currentBatch->isRawDelay = true;
+}
+
+void CommandBatches::Update()
+{
+	for (auto it = ms_pendingCommands.begin(); it != ms_pendingCommands.end();) {
+		auto& batch = STL::TopRef(*it);
+		if (batch.delay > 0.f) {
+			batch.delay -= batch.isRawDelay ? Engine::Instance()->RawDeltaTime() : Engine::Instance()->DeltaTime();
+		}
+		else if (batch.pointer >= STL::Count(batch.commands)) {
+			STL::Pop(*it);
+			if (STL::IsEmpty(*it)) {
+				it = ms_pendingCommands.erase(it);
+				continue;
+			}
+		}
+		else {
+			ms_inBatchExecution = true;
+			ms_currentBatch = &batch;
+			ms_currentExecutionStack = &(*it);
+			Commands::ExecuteCommand(batch.commands[batch.pointer++]);
+			ms_inBatchExecution = false;
+			ms_currentBatch = nullptr;
+			ms_currentExecutionStack = nullptr;
+		}
+		++it;
+	}
+}
+
 
 // Internal Commands
 
@@ -345,4 +440,24 @@ CHERRYSODA_COMMAND(addslider, "Adds parameter slider")
 	}
 	Commands::ExecuteCommand(args[0] + " " + StringUtil::ToString(d));
 	Commands::AddParamSlider(args[0], l, r, d);
+}
+
+CHERRYSODA_COMMAND(delay, "Delay time (in seconds) in command batch execution")
+{
+	CHERRYSODA_ASSERT(CommandBatches::InBatchExecution(), "Command \"delay\" can only be used in command batch\n");
+	if (STL::IsNotEmpty(args)) {
+		float seconds = 1.f;
+		StringUtil::SafeTo<float>(args[0], seconds);
+		CommandBatches::INTERNAL_Delay(seconds);
+	}
+}
+
+CHERRYSODA_COMMAND(rawdelay, "Delay raw time (in seconds) in command batch execution")
+{
+	CHERRYSODA_ASSERT(CommandBatches::InBatchExecution(), "Command \"rawdelay\" can only be used in command batch\n");
+	if (STL::IsNotEmpty(args)) {
+		float seconds = 1.f;
+		StringUtil::SafeTo<float>(args[0], seconds);
+		CommandBatches::INTERNAL_RawDelay(seconds);
+	}
 }

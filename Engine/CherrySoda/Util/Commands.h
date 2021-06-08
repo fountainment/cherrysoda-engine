@@ -32,6 +32,7 @@ public:
 	friend class GUI;
 
 	static void Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help);
+	static inline bool Exists(const StringID& command) { return STL::ContainsKey(INTERNAL_GetCommands(), command); }
 
 	static void ExecuteCommand();
 	static void ExecuteCommand(const String& command);
@@ -59,6 +60,9 @@ public:
 	static void ShowHelp(const String& command);
 
 	static void AddParamSlider(const String& param, float minValue, float maxValue, float defaultValue);
+
+	static void Initialize();
+	static void Terminate();
 
 private:
 	struct CommandInfo
@@ -96,6 +100,37 @@ private:
 	static int ms_commandHistoryIndex;
 
 	static STL::List<SliderInfo> ms_sliderInfo;
+};
+
+class CommandBatches
+{
+public:
+	static void Register(const String& alias, const String& commandBatch);
+	static inline bool Exists(const StringID& alias) { return STL::ContainsKey(ms_commandBatches, alias); }
+
+	static void ExecuteBatch(const String& batch);
+	static inline bool InBatchExecution() { return ms_inBatchExecution; }
+
+	static void INTERNAL_Delay(float seconds);
+	static void INTERNAL_RawDelay(float seconds);
+
+	static void Update();
+
+private:
+	struct CommandBatchInfo
+	{
+		STL::Vector<String> commands;
+		int pointer = 0;
+		float delay = 0.f;
+		bool isRawDelay = false;
+	};
+
+	static STL::HashMap<StringID, String> ms_commandBatches;
+	static STL::List<STL::Stack<CommandBatchInfo>> ms_pendingCommands;
+
+	static bool ms_inBatchExecution;
+	static CommandBatchInfo* ms_currentBatch;
+	static STL::Stack<CommandBatchInfo>* ms_currentExecutionStack;
 };
 
 class CommandRegisterHelper
