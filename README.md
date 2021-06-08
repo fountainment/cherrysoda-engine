@@ -8,13 +8,30 @@
 
 A tiny C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
-## HTML5 Demos
+## Demos
 
-**Web Assembly of Playground/VoxelExperiment:**
+[https://fountainment.github.io/demo/](https://fountainment.github.io/demo/)
 
-[VoxelExperiment](https://fountainment.github.io/demo/VoxelExperiment/) (github.io)
+[backup at gitee.io](https://fountainment.gitee.io/) (use this link if github.io is slow in your region)
 
-[VoxelExperiment](https://fountainment.gitee.io/VoxelExperiment/) (gitee.io)
+## Current Features 
+
+- BGFX Integrated for Cross-Platform Graphics Rendering
+- SDL2 Integrated for Cross-Platform Window and Audio
+- GLM Intergrated for Math
+- STB Intergrated (for now only) for OGG Audio File Loading
+- ImGui Integrated for Engine GUI
+- TracyProfiler Integrated for Profiling
+- RapidJSON Integrated for Json Parsing
+- CMixer Integrated for Audio Mixing
+- Simple Entity-Component System
+- Simple Sprite System (quite handy imo)
+- Minimalism 2D Collision Detection (too simple but useful in common situations)
+- BMFont File Loading and Pixel Font Rendering
+- Simple 2D Particle System
+- Audio Play (support wav and ogg loading)
+- SIMD Compile Option
+- HTML5 Support
 
 ## Requirements
 
@@ -122,24 +139,6 @@ GameShell: ```cmake .. -DCPI=1```
 
 You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 
-## Current Features 
-
-- BGFX Integrated for Cross-Platform Graphics Rendering
-- SDL2 Integrated for Cross-Platform Window and Audio
-- GLM Intergrated for Math
-- STB Intergrated (for now only) for OGG Audio File Loading
-- ImGui Integrated for Engine GUI
-- TracyProfiler Integrated for Profiling
-- RapidJSON Integrated for Json Parsing
-- CMixer Integrated for Audio Mixing
-- Simple Entity-Component System
-- Simple Sprite System (quite handy imo)
-- Minimalism 2D Collision Detection (too simple but useful in common situations)
-- BMFont File Loading and Pixel Font Rendering
-- Simple 2D Particle System
-- Audio Play (support wav and ogg loading)
-- SIMD Compile Option
-- HTML5 Support
 
 ## Licence
 
