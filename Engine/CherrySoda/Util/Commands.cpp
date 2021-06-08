@@ -126,7 +126,7 @@ void Commands::ExecuteCommand(const String& command)
 			CommandBatches::ExecuteBatch(lowerCom);
 		}
 		else {
-			Log(StringUtil::Format("command not found: %s", data[0].c_str()), Color::Orange);
+			ErrorLog(StringUtil::Format("command not found: %s", data[0].c_str()));
 		}
 	}
 }
@@ -265,7 +265,7 @@ void Commands::ShowHelp(const String& command)
 		}
 	}
 	else {
-		Log(StringUtil::Format("command not found: %s", command.c_str()), Color::Orange);
+		ErrorLog(StringUtil::Format("command not found: %s", command.c_str()));
 	}
 }
 
@@ -332,7 +332,7 @@ void CommandBatches::Update()
 		if (batch.delay > 0.f) {
 			batch.delay -= batch.isRawDelay ? Engine::Instance()->RawDeltaTime() : Engine::Instance()->DeltaTime();
 		}
-		else if (batch.pointer >= STL::Count(batch.commands)) {
+		else if (batch.pointer >= static_cast<int>(STL::Count(batch.commands))) {
 			STL::Pop(*it);
 			if (STL::IsEmpty(*it)) {
 				it = ms_pendingCommands.erase(it);
@@ -420,13 +420,13 @@ CHERRYSODA_COMMAND(addslider, "Adds parameter slider")
 		StringUtil::SafeTo<float>(args[1], l);
 		StringUtil::SafeTo<float>(args[2], r);
 		if (l > r) {
-			Commands::Log("min value is larger than max value", Color::Orange);
+			Commands::ErrorLog("min value is larger than max value");
 			return;
 		}
 		if (argnum >= 4) {
 			StringUtil::SafeTo<float>(args[3], d);
 			if (d < l || d > r) {
-				Commands::Log("default value not in range", Color::Orange);
+				Commands::ErrorLog("default value not in range");
 				return;
 			}
 		}
@@ -444,7 +444,10 @@ CHERRYSODA_COMMAND(addslider, "Adds parameter slider")
 
 CHERRYSODA_COMMAND(delay, "Delay time (in seconds) in command batch execution")
 {
-	CHERRYSODA_ASSERT(CommandBatches::InBatchExecution(), "Command \"delay\" can only be used in command batch\n");
+	if (!CommandBatches::InBatchExecution()) {
+		Commands::ErrorLog("command \"delay\" can only be used in command batch");
+		return;
+	}
 	if (STL::IsNotEmpty(args)) {
 		float seconds = 1.f;
 		StringUtil::SafeTo<float>(args[0], seconds);
@@ -454,7 +457,10 @@ CHERRYSODA_COMMAND(delay, "Delay time (in seconds) in command batch execution")
 
 CHERRYSODA_COMMAND(rawdelay, "Delay raw time (in seconds) in command batch execution")
 {
-	CHERRYSODA_ASSERT(CommandBatches::InBatchExecution(), "Command \"rawdelay\" can only be used in command batch\n");
+	if (!CommandBatches::InBatchExecution()) {
+		Commands::ErrorLog("command \"rawdelay\" can only be used in command batch");
+		return;
+	}
 	if (STL::IsNotEmpty(args)) {
 		float seconds = 1.f;
 		StringUtil::SafeTo<float>(args[0], seconds);

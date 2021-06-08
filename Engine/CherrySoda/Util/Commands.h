@@ -38,6 +38,7 @@ public:
 	static void ExecuteCommand(const String& command);
 
 	static void Log(const String& str, const Color& color = Color::White);
+	static inline void ErrorLog(const String& str) { Log(str, Color::Orange); }
 
 	static void Return(float f);
 	static void Return(int i);
