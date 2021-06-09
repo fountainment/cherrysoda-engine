@@ -119,7 +119,18 @@ void GUI::Initialize()
 
 void GUI::Terminate()
 {
-	Graphics::DestroyTexture(ms_fontTexture.GetHandle());
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_Arrow]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_TextInput]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeAll]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeNS]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeEW]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeNESW]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeNWSE]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_Hand]);
+	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_NotAllowed]);
+
+	ms_fontTexture.Dispose();
+	ImGui::DestroyContext();
 }
 
 void GUI::Update()

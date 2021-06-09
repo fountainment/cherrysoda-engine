@@ -227,6 +227,7 @@ void Engine::Terminate()
 	GUI::Terminate();
 	Draw::Terminate();
 	Graphics::Terminate();
+	MInput::Terminate();
 
 	m_window->DestroyWindow();
 	Window::Terminate();

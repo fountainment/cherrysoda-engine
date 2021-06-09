@@ -143,6 +143,16 @@ void MInput::Initialize()
 	// TODO: VirtualInputs
 }
 
+void MInput::Terminate()
+{
+	delete ms_keyboard;
+	delete ms_mouse;
+	for (int i = 0; i < 4; ++i) {
+		delete ms_gamePads[i];
+	}
+	SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+}
+
 void MInput::Update()
 {
 	CHERRYSODA_PROFILE_FUNCTION();

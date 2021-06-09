@@ -598,6 +598,7 @@ public:
 	static MouseData* Mouse() { return ms_mouse; }
 
 	static void Initialize();
+	static void Terminate();
 
 private:
 	// For GUI

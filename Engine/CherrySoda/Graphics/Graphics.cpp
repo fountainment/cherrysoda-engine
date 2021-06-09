@@ -159,6 +159,14 @@ void init()
 	s_fileWriter = BX_NEW(g_allocator, FileWriter);
 }
 
+void termiate()
+{
+	BX_DELETE(g_allocator, s_fileReader);
+	s_fileReader = nullptr;
+	BX_DELETE(g_allocator, s_fileWriter);
+	s_fileWriter = nullptr;
+}
+
 bx::FileReaderI* getFileReader()
 {
 	return s_fileReader;
@@ -499,6 +507,8 @@ void Graphics::Terminate()
 	STL::Clear(s_embeddedEffects);
 
 	bgfx::shutdown();
+
+	entry::termiate();
 }
 
 void Graphics::RenderFrame()

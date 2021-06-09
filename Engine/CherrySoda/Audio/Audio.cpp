@@ -59,7 +59,7 @@ void Audio::Initialize()
 	SDL_AudioSpec fmt, got;
 
 	/* Init SDL */
-	SDL_Init(SDL_INIT_AUDIO);
+	SDL_InitSubSystem(SDL_INIT_AUDIO);
 	audio_mutex = SDL_CreateMutex();
 
 	/* Init SDL audio */
@@ -89,6 +89,12 @@ void Audio::Terminate()
 	if (ms_initialized) {
 		SDL_CloseAudioDevice(s_sdlAudioDev);
 		s_sdlAudioDev = 0;
+
+		SDL_DestroyMutex(audio_mutex);
+		audio_mutex = nullptr;
+
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
 		ms_initialized = false;
 	}
 }

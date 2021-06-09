@@ -613,5 +613,6 @@ bool cherrysoda::Window::Initialize()
 
 void cherrysoda::Window::Terminate()
 {
+	SDL_QuitSubSystem(SDL_INIT_TIMER);
 	SDL_Quit();
 }
