@@ -19,7 +19,8 @@ public:
 
 	static void TextInput(const char* text);
 
-	static inline bool ConsoleFocused() { return ms_consoleFocused; }
+	static inline bool ConsoleWindowFocused() { return ms_consoleFocused; }
+	static inline bool SliderWindowFocused() { return ms_sliderFocused; }
 
 private:
 	friend class Engine;
@@ -36,6 +37,7 @@ private:
 	static bool ms_disable;
 	static bool ms_frameStarted;
 	static bool ms_consoleFocused;
+	static bool ms_sliderFocused;
 };
 
 } // namespace cherrysoda

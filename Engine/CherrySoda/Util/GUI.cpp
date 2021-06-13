@@ -36,6 +36,7 @@ type::UInt16 GUI::ms_guiRenderPass = 0;
 bool GUI::ms_disable = false;
 bool GUI::ms_frameStarted = false;
 bool GUI::ms_consoleFocused = false;
+bool GUI::ms_sliderFocused = false;
 
 static SDL_Cursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
 
@@ -206,6 +207,7 @@ void GUI::Update()
 
 	// Debug Console GUI
 	ms_consoleFocused = false;
+	ms_sliderFocused = false;
 	if (Engine::Instance()->ConsoleOpened()) {
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
@@ -270,6 +272,7 @@ void GUI::Update()
 			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f, 170.f), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Sliders");
 			{
+				ms_sliderFocused = ImGui::IsWindowFocused();
 				for (auto& slider : Commands::ms_sliderInfo) {
 					if (ImGui::SliderFloat(slider.param.c_str(), &slider.value, slider.minValue, slider.maxValue)) {
 						Commands::ExecuteCommand(slider.param + " " + StringUtil::ToString(slider.value));

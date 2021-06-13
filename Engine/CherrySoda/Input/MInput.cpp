@@ -163,12 +163,16 @@ void MInput::Update()
 	}
 
 	if (Engine::Instance()->IsActive()) {
-		if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleFocused()) {
+		if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleWindowFocused()) {
 			ms_keyboard->UpdateNull();
-			ms_mouse->UpdateNull();
 		}
 		else {
 			ms_keyboard->Update();
+		}
+		if (Engine::Instance()->ConsoleOpened() && (GUI::ConsoleWindowFocused() || GUI::SliderWindowFocused())) {
+			ms_mouse->UpdateNull();
+		}
+		else {
 			ms_mouse->Update();
 		}
 		for (int i = 0; i < 4; ++i) {
