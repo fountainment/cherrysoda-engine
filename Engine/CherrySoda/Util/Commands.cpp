@@ -430,13 +430,13 @@ CHERRYSODA_COMMAND(addslider, "Adds parameter slider")
 				return;
 			}
 		}
-		else {
-			Commands::ExecuteCommand(args[0]);
-			if (Commands::HasReturnValue()) {
-				d = Commands::GetReturnedFloat();
-			}
-			d = Math_Clamp(d, l, r);
+	}
+	if (argnum <= 3) {
+		Commands::ExecuteCommand(args[0]);
+		if (Commands::HasReturnValue()) {
+			d = Commands::GetReturnedFloat();
 		}
+		d = Math_Clamp(d, l, r);
 	}
 	Commands::ExecuteCommand(args[0] + " " + StringUtil::ToString(d));
 	Commands::AddParamSlider(args[0], l, r, d);
