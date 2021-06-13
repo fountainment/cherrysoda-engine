@@ -44,12 +44,22 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 		STL::Swap(leftUV, rightUV);
 	}
 	const Math::Vec4 rPos = ((effects & SpriteEffects::RoundRenderingPosition) == SpriteEffects::RoundRenderingPosition) ? Math::Vec4(Math_Round(pos), 0.f, 0.f) : Math::Vec4(pos, 0.f, 0.f);
+	Math::Vec2 RBCorner = (Math::Vec2(rect.Width(), 0.f)  - origin) * scale;
+	Math::Vec2 RTCorner = (Math::Vec2(rect.Size())        - origin) * scale;
+	Math::Vec2 LBCorner = (Vec2_Zero                      - origin) * scale;
+	Math::Vec2 LTCorner = (Math::Vec2(0.f, rect.Height()) - origin) * scale;
+	if ((effects & SpriteEffects::RoundRenderingPosition) == SpriteEffects::RoundRenderingPosition) {
+		RBCorner = Math_Floor(RBCorner);	
+		RTCorner = Math_Floor(RTCorner);	
+		LBCorner = Math_Floor(LBCorner);	
+		LTCorner = Math_Floor(LTCorner);	
+	}
 	const Math::Mat4 rotationMat = rotation == 0 ? Math_Identity<Math::Mat4>() : Math_Rotate(Math_Identity<Math::Mat4>(), rotation, Vec3_ZUp);
 	AddQuad(
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(rect.Width(), 0.f)  - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(rightUV, bottomUV)),
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(rect.Size())        - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(rightUV, topUV)),
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Vec2_Zero                      - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(leftUV,  bottomUV)),
-		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4((Math::Vec2(0.f, rect.Height()) - origin) * scale, -layerDepth, 1.f)), color, Math::Vec2(leftUV,  topUV))
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4(RBCorner, -layerDepth, 1.f)), color, Math::Vec2(rightUV, bottomUV)),
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4(RTCorner, -layerDepth, 1.f)), color, Math::Vec2(rightUV, topUV   )),
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4(LBCorner, -layerDepth, 1.f)), color, Math::Vec2(leftUV,  bottomUV)),
+		MK_VERT(Math::Vec3(rPos + rotationMat * Math::Vec4(LTCorner, -layerDepth, 1.f)), color, Math::Vec2(leftUV,  topUV   ))
 	);
 	m_previousTexture = tex;
 }
