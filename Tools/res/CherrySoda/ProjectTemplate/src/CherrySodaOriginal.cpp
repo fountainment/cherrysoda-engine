@@ -26,6 +26,17 @@ void CherrySodaTemplate::Initialize()
 
 	// Initialize and set scene here
 	auto scene = new Scene();
+	auto renderer = new EverythingRenderer();
+
+	auto camera = renderer->GetCamera();
+	camera->UseOrthoProjection(true);
+	camera->Position(Math::Vec3(0.f, 0.f, 100.f));
+	camera->CenterOrigin();
+
+	renderer->KeepCameraCenterOrigin(true);
+	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
+	scene->Add(renderer);
+
 	SetScene(scene);
 }
 
