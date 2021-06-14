@@ -233,4 +233,7 @@ def pack_atlas():
                     '--save-as', join_path('textures', get_file_name_without_extention(aseprite_file) + '_{tag}{tagframe00}.png')
                 ]
             )
-    execute_command([crunch, 'assets/atlases/atlas', 'textures/', '-j -p -u -t -s2048 -p8'])
+    if not exists(crunch):
+        print('crunch binary not found, please build the project for once first')
+        return
+    execute_command([crunch, 'assets/atlases/atlas', 'textures/', '-j', '-p', '-u', '-t', '-s2048', '-p8'])
