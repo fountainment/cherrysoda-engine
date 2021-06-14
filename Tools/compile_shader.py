@@ -9,13 +9,13 @@ import argparse
 
 def compile_shader_program(shader_dir, shader_name):
     print('Compiling shader "' + shader_name + '" ...')
-    vert_shader = cherry.join_path(shader_dir, 'shaders/vs_' + shader_name + '.sc')
-    frag_shader = cherry.join_path(shader_dir, 'shaders/fs_' + shader_name + '.sc')
-    vert_out    = cherry.join_path(shader_dir, '%s/vs_' + shader_name + '.bin')
-    frag_out    = cherry.join_path(shader_dir, '%s/fs_' + shader_name + '.bin')
+    vert_shader = cherry.join_path(shader_dir, 'shaders', 'vs_' + shader_name + '.sc')
+    frag_shader = cherry.join_path(shader_dir, 'shaders', 'fs_' + shader_name + '.sc')
+    vert_out    = cherry.join_path(shader_dir, '%s',      'vs_' + shader_name + '.bin')
+    frag_out    = cherry.join_path(shader_dir, '%s',      'fs_' + shader_name + '.bin')
     include_dirs= [cherry.bgfx_src_path, cherry.shader_path]
 
-    shader_out_dir = 'assets/shaders'
+    shader_out_dir = cherry.join_path('assets', 'shaders')
 
     compile_info = []
     if cherry.is_windows_system():
@@ -41,12 +41,12 @@ def compile_shader_program(shader_dir, shader_name):
 
 def compile_embedded_shader_program(shader_dir, shader_name):
     print('Compiling embedded shader "' + shader_name + '" ...')
-    vert_shader = cherry.join_path(shader_dir, 'shaders/vs_' + shader_name + '.sc')
-    frag_shader = cherry.join_path(shader_dir, 'shaders/fs_' + shader_name + '.sc')
-    vert_out    = cherry.join_path(shader_dir, 'embedded_shaders/vs_' + shader_name + '.bin.h')
-    frag_out    = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '.bin.h')
-    dx_vert_out = cherry.join_path(shader_dir, 'embedded_shaders/vs_' + shader_name + '.dx.bin.h')
-    dx_frag_out = cherry.join_path(shader_dir, 'embedded_shaders/fs_' + shader_name + '.dx.bin.h')
+    vert_shader = cherry.join_path(shader_dir, 'shaders',          'vs_' + shader_name + '.sc')
+    frag_shader = cherry.join_path(shader_dir, 'shaders',          'fs_' + shader_name + '.sc')
+    vert_out    = cherry.join_path(shader_dir, 'embedded_shaders', 'vs_' + shader_name + '.bin.h')
+    frag_out    = cherry.join_path(shader_dir, 'embedded_shaders', 'fs_' + shader_name + '.bin.h')
+    dx_vert_out = cherry.join_path(shader_dir, 'embedded_shaders', 'vs_' + shader_name + '.dx.bin.h')
+    dx_frag_out = cherry.join_path(shader_dir, 'embedded_shaders', 'fs_' + shader_name + '.dx.bin.h')
     include_dirs= [cherry.bgfx_src_path, cherry.shader_path]
     shader_tmp  = cherry.join_path(cherry.tmp_path, 'shader.tmp')
 

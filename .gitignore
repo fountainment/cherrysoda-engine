@@ -38,6 +38,7 @@ build_*/
 *.sublime-workspace
 Projects/
 Tools/bin/shaderc.local*
+Tools/bin/crunch*
 
 # Temp
 .*.swp
@@ -63,4 +64,3 @@ External/android-project/local.properties
 
 # MacOS
 .DS_Store
-

@@ -11,4 +11,13 @@ endif()
 if(NOT EMSCRIPTEN)
   add_executable(crunch crunch/main.cpp)
   target_link_libraries(crunch libcrunch)
+  if(NOT WINDOWS)
+    add_custom_command(TARGET crunch
+                       POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:crunch>/crunch ${CHERRYSODA_TOOL_PATH}/bin/crunch)
+  else()
+    add_custom_command(TARGET crunch
+                       POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:crunch>/crunch.exe ${CHERRYSODA_TOOL_PATH}/bin/crunch.exe)
+  endif()
 endif()

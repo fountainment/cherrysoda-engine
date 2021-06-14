@@ -20,8 +20,19 @@ def is_windows_system():
     return platform.system() == 'Windows'
 
 
-def join_path(a, b):
-    return os.path.join(a, b)
+def is_macos_system():
+    return platform.system() == 'Darwin'
+
+
+def is_linux_system():
+    return platform.system() == 'Linux'
+
+
+def join_path(*argv):
+    result = ''
+    for arg in argv:
+        result = os.path.join(result, arg)
+    return result
 
 
 def abspath(a):
@@ -36,18 +47,27 @@ def get_file_name(f):
     return os.path.basename(f)
 
 
+def get_file_extention(f):
+    return os.path.splitext(f)[1]
+
+
+def get_file_name_without_extention(f):
+    return os.path.splitext(os.path.basename(f))[0]
+
+
 executable_suffix = ('', '.exe')[is_windows_system()]
 
-project_path  = abspath(join_path(get_file_path(__file__), '../..'))
+project_path  = abspath(join_path(get_file_path(__file__), '..', '..'))
 engine_path   = join_path(project_path, 'Engine')
-shader_path   = join_path(engine_path, 'CherrySoda/Graphics/shaders')
+shader_path   = join_path(engine_path, 'CherrySoda', 'Graphics', 'shaders')
 tool_path     = join_path(project_path, 'Tools')
 external_path = join_path(project_path, 'External')
 tmp_path      = join_path(project_path, 'Tmp')
-bgfx_src_path = join_path(external_path, 'bgfx/bgfx/src')
+bgfx_src_path = join_path(external_path, 'bgfx', 'bgfx', 'src')
 
-shaderc = join_path(tool_path, 'bin/shaderc' + executable_suffix)
-shaderc_local = join_path(tool_path, 'bin/shaderc.local' + executable_suffix)
+crunch = join_path(tool_path, 'bin', 'crunch' + executable_suffix)
+shaderc = join_path(tool_path, 'bin', 'shaderc' + executable_suffix)
+shaderc_local = join_path(tool_path, 'bin', 'shaderc.local' + executable_suffix)
 shaderc_show_command = False
 
 sdl2_version = '2.0.14'
@@ -184,3 +204,33 @@ def replace_file_name(file, replace_list):
             print('"%s" already exists!' % (s))
             return
         move(file, s)
+
+
+def get_aseprite_location():
+    location = ''
+    if is_windows_system():
+        location = 'C:\\Program Files (x86)\\Steam\\steamapps\\common\\Aseprite\\aseprite.exe'
+    elif is_linux_system():
+        location = os.environ['HOME'] + '/.local/share/Steam/steamapps/common/Aseprite/aseprite'
+    elif is_macos_system():
+        location = os.environ['HOME'] + '/Library/Application Support/Steam/steamapps/common/Aseprite/Aseprite.app/Contents/MacOS/aseprite'
+
+    if exists(location):
+        return location
+    return 'aseprite'
+
+
+def pack_atlas():
+    aseprite = get_aseprite_location()
+    aseprite_folder = 'aseprites'
+    if exists(aseprite_folder):
+        aseprite_file_list = get_file_list_from_wildcard(join_path(aseprite_folder, '*.aseprite'))
+        for aseprite_file in aseprite_file_list:
+            execute_command(
+                [
+                    aseprite,
+                    '-b', aseprite_file,
+                    '--save-as', join_path('textures', get_file_name_without_extention(aseprite_file) + '_{tag}{tagframe00}.png')
+                ]
+            )
+    execute_command([crunch, 'assets/atlases/atlas', 'textures/', '-j -p -u -t -s2048 -p8'])
