@@ -18,7 +18,7 @@ void RendererBase::RenderPrepare(Scene* scene)
 	Math::IVec2 renderTargetSize = Graphics::GetRenderTargetSize(GetRenderTarget());
 	if (!FixedCameraSize()) {
 		GetCamera()->SetSize(renderTargetSize);
-		if (KeepCameraCenterOrigin() && GetCamera()->UseOrthoProjection()) {
+		if (DoKeepCameraCenterOrigin() && GetCamera()->UseOrthoProjection()) {
 			GetCamera()->CenterOrigin();
 		}
 	}
