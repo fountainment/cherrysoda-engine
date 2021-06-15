@@ -23,6 +23,8 @@ public:
 	inline float NextFloat(float max) { return NextFloat() * max; }
 	inline float NextFloat(float min, float max) { return min + NextFloat(max - min); }
 	inline double NextDouble() { return Next() / static_cast<double>(STL::RandomMax(m_random)); }
+	inline float NextDouble(double max) { return NextDouble() * max; }
+	inline float NextDouble(double min, double max) { return min + NextDouble(max - min); }
 	inline float NextAngle() { return NextFloat(Math::Pi2); }
 	inline Math::Vec2 ShakeVector()
 	{
