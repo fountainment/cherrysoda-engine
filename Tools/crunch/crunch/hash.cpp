@@ -32,11 +32,23 @@
 #include "tinydir.h"
 #include "str.hpp"
 
-template <class T>
-void HashCombine(std::size_t& hash, const T& v)
+std::size_t GetHashBKDR(const string& str)
 {
-    std::hash<T> hasher;
-    hash ^= hasher(v) + 0x9e3779b9 + (hash<<6) + (hash>>2);
+    std::size_t seed = 131;
+    std::size_t hash = 0;
+    int len = str.length();
+    for (int i = 0; i < len; ++i) {
+        hash = hash * seed + str[i];
+    }
+    return hash & 0x7fffffff;
+}
+
+void HashCombine(std::size_t& hash, const string& s)
+{
+    // std::hash<T> hasher;
+    // hash ^= hasher(v) + 0x9e3779b9 + (hash<<6) + (hash>>2);
+    // std::hash can differ on different platforms
+    hash ^= GetHashBKDR(s) + 0x9e3779b9 + (hash<<6) + (hash>>2);
 }
 void HashCombine(std::size_t& hash, size_t v)
 {
