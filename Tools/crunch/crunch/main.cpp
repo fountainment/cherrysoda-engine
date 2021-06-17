@@ -390,7 +390,7 @@ int main(int argc, const char* argv[])
     }
     
     //Sort the bitmaps by area
-    sort(bitmaps.begin(), bitmaps.end(), [](const Bitmap* a, const Bitmap* b) {
+    stable_sort(bitmaps.begin(), bitmaps.end(), [](const Bitmap* a, const Bitmap* b) {
         return (a->width * a->height) < (b->width * b->height);
     });
     
