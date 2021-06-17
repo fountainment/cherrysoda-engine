@@ -179,7 +179,7 @@ static void LoadBitmaps(const string& root, const string& prefix)
     tinydir_dir dir;
     tinydir_open_sorted(&dir, StrToPath(root).data());
     
-    for (int i = 0; i < dir.n_files; ++i)
+    for (int i = 0; i < static_cast<int>(dir.n_files); ++i)
     {
         tinydir_file file;
         tinydir_readfile_n(&dir, &file, i);

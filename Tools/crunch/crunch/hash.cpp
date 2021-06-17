@@ -70,12 +70,12 @@ void HashFiles(size_t& hash, const string& root)
     static string dot2 = "..";
     
     tinydir_dir dir;
-    tinydir_open(&dir, StrToPath(root).data());
+    tinydir_open_sorted(&dir, StrToPath(root).data());
     
-    while (dir.has_next)
+    for (int i = 0; i < static_cast<int>(dir.n_files); ++i)
     {
         tinydir_file file;
-        tinydir_readfile(&dir, &file);
+        tinydir_readfile_n(&dir, &file, i);
         
         if (file.is_dir)
         {
@@ -84,8 +84,6 @@ void HashFiles(size_t& hash, const string& root)
         }
         else if (PathToStr(file.extension) == "png")
             HashFile(hash, PathToStr(file.path));
-        
-        tinydir_next(&dir);
     }
     
     tinydir_close(&dir);
