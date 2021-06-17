@@ -172,15 +172,15 @@
 				},
 				{
 					"name": "libcrunch",
-					"shell_cmd": "make -j8 libcrunch"
+					"shell_cmd": "make -j8 libcrunch",
 				},
 				{
 					"name": "sfxr_port",
-					"shell_cmd": "make -j8 sfxr_port"
+					"shell_cmd": "make -j8 sfxr_port",
 				},
 				{
 					"name": "stb_vorbis",
-					"shell_cmd": "make -j8 stb_vorbis"
+					"shell_cmd": "make -j8 stb_vorbis",
 				},
 			],
 			"working_dir": "${project_path}/build",
