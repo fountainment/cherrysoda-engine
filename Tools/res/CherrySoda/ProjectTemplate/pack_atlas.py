@@ -5,20 +5,28 @@
 import os
 import sys
 
+current_path = os.path.abspath(os.path.dirname(__file__))
+
+possible_engine_locations = [
+    os.path.join(current_path, '../cherrysoda-engine/'),
+    os.path.join(current_path, '../../cherrysoda-engine/'),
+    os.path.join(current_path, '../'),
+    os.path.join(current_path, '../../')
+]
+
+engine_path = None
 tool_path = None
 
-if os.path.exists('../cherrysoda-engine/Tools/'):
-	tool_path = '../cherrysoda-engine/Tools/'
-elif os.path.exists('../../cherrysoda-engine/Tools/'):
-	tool_path = '../../cherrysoda-engine/Tools/'
-elif os.path.exists('../Tools/'):
-	tool_path = '../Tools/'
-elif os.path.exists('../../Tools/'):
-	tool_path = '../../Tools/'
+for engine_loc in possible_engine_locations:
+    tmp_path = os.path.join(engine_loc, 'Tools/')
+    if os.path.exists(tmp_path):
+        engine_path = engine_loc
+        tool_path = tmp_path
+        break
 
 if tool_path:
-	sys.path.append(os.path.abspath(tool_path))	
+    sys.path.append(os.path.abspath(tool_path))
 
 import lib.cherrysoda as cherry
 
-cherry.pack_atlas()
+cherry.pack_atlas(current_path, verbose=True)

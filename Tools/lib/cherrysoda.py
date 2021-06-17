@@ -84,9 +84,10 @@ def make_sure_folder_exist(f):
         os.makedirs(p)
 
 
-def execute_command(command):
-    # print('$ ' + ' '.join(command))
-    subprocess.call(command)
+def execute_command(command, working_dir=None, show_command=False):
+    if show_command:
+        print('$ ' + ' '.join(command))
+    subprocess.call(command, cwd=working_dir)
 
 
 def compile_shader(shader_source, output, platform, shader_type, include_paths=None, profile=None, opt_level=None, bin2c_array=None):
@@ -220,20 +221,27 @@ def get_aseprite_location():
     return 'aseprite'
 
 
-def pack_atlas():
+def pack_atlas(path=None, verbose=False):
     aseprite = get_aseprite_location()
     aseprite_folder = 'aseprites'
     if exists(aseprite_folder):
         aseprite_file_list = get_file_list_from_wildcard(join_path(aseprite_folder, '*.aseprite'))
         for aseprite_file in aseprite_file_list:
-            execute_command(
-                [
+            aseprite_command = [
                     aseprite,
                     '-b', aseprite_file,
                     '--save-as', join_path('textures', get_file_name_without_extention(aseprite_file) + '_{tag}{tagframe00}.png')
                 ]
-            )
+            execute_command(aseprite_command , working_dir=path, show_command=True)
     if not exists(crunch):
         print('crunch binary not found, please build the project for once first')
         return
-    execute_command([crunch, 'assets/atlases/atlas', 'textures/', '-j', '-p', '-u', '-t', '-s2048', '-p8'])
+    crunch_command = [
+            crunch,
+            'assets/atlases/atlas',
+            'textures/',
+            '-j', '-p', '-u', '-t', '-s2048', '-p8'
+        ]
+    if verbose:
+        crunch_command.append('-v')
+    execute_command(crunch_command, working_dir=path)
