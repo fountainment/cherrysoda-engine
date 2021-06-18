@@ -28,7 +28,10 @@ private:
 	void CreateWindow();
 	void DestroyWindow();
 
+	void Hide();
 	void Show();
+
+	void ShowCursor(bool show);
 
 	void PollEvents();
 

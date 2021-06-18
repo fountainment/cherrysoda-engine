@@ -110,6 +110,14 @@ void Engine::SetWindowed()
 	}
 }
 
+void Engine::ShowCursor(bool show)
+{
+	if (m_window) {
+		m_window->ShowCursor(show);
+	}
+	m_showCursor = show;
+}
+
 void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 {
 	ParseArgs(argc, argv);
@@ -126,6 +134,7 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 		Update();
 		Draw();
 
+		m_window->ShowCursor(m_showCursor);
 		m_window->Show();
 		Draw();
 	}

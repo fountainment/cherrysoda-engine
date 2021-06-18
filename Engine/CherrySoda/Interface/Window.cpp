@@ -526,9 +526,19 @@ void cherrysoda::Window::SetMousePosition(int x, int y)
 	SDL_WarpMouseInWindow(m_mainWindow, x, y);
 }
 
+void cherrysoda::Window::Hide()
+{
+	SDL_HideWindow(m_mainWindow);
+}
+
 void cherrysoda::Window::Show()
 {
 	SDL_ShowWindow(m_mainWindow);
+}
+
+void cherrysoda::Window::ShowCursor(bool show)
+{
+	SDL_ShowCursor(show ? SDL_ENABLE : SDL_DISABLE);
 }
 
 void cherrysoda::Window::PollEvents()

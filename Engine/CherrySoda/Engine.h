@@ -48,6 +48,9 @@ public:
 	void SetMousePosition(const Math::IVec2& pos);
 	void SetFullscreen();
 	void SetWindowed();
+	void ShowCursor(bool show);
+	inline void ShowCursor() { ShowCursor(true); }
+	inline void HideCursor() { ShowCursor(false); }
 
 	inline float RawGameTime() const { return static_cast<float>(m_rawGameTime); }
 	inline float GameTime() const { return static_cast<float>(m_gameTime); }
@@ -57,6 +60,7 @@ public:
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
 	inline int FPS() { return m_FPS; }
 	inline bool ConsoleOpened() { return m_consoleOpened; }
+	inline bool DoShowCursor() const { return m_showCursor; }
 
 	inline void DisableInternalAudio()
 	{
@@ -119,6 +123,7 @@ private:
 	bool m_active = false;
 	bool m_consoleOpened = false;
 	bool m_enableInternalAudio = true;
+	bool m_showCursor = true;
 
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;

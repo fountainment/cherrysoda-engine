@@ -184,13 +184,18 @@ void GUI::Update()
 			if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
 			{
 				// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-				SDL_ShowCursor(SDL_FALSE);
+				SDL_ShowCursor(SDL_DISABLE);
 			}
 			else
 			{
 				// Show OS mouse cursor
 				SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-				SDL_ShowCursor(SDL_TRUE);
+				if (Engine::Instance()->DoShowCursor()) {
+					SDL_ShowCursor(SDL_ENABLE);
+				}
+				else {
+					SDL_ShowCursor(SDL_DISABLE);
+				}
 			}
 		}
 
@@ -209,6 +214,9 @@ void GUI::Update()
 	ms_consoleFocused = false;
 	ms_sliderFocused = false;
 	if (Engine::Instance()->ConsoleOpened()) {
+		if (!Engine::Instance()->DoShowCursor() && !io.MouseDrawCursor) {
+			SDL_ShowCursor(SDL_ENABLE);
+		}
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
 		{
