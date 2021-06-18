@@ -115,6 +115,14 @@
 					"shell_cmd": "make -j8 EaseFunction",
 				},
 				{
+					"name": "FirstFont",
+					"shell_cmd": "make -j8 FirstFont",
+				},
+				{
+					"name": "FirstParticle",
+					"shell_cmd": "make -j8 FirstParticle",
+				},
+				{
 					"name": "FirstSprite",
 					"shell_cmd": "make -j8 FirstSprite",
 				},
@@ -280,7 +288,10 @@
 	[
 		{
 			"path": ".",
-		}
+		},
+		{
+			"path": "../cherrysoda-projects",
+		},
 	],
 	"settings":
 	{
