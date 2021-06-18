@@ -236,6 +236,10 @@ def pack_atlas(path=None, verbose=False):
     if not exists(crunch):
         print('crunch binary not found, please build the project for once first')
         return
+    atlas_folder = 'assets/atlases/'
+    if path:
+        atlas_folder = join_path(path, atlas_folder)
+    make_sure_folder_exist(atlas_folder)
     crunch_command = [
             crunch,
             'assets/atlases/atlas',

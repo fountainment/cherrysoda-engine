@@ -8,11 +8,11 @@ import sys
 current_path = os.path.abspath(os.path.dirname(__file__))
 
 possible_engine_locations = [
-    os.path.join(current_path, '../cherrysoda-engine/'),
-    os.path.join(current_path, '../../cherrysoda-engine/'),
-    os.path.join(current_path, '../'),
-    os.path.join(current_path, '../../')
-]
+        os.path.join(current_path, '../cherrysoda-engine/'),
+        os.path.join(current_path, '../../cherrysoda-engine/'),
+        os.path.join(current_path, '../'),
+        os.path.join(current_path, '../../')
+    ]
 
 engine_path = None
 tool_path = None
