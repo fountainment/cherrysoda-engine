@@ -179,6 +179,12 @@ def write_str_file(s, dest):
     f.close()
 
 
+def append_str_to_file(s, dest):
+    f = open(dest, 'a')
+    f.write(s)
+    f.close()
+
+
 def read_file(file):
     f = open(file, 'r')
     ret = f.read()

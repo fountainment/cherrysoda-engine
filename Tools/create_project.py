@@ -27,6 +27,7 @@ def create_project(path, name):
     for f in file_list:
         cherry.replace_file_str(f, replace_list)
         cherry.replace_file_name(f, replace_list)
+    cherry.append_str_to_file('add_subdirectory(%s)\n' % (name,), 'CMakeLists.txt')
 
 
 def main():
