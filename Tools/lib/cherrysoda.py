@@ -58,8 +58,7 @@ def get_file_name_without_extention(f):
 executable_suffix = ('', '.exe')[is_windows_system()]
 
 project_path  = abspath(join_path(get_file_path(__file__), '..', '..'))
-engine_path   = join_path(project_path, 'Engine')
-shader_path   = join_path(engine_path, 'CherrySoda', 'Graphics', 'shaders')
+shader_path   = join_path(project_path, 'Engine', 'CherrySoda', 'Graphics', 'shaders')
 tool_path     = join_path(project_path, 'Tools')
 external_path = join_path(project_path, 'External')
 tmp_path      = join_path(project_path, 'Tmp')
@@ -249,3 +248,13 @@ def pack_atlas(path=None, verbose=False):
     if verbose:
         crunch_command.append('-v')
     execute_command(crunch_command, working_dir=path)
+
+
+def update_assets(path=join_path(project_path, 'build')):
+    make_sure_folder_exist(path)
+    execute_command(['cmake', project_path], working_dir=path)
+
+
+def build(path=join_path(project_path, 'build'), build_type='Release'):
+    make_sure_folder_exist(path)
+    execute_command(['cmake', '--build', '.', '--config', build_type], working_dir=path)
