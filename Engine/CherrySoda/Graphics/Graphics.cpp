@@ -496,6 +496,11 @@ inline void DestroyUniform(Graphics::UniformHandle handle)
 
 void Graphics::Terminate()
 {
+	delete ms_renderPassHelperInstance;
+	ms_renderPassHelperInstance = nullptr;
+	delete ms_instance;
+	ms_instance = nullptr;
+
 	for (auto& uniform : ms_uniformHashMap) {
 		DestroyUniform(uniform.second);
 	}

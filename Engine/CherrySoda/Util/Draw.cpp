@@ -30,6 +30,7 @@ void Draw::Terminate()
 {
 	DestroyDebugPixelTexture();
 	delete ms_spriteBatch;
+	ms_spriteBatch = nullptr;
 }
 
 void Draw::UseDebugPixelTexture()

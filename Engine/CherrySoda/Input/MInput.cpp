@@ -146,9 +146,12 @@ void MInput::Initialize()
 void MInput::Terminate()
 {
 	delete ms_keyboard;
+	ms_keyboard = nullptr;
 	delete ms_mouse;
+	ms_mouse = nullptr;
 	for (int i = 0; i < 4; ++i) {
 		delete ms_gamePads[i];
+		ms_gamePads[i] = nullptr;
 	}
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 }

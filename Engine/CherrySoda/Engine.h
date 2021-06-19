@@ -33,6 +33,8 @@ public:
 	Engine(int width, int height, const String& title) : Engine(width, height, width, height, title, false) {}
 	Engine(int width, int height, int windowWidth, int windowHeight, const String& title, bool fullscreen);
 
+	virtual ~Engine();
+
 	inline int GetWidth() { return m_width; }
 	inline int GetHeight() { return m_height; }
 	inline Math::IVec2 GetViewSize() { return Math::IVec2(GetWidth(), GetHeight()); }

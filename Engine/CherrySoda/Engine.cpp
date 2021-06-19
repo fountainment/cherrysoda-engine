@@ -64,6 +64,11 @@ Engine::Engine(int width, int height, int windowWidth, int windowHeight,
 	m_fullscreen = fullscreen;
 }
 
+Engine::~Engine()
+{
+	ms_instance = nullptr;
+}
+
 void Engine::SetTitle(const String& title)
 {
 	m_title = title;
@@ -240,6 +245,12 @@ void Engine::Initialize()
 
 void Engine::Terminate()
 {
+	// TODO: What if the scene is not allocated on heap
+	if (m_scene) {
+		delete m_scene;
+		m_scene = nullptr;
+	}
+
 	Commands::Terminate();
 	Audio::Terminate();
 	GUI::Terminate();
@@ -252,6 +263,8 @@ void Engine::Terminate()
 	m_window = nullptr;
 
 	Window::Terminate();
+
+	m_initialized = false;
 }
 
 void Engine::LoadContent()
