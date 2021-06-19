@@ -10,9 +10,21 @@ project(CherrySoda VERSION 0.1
                    DESCRIPTION "A C++ Game Engine Based on BGFX and SDL2"
                    LANGUAGES C CXX)
 
+option(CHERRYSODA_BUILD_TOOLS      "Build tools"               ON)
+option(CHERRYSODA_BUILD_SHADERC    "Build shaderc"             OFF)
+option(CHERRYSODA_LIGHT_BUILD      "Build only necessaries"    OFF)
+option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
+option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
+option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
+
+option(ENABLE_LTO "Enable link time optimization" ON)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(Documentation)
+include(LTO)
 include(SysDetect)
+
+find_lto(CXX)
 
 find_package(Python)
 if(NOT Python_FOUND)
@@ -23,13 +35,6 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
-
-option(CHERRYSODA_BUILD_TOOLS      "Build tools"               ON)
-option(CHERRYSODA_BUILD_SHADERC    "Build shaderc"             OFF)
-option(CHERRYSODA_LIGHT_BUILD      "Build only necessaries"    OFF)
-option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
-option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
-option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 
 set(OUTSIDE_PROJECTS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../cherrysoda-projects)
 set(OUTSIDE_PROJECTS_FOLDER_EXISTS OFF)
@@ -259,6 +264,7 @@ function(add_cherrysoda_executable executable_name)
   source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${program_src} ${shader_src})
   target_link_libraries(${executable_name} PRIVATE ${module_links} CherrySoda)
   target_include_directories(${executable_name} PRIVATE src)
+  target_enable_lto(${executable_name} optimized)
   cherrysoda_set_target_folder(${executable_name} ${CHERRYSODA_EXECUTABLE_FOLDER})
 endfunction(add_cherrysoda_executable)
 
