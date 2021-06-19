@@ -98,6 +98,7 @@ void Engine::SetMousePosition(const Math::IVec2& pos)
 
 void Engine::SetFullscreen()
 {
+	m_fullscreen = true;
 	if (m_window) {
 		m_window->SetFullscreen(true);
 	}
@@ -105,6 +106,7 @@ void Engine::SetFullscreen()
 
 void Engine::SetWindowed()
 {
+	m_fullscreen = false;
 	if (m_window) {
 		m_window->SetFullscreen(false);
 	}
@@ -112,10 +114,18 @@ void Engine::SetWindowed()
 
 void Engine::ShowCursor(bool show)
 {
+	m_showCursor = show;
 	if (m_window) {
 		m_window->ShowCursor(show);
 	}
-	m_showCursor = show;
+}
+
+void Engine::WindowResizable(bool resizable)
+{
+	m_windowResizable = resizable;
+	if (m_window) {
+		m_window->Resizable(resizable);
+	}
 }
 
 void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
@@ -134,7 +144,6 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 		Update();
 		Draw();
 
-		m_window->ShowCursor(m_showCursor);
 		m_window->Show();
 		Draw();
 	}
@@ -239,6 +248,9 @@ void Engine::Terminate()
 	MInput::Terminate();
 
 	m_window->DestroyWindow();
+	delete m_window;
+	m_window = nullptr;
+
 	Window::Terminate();
 }
 

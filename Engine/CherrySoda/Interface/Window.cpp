@@ -461,27 +461,35 @@ namespace entry {
 
 } // namespace entry
 
-cherrysoda::Window::Window()
-{
-}
-
 void cherrysoda::Window::CreateWindow()
 {
 	int windowWidth = Engine::Instance()->GetWindowWidth();
 	int windowHeight = Engine::Instance()->GetWindowHeight();
 	String title = Engine::Instance()->GetTitle();
+
 #ifdef ANDROID
+	Engine::Instance()->m_windowResizable = false;
+	Engine::Instance()->m_fullscreen = true;
+
 	SDL_SetHint(SDL_HINT_VIDEO_EXTERNAL_CONTEXT, "1");
 	SDL_DisplayMode mode;
 	SDL_GetDesktopDisplayMode(0, &mode);
 	windowWidth  = mode.w;
 	windowHeight = mode.h;
-	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
-	SetFullscreen(true);
+	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
 	Engine::Instance()->SetWindowSize(windowWidth, windowHeight);
 #else
-	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
+	bool resizable  = Engine::Instance()->m_windowResizable;
+	bool fullscreen = Engine::Instance()->m_fullscreen;
+	Uint32 windowFlag = SDL_WINDOW_HIDDEN;
+	if (resizable ) windowFlag |= SDL_WINDOW_RESIZABLE;
+	if (fullscreen) windowFlag |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, windowFlag);
 #endif
+
+	bool showCursor = Engine::Instance()->m_showCursor;
+	ShowCursor(showCursor);
+
 	entry::sdlSetWindow(m_mainWindow);
 }
 
@@ -502,18 +510,12 @@ void cherrysoda::Window::SetTitle(const String& title)
 
 void cherrysoda::Window::SetFullscreen(bool fullscreen)
 {
-	Engine::Instance()->m_fullscreen = fullscreen;
 	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }
 
 bool cherrysoda::Window::IsFullscreen()
 {
 	return SDL_GetWindowFlags(m_mainWindow) & SDL_WINDOW_FULLSCREEN;
-}
-
-void cherrysoda::Window::ToggleFullscreen()
-{
-	SetFullscreen(!IsFullscreen());
 }
 
 void cherrysoda::Window::GetPosition(int* x, int* y)
@@ -539,6 +541,14 @@ void cherrysoda::Window::Show()
 void cherrysoda::Window::ShowCursor(bool show)
 {
 	SDL_ShowCursor(show ? SDL_ENABLE : SDL_DISABLE);
+}
+
+void cherrysoda::Window::Resizable(bool resizable)
+{
+	CHERRYSODA_ASSERT(SDL_VERSION_ATLEAST(2,0,5), "SDL_SetWindowResizable unavailable for SDL version below 2.0.5\n");
+#if SDL_VERSION_ATLEAST(2,0,5)
+	SDL_SetWindowResizable(m_mainWindow, resizable ? SDL_TRUE : SDL_FALSE);
+#endif // SDL_VERSION_ATLEAST(2,0,5)
 }
 
 void cherrysoda::Window::PollEvents()

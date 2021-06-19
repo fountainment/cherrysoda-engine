@@ -29,9 +29,9 @@ public:
 	static void MainLoop();
 #endif // __EMSCRIPTEN__ 
 
-	Engine() : Engine(500, 500, 500, 500, "CherrySoda", false) {}
-	Engine(int width, int height, int windowWidth, int windowHeight,
-	       const String& title, bool fullscreen);
+	Engine() : Engine(500, 500, "CherrySoda") {}
+	Engine(int width, int height, const String& title) : Engine(width, height, width, height, title, false) {}
+	Engine(int width, int height, int windowWidth, int windowHeight, const String& title, bool fullscreen);
 
 	inline int GetWidth() { return m_width; }
 	inline int GetHeight() { return m_height; }
@@ -51,6 +51,7 @@ public:
 	void ShowCursor(bool show);
 	inline void ShowCursor() { ShowCursor(true); }
 	inline void HideCursor() { ShowCursor(false); }
+	void WindowResizable(bool resizable);
 
 	inline float RawGameTime() const { return static_cast<float>(m_rawGameTime); }
 	inline float GameTime() const { return static_cast<float>(m_gameTime); }
@@ -124,6 +125,7 @@ private:
 	bool m_consoleOpened = false;
 	bool m_enableInternalAudio = true;
 	bool m_showCursor = true;
+	bool m_windowResizable = true;
 
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;

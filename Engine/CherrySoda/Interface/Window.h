@@ -14,13 +14,12 @@ class Window
 private:
 	friend class Engine;
 
-	Window();
+	Window() = default;
 
 	void SetSize(int width, int height);
 	void SetTitle(const String& string);
 	void SetFullscreen(bool fullscreen);
 	bool IsFullscreen();
-	void ToggleFullscreen();
 
 	void GetPosition(int* x, int* y);
 	void SetMousePosition(int x, int y);
@@ -32,6 +31,8 @@ private:
 	void Show();
 
 	void ShowCursor(bool show);
+
+	void Resizable(bool resizable);
 
 	void PollEvents();
 
