@@ -38,6 +38,8 @@ def join_path(*argv):
 def abspath(a):
     return os.path.abspath(a)
 
+def relpath(a, common):
+    return os.path.relpath(a, common)
 
 def get_file_path(f):
     return os.path.dirname(f)
@@ -228,13 +230,13 @@ def get_aseprite_location():
 
 def pack_atlas(path=None, verbose=False):
     aseprite = get_aseprite_location()
-    aseprite_folder = 'aseprites'
+    aseprite_folder = join_path(path, 'aseprites')
     if exists(aseprite_folder):
         aseprite_file_list = get_file_list_from_wildcard(join_path(aseprite_folder, '*.aseprite'))
         for aseprite_file in aseprite_file_list:
             aseprite_command = [
                     aseprite,
-                    '-b', aseprite_file,
+                    '-b', relpath(aseprite_file, path),
                     '--save-as', join_path('textures', get_file_name_without_extention(aseprite_file) + '_{tag}{tagframe00}.png')
                 ]
             execute_command(aseprite_command , working_dir=path, show_command=True)
