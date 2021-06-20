@@ -30,7 +30,7 @@ Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::V
 		particle->m_source = &m_source;
 	}
 	else {
-		particle->m_source = &Draw::Particle();
+		particle->m_source = &Draw::ParticleTexture();
 	}
 
 	// size

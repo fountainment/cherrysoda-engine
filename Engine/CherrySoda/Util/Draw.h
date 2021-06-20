@@ -30,10 +30,13 @@ public:
 	static void HollowRect(float x, float y, float width, float height, const Color& color = Color::White);
 	static void Circle(const Math::Vec2& pos, float radius, const Color& color = Color::White, float resolution = 4.f);
 
-	static const MTexture& Pixel() { return ms_pixel; }
-	static const MTexture& Particle() { return ms_particle; }
+	static const MTexture& PixelTexture() { return ms_pixel; }
+	static const MTexture& ParticleTexture() { return ms_particle; }
+	static void PixelTexture(const MTexture& texture) { ms_pixel = texture; }
+	static void ParticleTexture(const MTexture& texture) { ms_particle = texture; }
 
 private:
+	static MTexture ms_debugPixelTexture;
 	static MTexture ms_pixel;
 	static MTexture ms_particle;
 	static Renderer* ms_renderer;

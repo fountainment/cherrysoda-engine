@@ -15,6 +15,7 @@ using cherrysoda::Renderer;
 using cherrysoda::SpriteBatch;
 using cherrysoda::SpriteEffects;
 
+MTexture Draw::ms_debugPixelTexture;
 MTexture Draw::ms_pixel;
 MTexture Draw::ms_particle;
 Renderer* Draw::ms_renderer = nullptr;
@@ -35,20 +36,19 @@ void Draw::Terminate()
 
 void Draw::UseDebugPixelTexture()
 {
-	MTexture texture = MTexture(2, 2, Color::White);
-	ms_pixel = MTexture(texture, 0, 0, 1, 1);
-	ms_particle = MTexture(texture, 0, 0, 2, 2);
+	ms_debugPixelTexture = MTexture(2, 2, Color::White);
+	PixelTexture(MTexture(ms_debugPixelTexture, 0, 0, 1, 1));
+	ParticleTexture(MTexture(ms_debugPixelTexture, 0, 0, 2, 2));
 }
 
 void Draw::DestroyDebugPixelTexture()
 {
-	// TODO: use a more elegant way to do this, consider texture ref count?
-	Graphics::DestroyTexture(ms_pixel.Texture().GetHandle());
+	Graphics::DestroyTexture(ms_debugPixelTexture.Texture().GetHandle());
 }
 
 void Draw::LineAngle(const Math::Vec2& start, float angle, float length, const Color& color/* = Color::White*/, float thickness/* = 1.f*/)
 {
-	GetSpriteBatch()->Draw(ms_pixel.Texture(), start, ms_pixel.ClipRect(), color, angle, IVec2_Zero, Math::Vec2(length, thickness), SpriteEffects::None, 0);
+	GetSpriteBatch()->Draw(PixelTexture().Texture(), start, PixelTexture().ClipRect(), color, angle, IVec2_Zero, Math::Vec2(length, thickness), SpriteEffects::None, 0);
 }
 
 void Draw::Line(const Math::Vec2& start, const Math::Vec2& end, const Color& color/* = Color::White*/, float thickness/* = 1.f*/)
