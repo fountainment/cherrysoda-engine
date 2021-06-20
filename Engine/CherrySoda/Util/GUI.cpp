@@ -193,7 +193,7 @@ void GUI::Update()
 				if (Engine::Instance()->DoShowCursor()) {
 					SDL_ShowCursor(SDL_ENABLE);
 				}
-				else {
+				else if (!Engine::Instance()->ConsoleOpened()) {
 					SDL_ShowCursor(SDL_DISABLE);
 				}
 			}
