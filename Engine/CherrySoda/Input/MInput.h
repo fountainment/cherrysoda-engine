@@ -471,16 +471,8 @@ public:
 
 		int AxisCheck(Keys negative, Keys positive) const
 		{
-			if (Check(negative)) {
-				if (Check(positive))
-					return 0;
-				else
-					return -1;
-			}
-			else if (Check(positive))
-				return 1;
-			else
-				return 0;
+			if (Check(negative)) return Check(positive) ? 0 : -1;
+			else return Check(positive) ? 1 : 0;
 		}
 
 		Math::IVec2 GetAxis(Keys left, Keys right, Keys down, Keys up) const
@@ -490,16 +482,8 @@ public:
 
 		int AxisCheck(Keys negative, Keys positive, int both) const
 		{
-			if (Check(negative)) {
-				if (Check(positive))
-					return both;
-				else
-					return -1;
-			}
-			else if (Check(positive))
-				return 1;
-			else
-				return 0;
+			if (Check(negative)) return Check(positive) ? both : -1;
+			else return Check(positive) ? 1 : 0;
 		}
 
 		inline int GetHashCode() const { return m_currentState.GetHashCode(); }
@@ -580,10 +564,13 @@ public:
 		// int X() const { return Position().x; }
 		// int Y() const { return Position().y; }
 
-		const Math::IVec2 RawPosition() const { return Math::IVec2(m_currentState.m_x, m_currentState.m_y); }
+		inline const Math::IVec2 RawPosition() const { return Math::IVec2(m_currentState.m_x, m_currentState.m_y); }
 		void RawPosition(const Math::IVec2& pos) { SetMousePosition(pos); }
+		const Math::IVec2 Position() const;
+		void Position(const Math::IVec2& pos);
 
-		const Math::IVec2 RawPositionDelta() const { return Math::IVec2(m_currentState.m_x - m_previousState.m_x, m_currentState.m_y - m_previousState.m_y); }
+		inline const Math::IVec2 RawPositionDelta() const { return Math::IVec2(m_currentState.m_x - m_previousState.m_x, m_currentState.m_y - m_previousState.m_y); }
+		inline const Math::IVec2 PositionDelta() const { return Math::IVec2(m_currentState.m_x - m_previousState.m_x, m_previousState.m_y - m_currentState.m_y); }
 
 		int RawX() const { return RawPosition().x; }
 		int RawY() const { return RawPosition().y; }

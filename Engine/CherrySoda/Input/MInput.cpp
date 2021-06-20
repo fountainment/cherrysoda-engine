@@ -100,6 +100,16 @@ void MInput::KeyboardState::InternalSetKey(Keys key)
 	}
 }
 
+const Math::IVec2 MInput::MouseData::Position() const
+{
+	return Math::IVec2(m_currentState.m_x, Engine::Instance()->GetWindowHeight() - m_currentState.m_y);
+}
+
+void MInput::MouseData::Position(const Math::IVec2& pos)
+{
+	SetMousePosition(Math::IVec2(pos.x, Engine::Instance()->GetWindowHeight() - pos.y));
+}
+
 void MInput::Initialize()
 {
 	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
