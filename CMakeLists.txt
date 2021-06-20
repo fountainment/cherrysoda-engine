@@ -161,6 +161,7 @@ elseif(NOT MSVC)
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+  set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
 else() # MSVC
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8 /MP ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DCHERRYSODA_ENABLE_DEBUG")
@@ -262,7 +263,15 @@ function(add_cherrysoda_executable executable_name)
   if(ANDROID)
     add_library(${executable_name} SHARED ${program_src} ${shader_src} ${shader_compile_stamp})
   else()
-    add_executable(${executable_name} ${program_src} ${shader_src} ${shader_compile_stamp})
+    add_executable(${executable_name} WIN32 ${program_src} ${shader_src} ${shader_compile_stamp})
+  endif()
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    cmake_minimum_required(VERSION 3.17)
+    # XCODE_SCHEME_WORKING_DIRECTORY requires cmake 3.17
+    set_target_properties(${executable_name} PROPERTIES
+        XCODE_GENERATE_SCHEME TRUE
+        XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
   endif()
   source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${program_src} ${shader_src})
   target_link_libraries(${executable_name} PRIVATE ${module_links} CherrySoda)

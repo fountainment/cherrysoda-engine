@@ -82,6 +82,8 @@ git clone https://github.com/wolfpld/tracy.git
 
 In this engine, profiling that use tracy profiler is only enabled in "Profile" build:
 
+(for Visual Studio and Xcode, it's the "RelWithDebInfo" build option)
+
 ```sh
 # Profile build on Linux
 mkdir build_profile
@@ -89,8 +91,6 @@ cd build_profile
 cmake .. -DCMAKE_BUILD_TYPE=Profile
 make -j
 ```
-
-And on Visual Studio, it's the "RelWithDebInfo" build option.
 
 Then you can use tracy profiler to monitor performance.
 
