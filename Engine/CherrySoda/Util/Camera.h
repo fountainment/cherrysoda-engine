@@ -1,8 +1,10 @@
 #ifndef _CHERRYSODA_UTIL_CAMERA_H_
 #define _CHERRYSODA_UTIL_CAMERA_H_
 
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
+
 
 namespace cherrysoda {
 
@@ -53,6 +55,12 @@ public:
 	void Approach(const Math::Vec2& pos, float ease, float maxDistance);
 	void Approach(const Math::Vec3& pos, float ease);
 	void Approach(const Math::Vec3& pos, float ease, float maxDistance);
+
+	inline Math::Vec2 ScreenToWorld(const Math::Vec2& screenPos) const
+	{
+		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera::ScreenToWorld is for ortho projection camera.\n");
+		return Position2D() + (screenPos - Origin2D()) / Scale2D();
+	}
 
 private:
 	friend class Graphics;
