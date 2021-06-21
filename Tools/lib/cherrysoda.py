@@ -258,11 +258,11 @@ def pack_atlas(path=None, verbose=False):
     execute_command(crunch_command, working_dir=path)
 
 
-def update_assets(path=join_path(project_path, 'build')):
+def update_assets(path=join_path(project_path, 'build', '')):
     make_sure_folder_exist(path)
     execute_command(['cmake', project_path], working_dir=path)
 
 
-def build(path=join_path(project_path, 'build'), build_type='Release'):
+def build(path=join_path(project_path, 'build', ''), build_type='Release'):
     make_sure_folder_exist(path)
     execute_command(['cmake', '--build', '.', '--config', build_type], working_dir=path)
