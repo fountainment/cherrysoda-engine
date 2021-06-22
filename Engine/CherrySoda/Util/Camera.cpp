@@ -61,10 +61,17 @@ void Camera::Approach(const Math::Vec3& pos, float ease)
 void Camera::Approach(const Math::Vec3& pos, float ease, float maxDistance)
 {
 	Math::Vec3 move = (pos - Position()) * ease;
-	if (Math_Length(move) > maxDistance) {
+	if (Math_LengthSq(move) > maxDistance * maxDistance) {
 		Position(Position() + Math_Normalize(move) * maxDistance);
 	}
 	else {
 		Position(Position() + move);	
 	}
+}
+
+void Camera::Approach(const Math::Vec2& pos, const Math::Rectangle& rect, float ease)
+{
+	Math::Rectangle rectCopy = rect;
+	rectCopy.Move(Position2D());
+	Approach(Position2D() + pos - rectCopy.Clamp(pos), ease);
 }

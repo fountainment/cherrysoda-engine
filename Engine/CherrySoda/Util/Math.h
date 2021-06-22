@@ -188,6 +188,25 @@ public:
 		Vec3 m_max;
 	};
 
+	struct Rectangle
+	{
+		Vec2 m_coord;
+		Vec2 m_size;
+
+		inline float X() const { return m_coord.x; }
+		inline float Y() const { return m_coord.y; }
+		inline Vec2 Size() const { return m_size; }
+		inline float Width() const { return m_size.x; }
+		inline float Height() const { return m_size.y; }
+		inline float Left() const { return X(); }
+		inline float Right() const { return X() + Width(); }
+		inline float Top() const { return Y() + Height(); }
+		inline float Bottom() const { return Y(); }
+
+		inline void Move(const Vec2& delta) { m_coord += delta; }
+		inline Vec2 Clamp(const Vec2& pos) { return Vec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
+	};
+
 	struct IRectangle
 	{
 		IVec2 m_coord;
@@ -202,6 +221,9 @@ public:
 		inline int Right() const { return X() + Width(); }
 		inline int Top() const { return Y() + Height(); }
 		inline int Bottom() const { return Y(); }
+
+		inline void Move(const IVec2& delta) { m_coord += delta; }
+		inline IVec2 Clamp(const IVec2& pos) { return IVec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
 	};
 
 	static inline Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis = Vec3_ZUp)

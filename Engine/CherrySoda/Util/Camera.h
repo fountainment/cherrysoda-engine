@@ -55,6 +55,7 @@ public:
 	void Approach(const Math::Vec2& pos, float ease, float maxDistance);
 	void Approach(const Math::Vec3& pos, float ease);
 	void Approach(const Math::Vec3& pos, float ease, float maxDistance);
+	void Approach(const Math::Vec2& pos, const Math::Rectangle& rect, float ease);
 
 	inline Math::Vec2 ScreenToWorld(const Math::Vec2& screenPos) const
 	{
