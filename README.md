@@ -6,7 +6,7 @@
 [![Emscripten](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml/badge.svg)](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml)
 [![Licence](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
 
-A tiny C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
+A tiny cross-platform C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
 ## Demos
 
@@ -44,6 +44,10 @@ A tiny C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
 ### Windows
 - Visual Studio >=2017
+
+### MacOS
+
+- brew install sdl2
 
 ## How to Build
 
