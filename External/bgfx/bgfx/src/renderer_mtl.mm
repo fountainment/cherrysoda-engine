@@ -1903,7 +1903,7 @@ namespace bgfx { namespace mtl
 							 && arg.index > 0
 							 && NULL != arg.bufferStructType)
 						{
-							const char* name = utf8String(arg.name);
+							const char* name = utf8String(arg.name); BX_UNUSED(name);
 
 							if (arg.index >= BGFX_CONFIG_MAX_TEXTURE_SAMPLERS)
 							{
