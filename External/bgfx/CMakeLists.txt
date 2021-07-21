@@ -31,10 +31,12 @@ if(BGFX_CONFIG_DEBUG)
 endif()
 
 # bimg
-file(GLOB BIMG_SRC bimg/include/bimg/*. bimg/include/bimg/*.h bimg/src/image.cpp bimg/src/image_gnf.cpp bimg/src/*.h bimg/3rdparty/astc-codec/src/decoder/*.cc)
+file(GLOB BIMG_SRC bimg/include/bimg/*.h bimg/src/image.cpp bimg/src/image_gnf.cpp bimg/src/*.h
+                   bimg/3rdparty/astc-codec/src/decoder/*.h bimg/3rdparty/astc-codec/src/decoder/*.cc
+                   bimg/3rdparty/tinyexr/deps/miniz/miniz.*)
 
 add_library(bimg STATIC ${BIMG_SRC})
-target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-codec bimg/3rdparty/astc-codec/include)
+target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-codec bimg/3rdparty/astc-codec/include 3rdparty/tinyexr/deps/miniz)
 target_compile_features(bimg PRIVATE cxx_std_14)
 
 
@@ -43,7 +45,7 @@ file(GLOB BIMG_DECODE_SRC bimg/include/bimg/*.h bimg/src/image_decode.cpp bimg/s
 
 add_library(bimg_decode STATIC ${BIMG_DECODE_SRC})
 target_compile_features(bimg_decode PRIVATE cxx_std_14)
-target_include_directories(bimg_decode PRIVATE bx/include bimg/include bimg/3rdparty)
+target_include_directories(bimg_decode PRIVATE bx/include bimg/include bimg/3rdparty bimg/3rdparty/tinyexr/deps/miniz)
 
 
 # bimg_encode
