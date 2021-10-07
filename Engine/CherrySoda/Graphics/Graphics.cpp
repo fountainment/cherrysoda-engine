@@ -267,6 +267,7 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 	case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
 	case bgfx::RendererType::Direct3D11:
 	case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
+	case bgfx::RendererType::Agc:
 	case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
 	case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
 	case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;

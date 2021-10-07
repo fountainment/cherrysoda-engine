@@ -38,8 +38,10 @@ def join_path(*argv):
 def abspath(a):
     return os.path.abspath(a)
 
+
 def relpath(a, common):
     return os.path.relpath(a, common)
+
 
 def get_file_path(f):
     return os.path.dirname(f)

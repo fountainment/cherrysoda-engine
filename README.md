@@ -14,7 +14,7 @@ A tiny cross-platform C++ game engine based on bgfx and SDL2 (inspired by Monocl
 
 [backup at gitee.io](https://fountainment.gitee.io/) (use this link if github.io is slow in your region)
 
-## Current Features 
+## Current Features
 
 - BGFX Integrated for Cross-Platform Graphics Rendering
 - SDL2 Integrated for Cross-Platform Window and Audio
