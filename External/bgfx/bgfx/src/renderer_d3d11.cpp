@@ -2287,7 +2287,15 @@ namespace bgfx { namespace d3d11
 					if (NULL != m_swapChain
 					&&  m_needPresent)
 					{
-						hr = m_swapChain->Present(syncInterval, 0);
+						uint32_t presentFlags = 0;
+
+						if (!syncInterval
+						&&  m_dxgi.tearingSupported() )
+						{
+							presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
+						}
+
+						hr = m_swapChain->Present(syncInterval, presentFlags);
 
 						m_needPresent = false;
 					}
@@ -2968,11 +2976,12 @@ namespace bgfx { namespace d3d11
 			const uint32_t index = (_flags & BGFX_SAMPLER_BORDER_COLOR_MASK) >> BGFX_SAMPLER_BORDER_COLOR_SHIFT;
 			_flags &= BGFX_SAMPLER_BITS_MASK;
 
-			// Force both min+max anisotropic, can't be set individually.
-			_flags |= 0 != (_flags & (BGFX_SAMPLER_MIN_ANISOTROPIC|BGFX_SAMPLER_MAG_ANISOTROPIC) )
-					? BGFX_SAMPLER_MIN_ANISOTROPIC|BGFX_SAMPLER_MAG_ANISOTROPIC
-					: 0
-					;
+			// Force min+mag anisotropic (can't be set individually) and remove mip (not supported).
+			if (0 != (_flags & (BGFX_SAMPLER_MIN_ANISOTROPIC|BGFX_SAMPLER_MAG_ANISOTROPIC)))
+			{
+				_flags |= BGFX_SAMPLER_MIN_ANISOTROPIC|BGFX_SAMPLER_MAG_ANISOTROPIC;
+				_flags &= ~BGFX_SAMPLER_MIP_MASK;
+			}
 
 			uint32_t hash;
 			ID3D11SamplerState* sampler;
@@ -3033,7 +3042,7 @@ namespace bgfx { namespace d3d11
 				sd.MinLOD = 0;
 				sd.MaxLOD = D3D11_FLOAT32_MAX;
 
-				m_device->CreateSamplerState(&sd, &sampler);
+				DX_CHECK(m_device->CreateSamplerState(&sd, &sampler));
 				DX_CHECK_REFCOUNT(sampler, 1);
 
 				m_samplerStateCache.add(hash, sampler);
