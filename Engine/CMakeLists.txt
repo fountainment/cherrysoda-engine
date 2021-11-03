@@ -107,6 +107,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Log.h
   CherrySoda/Util/Math.cpp
   CherrySoda/Util/Math.h
+  CherrySoda/Util/Model.cpp
+  CherrySoda/Util/Model.h
   CherrySoda/Util/NumType.h
   CherrySoda/Util/PixelFont.cpp
   CherrySoda/Util/PixelFont.h
@@ -172,7 +174,7 @@ else()
 endif()
 
 target_include_directories(CherrySoda PUBLIC . ${SDL2_INCLUDE_DIRS})
-set(CHERRYSODA_COMMON_LIBS imgui bgfx bimg bimg_decode bx glm rapidjson cmixer stb ${SDL2_LIBRARIES})
+set(CHERRYSODA_COMMON_LIBS cgltf imgui bgfx bimg bimg_decode bx glm rapidjson cmixer stb ${SDL2_LIBRARIES})
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} psapi)
 elseif(ANDROID)

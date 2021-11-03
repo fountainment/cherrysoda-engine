@@ -49,6 +49,20 @@ public:
 		Transient
 	};
 
+	struct VertexInfo
+	{
+		Math::Vec3 position;
+		Math::Vec4 color;
+		Math::Vec3 normal;
+		Math::Vec2 texcoord0;
+	};
+
+	struct MeshInfo
+	{
+		STL::Vector<VertexInfo> vertices;
+		STL::Vector<type::UInt16> indices;
+	};
+
 	static constexpr type::UInt32 EncodeNormalU32(const Math::Vec3& v)
 	{
 		type::UInt32 a = static_cast<type::UInt32>((v.x + 1.0f) * 0.5f * 255.f + 0.5f);
@@ -63,6 +77,7 @@ public:
 		type::UInt32 m_abgr;
 
 		static void Init();
+
 		static inline const PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
 		{
 			return { p[0], p[1], p[2], c };
@@ -70,6 +85,11 @@ public:
 		static inline const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c = Color::White)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR() };
+		}
+
+		static inline const PosColorVertex MakeVertex(const VertexInfo& vertex)
+		{
+			return MakeVertex(vertex.position, Color(vertex.color));
 		}
 	};
 
@@ -80,6 +100,7 @@ public:
 		type::UInt32 m_normal;
 
 		static void Init();
+
 		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n = Vec3_ZUp)
 		{
 			return { p[0], p[1], p[2], c, EncodeNormalU32(n) };
@@ -88,15 +109,21 @@ public:
 		{
 			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n) };
 		}
+
+		static inline const PosColorNormalVertex MakeVertex(const VertexInfo& vertex)
+		{
+			return MakeVertex(vertex.position, Color(vertex.color), vertex.normal);
+		}
 	};
 
-	struct PosColorTexCoord0Vertex
+	struct PosColorTexCoord0Vertex // default SpriteBatch vertex
 	{
 		float m_x, m_y, m_z;
 		type::UInt32 m_abgr;
 		float m_u, m_v;
 
 		static void Init();
+
 		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv = Vec2_Zero)
 		{
 			return { p[0], p[1], p[2], c, uv[0], uv[1] };
@@ -104,6 +131,54 @@ public:
 		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv = Vec2_Zero)
 		{
 			return { p[0], p[1], p[2], c.U32ABGR(), uv[0], uv[1] };
+		}
+
+		static inline const PosColorTexCoord0Vertex MakeVertex(const VertexInfo& vertex)
+		{
+			return MakeVertex(vertex.position, Color(vertex.color), vertex.texcoord0);
+		}
+	};
+
+	struct PosNormalTexCoord0Vertex // default Model vertex
+	{
+		float m_x, m_y, m_z;
+		type::UInt32 m_normal;	
+		float m_u, m_v;
+
+		static void Init();
+
+		static inline const PosNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Math::Vec3& n = Vec3_ZUp, const Math::Vec2& uv = Vec2_Zero)
+		{
+			return { p[0], p[1], p[2], EncodeNormalU32(n), uv[0], uv[1] };
+		}
+
+		static inline const PosNormalTexCoord0Vertex MakeVertex(const VertexInfo& vertex)
+		{
+			return MakeVertex(vertex.position, vertex.normal, vertex.texcoord0);
+		}
+	};
+
+	struct PosColorNormalTexCoord0Vertex
+	{
+		float m_x, m_y, m_z;
+		type::UInt32 m_abgr;
+		type::UInt32 m_normal;	
+		float m_u, m_v;
+
+		static void Init();
+
+		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n = Vec3_ZUp, const Math::Vec2& uv = Vec2_Zero)
+		{
+			return { p[0], p[1], p[2], c, EncodeNormalU32(n), uv[0], uv[1] };
+		}
+		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n = Vec3_ZUp, const Math::Vec2& uv = Vec2_Zero)
+		{
+			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n), uv[0], uv[1] };
+		}
+
+		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const VertexInfo& vertex)
+		{
+			return MakeVertex(vertex.position, Color(vertex.color), vertex.normal, vertex.texcoord0);
 		}
 	};
 
@@ -297,6 +372,8 @@ public:
 	CHERRYSODA_VERTEX_DECLARATION(PosColorVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalVertex);
 	CHERRYSODA_VERTEX_DECLARATION(PosColorTexCoord0Vertex);
+	CHERRYSODA_VERTEX_DECLARATION(PosNormalTexCoord0Vertex);
+	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalTexCoord0Vertex);
 	CHERRYSODA_VERTEX_DECLARATION(ImGuiVertex);
 
 	#undef CHERRYSODA_VERTEX_DECLARATION

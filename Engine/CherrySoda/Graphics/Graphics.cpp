@@ -93,6 +93,20 @@ public:
 	static bgfx::VertexLayout s_layout;
 };
 
+class PosNormalTexCoord0Definition
+{
+public:
+	typedef Graphics::PosNormalTexCoord0Vertex VertexType;
+	static bgfx::VertexLayout s_layout;
+};
+
+class PosColorNormalTexCoord0Definition
+{
+public:
+	typedef Graphics::PosColorNormalTexCoord0Vertex VertexType;
+	static bgfx::VertexLayout s_layout;
+};
+
 class ImGuiVertexDefinition
 {
 public:
@@ -103,6 +117,8 @@ public:
 bgfx::VertexLayout PosColorDefinition::s_layout;
 bgfx::VertexLayout PosColorNormalDefinition::s_layout;
 bgfx::VertexLayout PosColorTexCoord0Definition::s_layout;
+bgfx::VertexLayout PosNormalTexCoord0Definition::s_layout;
+bgfx::VertexLayout PosColorNormalTexCoord0Definition::s_layout;
 bgfx::VertexLayout ImGuiVertexDefinition::s_layout;
 
 STL::Vector<bgfx::TransientIndexBuffer> s_transientIndexBufferStack;
@@ -209,6 +225,27 @@ void Graphics::PosColorTexCoord0Vertex::Init()
 		.begin()
 		.add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+		.end();
+}
+
+void Graphics::PosNormalTexCoord0Vertex::Init()
+{
+	PosNormalTexCoord0Definition::s_layout
+		.begin()
+		.add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Normal,    4, bgfx::AttribType::Uint8, true, true)
+		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+		.end();
+}
+
+void Graphics::PosColorNormalTexCoord0Vertex::Init()
+{
+	PosColorNormalTexCoord0Definition::s_layout
+		.begin()
+		.add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
+		.add(bgfx::Attrib::Normal,    4, bgfx::AttribType::Uint8, true, true)
 		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 		.end();
 }
@@ -459,6 +496,8 @@ void Graphics::Initialize()
 	PosColorVertex::Init();
 	PosColorNormalVertex::Init();
 	PosColorTexCoord0Vertex::Init();
+	PosNormalTexCoord0Vertex::Init();
+	PosColorNormalTexCoord0Vertex::Init();
 	ImGuiVertex::Init();
 
 	s_defaultDepthFormat =
@@ -1123,4 +1162,6 @@ CHERRYSODA_CREATE_TRANSIENT_VERTEX_BUFFER(VERTEX_D);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorDefinition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalDefinition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorTexCoord0Definition);
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosNormalTexCoord0Definition);
+CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalTexCoord0Definition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(ImGuiVertexDefinition);

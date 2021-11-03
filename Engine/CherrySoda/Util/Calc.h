@@ -36,6 +36,7 @@ public:
 	inline T Choose(const T& a, const T& b) { return Next(2) ? a : b; }
 
 	inline Math::Vec2 Range(const Math::Vec2& min, const Math::Vec2& max) { return min + Math::Vec2(NextFloat(max.x - min.x), NextFloat(max.y - min.y)); }
+	inline Math::Vec3 Range(const Math::Vec3& min, const Math::Vec3& max) { return min + Math::Vec3(NextFloat(max.x - min.x), NextFloat(max.y - min.y), NextFloat(max.z - min.z)); }
 
 	static type::UInt32 TrueRandomNext();
 

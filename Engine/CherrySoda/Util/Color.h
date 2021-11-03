@@ -1,6 +1,7 @@
 #ifndef _CHERRYSODA_UTIL_COLOR_H_
 #define _CHERRYSODA_UTIL_COLOR_H_
 
+#include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
@@ -10,11 +11,15 @@ class Color
 {
 public:
 	constexpr Color() : Color(0.0f) {}
-	constexpr Color(float rgb) : Color(rgb, rgb, rgb) {}
+
 	constexpr Color(float rgb, float a) : Color(rgb, rgb, rgb, a) {}
 	constexpr Color(float r, float g, float b) : Color(r, g, b, 1.0f) {}
 	constexpr Color(float r, float g, float b, float a)
 		: m_r(r), m_g(g), m_b(b), m_a(a) {}
+
+	explicit constexpr Color(float rgb) : Color(rgb, rgb, rgb) {}
+	explicit constexpr Color(const Math::Vec3& v3) : Color(v3[0], v3[1], v3[2]) {}
+	explicit constexpr Color(const Math::Vec4& v4) : Color(v4[0], v4[1], v4[2], v4[3]) {}
 
 	constexpr Color(int r, int g, int b) : Color(r, g, b, 255) {}
 	constexpr Color(int r, int g, int b, int a)

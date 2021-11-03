@@ -28,7 +28,6 @@ public:
 	inline size_t VertexBufferSize() const { return STL::Count(m_verticesFront); }
 	inline size_t IndexBufferSize() const { return STL::Count(m_indicesFront); }
 
-	// void LoadObj(const String& objFile);
 	inline void AddVertex(const VERTEX_T& vertex)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 1 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
@@ -230,6 +229,16 @@ public:
 	inline bool IsValid() const
 	{
 		return m_vertexBuffer != Graphics::InvalidHandle;
+	}
+
+	void SubmitBufferWithMeshInfo(const Graphics::MeshInfo& mesh)
+	{
+		Clear();
+		for (auto& vertex : mesh.vertices) {
+			AddVertex(MK_VERT(vertex));
+		}	
+		STL::AddRange(m_indices, mesh.indices);
+		SubmitBuffer();
 	}
 
 	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }

@@ -67,6 +67,7 @@
 #include <CherrySoda/Util/Literals.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Model.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/PixelFont.h>
 #include <CherrySoda/Util/Pool.h>

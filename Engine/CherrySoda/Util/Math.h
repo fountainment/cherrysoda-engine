@@ -117,6 +117,13 @@ inline ENUM_T operator - (ENUM_T lhs, ENUM_T rhs) \
 #define Vec3_YUp        cherrysoda::Math::Vec3(0.f,1.f,0.f)
 #define Vec3_ZUp        cherrysoda::Math::Vec3(0.f,0.f,1.f)
 
+#define Vec4_Zero       cherrysoda::Math::Vec4(0.f)
+#define Vec4_One        cherrysoda::Math::Vec4(1.f)
+#define Vec4_XUp        cherrysoda::Math::Vec4(1.f,0.f,0.f,0.f)
+#define Vec4_YUp        cherrysoda::Math::Vec4(0.f,1.f,0.f,0.f)
+#define Vec4_ZUp        cherrysoda::Math::Vec4(0.f,0.f,1.f,0.f)
+#define Vec4_WUp        cherrysoda::Math::Vec4(0.f,0.f,0.f,1.f)
+
 #define IVec2_Zero      cherrysoda::Math::IVec2(0)
 #define IVec2_One       cherrysoda::Math::IVec2(1)
 #define IVec2_XUp       cherrysoda::Math::IVec2(1,0)
