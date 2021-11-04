@@ -130,6 +130,7 @@ Model Model::FromGltf(const String& gltfFile)
 						}
 					}
 					if (colorAccessor) {
+						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == colorAccessor->count, "Color attribute count incorrect!\n");
 						size_t offset = AccessorOffset(colorAccessor);
 						size_t stride = AccessorStride(colorAccessor);
 						char* data = reinterpret_cast<char*>(colorAccessor->buffer_view->buffer->data);
@@ -139,6 +140,7 @@ Model Model::FromGltf(const String& gltfFile)
 						}
 					}
 					if (normalAccessor) {
+						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == normalAccessor->count, "Normal attribute count incorrect!\n");
 						size_t offset = AccessorOffset(normalAccessor);
 						size_t stride = AccessorStride(normalAccessor);
 						char* data = reinterpret_cast<char*>(normalAccessor->buffer_view->buffer->data);
@@ -148,6 +150,7 @@ Model Model::FromGltf(const String& gltfFile)
 						}
 					}
 					if (texcoord0Accessor) {
+						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == texcoord0Accessor->count, "Texcoord0 attribute count incorrect!\n");
 						size_t offset = AccessorOffset(texcoord0Accessor);
 						size_t stride = AccessorStride(texcoord0Accessor);
 						char* data = reinterpret_cast<char*>(texcoord0Accessor->buffer_view->buffer->data);
@@ -159,7 +162,9 @@ Model Model::FromGltf(const String& gltfFile)
 					cgltf_accessor* indexAccessor = primitive.indices;
 					if (indexAccessor) {
 						for (int i = 0; i < indexAccessor->count; ++i) {
-							STL::Add(mesh.indices, cgltf_accessor_read_index(indexAccessor, i));
+							cgltf_size index = cgltf_accessor_read_index(indexAccessor, i);
+							CHERRYSODA_ASSERT(index == static_cast<cgltf_size>(static_cast<type::UInt16>(index)), "Index out of UInt16 range!\n");
+							STL::Add(mesh.indices, static_cast<type::UInt16>(index));
 						}
 					}
 
