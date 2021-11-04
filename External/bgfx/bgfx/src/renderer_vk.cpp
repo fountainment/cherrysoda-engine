@@ -2267,7 +2267,7 @@ VK_IMPORT_DEVICE
 
 			bx::StaticMemoryBlockWriter writer(mem->data, mem->size);
 			uint32_t magic = BGFX_CHUNK_MAGIC_TEX;
-			bx::write(&writer, magic);
+			bx::write(&writer, magic, bx::ErrorAssert{});
 
 			TextureCreate tc;
 			tc.m_width     = _width;
@@ -2278,7 +2278,7 @@ VK_IMPORT_DEVICE
 			tc.m_format    = format;
 			tc.m_cubeMap   = false;
 			tc.m_mem       = NULL;
-			bx::write(&writer, tc);
+			bx::write(&writer, tc, bx::ErrorAssert{});
 
 			destroyTexture(_handle);
 			createTexture(_handle, mem, flags, 0);
@@ -4690,8 +4690,10 @@ VK_DESTROY
 	{
 		bx::MemoryReader reader(_mem->data, _mem->size);
 
+		bx::ErrorAssert err;
+
 		uint32_t magic;
-		bx::read(&reader, magic);
+		bx::read(&reader, magic, &err);
 
 		VkShaderStageFlagBits shaderStage = VK_SHADER_STAGE_ALL;
 
@@ -4711,7 +4713,7 @@ VK_DESTROY
 		const bool fragment = isShaderType(magic, 'F');
 
 		uint32_t hashIn;
-		bx::read(&reader, hashIn);
+		bx::read(&reader, hashIn, &err);
 
 		uint32_t hashOut;
 
@@ -4721,15 +4723,15 @@ VK_DESTROY
 		}
 		else
 		{
-			bx::read(&reader, hashOut);
+			bx::read(&reader, hashOut, &err);
 		}
 
 		uint16_t count;
-		bx::read(&reader, count);
+		bx::read(&reader, count, &err);
 
 		m_numPredefined = 0;
-		m_numUniforms = count;
-		m_numTextures = 0;
+		m_numUniforms   = count;
+		m_numTextures   = 0;
 
 		m_oldBindingModel = isShaderVerLess(magic, 11);
 
@@ -4754,46 +4756,44 @@ VK_DESTROY
 			for (uint32_t ii = 0; ii < count; ++ii)
 			{
 				uint8_t nameSize = 0;
-				bx::read(&reader, nameSize);
+				bx::read(&reader, nameSize, &err);
 
 				char name[256];
-				bx::read(&reader, &name, nameSize);
+				bx::read(&reader, &name, nameSize, &err);
 				name[nameSize] = '\0';
 
 				uint8_t type = 0;
-				bx::read(&reader, type);
+				bx::read(&reader, type, &err);
 
 				uint8_t num;
-				bx::read(&reader, num);
+				bx::read(&reader, num, &err);
 
 				uint16_t regIndex;
-				bx::read(&reader, regIndex);
+				bx::read(&reader, regIndex, &err);
 
 				uint16_t regCount;
-				bx::read(&reader, regCount);
+				bx::read(&reader, regCount, &err);
 
-				const bool hasTexData = !isShaderVerLess(magic, 8);
+				const bool hasTexData   = !isShaderVerLess(magic, 8);
 				const bool hasTexFormat = !isShaderVerLess(magic, 10);
-				uint8_t texComponent = 0;
-				uint8_t texDimension = 0;
-				uint16_t texFormat = 0;
+				uint8_t  texComponent   = 0;
+				uint8_t  texDimension   = 0;
+				uint16_t texFormat      = 0;
 
 				if (hasTexData)
 				{
-					bx::read(&reader, texComponent);
-					bx::read(&reader, texDimension);
+					bx::read(&reader, texComponent, &err);
+					bx::read(&reader, texDimension, &err);
 				}
 
 				if (hasTexFormat)
 				{
-					bx::read(&reader, texFormat);
+					bx::read(&reader, texFormat, &err);
 				}
 
 				const char* kind = "invalid";
 
-				BX_UNUSED(num);
-				BX_UNUSED(texComponent);
-				BX_UNUSED(texFormat);
+				BX_UNUSED(num, texComponent, texFormat);
 
 				auto textureDimensionToViewType = [](TextureDimension::Enum dimension)
 				{
@@ -4923,7 +4923,7 @@ VK_DESTROY
 		}
 
 		uint32_t shaderSize;
-		bx::read(&reader, shaderSize);
+		bx::read(&reader, shaderSize, &err);
 
 		const void* code = reader.getDataPtr();
 		bx::skip(&reader, shaderSize+1);
@@ -4950,12 +4950,12 @@ VK_DESTROY
 		bx::memSet(m_attrMask,  0, sizeof(m_attrMask) );
 		bx::memSet(m_attrRemap, 0, sizeof(m_attrRemap) );
 
-		bx::read(&reader, m_numAttrs);
+		bx::read(&reader, m_numAttrs, &err);
 
 		for (uint8_t ii = 0; ii < m_numAttrs; ++ii)
 		{
 			uint16_t id;
-			bx::read(&reader, id);
+			bx::read(&reader, id, &err);
 
 			Attrib::Enum attr = idToAttrib(id);
 
@@ -4976,7 +4976,7 @@ VK_DESTROY
 		murmur.add(m_attrRemap, m_numAttrs);
 		m_hash = murmur.end();
 
-		bx::read(&reader, m_size);
+		bx::read(&reader, m_size, &err);
 
 		// fill binding description with uniform informations
 		uint16_t bidx = 0;
@@ -7890,43 +7890,42 @@ VK_DESTROY
 
 	void RendererContextVK::submitBlit(BlitState& _bs, uint16_t _view)
 	{
-		TextureHandle currentSrc = { kInvalidHandle };
-		TextureHandle currentDst = { kInvalidHandle };
-		VkImageLayout oldSrcLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		VkImageLayout oldDstLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		VkImageLayout srcLayouts[BGFX_CONFIG_MAX_BLIT_ITEMS];
+		VkImageLayout dstLayouts[BGFX_CONFIG_MAX_BLIT_ITEMS];
 
-		while (_bs.hasItem(_view) )
+		BlitState bs0 = _bs;
+
+		while (bs0.hasItem(_view) )
 		{
-			const BlitItem& blit = _bs.advance();
+			uint16_t item = bs0.m_item;
+
+			const BlitItem& blit = bs0.advance();
 
 			TextureVK& src = m_textures[blit.m_src.idx];
 			TextureVK& dst = m_textures[blit.m_dst.idx];
 
-			if (currentSrc.idx != blit.m_src.idx)
+			srcLayouts[item] = VK_NULL_HANDLE != src.m_singleMsaaImage ? src.m_currentSingleMsaaImageLayout : src.m_currentImageLayout;
+			dstLayouts[item] = dst.m_currentImageLayout;
+		}
+
+		bs0 = _bs;
+
+		while (bs0.hasItem(_view) )
+		{
+			const BlitItem& blit = bs0.advance();
+
+			TextureVK& src = m_textures[blit.m_src.idx];
+			TextureVK& dst = m_textures[blit.m_dst.idx];
+
+			src.setImageMemoryBarrier(
+				  m_commandBuffer
+				, blit.m_src.idx == blit.m_dst.idx ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
+				, VK_NULL_HANDLE != src.m_singleMsaaImage
+				);
+
+			if (blit.m_src.idx != blit.m_dst.idx)
 			{
-				if (oldSrcLayout != VK_IMAGE_LAYOUT_UNDEFINED)
-				{
-					TextureVK& texture = m_textures[currentSrc.idx];
-					texture.setImageMemoryBarrier(m_commandBuffer, oldSrcLayout, VK_NULL_HANDLE != texture.m_singleMsaaImage);
-				}
-
-				oldSrcLayout = src.setImageMemoryBarrier(
-					  m_commandBuffer
-					, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
-					, VK_NULL_HANDLE != src.m_singleMsaaImage
-					);
-				currentSrc = blit.m_src;
-			}
-
-			if (currentDst.idx != blit.m_dst.idx)
-			{
-				if (oldDstLayout != VK_IMAGE_LAYOUT_UNDEFINED)
-				{
-					m_textures[currentDst.idx].setImageMemoryBarrier(m_commandBuffer, oldDstLayout);
-				}
-
-				oldDstLayout = dst.setImageMemoryBarrier(m_commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-				currentDst = blit.m_dst;
+				dst.setImageMemoryBarrier(m_commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 			}
 
 			const uint16_t srcSamples = VK_NULL_HANDLE != src.m_singleMsaaImage ? 1 : src.m_sampler.Count;
@@ -7994,15 +7993,17 @@ VK_DESTROY
 				);
 		}
 
-		if (oldSrcLayout != VK_IMAGE_LAYOUT_UNDEFINED)
+		while (_bs.hasItem(_view) )
 		{
-			TextureVK& texture = m_textures[currentSrc.idx];
-			texture.setImageMemoryBarrier(m_commandBuffer, oldSrcLayout, VK_NULL_HANDLE != texture.m_singleMsaaImage);
-		}
+			uint16_t item = _bs.m_item;
 
-		if (oldDstLayout != VK_IMAGE_LAYOUT_UNDEFINED)
-		{
-			m_textures[currentDst.idx].setImageMemoryBarrier(m_commandBuffer, oldDstLayout);
+			const BlitItem& blit = _bs.advance();
+
+			TextureVK& src = m_textures[blit.m_src.idx];
+			TextureVK& dst = m_textures[blit.m_dst.idx];
+
+			src.setImageMemoryBarrier(m_commandBuffer, srcLayouts[item], VK_NULL_HANDLE != src.m_singleMsaaImage);
+			dst.setImageMemoryBarrier(m_commandBuffer, dstLayouts[item]);
 		}
 	}
 

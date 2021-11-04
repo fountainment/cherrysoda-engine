@@ -18,6 +18,7 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/embedded_shader.h>
 #include <bx/bx.h>
+#include <bx/debug.h>
 #include <bx/file.h>
 #include <bx/allocator.h>
 #include <bimg/bimg.h>
@@ -47,6 +48,11 @@ using cherrysoda::Texture2D;
 using cherrysoda::TextureCube;
 
 namespace type = cherrysoda::type;
+
+#define DBG_STRINGIZE(_x) DBG_STRINGIZE_(_x)
+#define DBG_STRINGIZE_(_x) #_x
+#define DBG_FILE_LINE_LITERAL "" __FILE__ "(" DBG_STRINGIZE(__LINE__) "): "
+#define DBG(_format, ...) bx::debugPrintf(DBG_FILE_LINE_LITERAL "" _format "\n", ##__VA_ARGS__)
 
 static uint64_t s_defaultTextureSamplerFlags = 0
 	| BGFX_SAMPLER_U_CLAMP
@@ -332,17 +338,21 @@ bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
 
 void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
 {
-	if (bx::open(_reader, _filePath))
+	if (bx::open(_reader, _filePath) )
 	{
 		uint32_t size = (uint32_t)bx::getSize(_reader);
 		void* data = BX_ALLOC(_allocator, size);
-		bx::read(_reader, data, size);
+		bx::read(_reader, data, size, bx::ErrorAssert{});
 		bx::close(_reader);
 		if (NULL != _size)
 		{
 			*_size = size;
 		}
 		return data;
+	}
+	else
+	{
+		DBG("Failed to open: %s.", _filePath);
 	}
 
 	if (NULL != _size)

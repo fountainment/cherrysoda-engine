@@ -25,9 +25,10 @@ if(MACOSX)
   target_include_directories(bx PUBLIC bx/include/compat/osx)
 endif()
 
-target_compile_definitions(bx PRIVATE "$<$<CONFIG:Debug>:BX_CONFIG_DEBUG=1>")
 if(BGFX_CONFIG_DEBUG)
-  target_compile_definitions(bx PRIVATE BX_CONFIG_DEBUG=1)
+  target_compile_definitions(bx PUBLIC BX_CONFIG_DEBUG=1)
+else()
+  target_compile_definitions(bx PUBLIC BX_CONFIG_DEBUG=$<CONFIG:Debug>)
 endif()
 
 # bimg
@@ -37,6 +38,7 @@ file(GLOB BIMG_SRC bimg/include/bimg/*.h bimg/src/image.cpp bimg/src/image_gnf.c
 
 add_library(bimg STATIC ${BIMG_SRC})
 target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-codec bimg/3rdparty/astc-codec/include 3rdparty/tinyexr/deps/miniz)
+target_link_libraries(bimg PUBLIC bx)
 target_compile_features(bimg PRIVATE cxx_std_14)
 
 
@@ -44,6 +46,7 @@ target_compile_features(bimg PRIVATE cxx_std_14)
 file(GLOB BIMG_DECODE_SRC bimg/include/bimg/*.h bimg/src/image_decode.cpp bimg/src/*.h)
 
 add_library(bimg_decode STATIC ${BIMG_DECODE_SRC})
+target_link_libraries(bimg_decode PUBLIC bx)
 target_compile_features(bimg_decode PRIVATE cxx_std_14)
 target_include_directories(bimg_decode PRIVATE bx/include bimg/include bimg/3rdparty bimg/3rdparty/tinyexr/deps/miniz)
 
@@ -69,6 +72,7 @@ if(MACOSX)
   set(BGFX_SRC ${BGFX_SRC} ${MACOSX_BGFX_SRC})
 endif()
 add_library(bgfx STATIC ${BGFX_SRC})
+target_link_libraries(bgfx PUBLIC bx)
 target_compile_features(bgfx PRIVATE cxx_std_14)
 target_include_directories(bgfx PUBLIC bx/include bimg/include bgfx/include)
 target_include_directories(bgfx PRIVATE bgfx/3rdparty bgfx/3rdparty/dxsdk/include bgfx/3rdparty/khronos)
@@ -87,11 +91,6 @@ if(WINDOWS)
   target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_DIRECT3D9=1)
 endif()
 target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_MAX_VIEWS=8)
-
-target_compile_definitions(bgfx PRIVATE "$<$<CONFIG:Debug>:BGFX_CONFIG_DEBUG=1>")
-if(BGFX_CONFIG_DEBUG)
-  target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_DEBUG=1)
-endif()
 
 if(CHERRYSODA_BUILD_SHADERC)
   include(${CMAKE_CURRENT_SOURCE_DIR}/shaderc.cmake)
