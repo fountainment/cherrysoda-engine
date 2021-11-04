@@ -89,12 +89,12 @@ Model Model::FromGltf(const String& gltfFile)
 		if (result == cgltf_result_success) {
 			CHERRYSODA_DEBUG_FORMAT("    Meshes: %u\n", (unsigned)data->meshes_count);
 			CHERRYSODA_DEBUG_FORMAT("    Textures: %u\n", (unsigned)data->textures_count);
-			for (int i = 0; i < data->textures_count; ++i) {
+			for (int i = 0; i < static_cast<int>(data->textures_count); ++i) {
 				CHERRYSODA_DEBUG_FORMAT("        uri %d: %s\n", i, data->textures[i].image->uri);
 			}
 
-			for (int m = 0; m < data->meshes_count; ++m) {
-				for (int n = 0; n < data->meshes[m].primitives_count; ++n) {
+			for (int m = 0; m < static_cast<int>(data->meshes_count); ++m) {
+				for (int n = 0; n < static_cast<int>(data->meshes[m].primitives_count); ++n) {
 					auto& primitive = data->meshes[m].primitives[n];
 					Graphics::MeshInfo mesh;
 					cgltf_accessor* positionAccessor = nullptr;
@@ -126,7 +126,7 @@ Model Model::FromGltf(const String& gltfFile)
 						size_t offset = AccessorOffset(positionAccessor);
 						size_t stride = AccessorStride(positionAccessor);
 						char* data = reinterpret_cast<char*>(positionAccessor->buffer_view->buffer->data);
-						for (int i = 0; i < positionAccessor->count; ++i) {
+						for (int i = 0; i < static_cast<int>(positionAccessor->count); ++i) {
 							auto position = reinterpret_cast<cherrysoda::Math::Vec3*>(&(data[offset + i * stride]));	
 							STL::Add(mesh.vertices, Graphics::VertexInfo{ *position, Vec4_Zero, Vec3_ZUp, Vec2_Zero });
 						}
@@ -136,7 +136,7 @@ Model Model::FromGltf(const String& gltfFile)
 						size_t offset = AccessorOffset(colorAccessor);
 						size_t stride = AccessorStride(colorAccessor);
 						char* data = reinterpret_cast<char*>(colorAccessor->buffer_view->buffer->data);
-						for (int i = 0; i < colorAccessor->count; ++i) {
+						for (int i = 0; i < static_cast<int>(colorAccessor->count); ++i) {
 							auto color = reinterpret_cast<cherrysoda::Math::Vec4*>(&(data[offset + i * stride]));	
 							mesh.vertices[i].color = *color;
 						}
@@ -146,7 +146,7 @@ Model Model::FromGltf(const String& gltfFile)
 						size_t offset = AccessorOffset(normalAccessor);
 						size_t stride = AccessorStride(normalAccessor);
 						char* data = reinterpret_cast<char*>(normalAccessor->buffer_view->buffer->data);
-						for (int i = 0; i < normalAccessor->count; ++i) {
+						for (int i = 0; i < static_cast<int>(normalAccessor->count); ++i) {
 							auto normal = reinterpret_cast<cherrysoda::Math::Vec3*>(&(data[offset + i * stride]));	
 							mesh.vertices[i].normal = *normal;
 						}
@@ -156,14 +156,14 @@ Model Model::FromGltf(const String& gltfFile)
 						size_t offset = AccessorOffset(texcoord0Accessor);
 						size_t stride = AccessorStride(texcoord0Accessor);
 						char* data = reinterpret_cast<char*>(texcoord0Accessor->buffer_view->buffer->data);
-						for (int i = 0; i < texcoord0Accessor->count; ++i) {
+						for (int i = 0; i < static_cast<int>(texcoord0Accessor->count); ++i) {
 							auto texcoord0 = reinterpret_cast<cherrysoda::Math::Vec2*>(&(data[offset + i * stride]));	
 							mesh.vertices[i].texcoord0 = *texcoord0;
 						}
 					}
 					cgltf_accessor* indexAccessor = primitive.indices;
 					if (indexAccessor) {
-						for (int i = 0; i < indexAccessor->count; ++i) {
+						for (int i = 0; i < static_cast<int>(indexAccessor->count); ++i) {
 							cgltf_size index = cgltf_accessor_read_index(indexAccessor, i);
 							CHERRYSODA_ASSERT(index == static_cast<cgltf_size>(static_cast<type::UInt16>(index)), "Index out of UInt16 range!\n");
 							STL::Add(mesh.indices, static_cast<type::UInt16>(index));
