@@ -8,6 +8,8 @@
 #define CGLTF_IMPLEMENTATION
 #include <cgltf.h>
 
+#include <cstring>
+
 using cherrysoda::Model;
 
 using cherrysoda::Graphics;
