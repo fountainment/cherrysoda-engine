@@ -128,7 +128,7 @@ Model Model::FromGltf(const String& gltfFile)
 						char* data = reinterpret_cast<char*>(positionAccessor->buffer_view->buffer->data);
 						for (int i = 0; i < static_cast<int>(positionAccessor->count); ++i) {
 							auto position = reinterpret_cast<cherrysoda::Math::Vec3*>(&(data[offset + i * stride]));	
-							STL::Add(mesh.vertices, Graphics::VertexInfo{ *position, Vec4_Zero, Vec3_ZUp, Vec2_Zero });
+							STL::Add(mesh.vertices, Graphics::VertexInfo{ *position, Vec4_One, Vec3_ZUp, Vec2_Zero });
 						}
 					}
 					if (colorAccessor) {
