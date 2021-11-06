@@ -76,6 +76,7 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
 
+#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #include <imgui.h>
 
 #endif // _CHERRYSODA_CHERRYSODA_H_

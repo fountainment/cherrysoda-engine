@@ -9,6 +9,7 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Graphics/Texture.h>
 
+#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #include <imgui.h>
 #include <SDL.h>
 
@@ -218,7 +219,7 @@ void GUI::Update()
 			SDL_ShowCursor(SDL_ENABLE);
 		}
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
-		ImGui::Begin("Console");
+		ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoDocking);
 		{
 			bool isLogOutputFocused = false;
 			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 13.f), true);
@@ -266,7 +267,7 @@ void GUI::Update()
 					return 0;
 				}
 			};
-			ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth() - ImGui::GetTextLineHeight() * 2.f - 26.f);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() * 2.f - 26.f);
 			const ImGuiInputTextFlags inputTextFlag = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
 			bool commandInput = ImGui::InputText("", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), inputTextFlag, Funcs::InputTextCallback);
 			ImGui::PopItemWidth();
