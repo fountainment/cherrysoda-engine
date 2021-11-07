@@ -37,7 +37,7 @@ file(GLOB BIMG_SRC bimg/include/bimg/*.h bimg/src/image.cpp bimg/src/image_gnf.c
                    bimg/3rdparty/tinyexr/deps/miniz/miniz.*)
 
 add_library(bimg STATIC ${BIMG_SRC})
-target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-codec bimg/3rdparty/astc-codec/include 3rdparty/tinyexr/deps/miniz)
+target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-codec bimg/3rdparty/astc-codec/include bimg/3rdparty/tinyexr/deps/miniz)
 target_link_libraries(bimg PUBLIC bx)
 target_compile_features(bimg PRIVATE cxx_std_14)
 
