@@ -11,8 +11,7 @@ if [ ! -d "/opt/cmake-3.12.2" ]; then
   mv cmake-3.12.2-Linux-x86_64 /opt/cmake-3.12.2
   ln -sf /opt/cmake-3.12.2/bin/* /usr/bin/
 fi
-apt update
-apt -y install libsd2-dev
+apt -y install libsdl2-dev
 if [ -d "~/cherrysoda-engine/build" ]; then
   rm -rf ~/cherrysoda-engine/build
 fi
