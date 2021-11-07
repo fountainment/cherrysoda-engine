@@ -56,17 +56,17 @@ namespace bx
 		/// Fields are left uninitialized.
 		///
 		struct NoneType {};
-		constexpr NoneType None;
+		constexpr NoneType None{};
 
 		/// Fields are initialized to zero.
 		///
 		struct ZeroType {};
-		constexpr ZeroType Zero;
+		constexpr ZeroType Zero{};
 
 		/// Fields are initialized to identity value.
 		///
 		struct IdentityType {};
-		constexpr IdentityType Identity;
+		constexpr IdentityType Identity{};
 	}
 
 	///
