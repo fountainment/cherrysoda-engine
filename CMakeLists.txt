@@ -137,14 +137,15 @@ if(EMSCRIPTEN)
                                                         -s NO_EXIT_RUNTIME=1 \
                                                         -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
                                                         -s OFFSCREENCANVAS_SUPPORT=1 \
-                                                        -s TOTAL_MEMORY=512MB")
+                                                        -s ALLOW_MEMORY_GROWTH=1")
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG   "${CMAKE_EXE_LINKER_FLAGS_DEBUG}   -s ASSERTIONS=2 -s GL_ASSERTIONS=2")
   set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s ASSERTIONS=0 -s GL_ASSERTIONS=0")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti \
                                           -s USE_SDL=2 \
-                                          --preload-file assets")
-  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g4 -DCHERRYSODA_ENABLE_DEBUG")
+                                          --preload-file assets \
+                                          -Wno-unused-command-line-argument")
+  set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -gsource-map -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz --closure 1") 
   # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
   #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
