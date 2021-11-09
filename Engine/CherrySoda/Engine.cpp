@@ -163,7 +163,7 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 		CHERRYSODA_PROFILE("MainLoop");
 		Update();
 		Draw();
-	}	
+	}
 #endif // __EMSCRIPTEN__
 
 	Terminate();

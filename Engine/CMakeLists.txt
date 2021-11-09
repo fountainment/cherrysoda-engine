@@ -129,6 +129,8 @@ set(EMBEDDED_SHADER_SRC
   CherrySoda/Graphics/shaders/varying.def.sc
   CherrySoda/Graphics/shaders/vs_basic.sc
   CherrySoda/Graphics/shaders/fs_basic.sc
+  CherrySoda/Graphics/shaders/vs_model.sc
+  CherrySoda/Graphics/shaders/fs_model.sc
   CherrySoda/Graphics/shaders/vs_sprite.sc
   CherrySoda/Graphics/shaders/fs_sprite.sc
 )

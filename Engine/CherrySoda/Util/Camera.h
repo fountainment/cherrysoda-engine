@@ -32,6 +32,8 @@ public:
 
 	void UpdateMatrices();
 
+	inline void SetUpVector(const Math::Vec3& vec) { m_upVector = vec; }
+
 	inline Math::Mat4* GetViewMatrix() { UpdateMatrices(); return &m_viewMatrix; }
 	inline Math::Mat4* GetProjectionMatrix() { UpdateMatrices(); return &m_projMatrix; }
 

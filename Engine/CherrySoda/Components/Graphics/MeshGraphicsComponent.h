@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Graphics/Mesh.h>
 
 namespace cherrysoda {
@@ -19,14 +20,18 @@ public:
 
 	void Render() override
 	{
-		cherrysoda::Graphics::SetTransformMatrix(GetTransformMatrix());
-		cherrysoda::Graphics::SubmitMesh(GetMesh());
+		Graphics::SetTexture(&m_tex);
+		Graphics::SetTransformMatrix(GetTransformMatrix());
+		Graphics::SubmitMesh(GetMesh());
 	}
 
-	cherrysoda::Mesh<VERTEX_T>* GetMesh() { return &m_mesh; }
+	Mesh<VERTEX_T>* GetMesh() { return &m_mesh; }
+
+	void SetTexture(const Texture2D& tex) { m_tex = tex; }
 
 private:
-	cherrysoda::Mesh<VERTEX_T> m_mesh;
+	Mesh<VERTEX_T> m_mesh;
+	Texture2D m_tex;
 };
 
 } // namespace cherrysoda
