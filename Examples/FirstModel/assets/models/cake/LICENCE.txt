@@ -1,0 +1,7 @@
+Model Author: emm
+Original Link: https://sketchfab.com/3d-models/cake-1-maison-alyzee-c01b7abbedfa4e49bd25f14c4b2a756a
+
+Modification: Base color texture was down sampled to reduce size.
+
+Licence: CC Attribution
+Licence Link: https://creativecommons.org/licenses/by/4.0/
