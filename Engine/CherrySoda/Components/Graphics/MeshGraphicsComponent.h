@@ -20,7 +20,11 @@ public:
 
 	void Render() override
 	{
-		Graphics::SetTexture(&m_tex);
+		// TODO: Make mesh state setting more general purpose
+		if (m_tex.IsValid()) {
+			Graphics::SetTexture(&m_tex);
+		}
+
 		Graphics::SetTransformMatrix(GetTransformMatrix());
 		Graphics::SubmitMesh(GetMesh());
 	}
