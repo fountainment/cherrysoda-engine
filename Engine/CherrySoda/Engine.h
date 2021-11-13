@@ -50,6 +50,7 @@ public:
 	void SetMousePosition(const Math::IVec2& pos);
 	void SetFullscreen();
 	void SetWindowed();
+	void ToggleFullscreen();
 	void ShowCursor(bool show);
 	inline void ShowCursor() { ShowCursor(true); }
 	inline void HideCursor() { ShowCursor(false); }

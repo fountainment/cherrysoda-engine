@@ -5,6 +5,7 @@
 #include <CherrySoda/Graphics/Effect.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Texture.h>
+#include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Util/Color.h>
 
 using voxelexperiment::VoxelExperiment;
@@ -12,6 +13,7 @@ using voxelexperiment::VoxelExperiment;
 using cherrysoda::Color;
 using cherrysoda::Effect;
 using cherrysoda::Graphics;
+using cherrysoda::MInput;
 using cherrysoda::TextureCube;
 
 VoxelExperiment::VoxelExperiment()
@@ -24,6 +26,10 @@ VoxelExperiment::VoxelExperiment()
 void VoxelExperiment::Update()
 {
 	base::Update();
+
+	if (MInput::Keyboard()->Pressed(cherrysoda::Keys::F11)) {
+		Engine::Instance()->ToggleFullscreen();
+	}
 }
 
 void VoxelExperiment::Initialize()

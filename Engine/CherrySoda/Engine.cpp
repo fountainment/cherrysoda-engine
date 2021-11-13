@@ -117,6 +117,15 @@ void Engine::SetWindowed()
 	}
 }
 
+void Engine::ToggleFullscreen()
+{
+	m_fullscreen = !m_fullscreen;
+	if (m_window) {
+		m_fullscreen = !(m_window->IsFullscreen());
+		m_window->SetFullscreen(m_fullscreen);
+	}
+}
+
 void Engine::ShowCursor(bool show)
 {
 	m_showCursor = show;
