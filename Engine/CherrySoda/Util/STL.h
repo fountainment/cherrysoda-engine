@@ -323,6 +323,17 @@ public:
 	}
 
 	template <typename T>
+	static inline bool RemoveKey(T& container, const typename T::key_type& key)
+	{
+		auto it = FindKey(container, key);
+		if (it != container.end()) {
+			container.erase(it);
+			return true;
+		}
+		return false;
+	}
+
+	template <typename T>
 	static inline bool TryGetValue(const T& container, const typename T::key_type& key, typename T::mapped_type& output)
 	{
 		auto it = FindKey(container, key);

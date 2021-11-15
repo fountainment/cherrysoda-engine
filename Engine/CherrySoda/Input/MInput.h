@@ -605,11 +605,15 @@ private:
 	static void SetMousePosition(const Math::IVec2& pos);
 	static bool SetGamePadVibration(int index, float leftMotor, float rightMotor);
 
+	static void AddControllerInstance(int dev);
+	static void RemoveControllerInstance(int dev);
+
 	static STL::List<Keys> ms_keyboardKeys;
 	static KeyboardData* ms_keyboard;
 	static MouseData* ms_mouse;
 	static GamePadData* ms_gamePads[4];
 	static void* ms_internalDevices[4];
+	static STL::Map<int,int> ms_internalInstanceMap;
 
 	static int ms_internalMouseWheel; 
 	static bool ms_supportsGlobalMouse;

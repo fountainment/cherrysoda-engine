@@ -112,24 +112,21 @@ void MInput::MouseData::Position(const Math::IVec2& pos)
 
 void MInput::Initialize()
 {
-	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
-	SDL_JoystickEventState(SDL_ENABLE);
 	SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
+	SDL_SetHintWithPriority(SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS, "0", SDL_HINT_OVERRIDE);
 
-	// TODO: Remove temporary code
-	SDL_GameController *controller = nullptr;
-	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-		if (SDL_IsGameController(i)) {
-			controller = SDL_GameControllerOpen(i);
-			if (controller) {
-				CHERRYSODA_DEBUG_FORMAT("Successfully open gamecontroller %i\n", i);
-				ms_internalDevices[0] = (void*)controller;
-				break;
-			} else {
-				CHERRYSODA_DEBUG_FORMAT("Could not open gamecontroller %i: %s\n", i, SDL_GetError());
-			}
-		}
+	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+
+	const char* hint = SDL_GetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS);
+	if (hint == nullptr) {
+		SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 	}
+
+	SDL_PumpEvents();
+	SDL_Event evt[1];
+	while (SDL_PeepEvents(evt, 1, SDL_GETEVENT, SDL_CONTROLLERDEVICEADDED, SDL_CONTROLLERDEVICEADDED) == 1) {
+		AddControllerInstance(evt[0].cdevice.which);
+	}	
 
 	ms_keyboard = new KeyboardData();
 	ms_mouse = new MouseData();
@@ -169,11 +166,6 @@ void MInput::Terminate()
 void MInput::Update()
 {
 	CHERRYSODA_PROFILE_FUNCTION();
-
-	// TODO: Use gamepad event to detect gamepad connection
-	if (ms_internalDevices[0] == nullptr && SDL_NumJoysticks() > 0) {
-		ms_internalDevices[0] = (void*)SDL_GameControllerOpen(0);
-	}
 
 	if (Engine::Instance()->IsActive()) {
 		if (Engine::Instance()->ConsoleOpened() && GUI::ConsoleWindowFocused()) {
@@ -384,11 +376,44 @@ bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 	return true;
 }
 
+void MInput::AddControllerInstance(int dev)
+{
+	int which = -1;
+
+	for (int i = 0; i < sizeof(ms_internalDevices); ++i) {
+		if (ms_internalDevices[i] == nullptr) {
+			which = i;
+			break;
+		}
+	}
+
+	if (which == -1) {
+		return;
+	}
+
+	ms_internalDevices[which] = SDL_GameControllerOpen(dev);
+	SDL_Joystick* thisJoystick = SDL_GameControllerGetJoystick((SDL_GameController*)ms_internalDevices[which]);
+	int thisInstance = SDL_JoystickInstanceID(thisJoystick);
+	ms_internalInstanceMap[thisInstance] = which;
+}
+
+void MInput::RemoveControllerInstance(int dev)
+{
+	int output;
+	if (!STL::TryGetValue(ms_internalInstanceMap, dev, output)) {
+		return;
+	}
+
+	STL::RemoveKey(ms_internalInstanceMap, dev);
+	ms_internalDevices[output] = nullptr;
+}
+
 STL::List<Keys> MInput::ms_keyboardKeys;
 MInput::KeyboardData* MInput::ms_keyboard = nullptr;
 MInput::MouseData* MInput::ms_mouse = nullptr;
 MInput::GamePadData* MInput::ms_gamePads[4] = { nullptr, nullptr, nullptr, nullptr };
 void* MInput::ms_internalDevices[4] = { nullptr, nullptr, nullptr, nullptr };
+STL::Map<int,int> MInput::ms_internalInstanceMap;
 
 int MInput::ms_internalMouseWheel = 0;
 bool MInput::ms_supportsGlobalMouse = true;

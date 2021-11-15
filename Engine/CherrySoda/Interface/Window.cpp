@@ -573,6 +573,7 @@ void cherrysoda::Window::PollEvents()
 		case SDL_QUIT:
 			Engine::Instance()->Exit();
 			break;
+
 		case SDL_KEYDOWN:
 		{
 			SDL_Scancode scancode = event.key.keysym.scancode;
@@ -591,9 +592,25 @@ void cherrysoda::Window::PollEvents()
 				STL::Remove(s_keyboardKeys, key);
 			}
 			break;
+
 		case SDL_MOUSEWHEEL:
 			MInput::ms_internalMouseWheel += event.wheel.y * 120;
 			break;
+
+		case SDL_FINGERDOWN:
+			break;
+		case SDL_FINGERMOTION:
+			break;
+		case SDL_FINGERUP:
+			break;
+
+		case SDL_CONTROLLERDEVICEADDED:
+			MInput::AddControllerInstance(event.cdevice.which);
+			break;
+		case SDL_CONTROLLERDEVICEREMOVED:
+			MInput::RemoveControllerInstance(event.cdevice.which);
+			break;
+
 		case SDL_WINDOWEVENT:
 		{
 			const SDL_WindowEvent& wev = event.window;
@@ -611,6 +628,7 @@ void cherrysoda::Window::PollEvents()
 			}
 		}
 		break;
+
 		case SDL_TEXTINPUT:
 		{
 			const SDL_TextInputEvent& tev = event.text;
@@ -624,10 +642,17 @@ void cherrysoda::Window::PollEvents()
 
 bool cherrysoda::Window::Initialize()
 {
+#ifdef _WIN32
+	SDL_SetMainReady();
+#endif // _WIN32
+
 	if (SDL_Init(0) != 0) {
 		return false;
 	}
 	SDL_InitSubSystem(SDL_INIT_TIMER);
+
+	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight Portrait");
+
 	return true;
 }
 
