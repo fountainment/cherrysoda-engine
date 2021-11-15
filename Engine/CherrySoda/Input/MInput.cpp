@@ -113,7 +113,10 @@ void MInput::MouseData::Position(const Math::IVec2& pos)
 void MInput::Initialize()
 {
 	SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt");
+
+#if SDL_VERSION_ATLEAST(2,0,12)
 	SDL_SetHintWithPriority(SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS, "0", SDL_HINT_OVERRIDE);
+#endif // #if SDL_VERSION_ATLEAST(2,0,12)
 
 	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 
@@ -380,7 +383,7 @@ void MInput::AddControllerInstance(int dev)
 {
 	int which = -1;
 
-	for (int i = 0; i < sizeof(ms_internalDevices); ++i) {
+	for (int i = 0; i < 4; ++i) {
 		if (ms_internalDevices[i] == nullptr) {
 			which = i;
 			break;
