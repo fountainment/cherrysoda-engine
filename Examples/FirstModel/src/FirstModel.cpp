@@ -11,7 +11,7 @@ CHERRYSODA_CONSOLE_VARIABLE(rotation_speed, float, 0.35f, "");
 class ModelMesh : public MeshGraphicsComponent<Graphics::PosNormalTexCoord0Vertex>
 {
 public:
-	typedef MeshGraphicsComponent<Graphics::PosNormalTexCoord0Vertex> base;
+	CHERRYSODA_DECLARE_COMPONENT(ModelMesh, MeshGraphicsComponent<Graphics::PosNormalTexCoord0Vertex>);
 
 	ModelMesh() : base(true) {}
 

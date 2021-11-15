@@ -9,7 +9,7 @@
 namespace cherrysoda {
 
 template <class VERTEX_T>
-class MeshGraphicsComponent : public cherrysoda::GraphicsComponent
+class MeshGraphicsComponent : public GraphicsComponent
 {
 public:
 	// TODO: It needs some workaround here for the template name
