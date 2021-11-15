@@ -15,7 +15,7 @@ public:
 
 	ModelMesh() : base(true) {}
 
-	virtual void Update()
+	void Update() override
 	{
 		base::Update();
 
