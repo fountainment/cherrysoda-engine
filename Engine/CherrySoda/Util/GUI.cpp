@@ -63,7 +63,7 @@ void GUI::Initialize()
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 	io.BackendPlatformName = "imgui_impl_cherrysoda";
 
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
 
 	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
 	io.KeyMap[ImGuiKey_Tab] = (int)Keys::Tab;
@@ -201,7 +201,21 @@ void GUI::Update()
 		}
 
 		// GamePad
-		// TODO: Add GamePad support
+		if (MInput::GamePads(0)->Attached()) {
+			io.NavInputs[ImGuiNavInput_Activate]  = MInput::GamePads(0)->Check(Buttons::A)         ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_Cancel]    = MInput::GamePads(0)->Check(Buttons::B)         ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_Menu]      = MInput::GamePads(0)->Check(Buttons::X)         ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_Input]     = MInput::GamePads(0)->Check(Buttons::Y)         ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_DpadLeft]  = MInput::GamePads(0)->Check(Buttons::DPadLeft)  ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_DpadRight] = MInput::GamePads(0)->Check(Buttons::DPadRight) ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_DpadUp]    = MInput::GamePads(0)->Check(Buttons::DPadUp)    ? 1.0f : 0.0f;
+			io.NavInputs[ImGuiNavInput_DpadDown]  = MInput::GamePads(0)->Check(Buttons::DPadDown)  ? 1.0f : 0.0f;
+
+			io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
+		}
+		else {
+			io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
+		}
 	}
 
 	// Delta time

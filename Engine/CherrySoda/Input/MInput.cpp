@@ -116,7 +116,7 @@ void MInput::Initialize()
 
 #if SDL_VERSION_ATLEAST(2,0,12)
 	SDL_SetHintWithPriority(SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS, "0", SDL_HINT_OVERRIDE);
-#endif // #if SDL_VERSION_ATLEAST(2,0,12)
+#endif // SDL_VERSION_ATLEAST(2,0,12)
 
 	SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 
@@ -338,6 +338,32 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT) != 0) {
 		buttonState |= Buttons::DPadRight;
 		dpadRight = ButtonState::Pressed;
+	}
+
+	// Extensions
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MISC1) != 0)
+	{
+		buttonState |= Buttons::Misc1EXT;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_PADDLE1) != 0)
+	{
+		buttonState |= Buttons::Paddle1EXT;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_PADDLE2) != 0)
+	{
+		buttonState |= Buttons::Paddle2EXT;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_PADDLE3) != 0)
+	{
+		buttonState |= Buttons::Paddle3EXT;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_PADDLE4) != 0)
+	{
+		buttonState |= Buttons::Paddle4EXT;
+	}
+	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_TOUCHPAD) != 0)
+	{
+		buttonState |= Buttons::TouchPadEXT;
 	}
 
 	GamePadState builtState(
