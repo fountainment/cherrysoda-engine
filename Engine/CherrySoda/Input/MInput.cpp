@@ -340,6 +340,7 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 		dpadRight = ButtonState::Pressed;
 	}
 
+#if SDL_VERSION_ATLEAST(2,0,14)
 	// Extensions
 	if (SDL_GameControllerGetButton(device, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_MISC1) != 0)
 	{
@@ -365,6 +366,7 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 	{
 		buttonState |= Buttons::TouchPadEXT;
 	}
+#endif // SDL_VERSION_ATLEAST(2,0,14)
 
 	GamePadState builtState(
 		GamePadThumbSticks(stickLeft, stickRight),
