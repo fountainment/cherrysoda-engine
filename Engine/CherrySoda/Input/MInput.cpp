@@ -24,6 +24,7 @@ using cherrysoda::StringUtil;
 
 namespace type = cherrysoda::type;
 
+
 void MInput::GamePadData::Update()
 {
 	m_previousState = m_currentState;
@@ -219,7 +220,7 @@ const MInput::MouseState MInput::GetMouseState()
 	ButtonState x1, x2;
 	type::UInt32 flags = 0;
 	if (GetRelativeMouseMode()) {
-		flags = SDL_GetRelativeMouseState(&x, &y);	
+		flags = SDL_GetRelativeMouseState(&x, &y);
 	}
 #if SDL_VERSION_ATLEAST(2,0,4)
 	else if (ms_supportsGlobalMouse) {
@@ -230,7 +231,7 @@ const MInput::MouseState MInput::GetMouseState()
 	}
 #endif // SDL_VERSION_ATLEAST(2,0,4)
 	else {
-		flags = SDL_GetMouseState(&x, &y);	
+		flags = SDL_GetMouseState(&x, &y);
 	}
 	left = (ButtonState)(flags & SDL_BUTTON_LMASK);
 	middle = (ButtonState)((flags & SDL_BUTTON_MMASK) >> 1);
@@ -242,7 +243,6 @@ const MInput::MouseState MInput::GetMouseState()
 
 const MInput::GamePadState MInput::GetGamePadState(int index)
 {
-	// TODO: Implement MInput::GetGamePadState
 	SDL_GameController* device = (SDL_GameController*)ms_internalDevices[index];
 	if (device == nullptr)
 	{
@@ -380,12 +380,12 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 
 bool MInput::GetRelativeMouseMode()
 {
-	return SDL_GetRelativeMouseMode() == SDL_TRUE;	
+	return SDL_GetRelativeMouseMode() == SDL_TRUE;
 }
 
 void MInput::SetMousePosition(const Math::IVec2& pos)
 {
-	Engine::Instance()->SetMousePosition(pos);	
+	Engine::Instance()->SetMousePosition(pos);
 }
 
 bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
