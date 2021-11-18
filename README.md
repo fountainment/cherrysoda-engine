@@ -72,7 +72,7 @@ cd cherrysoda-engine
 mkdir build
 cd build
 emcmake cmake ..
-make -j
+make -j8
 ```
 
 ### How to Do Performance Profiling with Tracy Profiler
@@ -93,7 +93,7 @@ In this engine, profiling that use tracy profiler is only enabled in "Profile" b
 mkdir build_profile
 cd build_profile
 cmake .. -DCMAKE_BUILD_TYPE=Profile
-make -j
+make -j8
 ```
 
 Then you can use tracy profiler to monitor performance.
@@ -102,7 +102,7 @@ Then you can use tracy profiler to monitor performance.
 # How to build tracy profiler on Linux
 git clone https://github.com/wolfpld/tracy.git
 cd tracy/profiler/build/unix/
-make -j
+make -j8
 ```
 
 ## Tips
