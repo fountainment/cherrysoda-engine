@@ -132,7 +132,7 @@ if(MSVC)
 endif()
 
 if(EMSCRIPTEN)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 \
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MAX_WEBGL_VERSION=2 \
                                                         -s WASM=1 \
                                                         -s NO_EXIT_RUNTIME=1 \
                                                         -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
