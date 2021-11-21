@@ -138,7 +138,7 @@ if(EMSCRIPTEN)
                                                         -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
                                                         -s OFFSCREENCANVAS_SUPPORT=1 \
                                                         -s ALLOW_MEMORY_GROWTH=1")
-  set(CMAKE_EXE_LINKER_FLAGS_DEBUG   "${CMAKE_EXE_LINKER_FLAGS_DEBUG}   -s ASSERTIONS=2 -s GL_ASSERTIONS=2")
+  set(CMAKE_EXE_LINKER_FLAGS_DEBUG   "${CMAKE_EXE_LINKER_FLAGS_DEBUG}   -s ASSERTIONS=2 -s GL_ASSERTIONS=2 --source-map-base=./")
   set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s ASSERTIONS=0 -s GL_ASSERTIONS=0")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti \
