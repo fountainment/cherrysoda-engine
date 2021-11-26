@@ -18,63 +18,6 @@ using cherrysoda::STL;
 using cherrysoda::String;
 
 
-static size_t ComponentSize(cgltf_accessor *accessor)
-{
-	switch (accessor->component_type)
-	{
-		case cgltf_component_type_r_8:
-		case cgltf_component_type_r_8u:
-			return 1;
-
-		case cgltf_component_type_r_16:
-		case cgltf_component_type_r_16u:
-			return 2;
-
-		case cgltf_component_type_r_32u:
-		case cgltf_component_type_r_32f:
-			return 4;
-
-		case cgltf_component_type_invalid:
-			CHERRYSODA_ASSERT(0, "Asked for component_size of invalid component_type!\n");
-		default:
-			CHERRYSODA_ASSERT(0, "Asked for component_size of unknown component_type!\n");
-	}
-	return 0;
-}
-
-static size_t ComponentCount(cgltf_accessor *accessor)
-{
-	switch (accessor->type)
-	{
-		case cgltf_type_scalar:
-			return 1;
-		case cgltf_type_vec2:
-			return 2;
-		case cgltf_type_vec3:
-			return 3;
-		case cgltf_type_vec4:
-		case cgltf_type_mat2:
-			return 4;
-		case cgltf_type_mat3:
-			return 9;
-		case cgltf_type_mat4:
-			return 16;
-		default:
-			CHERRYSODA_ASSERT(0, "Asked for component_count of invalid component_type!\n");
-	}
-	return 0;
-}
-
-static size_t AccessorOffset(cgltf_accessor *accessor)
-{
-	return accessor->offset + accessor->buffer_view->offset;
-}
-
-static size_t AccessorStride(cgltf_accessor *accessor)
-{
-	return accessor->stride ? accessor->stride : ComponentSize(accessor) * ComponentCount(accessor);
-}
-
 Model Model::FromGltf(const String& gltfFile)
 {
 	Model ret;
@@ -123,42 +66,28 @@ Model Model::FromGltf(const String& gltfFile)
 						}
 					}
 					if (positionAccessor) {
-						size_t offset = AccessorOffset(positionAccessor);
-						size_t stride = AccessorStride(positionAccessor);
-						char* data = reinterpret_cast<char*>(positionAccessor->buffer_view->buffer->data);
 						for (int i = 0; i < static_cast<int>(positionAccessor->count); ++i) {
-							auto position = reinterpret_cast<cherrysoda::Math::Vec3*>(&(data[offset + i * stride]));	
-							STL::Add(mesh.vertices, Graphics::VertexInfo{ *position, Vec4_One, Vec3_ZUp, Vec2_Zero });
+							Math::Vec3 position;
+							cgltf_accessor_read_float(positionAccessor, i, reinterpret_cast<float*>(&position), 3);
+							STL::Add(mesh.vertices, Graphics::VertexInfo{ position, Vec4_One, Vec3_ZUp, Vec2_Zero });
 						}
 					}
 					if (colorAccessor) {
 						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == colorAccessor->count, "Color attribute count incorrect!\n");
-						size_t offset = AccessorOffset(colorAccessor);
-						size_t stride = AccessorStride(colorAccessor);
-						char* data = reinterpret_cast<char*>(colorAccessor->buffer_view->buffer->data);
 						for (int i = 0; i < static_cast<int>(colorAccessor->count); ++i) {
-							auto color = reinterpret_cast<cherrysoda::Math::Vec4*>(&(data[offset + i * stride]));	
-							mesh.vertices[i].color = *color;
+							cgltf_accessor_read_float(colorAccessor, i, reinterpret_cast<float*>(&(mesh.vertices[i].color)), 4);
 						}
 					}
 					if (normalAccessor) {
 						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == normalAccessor->count, "Normal attribute count incorrect!\n");
-						size_t offset = AccessorOffset(normalAccessor);
-						size_t stride = AccessorStride(normalAccessor);
-						char* data = reinterpret_cast<char*>(normalAccessor->buffer_view->buffer->data);
 						for (int i = 0; i < static_cast<int>(normalAccessor->count); ++i) {
-							auto normal = reinterpret_cast<cherrysoda::Math::Vec3*>(&(data[offset + i * stride]));	
-							mesh.vertices[i].normal = *normal;
+							cgltf_accessor_read_float(normalAccessor, i, reinterpret_cast<float*>(&(mesh.vertices[i].normal)), 3);
 						}
 					}
 					if (texcoord0Accessor) {
 						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == texcoord0Accessor->count, "Texcoord0 attribute count incorrect!\n");
-						size_t offset = AccessorOffset(texcoord0Accessor);
-						size_t stride = AccessorStride(texcoord0Accessor);
-						char* data = reinterpret_cast<char*>(texcoord0Accessor->buffer_view->buffer->data);
 						for (int i = 0; i < static_cast<int>(texcoord0Accessor->count); ++i) {
-							auto texcoord0 = reinterpret_cast<cherrysoda::Math::Vec2*>(&(data[offset + i * stride]));	
-							mesh.vertices[i].texcoord0 = *texcoord0;
+							cgltf_accessor_read_float(texcoord0Accessor, i, reinterpret_cast<float*>(&(mesh.vertices[i].texcoord0)), 2);
 						}
 					}
 					cgltf_accessor* indexAccessor = primitive.indices;
