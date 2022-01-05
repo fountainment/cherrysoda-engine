@@ -64,9 +64,14 @@ public:
 
 	void Play(const StringID& id, bool restart = false, bool randomizeFrame = false);
 
-	inline bool Has(const StringID& id)
+	inline bool Has(const StringID& id) const
 	{
 		return STL::ContainsKey(m_animations, id);
+	}
+
+	inline bool IsPlaying(const StringID& id) const
+	{
+		return id == m_currentAnimationID;
 	}
 
 	inline void Stop()
