@@ -26,16 +26,21 @@ SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 	STL::HashMap<StringID, String> jsons;
 
 	STL::HashMap<StringID, const cherrysoda::json::Value*> elements;
-	for (const auto& element : m_json["Sprites"].GetArray()) {
-		const char* elementName = element["Name"].GetString();
-		STL::Add(elements, STL::MakePair(StringID(elementName), &element));
-		CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(m_spriteData, elementName), "Duplicate sprite name in SpriteData: '%s'!", elementName);
+	if (m_json.IsObject()) {
+		for (const auto& element : m_json["Sprites"].GetArray()) {
+			const char* elementName = element["Name"].GetString();
+			STL::Add(elements, STL::MakePair(StringID(elementName), &element));
+			CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(m_spriteData, elementName), "Duplicate sprite name in SpriteData: '%s'!", elementName);
 
-		auto data = m_spriteData[elementName] = new SpriteData(m_atlas);
-		if (element.HasMember("copy")) {
-			data->Add(elements[StringID(element["copy"].GetString())], element["path"].GetString());
+			auto data = m_spriteData[elementName] = new SpriteData(m_atlas);
+			if (element.HasMember("copy")) {
+				data->Add(elements[StringID(element["copy"].GetString())], element["path"].GetString());
+			}
+			data->Add(&element);
 		}
-		data->Add(&element);
+	}
+	else {
+		CHERRYSODA_ASSERT_FORMAT(false, "Json validation failed on \"%s\"!\n", jsonPath.c_str());
 	}
 }
 
