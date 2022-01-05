@@ -283,7 +283,7 @@ void GUI::Update()
 			};
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() * 2.f - 26.f);
 			const ImGuiInputTextFlags inputTextFlag = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-			bool commandInput = ImGui::InputText("", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), inputTextFlag, Funcs::InputTextCallback);
+			bool commandInput = ImGui::InputText("##Command", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), inputTextFlag, Funcs::InputTextCallback);
 			ImGui::PopItemWidth();
 			ImGui::SameLine(); commandInput |= ImGui::Button("Enter");
 			if (commandInput && Commands::ms_currentText[0] != '\0') {
