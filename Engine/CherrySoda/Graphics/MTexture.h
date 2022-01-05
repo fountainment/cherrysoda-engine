@@ -51,7 +51,7 @@ private:
 
 	inline void ClipRect(const Math::IRectangle& rect) { m_clipRect = rect; }
 	inline void DrawOffset(const Math::Vec2& drawOffset) { m_drawOffset = drawOffset; }
-	inline void ActualDrawOffset(const Math::Vec2& drawOffset) { m_actualDrawOffset = m_drawOffset; }
+	inline void ActualDrawOffset(const Math::Vec2& actualDrawOffset) { m_actualDrawOffset = actualDrawOffset; }
 	inline void Width(int width) { m_width = width; }
 	inline void Height(int height) { m_height = height; }
 
