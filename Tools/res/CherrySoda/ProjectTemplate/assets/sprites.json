@@ -1,0 +1,34 @@
+{
+"Sprites": [
+	/* example
+	{
+		"Name": "player",
+		"path": "player_",
+		"delay": 0.0667,
+		"start": "stand",
+		"Center": [],
+		"Anim": [
+			{
+				"id": "stop",
+				"path": "stop",
+				"goto": "stand"
+			}
+		],
+		"Loop": [
+			{
+				"id": "stand",
+				"path": "stand"
+			},
+			{
+				"id": "walk",
+				"path": "walk"
+			},
+			{
+				"id": "run",
+				"path": "run"
+			}
+		]
+	}
+	*/
+]
+}
