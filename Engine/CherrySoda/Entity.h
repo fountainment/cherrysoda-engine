@@ -52,6 +52,7 @@ public:
 	bool CollideCheck(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag, const Math::Vec2& at);
 	bool CollideCheck(const Entity* other) const;
+	bool CollideCheck(const Entity* other, const Math::Vec2& at);
 	bool CollidePoint(const Math::Vec2& point) const;
 	int CollideCount(const BitTag& tag) const;
 	Entity* CollideFirst(const BitTag& tag) const;

@@ -121,6 +121,11 @@ bool Entity::CollideCheck(const Entity* other) const
 	return Collide::Check(this, other);
 }
 
+bool Entity::CollideCheck(const Entity* other, const Math::Vec2& at)
+{
+	return Collide::Check(this, other, at);
+}
+
 bool Entity::CollidePoint(const Math::Vec2& point) const
 {
 	return Collide::CheckPoint(this, point);	
