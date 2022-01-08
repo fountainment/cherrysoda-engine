@@ -5,6 +5,7 @@ add_subdirectory(rapidjson)
 add_subdirectory(stb)
 add_subdirectory(cmixer)
 add_subdirectory(cgltf)
+add_subdirectory(tinyxml2)
 
 cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx;imgui;stb_vorbis;cmixer" External)
 if(CHERRYSODA_BUILD_SHADERC)

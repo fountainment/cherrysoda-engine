@@ -122,6 +122,8 @@ set(ENGINE_SRC
   CherrySoda/Util/String.h
   CherrySoda/Util/Time.cpp
   CherrySoda/Util/Time.h
+  CherrySoda/Util/XML.cpp
+  CherrySoda/Util/XML.h
 )
 
 set(EMBEDDED_SHADER_SRC
@@ -176,7 +178,7 @@ else()
 endif()
 
 target_include_directories(CherrySoda PUBLIC . ${SDL2_INCLUDE_DIRS})
-set(CHERRYSODA_COMMON_LIBS cgltf imgui bgfx bimg_decode bimg bx glm rapidjson cmixer stb ${SDL2_LIBRARIES})
+set(CHERRYSODA_COMMON_LIBS cgltf imgui bgfx bimg_decode bimg bx glm rapidjson tinyxml2 cmixer stb ${SDL2_LIBRARIES})
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} psapi)
 elseif(ANDROID)
