@@ -8,6 +8,23 @@
 
 A lightweight cross-platform C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
 
+## Introduction
+
+This is an engine that I made for anticipating gamejam.
+
+In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
+Its design is quite simple and handy, then I think if I can use it to make game for different platforms.
+
+The result is this engine, it inherited most of the design from Monocle engine, and added some useful features.
+I have to admit that the port quality is not very good, anyway, after a few gamejam, it's less buggy now.
+
+## Contribution
+
+Feature requests and pull requests are welcome, but don't expect the response to be very quick.
+
+The top priority is to make this engine more robust and more handy.
+So before putting too much work in pull request, please create an issue that we can discuss it first.
+
 ## Demos
 
 [https://fountainment.github.io/demo/](https://fountainment.github.io/demo/)
@@ -22,7 +39,8 @@ A lightweight cross-platform C++ game engine based on bgfx and SDL2 (inspired by
 - STB Intergrated (for now only) for OGG Audio File Loading
 - ImGui Integrated for Engine GUI
 - TracyProfiler Integrated for Profiling
-- RapidJSON Integrated for Json Parsing
+- RapidJSON Integrated for JSON Parsing
+- TinyXML2 Integrated for XML Parsing
 - CMixer Integrated for Audio Mixing
 - Simple Entity-Component System
 - Simple Sprite System (quite handy imo)
@@ -39,10 +57,12 @@ A lightweight cross-platform C++ game engine based on bgfx and SDL2 (inspired by
 - Python >=3.6
 
 ### Linux
+
 - GCC >=5.2 or Clang >=3.4
 - libSDL2-dev
 
 ### Windows
+
 - Visual Studio >=2017
 
 ### MacOS
@@ -116,6 +136,8 @@ You need to install the CMakeBuilder plugin first
 You need to use Tools/crunch (build it youself)
 
 The recommended parameters for crunch is: ```-j -p -u -t -s2048 -p8```
+
+The ```-j``` arg is required, because engine only support json atlas file parsing at the moment.
 
 For more information about crunch you can look into https://github.com/fountainment/crunch
 
