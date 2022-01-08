@@ -98,7 +98,7 @@ void Sprite::SetFrame(MTexture texture)
 void Sprite::Play(const StringID& id, bool restart/* = false*/, bool randomizeFrame/* = false*/)
 {
 	if (m_currentAnimationID != id || restart) {
-		CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(m_animations, id), "No Animation defined for ID: %s\n", id.GetStr().c_str()); 
+		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str()); 
 
 		if (m_onChange) {
 			m_onChange(m_lastAnimationID, id);
