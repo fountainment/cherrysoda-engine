@@ -7,7 +7,7 @@ add_subdirectory(cmixer)
 add_subdirectory(cgltf)
 add_subdirectory(tinyxml2)
 
-cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx;imgui;stb_vorbis;cmixer" External)
+cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx;imgui;stb_vorbis;cmixer;tinyxml2" External)
 if(CHERRYSODA_BUILD_SHADERC)
   cherrysoda_set_targets_folder("fcpp;glslang;glsl-optimizer;spirv-cross;spirv-opt;shaderc" Tools/shaderc)
 endif()
