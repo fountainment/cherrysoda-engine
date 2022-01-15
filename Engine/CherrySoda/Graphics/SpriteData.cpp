@@ -55,6 +55,7 @@ void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& ove
 	{
 		const char* normalPath = jsonObj.HasMember("path") ? jsonObj["path"].GetString() : "";
 		float masterDelay = jsonObj.HasMember("delay") ? jsonObj["delay"].GetFloat() : 0.f;
+		bool useIdForDefaultAnimationPath = jsonObj.HasMember("UseIdForDefaultAnimationPath");
 
 		// Build Animation
 		if (jsonObj.HasMember("Anim")) {
@@ -65,7 +66,13 @@ void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& ove
 				}
 
 				const char* id = anim["id"].GetString();
-				String path = anim.HasMember("path") ? anim["path"].GetString() : id;
+				String path = "";
+				if (anim.HasMember("path")) {
+					path = anim["path"].GetString();
+				}
+				else if (useIdForDefaultAnimationPath) {
+					path = id;
+				}
 				float delay = anim.HasMember("delay") ? anim["delay"].GetFloat() : masterDelay;
 				if (overridePath.length() != 0) {
 					path = overridePath + path;
@@ -82,7 +89,13 @@ void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& ove
 		if (jsonObj.HasMember("Loop")) {
 			for (const auto& loop : jsonObj["Loop"].GetArray()) {
 				const char* id = loop["id"].GetString();
-				String path = loop.HasMember("path") ? loop["path"].GetString() : id;
+				String path = "";
+				if (loop.HasMember("path")) {
+					path = loop["path"].GetString();
+				}
+				else if (useIdForDefaultAnimationPath) {
+					path = id;
+				}
 				float delay = loop.HasMember("delay") ? loop["delay"].GetFloat() : masterDelay;
 				if (overridePath.length() != 0) {
 					path = overridePath + path;
