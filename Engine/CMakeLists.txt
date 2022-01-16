@@ -144,7 +144,7 @@ if(NOT "${EMBEDDED_SHADER_SRC}" STREQUAL "")
   if(CHERRYSODA_PREBUILT_SHADERC_AVAILABLE OR CHERRYSODA_BUILD_SHADERC)
     set(SHADER_COMPILE_STAMP ${CMAKE_CURRENT_BINARY_DIR}/shader_compile.stamp)
     add_custom_command(OUTPUT ${SHADER_COMPILE_STAMP}
-                       COMMAND python ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
+                       COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
                        COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
                        DEPENDS ${EMBEDDED_SHADER_SRC} ${CHERRYSODA_SHADERC_EXECUTABLE}
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
