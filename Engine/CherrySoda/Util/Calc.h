@@ -29,7 +29,7 @@ public:
 	inline Math::Vec2 ShakeVector()
 	{
 		constexpr float shakeVectorOffsets[5] = { -1.f, -1.f, 0.f, 1.f, 1.f };
-		return Math::Vec2(shakeVectorOffsets[Next(4)], shakeVectorOffsets[Next(4)]);
+		return Math::Vec2(shakeVectorOffsets[Next(5)], shakeVectorOffsets[Next(5)]);
 	}
 
 	template <typename T>
