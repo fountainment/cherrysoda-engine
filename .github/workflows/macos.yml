@@ -27,3 +27,8 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/build
       run: cmake --build . --config $BUILD_TYPE
+
+    - name: Test
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: Tests/CalcTest
