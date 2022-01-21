@@ -33,6 +33,12 @@ bool Hitbox::Collide(const Math::Vec2& point) const
 	return Collide::RectToPoint(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, point);
 }
 
+bool Hitbox::Collide(const Math::Vec2& from, const Math::Vec2& to) const
+{
+	// TODO
+	return false;
+}
+
 void Hitbox::Render(const Camera* camera, const Color& color) const
 {
 	Draw::HollowRect(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, color);	

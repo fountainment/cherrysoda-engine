@@ -220,20 +220,29 @@ void Scene::INTERNAL_SetActualDepth(Entity* entity)
 	}
 }
 
-bool Scene::CollideCheck(const Math::Vec2& point, int tag)
+bool Scene::CollideCheck(const Math::Vec2& point, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list)
-	{
-		if (item->Collidable() && item->CollidePoint(point))
-		{
+	for (auto item : list) {
+		if (item->Collidable() && item->CollidePoint(point)) {
 			return true;
 		}
 	}
 	return false;
 }
 
-Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision)
+bool Scene::CollideCheck(const Math::Vec2& from, const Math::Vec2& to, int tag) const
+{
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && item->CollideLine(from, to)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision) const
 {
 	Math::Vec2 add = to - from;
 	add = Math_Normalize(add);

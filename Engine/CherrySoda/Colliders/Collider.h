@@ -41,6 +41,7 @@ public:
 	virtual bool Collide(const Circle* circle) const = 0;
 	virtual bool Collide(const Hitbox* hitbox) const = 0;
 	virtual bool Collide(const Math::Vec2& point) const = 0;
+	virtual bool Collide(const Math::Vec2& from, const Math::Vec2& to) const = 0;
 
 	virtual float Left() const = 0;
 	virtual float Right() const = 0;

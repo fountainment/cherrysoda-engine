@@ -131,6 +131,11 @@ bool Entity::CollidePoint(const Math::Vec2& point) const
 	return Collide::CheckPoint(this, point);	
 }
 
+bool Entity::CollideLine(const Math::Vec2& from, const Math::Vec2& to) const
+{
+	return Collide::CheckLine(this, from, to);
+}
+
 int Entity::CollideCount(const BitTag& tag) const
 {
 	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");

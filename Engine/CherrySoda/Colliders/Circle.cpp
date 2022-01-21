@@ -34,6 +34,11 @@ bool Circle::Collide(const Math::Vec2& point) const
 	return Math_LengthSq(vec) <= RadiusSq();
 }
 
+bool Circle::Collide(const Math::Vec2& from, const Math::Vec2& to) const
+{
+	return Collide::CircleToLine(AbsolutePosition2D(), Radius(), from, to);
+}
+
 void Circle::Render(const Camera* camera, const Color& color) const
 {
 	Draw::Circle(AbsolutePosition2D(), Radius(), color, 4.f);

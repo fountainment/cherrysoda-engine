@@ -58,6 +58,14 @@ bool Collide::CheckPoint(const Entity* a, const Math::Vec2& point)
 	return a->GetCollider()->Collide(point);
 }
 
+bool Collide::CheckLine(const Entity* a, const Math::Vec2& from, const Math::Vec2& to)
+{
+	if (a->GetCollider() == nullptr) {
+		return false;
+	}
+	return a->GetCollider()->Collide(from, to);
+}
+
 int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();

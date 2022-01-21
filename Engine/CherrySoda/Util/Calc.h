@@ -68,7 +68,7 @@ public:
 	}
 	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec) { return SafeNormalize(vec, Vec2_Zero); }
 
-	static Math::Vec2 ClosestPointToLine(const Math::Vec2& lineA, const Math::Vec2& lineB, const Math::Vec2& closestTo);
+	static Math::Vec2 ClosestPointOnLine(const Math::Vec2& lineA, const Math::Vec2& lineB, const Math::Vec2& closestTo);
 
 	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return Math::Vec2(vec.y, -vec.x); }
 

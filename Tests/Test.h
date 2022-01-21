@@ -28,10 +28,10 @@ private:
 	float y;
 };
 
-#define TEST_CLOSESTPOINTTOLINE(a,b,p,e) \
+#define TEST_CLOSESTPOINTONLINE(a,b,p,e) \
 { \
 	auto expectedResult = Vec2TestWrapper(e); \
-	EXPECT_EQ(Vec2TestWrapper(Calc::ClosestPointToLine(a,b,p)),expectedResult); \
+	EXPECT_EQ(Vec2TestWrapper(Calc::ClosestPointOnLine(a,b,p)),expectedResult); \
 }
 
 #endif // _CHERRYSODA_TEST_H_

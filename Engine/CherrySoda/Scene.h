@@ -63,8 +63,9 @@ public:
 		return (int)((TimeActive() - Engine::Instance()->DeltaTime()) / interval) < (int)(TimeActive() / interval);
 	}
 
-	bool CollideCheck(const Math::Vec2& point, int tag);
-	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision);
+	bool CollideCheck(const Math::Vec2& point, int tag) const;
+	bool CollideCheck(const Math::Vec2& from, const Math::Vec2& to, int tag) const;
+	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision) const;
 
 	const STL::List<Entity*>& operator [] (const BitTag& tag) const;
 
