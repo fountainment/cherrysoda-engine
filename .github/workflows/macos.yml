@@ -31,4 +31,4 @@ jobs:
     - name: Test
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: Tests/CalcTest
+      run: Tests/AllTests

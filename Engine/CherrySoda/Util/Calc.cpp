@@ -54,6 +54,7 @@ Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 Math::Vec2 Calc::ClosestPointToLine(const Math::Vec2& lineA, const Math::Vec2& lineB, const Math::Vec2& closestTo)
 {
 	auto v = lineB - lineA;
+	if (v == Vec2_Zero) return lineA;
 	auto w = closestTo - lineA;
 	float t = Math_Dot(w, v) / Math_Dot(v, v);
 	t = Math_Clamp(t, 0.f, 1.f);
