@@ -1,8 +1,8 @@
 add_subdirectory(crunch)
 
-cherrysoda_set_targets_folder("libcrunch" Tools)
+cherrysoda_set_targets_folder("libcrunch" Tools/crunch)
 if(NOT EMSCRIPTEN)
-  cherrysoda_set_targets_folder("crunch" Tools)
+  cherrysoda_set_targets_folder("crunch" Tools/crunch)
 endif()
 
 add_subdirectory(sfxr_port)
