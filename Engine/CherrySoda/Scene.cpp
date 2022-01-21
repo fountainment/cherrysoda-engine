@@ -163,10 +163,8 @@ void Scene::Remove(Entity* entity)
 const STL::List<Entity*> Scene::GetEntitiesByTagMask(BitTagValueType mask) const
 {
 	STL::List<Entity*> list;
-	for (Entity* entity : *m_entities)
-	{
-		if ((entity->Tag() & mask) != 0)
-		{
+	for (Entity* entity : *m_entities) {
+		if ((entity->Tag() & mask) != 0) {
 			STL::Add(list, entity);
 		}
 	}
@@ -176,10 +174,8 @@ const STL::List<Entity*> Scene::GetEntitiesByTagMask(BitTagValueType mask) const
 const STL::List<Entity*> Scene::GetEntitiesExcludingTagMask(BitTagValueType mask) const
 {
 	STL::List<Entity*> list;
-	for (Entity* entity : *m_entities)
-	{
-		if ((entity->Tag() & mask) == 0)
-		{
+	for (Entity* entity : *m_entities) {
+		if ((entity->Tag() & mask) == 0) {
 			STL::Add(list, entity);
 		}
 	}
@@ -201,20 +197,16 @@ void Scene::INTERNAL_SetActualDepth(Entity* entity)
 	const double theta = 0.000001;
 
 	double add = 0;
-	if (STL::TryGetValue(m_actualDepthLookup, entity->Depth(), add))
-	{
+	if (STL::TryGetValue(m_actualDepthLookup, entity->Depth(), add)) {
 		m_actualDepthLookup[entity->Depth()] += theta;
 	}
-	else
-	{
+	else {
 		STL::Add(m_actualDepthLookup, STL::MakePair(entity->Depth(), (double)theta));
 	}
 	entity->m_actualDepth = (double)entity->Depth() - add;
 	m_entities->MarkUnsorted();	
-	for (int i = 0; i < BitTag::TotalTags(); ++i)
-	{
-		if (entity->TagCheck(1 << i))
-		{
+	for (int i = 0; i < BitTag::TotalTags(); ++i) {
+		if (entity->TagCheck(1 << i)) {
 			m_tagLists->MarkUnsorted(i);
 	 	}
 	}
@@ -252,8 +244,7 @@ Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, in
 	Math::Vec2 prev = from;
 	Math::Vec2 at = from + add;
 
-	for (int i = 0; i <= amount; ++i)
-	{
+	for (int i = 0; i <= amount; ++i) {
 		if (CollideCheck(at, tag))
 			return prev;
 		prev = at;
