@@ -1,5 +1,9 @@
 #include "CherrySodaSceneTemplateScene.h"
 
+#include <CherrySoda/CherrySoda.h>
+
+using namespace cherrysoda;
+
 using cherrysodascenetemplate::CherrySodaSceneTemplateScene;
 
 void CherrySodaSceneTemplateScene::Begin()
