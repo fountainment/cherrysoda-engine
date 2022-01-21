@@ -42,6 +42,7 @@ So before putting too much work in pull request, please create an issue that we 
 - RapidJSON Integrated for JSON Parsing
 - TinyXML2 Integrated for XML Parsing
 - CMixer Integrated for Audio Mixing
+- GoogleTest Integrated for Testing
 - Simple Entity-Component System
 - Simple Sprite System (quite handy imo)
 - Minimalism 2D Collision Detection (too simple but useful in common situations)
@@ -171,7 +172,7 @@ You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
 ```
 MIT License
 
-Copyright (c) 2019-2021 C.Even
+Copyright (c) 2019-2022 C.Even
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
