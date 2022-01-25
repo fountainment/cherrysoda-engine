@@ -73,7 +73,7 @@ shaderc = join_path(tool_path, 'bin', 'shaderc' + executable_suffix)
 shaderc_local = join_path(tool_path, 'bin', 'shaderc.local' + executable_suffix)
 shaderc_show_command = False
 
-sdl2_version = '2.0.14'
+sdl2_version = '2.0.20'
 sdl2_path = join_path(external_path, 'SDL2-' + sdl2_version)
 
 
