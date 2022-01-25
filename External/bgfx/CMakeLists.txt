@@ -85,10 +85,6 @@ endif()
 target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_MULTITHREADED=0)
 # target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_OPENGL=1)
 # target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_VULKAN=1)
-if(WINDOWS)
-  # Seems bgfx's DX11 renderer are causing high latency in some cases
-  target_compile_definitions(bgfx PRIVATE BGFX_CONFIG_RENDERER_DIRECT3D9=1)
-endif()
 target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_MAX_VIEWS=8)
 
 if(CHERRYSODA_BUILD_SHADERC)
