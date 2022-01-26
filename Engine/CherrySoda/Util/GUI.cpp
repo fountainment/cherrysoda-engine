@@ -9,7 +9,6 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Graphics/Texture.h>
 
-#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #include <imgui.h>
 #include <SDL.h>
 
@@ -51,6 +50,110 @@ void SetClipboardText_SDL2ImplForImGui(void*, const char* text)
 	SDL_SetClipboardText(text);
 }
 
+ImGuiKey CherrySodaKeyToImGuiKey(Keys key)
+{
+	switch (key) {
+		case Keys::Tab: return ImGuiKey_Tab;
+		case Keys::Left: return ImGuiKey_LeftArrow;
+		case Keys::Right: return ImGuiKey_RightArrow;
+		case Keys::Up: return ImGuiKey_UpArrow;
+		case Keys::Down: return ImGuiKey_DownArrow;
+		case Keys::PageUp: return ImGuiKey_PageUp;
+		case Keys::PageDown: return ImGuiKey_PageDown;
+		case Keys::Home: return ImGuiKey_Home;
+		case Keys::End: return ImGuiKey_End;
+		case Keys::Insert: return ImGuiKey_Insert;
+		case Keys::Delete: return ImGuiKey_Delete;
+		case Keys::Back: return ImGuiKey_Backspace;
+		case Keys::Space: return ImGuiKey_Space;
+		case Keys::Enter: return ImGuiKey_Enter;
+		case Keys::Escape: return ImGuiKey_Escape;
+		case Keys::OemQuotes: return ImGuiKey_Apostrophe;
+		case Keys::OemComma: return ImGuiKey_Comma;
+		case Keys::OemMinus: return ImGuiKey_Minus;
+		case Keys::OemPeriod: return ImGuiKey_Period;
+		case Keys::OemQuestion: return ImGuiKey_Slash;
+		case Keys::OemSemicolon: return ImGuiKey_Semicolon;
+		case Keys::OemPlus: return ImGuiKey_Equal;
+		case Keys::OemOpenBrackets: return ImGuiKey_LeftBracket;
+		case Keys::OemBackslash: return ImGuiKey_Backslash;
+		case Keys::OemCloseBrackets: return ImGuiKey_RightBracket;
+		case Keys::OemTilde: return ImGuiKey_GraveAccent;
+		case Keys::CapsLock: return ImGuiKey_CapsLock;
+		case Keys::Scroll: return ImGuiKey_ScrollLock;
+		case Keys::NumLock: return ImGuiKey_NumLock;
+		case Keys::PrintScreen: return ImGuiKey_PrintScreen;
+		case Keys::Pause: return ImGuiKey_Pause;
+		case Keys::NumPad0: return ImGuiKey_Keypad0;
+		case Keys::NumPad1: return ImGuiKey_Keypad1;
+		case Keys::NumPad2: return ImGuiKey_Keypad2;
+		case Keys::NumPad3: return ImGuiKey_Keypad3;
+		case Keys::NumPad4: return ImGuiKey_Keypad4;
+		case Keys::NumPad5: return ImGuiKey_Keypad5;
+		case Keys::NumPad6: return ImGuiKey_Keypad6;
+		case Keys::NumPad7: return ImGuiKey_Keypad7;
+		case Keys::NumPad8: return ImGuiKey_Keypad8;
+		case Keys::NumPad9: return ImGuiKey_Keypad9;
+		case Keys::LeftControl: return ImGuiKey_LeftCtrl;
+		case Keys::LeftShift: return ImGuiKey_LeftShift;
+		case Keys::LeftAlt: return ImGuiKey_LeftAlt;
+		case Keys::LeftSuper: return ImGuiKey_LeftSuper;
+		case Keys::RightControl: return ImGuiKey_RightCtrl;
+		case Keys::RightShift: return ImGuiKey_RightShift;
+		case Keys::RightAlt: return ImGuiKey_RightAlt;
+		case Keys::RightSuper: return ImGuiKey_RightSuper;
+		case Keys::D0: return ImGuiKey_0;
+		case Keys::D1: return ImGuiKey_1;
+		case Keys::D2: return ImGuiKey_2;
+		case Keys::D3: return ImGuiKey_3;
+		case Keys::D4: return ImGuiKey_4;
+		case Keys::D5: return ImGuiKey_5;
+		case Keys::D6: return ImGuiKey_6;
+		case Keys::D7: return ImGuiKey_7;
+		case Keys::D8: return ImGuiKey_8;
+		case Keys::D9: return ImGuiKey_9;
+		case Keys::A: return ImGuiKey_A;
+		case Keys::B: return ImGuiKey_B;
+		case Keys::C: return ImGuiKey_C;
+		case Keys::D: return ImGuiKey_D;
+		case Keys::E: return ImGuiKey_E;
+		case Keys::F: return ImGuiKey_F;
+		case Keys::G: return ImGuiKey_G;
+		case Keys::H: return ImGuiKey_H;
+		case Keys::I: return ImGuiKey_I;
+		case Keys::J: return ImGuiKey_J;
+		case Keys::K: return ImGuiKey_K;
+		case Keys::L: return ImGuiKey_L;
+		case Keys::M: return ImGuiKey_M;
+		case Keys::N: return ImGuiKey_N;
+		case Keys::O: return ImGuiKey_O;
+		case Keys::P: return ImGuiKey_P;
+		case Keys::Q: return ImGuiKey_Q;
+		case Keys::R: return ImGuiKey_R;
+		case Keys::S: return ImGuiKey_S;
+		case Keys::T: return ImGuiKey_T;
+		case Keys::U: return ImGuiKey_U;
+		case Keys::V: return ImGuiKey_V;
+		case Keys::W: return ImGuiKey_W;
+		case Keys::X: return ImGuiKey_X;
+		case Keys::Y: return ImGuiKey_Y;
+		case Keys::Z: return ImGuiKey_Z;
+		case Keys::F1: return ImGuiKey_F1;
+		case Keys::F2: return ImGuiKey_F2;
+		case Keys::F3: return ImGuiKey_F3;
+		case Keys::F4: return ImGuiKey_F4;
+		case Keys::F5: return ImGuiKey_F5;
+		case Keys::F6: return ImGuiKey_F6;
+		case Keys::F7: return ImGuiKey_F7;
+		case Keys::F8: return ImGuiKey_F8;
+		case Keys::F9: return ImGuiKey_F9;
+		case Keys::F10: return ImGuiKey_F10;
+		case Keys::F11: return ImGuiKey_F11;
+		case Keys::F12: return ImGuiKey_F12;
+		default: return ImGuiKey_None;
+	}
+}
+
 void GUI::Initialize()
 {
 	ImGui::CreateContext();
@@ -60,34 +163,9 @@ void GUI::Initialize()
 	// Setup back-end capabilities flags
 	ImGuiIO& io = ImGui::GetIO();
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 	io.BackendPlatformName = "imgui_impl_cherrysoda";
 
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
-
-	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
-	io.KeyMap[ImGuiKey_Tab] = (int)Keys::Tab;
-	io.KeyMap[ImGuiKey_LeftArrow] = (int)Keys::Left;
-	io.KeyMap[ImGuiKey_RightArrow] = (int)Keys::Right;
-	io.KeyMap[ImGuiKey_UpArrow] = (int)Keys::Up;
-	io.KeyMap[ImGuiKey_DownArrow] = (int)Keys::Down;
-	io.KeyMap[ImGuiKey_PageUp] = (int)Keys::PageUp;
-	io.KeyMap[ImGuiKey_PageDown] = (int)Keys::PageDown;
-	io.KeyMap[ImGuiKey_Home] = (int)Keys::Home;
-	io.KeyMap[ImGuiKey_End] = (int)Keys::End;
-	io.KeyMap[ImGuiKey_Insert] = (int)Keys::Insert;
-	io.KeyMap[ImGuiKey_Delete] = (int)Keys::Delete;
-	io.KeyMap[ImGuiKey_Backspace] = (int)Keys::Back;
-	io.KeyMap[ImGuiKey_Space] = (int)Keys::Space;
-	io.KeyMap[ImGuiKey_Enter] = (int)Keys::Enter;
-	io.KeyMap[ImGuiKey_Escape] = (int)Keys::Escape;
-	io.KeyMap[ImGuiKey_KeypadEnter] = (int)Keys::Enter;
-	io.KeyMap[ImGuiKey_A] = (int)Keys::A;
-	io.KeyMap[ImGuiKey_C] = (int)Keys::C;
-	io.KeyMap[ImGuiKey_V] = (int)Keys::V;
-	io.KeyMap[ImGuiKey_X] = (int)Keys::X;
-	io.KeyMap[ImGuiKey_Y] = (int)Keys::Y;
-	io.KeyMap[ImGuiKey_Z] = (int)Keys::Z;
 
 	// TODO: Hide SDL2 from ImGui, provide engine interface
 	// Load mouse cursors
@@ -141,42 +219,58 @@ void GUI::Update()
 
 	ImGuiIO& io = ImGui::GetIO();
 
+
 	// Window size update
 	auto winSize = Engine::Instance()->GetWindowSize();	
 	io.DisplaySize.x = winSize.x;
 	io.DisplaySize.y = winSize.y;
 
-	// Keyboard clear
-	std::memset(io.KeysDown, 0, sizeof(io.KeysDown));
-	io.KeyShift = io.KeyCtrl = io.KeyAlt = io.KeySuper = false;
-
 	if (Engine::Instance()->IsActive()) {
 		// Keyboard
+		static STL::List<Keys> s_previousKeyboardKeys;
 		auto keyboardKeys = MInput::GetCurrentKeyboardKeys();
-		for (auto key : keyboardKeys) {
-			io.KeysDown[(int)key] = true;
+		STL::Sort(keyboardKeys);
+
+		if (keyboardKeys != s_previousKeyboardKeys) {
+			auto it1 = s_previousKeyboardKeys.begin();
+			auto it2 = keyboardKeys.begin();
+
+			while (it1 != s_previousKeyboardKeys.end() && it2 != keyboardKeys.end()) {
+				if (*it1 < *it2) { io.AddKeyEvent(CherrySodaKeyToImGuiKey(*it1), false); ++it1; }
+				else if (*it1 > *it2) { io.AddKeyEvent(CherrySodaKeyToImGuiKey(*it2), true); ++it2; }
+				else { ++it1; ++it2; }
+			}
+			for (; it1 != s_previousKeyboardKeys.end(); ++it1) {
+				io.AddKeyEvent(CherrySodaKeyToImGuiKey(*it1), false);
+			}
+			for (; it2 != keyboardKeys.end(); ++it2) {
+				io.AddKeyEvent(CherrySodaKeyToImGuiKey(*it2), true);
+			}
+			bool keyShift = false, keyCtrl = false, keyAlt = false, keySuper = false;
+			MInput::KeyboardState keyboard = MInput::GetKeyboardState();
+			keyCtrl  = keyboard.IsKeyDown(Keys::LeftControl) || keyboard.IsKeyDown(Keys::RightControl);
+			keyShift = keyboard.IsKeyDown(Keys::LeftShift)   || keyboard.IsKeyDown(Keys::RightShift);
+			keyAlt   = keyboard.IsKeyDown(Keys::LeftAlt)     || keyboard.IsKeyDown(Keys::RightAlt);
+			keySuper = keyboard.IsKeyDown(Keys::LeftSuper)   || keyboard.IsKeyDown(Keys::RightSuper);
+			ImGuiKeyModFlags keyMods =
+				(keyCtrl  ? ImGuiKeyModFlags_Ctrl  : 0) |
+				(keyShift ? ImGuiKeyModFlags_Shift : 0) |
+				(keyAlt   ? ImGuiKeyModFlags_Alt   : 0) |
+				(keySuper ? ImGuiKeyModFlags_Super : 0);
+			io.AddKeyModsEvent(keyMods);
 		}
 
-		io.KeyShift = io.KeysDown[(int)Keys::LeftShift] || io.KeysDown[(int)Keys::RightShift];
-		io.KeyCtrl = io.KeysDown[(int)Keys::LeftControl] || io.KeysDown[(int)Keys::RightControl];
-		io.KeyAlt = io.KeysDown[(int)Keys::LeftAlt] || io.KeysDown[(int)Keys::RightAlt];
-		io.KeySuper = io.KeysDown[(int)Keys::LeftSuper] || io.KeysDown[(int)Keys::RightSuper];
+		s_previousKeyboardKeys = keyboardKeys;
 
 		// Mouse
-		if (io.WantSetMousePos) {
-			Engine::Instance()->SetMousePosition(Math::IVec2((int)io.MousePos.x, (int)io.MousePos.y));
-		}
-		else {
-			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-		}
-
 		MInput::MouseState mouse = MInput::GetMouseState();
-		io.MousePos = ImVec2((float)mouse.m_x, (float)mouse.m_y);
-		io.MouseDown[0] = mouse.m_leftButton == ButtonState::Pressed;
-		io.MouseDown[1] = mouse.m_rightButton == ButtonState::Pressed;
-		io.MouseDown[2] = mouse.m_middleButton == ButtonState::Pressed;
 		static int s_previousWheel = mouse.m_scrollWheelValue;
-		io.MouseWheel += (mouse.m_scrollWheelValue - s_previousWheel) / 120;
+		int mouseWheelDelta = (mouse.m_scrollWheelValue - s_previousWheel) / 120;
+		io.AddMousePosEvent(static_cast<float>(mouse.m_x), static_cast<float>(mouse.m_y));
+		io.AddMouseButtonEvent(0, mouse.m_leftButton == ButtonState::Pressed);
+		io.AddMouseButtonEvent(1, mouse.m_rightButton == ButtonState::Pressed);
+		io.AddMouseButtonEvent(2, mouse.m_middleButton == ButtonState::Pressed);
+		io.AddMouseWheelEvent(0.f, static_cast<float>(mouseWheelDelta));
 		s_previousWheel = mouse.m_scrollWheelValue;
 
 		// Mouse cursor control
@@ -201,20 +295,46 @@ void GUI::Update()
 		}
 
 		// GamePad
-		if (MInput::GamePads(0)->Attached()) {
-			io.NavInputs[ImGuiNavInput_Activate]  = MInput::GamePads(0)->Check(Buttons::A)         ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_Cancel]    = MInput::GamePads(0)->Check(Buttons::B)         ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_Menu]      = MInput::GamePads(0)->Check(Buttons::X)         ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_Input]     = MInput::GamePads(0)->Check(Buttons::Y)         ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_DpadLeft]  = MInput::GamePads(0)->Check(Buttons::DPadLeft)  ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_DpadRight] = MInput::GamePads(0)->Check(Buttons::DPadRight) ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_DpadUp]    = MInput::GamePads(0)->Check(Buttons::DPadUp)    ? 1.0f : 0.0f;
-			io.NavInputs[ImGuiNavInput_DpadDown]  = MInput::GamePads(0)->Check(Buttons::DPadDown)  ? 1.0f : 0.0f;
+		if ((io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) != 0) {
+			auto gamepad = MInput::GamePads(0);
+			if (gamepad->Attached()) {
+				io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 
-			io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
-		}
-		else {
-			io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
+				io.AddKeyEvent(ImGuiKey_GamepadStart, gamepad->Check(Buttons::Start));
+				io.AddKeyEvent(ImGuiKey_GamepadBack, gamepad->Check(Buttons::Back));
+				io.AddKeyEvent(ImGuiKey_GamepadFaceDown, gamepad->Check(Buttons::A));
+				io.AddKeyEvent(ImGuiKey_GamepadFaceRight, gamepad->Check(Buttons::B));
+				io.AddKeyEvent(ImGuiKey_GamepadFaceLeft, gamepad->Check(Buttons::X));
+				io.AddKeyEvent(ImGuiKey_GamepadFaceUp, gamepad->Check(Buttons::Y));
+				io.AddKeyEvent(ImGuiKey_GamepadDpadLeft, gamepad->Check(Buttons::DPadLeft));
+				io.AddKeyEvent(ImGuiKey_GamepadDpadRight, gamepad->Check(Buttons::DPadRight));
+				io.AddKeyEvent(ImGuiKey_GamepadDpadUp, gamepad->Check(Buttons::DPadUp));
+				io.AddKeyEvent(ImGuiKey_GamepadDpadDown, gamepad->Check(Buttons::DPadDown));
+				io.AddKeyEvent(ImGuiKey_GamepadL1, gamepad->Check(Buttons::LeftShoulder));
+				io.AddKeyEvent(ImGuiKey_GamepadR1, gamepad->Check(Buttons::RightShoulder));
+				io.AddKeyEvent(ImGuiKey_GamepadL3, gamepad->Check(Buttons::LeftStick));
+				io.AddKeyEvent(ImGuiKey_GamepadR3, gamepad->Check(Buttons::RightStick));
+
+				float LT = gamepad->GetLeftTrigger();
+				float RT = gamepad->GetRightTrigger();
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadL2, LT > 0.1f, LT);
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadR2, RT > 0.1f, RT);
+
+				const float stickDeadZone = 0.1f;
+				Math::Vec2 LS = gamepad->GetLeftStick(stickDeadZone);
+				Math::Vec2 RS = gamepad->GetRightStick(stickDeadZone);
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickLeft, LS.x < -stickDeadZone, Math_Clamp(LS.x, -1.f, 0.f) * -1.f);
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickRight, LS.x > stickDeadZone, Math_Clamp(LS.x, 0.f, 1.f));
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickUp, LS.y > stickDeadZone, Math_Clamp(LS.y, 0.f, 1.f));
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickDown, LS.y < -stickDeadZone, Math_Clamp(LS.y, -1.f, 0.f) * -1.f);
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickLeft, RS.x < -stickDeadZone, Math_Clamp(RS.x, -1.f, 0.f) * -1.f);
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickRight, RS.x > stickDeadZone, Math_Clamp(RS.x, 0.f, 1.f));
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickUp, RS.y > stickDeadZone, Math_Clamp(RS.y, 0.f, 1.f));
+				io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickDown, RS.y < -stickDeadZone, Math_Clamp(RS.y, -1.f, 0.f) * -1.f);
+			}
+			else {
+				io.BackendFlags &= ~ImGuiBackendFlags_HasGamepad;
+			}
 		}
 	}
 
@@ -233,7 +353,7 @@ void GUI::Update()
 			SDL_ShowCursor(SDL_ENABLE);
 		}
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
-		ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoDocking);
+		ImGui::Begin("Console");
 		{
 			bool isLogOutputFocused = false;
 			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 13.f), true);

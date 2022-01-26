@@ -600,8 +600,7 @@ public:
 	static void Terminate();
 
 private:
-	// For GUI
-	static const STL::List<Keys>& GetCurrentKeyboardKeys() { return ms_keyboardKeys; }
+	static const STL::List<Keys>& GetCurrentKeyboardKeys() { return ms_keyboardKeys; } // Added for GUI, this won't be affected when Keyboard UpdateNull)
 
 	static void Shutdown();
 	static void Update();
