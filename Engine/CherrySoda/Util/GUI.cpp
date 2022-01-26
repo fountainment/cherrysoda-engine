@@ -81,7 +81,7 @@ void GUI::Initialize()
 	io.KeyMap[ImGuiKey_Space] = (int)Keys::Space;
 	io.KeyMap[ImGuiKey_Enter] = (int)Keys::Enter;
 	io.KeyMap[ImGuiKey_Escape] = (int)Keys::Escape;
-	io.KeyMap[ImGuiKey_KeyPadEnter] = (int)Keys::Enter;
+	io.KeyMap[ImGuiKey_KeypadEnter] = (int)Keys::Enter;
 	io.KeyMap[ImGuiKey_A] = (int)Keys::A;
 	io.KeyMap[ImGuiKey_C] = (int)Keys::C;
 	io.KeyMap[ImGuiKey_V] = (int)Keys::V;
