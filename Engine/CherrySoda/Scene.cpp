@@ -92,7 +92,7 @@ void Scene::AfterUpdate()
 		for (auto func : m_onEndOfFrame) {
 			func();
 		}
-		m_onEndOfFrame.clear();
+		STL::Clear(m_onEndOfFrame);
 	}
 }
 
