@@ -5,5 +5,6 @@ if(NOT EMSCRIPTEN)
   cherrysoda_set_targets_folder("crunch" Tools/crunch)
 endif()
 
+set(CHERRYSODA_EXECUTABLE_FOLDER Tools)
 add_subdirectory(sfxr_port)
-cherrysoda_set_targets_folder("sfxr_port" Tools)
+add_subdirectory(ParticleEditor)
