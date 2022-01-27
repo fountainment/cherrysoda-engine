@@ -8,6 +8,21 @@ using namespace cherrysoda;
 
 static ParticleType* s_particleType;
 static ParticleEmitter* s_particleEmitter;
+static Camera* s_camera;
+
+class OriginGraphicsCompoent : public GraphicsComponent
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(OriginGraphicsCompoent, GraphicsComponent);
+
+	OriginGraphicsCompoent() : base(false) {}
+
+	void Render() override
+	{
+		Draw::Line(Math::Vec2(RenderPosition()), Math::Vec2(RenderPosition()) + Math::Vec2(0.f, 10.f));
+		Draw::Line(Math::Vec2(RenderPosition()), Math::Vec2(RenderPosition()) + Math::Vec2(10.f, 0.f));
+	}
+};
 
 ParticleEditor::ParticleEditor()
 	: base(1280, 800, "Particle Editor (Work In Progress)")
@@ -19,9 +34,17 @@ void ParticleEditor::Update()
 {
 	base::Update();
 
-	ImGui::Begin("Particle Editor");
+	ImGui::Begin("Particle Editor", nullptr, ImGuiWindowFlags_MenuBar);
 	{
-		ImGui::BeginChild("Type", ImVec2(0.f, 645.f), true);
+		if (ImGui::BeginMenuBar()) {
+			if (ImGui::BeginMenu("File")) {
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+
+		ImGui::BeginChild("Type", ImVec2(0.f, 638.f), true);
 		ImGui::Text("Colors:");
 		ImGui::Indent();
 		{
@@ -72,8 +95,8 @@ void ParticleEditor::Update()
 		ImGui::Text("Size:");
 		ImGui::Indent();
 		{
-			ImGui::SliderFloat("Size", &s_particleType->m_size, 0.f, 5.f);
-			ImGui::SliderFloat("Range##Size", &s_particleType->m_sizeRange, 0.f, 5.f);
+			ImGui::DragFloat("Size", &s_particleType->m_size, 0.1f, 0.f, 10.f);
+			ImGui::SliderFloat("Range##Size", &s_particleType->m_sizeRange, 0.f, 10.f);
 		}
 		ImGui::Unindent();
 		ImGui::Separator();
@@ -81,8 +104,8 @@ void ParticleEditor::Update()
 		ImGui::Text("Rotation:");
 		ImGui::Indent();
 		{
-			ImGui::SliderFloat("Spin Min", &s_particleType->m_spinMin, 0.f, Math::Pi2 * 100.f);
-			ImGui::SliderFloat("Spin Max", &s_particleType->m_spinMax, 0.f, Math::Pi2 * 100.f);
+			ImGui::SliderFloat("Spin Min", &s_particleType->m_spinMin, 0.f, Math::Pi2 * 5.f);
+			ImGui::SliderFloat("Spin Max", &s_particleType->m_spinMax, 0.f, Math::Pi2 * 5.f);
 			ImGui::Checkbox("Spin Flipped Chance", &s_particleType->m_spinFlippedChance);
 			static int s_rotationMode = 0;
 			ImGui::Combo("Rotation Mode", &s_rotationMode, "None\0Random\0SameAsDirection\0");	
@@ -123,6 +146,10 @@ void ParticleEditor::Update()
 
 	// ImGui::ShowDemoWindow();
 
+	if (MInput::Mouse()->CheckRightButton()) {
+		s_camera->MovePosition2D(-MInput::Mouse()->PositionDelta());
+	}
+
 	// Add global GUI or other global stuffs here
 }
 
@@ -138,6 +165,7 @@ void ParticleEditor::Initialize()
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 100.f));
 	camera->CenterOrigin();
+	s_camera = camera;
 
 	renderer->KeepCameraCenterOrigin(true);
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
@@ -154,6 +182,7 @@ void ParticleEditor::Initialize()
 	s_particleType->m_directionRange = Math::Pi2;
 	auto entity = new Entity();
 	s_particleEmitter = new ParticleEmitter(particleSystem, s_particleType, Vec2_Zero, Vec2_Zero, 500, 1.0f);
+	entity->Add(new OriginGraphicsCompoent);
 	entity->Add(s_particleEmitter);
 
 	scene->Add(entity);
