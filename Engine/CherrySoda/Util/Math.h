@@ -43,8 +43,8 @@
 	inline void NAME(const cherrysoda::Math::Vec2& v) { NAME(cherrysoda::Math::Vec3(v, NAME().z)); } \
 	inline void NAME##2D(const cherrysoda::Math::Vec2& v) { NAME(cherrysoda::Math::Vec3(v, NAME().z)); } \
 	inline void Move##NAME(const cherrysoda::Math::Vec3& v) { NAME(VALUE + v); } \
-	inline void Move##NAME(const cherrysoda::Math::Vec2& v) { NAME(VALUE + cherrysoda::Math::Vec3(v, VALUE.z)); } \
-	inline void Move##NAME##2D(const cherrysoda::Math::Vec2& v) { NAME(VALUE + cherrysoda::Math::Vec3(v, VALUE.z)); } \
+	inline void Move##NAME(const cherrysoda::Math::Vec2& v) { NAME(VALUE + cherrysoda::Math::Vec3(v, 0.f)); } \
+	inline void Move##NAME##2D(const cherrysoda::Math::Vec2& v) { NAME(VALUE + cherrysoda::Math::Vec3(v, 0.f)); } \
 	inline void Move##NAME##X(float x) { NAME##X(VALUE.x + x); } \
 	inline void Move##NAME##Y(float y) { NAME##Y(VALUE.y + y); } \
 	inline void Move##NAME##Z(float z) { NAME##Z(VALUE.z + z); } \
