@@ -5,6 +5,7 @@
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Particles/ParticleSystem.h>
 #include <CherrySoda/Particles/ParticleType.h>
+#include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
 
@@ -12,6 +13,10 @@ class ParticleEmitter : public Component
 {
 public:
 	CHERRYSODA_DECLARE_COMPONENT(ParticleEmitter, Component);
+
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, Interval, m_interval);
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(int, Amount, m_amount);
+	CHERRYSODA_GETTER_SETTER_OF_VEC2(PositionRange, m_range);
 
 	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, int amount, float interval);
 	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, float direction, int amount, float interval);

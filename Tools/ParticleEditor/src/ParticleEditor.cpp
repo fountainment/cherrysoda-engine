@@ -34,8 +34,12 @@ void ParticleEditor::Update()
 {
 	base::Update();
 
-	ImGui::Begin("Particle Editor", nullptr, ImGuiWindowFlags_MenuBar);
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings;
+	ImGui::Begin("Particle Editor", nullptr, windowFlags);
 	{
+		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
+		ImGui::SetWindowSize(ImVec2(410.f, 800.f));
+
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
 				ImGui::EndMenu();
@@ -43,14 +47,13 @@ void ParticleEditor::Update()
 			ImGui::EndMenuBar();
 		}
 
-
-		ImGui::BeginChild("Type", ImVec2(0.f, 638.f), true);
+		ImGui::BeginChild("Type", ImVec2(0.f, 640.f), true);
 		ImGui::Text("Colors:");
 		ImGui::Indent();
 		{
-			ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&s_particleType->m_color));
-			ImGui::ColorEdit4("Color2", reinterpret_cast<float*>(&s_particleType->m_color2));
-			static int s_colorMode = 0;
+			ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&s_particleType->m_color), ImGuiColorEditFlags_AlphaPreview);
+			ImGui::ColorEdit4("Color2", reinterpret_cast<float*>(&s_particleType->m_color2), ImGuiColorEditFlags_AlphaPreview);
+			static int s_colorMode = static_cast<int>(s_particleType->m_colorMode);
 			if (ImGui::Combo("Color Mode", &s_colorMode, "Static\0Choose\0Blink\0Fade\0")) {
 				s_particleType->m_colorMode = static_cast<ParticleType::ColorModes>(s_colorMode);
 			}
@@ -96,7 +99,7 @@ void ParticleEditor::Update()
 		ImGui::Indent();
 		{
 			ImGui::DragFloat("Size", &s_particleType->m_size, 0.1f, 0.f, 10.f);
-			ImGui::SliderFloat("Range##Size", &s_particleType->m_sizeRange, 0.f, 10.f);
+			ImGui::DragFloat("Range##Size", &s_particleType->m_sizeRange, 0.1f, 0.f, 10.f);
 		}
 		ImGui::Unindent();
 		ImGui::Separator();
@@ -107,7 +110,7 @@ void ParticleEditor::Update()
 			ImGui::SliderFloat("Spin Min", &s_particleType->m_spinMin, 0.f, Math::Pi2 * 5.f);
 			ImGui::SliderFloat("Spin Max", &s_particleType->m_spinMax, 0.f, Math::Pi2 * 5.f);
 			ImGui::Checkbox("Spin Flipped Chance", &s_particleType->m_spinFlippedChance);
-			static int s_rotationMode = 0;
+			static int s_rotationMode = static_cast<int>(s_particleType->m_rotationMode);
 			ImGui::Combo("Rotation Mode", &s_rotationMode, "None\0Random\0SameAsDirection\0");	
 			s_particleType->m_rotationMode = static_cast<ParticleType::RotationModes>(s_rotationMode);
 		}
@@ -128,36 +131,32 @@ void ParticleEditor::Update()
 		ImGui::Text("Emitter Parameters:");
 		ImGui::Indent();
 		{
-			static float s_interval = 0.5f;
-			static int s_amount = 500;
-			static Math::Vec2 s_positionRange = Vec2_Zero;
-			if (ImGui::SliderFloat("Interval", &s_interval, 0.016f, 5.f)) {
+			static float s_interval = s_particleEmitter->Interval();
+			static int s_amount = s_particleEmitter->Amount();
+			static Math::Vec2 s_positionRange = s_particleEmitter->PositionRange();
+			if (ImGui::SliderFloat("Interval", &s_interval, 1.f / 60.f, 5.f)) {
+				s_particleEmitter->Interval(s_interval);
 			}
-			if (ImGui::SliderInt("Amount", &s_amount, 1, 1000)) {
-
+			if (ImGui::DragInt("Amount", &s_amount, 1, 1, 1000)) {
+				s_particleEmitter->Amount(s_amount);
 			}
-			if (ImGui::SliderFloat2("Position Range", &s_positionRange.x, -100.f, 100.f)) {
-
+			if (ImGui::DragFloat2("Position Range", &s_positionRange.x, 0.1f, 0.f, 100.f)) {
+				s_particleEmitter->PositionRange(s_positionRange);
 			}
 		}
 		ImGui::EndChild();
 	}
 	ImGui::End();
 
-	// ImGui::ShowDemoWindow();
-
 	if (MInput::Mouse()->CheckRightButton()) {
 		s_camera->MovePosition2D(-MInput::Mouse()->PositionDelta());
 	}
-
-	// Add global GUI or other global stuffs here
 }
 
 void ParticleEditor::Initialize()
 {
 	base::Initialize();
 
-	// Initialize and set scene here
 	auto scene = new Scene();
 	auto renderer = new EverythingRenderer();
 
@@ -175,13 +174,13 @@ void ParticleEditor::Initialize()
 	s_particleType = new ParticleType();
 	scene->Add(particleSystem);
 
-	s_particleType->m_speedMin = 10.f;
+	s_particleType->m_speedMin = 0.f;
 	s_particleType->m_speedMax = 100.f;
-	s_particleType->m_lifeMin = 0.5f;
+	s_particleType->m_lifeMin = 0.f;
 	s_particleType->m_lifeMax = 1.f;
 	s_particleType->m_directionRange = Math::Pi2;
 	auto entity = new Entity();
-	s_particleEmitter = new ParticleEmitter(particleSystem, s_particleType, Vec2_Zero, Vec2_Zero, 500, 1.0f);
+	s_particleEmitter = new ParticleEmitter(particleSystem, s_particleType, Vec2_Zero, Vec2_Zero, 100, 1.0f);
 	entity->Add(new OriginGraphicsCompoent);
 	entity->Add(s_particleEmitter);
 
@@ -193,7 +192,5 @@ void ParticleEditor::Initialize()
 void ParticleEditor::LoadContent()
 {
 	base::LoadContent();
-
-	// Load textures, sprites, shaders and other resources here
 }
 
