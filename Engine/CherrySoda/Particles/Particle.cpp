@@ -41,12 +41,10 @@ void Particle::Update(float dt)
 
 	// spin
 	if (m_type->m_rotationMode == ParticleType::RotationModes::SameAsDirection) {
-		if (m_speed != Vec2_Zero) {
-			m_rotation = Calc::Angle(m_speed);
-		}
-		else {
-			m_rotation += m_spin * dt;
-		}
+		if (m_speed != Vec2_Zero) m_rotation = Calc::Angle(m_speed);
+	}
+	else {
+		m_rotation += m_spin * dt;
 	}
 
 	// fade
