@@ -34,20 +34,17 @@ void ParticleEditor::Update()
 {
 	base::Update();
 
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags windowFlags = 0 |
+	                               ImGuiWindowFlags_NoResize |
+	                               ImGuiWindowFlags_NoMove |
+	                               ImGuiWindowFlags_NoSavedSettings |
+	                               ImGuiWindowFlags_NoDocking;
 	ImGui::Begin("Particle Editor", nullptr, windowFlags);
 	{
 		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
-		ImGui::SetWindowSize(ImVec2(410.f, 800.f));
+		ImGui::SetWindowSize(ImVec2(375.f, Engine::Instance()->GetWindowHeight()));
 
-		if (ImGui::BeginMenuBar()) {
-			if (ImGui::BeginMenu("File")) {
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-
-		ImGui::BeginChild("Type", ImVec2(0.f, 640.f), true);
+		ImGui::BeginChild("Type", ImVec2(0.f, 635.f), true);
 		ImGui::Text("Colors:");
 		ImGui::Indent();
 		{
