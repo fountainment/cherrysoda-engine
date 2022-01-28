@@ -215,8 +215,11 @@ static void ImGuiStyleCherrySoda(ImGuiStyle *dst)
 	colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
+	style->WindowPadding = ImVec2(6.f, 6.f);
 	style->ItemSpacing = ImVec2(4.f, 3.f);
 	style->IndentSpacing = 9.f;
+	style->ScrollbarSize = 12.f;
+
 	style->WindowRounding = 5.f;
 	style->ChildRounding = 3.f;
 	style->FrameRounding = 3.f;

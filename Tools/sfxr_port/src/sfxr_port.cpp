@@ -9,7 +9,7 @@ using sfxr_port::Sfxr_port;
 using namespace cherrysoda;
 
 Sfxr_port::Sfxr_port()
-	: base(1180, 740, 1180, 740, "sfxr_port", false)
+	: base(1280, 800, "sfxr_port")
 {
 	SetTitle("sfxr_port");
 	SetClearColor(Color::Black);

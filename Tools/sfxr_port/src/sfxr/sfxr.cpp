@@ -657,7 +657,7 @@ void DrawScreen()
 		
 		ImGui::BeginGroup();
 		{
-			ImGui::BeginChild("Generator", ImVec2(200.f, 0), true);
+			ImGui::BeginChild("Generator", ImVec2(182.f, 0), true);
 			{
 				ImGui::TextUnformatted(LANGS(u8"生成器", "Generator"));
 				// PickUp/Coin
@@ -944,7 +944,7 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Manual Settings", ImVec2(0, 0), true);
 			{
-				ImGui::TextUnformatted(LANGS(u8"手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 40.f);
+				ImGui::TextUnformatted(LANGS(u8"手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 38.f);
 				const char* lang[] = { "En", u8"中" };
 				if (ImGui::Button(lang[lang_i])) {
 					if (lang_i == 0) {
