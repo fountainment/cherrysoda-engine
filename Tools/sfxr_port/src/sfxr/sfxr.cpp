@@ -855,7 +855,7 @@ void DrawScreen()
 
 				// Volume
 				ImGui::Text(LANGS(u8"音量", "Volume"));
-				if (ImGui::SliderFloat("", &sound_vol, 0.f, 1.f)) {
+				if (ImGui::SliderFloat("##volume", &sound_vol, 0.f, 1.f)) {
 					PlaySample();
 				}
 				// Play Sound
@@ -925,7 +925,7 @@ void DrawScreen()
 				}
 
 				if (ImGui::BeginPopupModal(unserialize_str, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-					ImGui::InputText("", unserialize_input, 512, ImGuiInputTextFlags_CharsNoBlank);
+					ImGui::InputText("##unserialze_str", unserialize_input, 512, ImGuiInputTextFlags_CharsNoBlank);
 					ImGui::Spacing();
 					if (ImGui::Button(ok_str, ImVec2(120.f, 0.f))) {
 						UnserializeSetting(unserialize_input);

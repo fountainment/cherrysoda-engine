@@ -429,7 +429,7 @@ void GUI::Update()
 		ImGui::Begin("Console");
 		{
 			bool isLogOutputFocused = false;
-			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 13.f), true);
+			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 10.f), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
 				for (auto c : Commands::ms_drawCommands) {
@@ -474,7 +474,7 @@ void GUI::Update()
 					return 0;
 				}
 			};
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() * 2.f - 26.f);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() * 2.f - 21.f);
 			const ImGuiInputTextFlags inputTextFlag = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
 			bool commandInput = ImGui::InputText("##Command", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), inputTextFlag, Funcs::InputTextCallback);
 			ImGui::PopItemWidth();
