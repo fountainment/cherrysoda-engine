@@ -645,7 +645,12 @@ void DrawScreen()
 	static int lang_i = 1;
 	#define LANGS(A,B) (lang_i?(B):(A))
 	bool do_play = false;
-	ImGui::Begin("sfxr", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar |
+	                         ImGuiWindowFlags_NoResize |
+	                         ImGuiWindowFlags_NoMove |
+	                         ImGuiWindowFlags_NoSavedSettings |
+	                         ImGuiWindowFlags_NoDocking;
+	ImGui::Begin("sfxr", nullptr, windowFlags);
 	{
 		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
 		ImGui::SetWindowSize(ImVec2(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight()));
