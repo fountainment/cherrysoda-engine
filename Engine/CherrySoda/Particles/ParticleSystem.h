@@ -49,6 +49,16 @@ public:
 		}
 	}
 
+	// For particle editor
+	int ActiveAmount()
+	{
+		int amount = 0;
+		for (auto& particle : m_particles) {
+			if (particle.m_active) amount++;
+		}
+		return amount;
+	}
+
 	void Emit(const ParticleType* type, const Math::Vec2& position)
 	{
 		type->Create(&m_particles[m_nextSlot], position);

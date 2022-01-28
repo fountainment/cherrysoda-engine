@@ -6,9 +6,10 @@ using particleeditor::ParticleEditor;
 
 using namespace cherrysoda;
 
-static ParticleType* s_particleType;
-static ParticleEmitter* s_particleEmitter;
-static Camera* s_camera;
+static ParticleSystem* s_particleSystem = nullptr;
+static ParticleType* s_particleType = nullptr;
+static ParticleEmitter* s_particleEmitter = nullptr;
+static Camera* s_camera = nullptr;
 
 class OriginGraphicsCompoent : public GraphicsComponent
 {
@@ -38,13 +39,53 @@ void ParticleEditor::Update()
 	                               ImGuiWindowFlags_NoResize |
 	                               ImGuiWindowFlags_NoMove |
 	                               ImGuiWindowFlags_NoSavedSettings |
-	                               ImGuiWindowFlags_NoDocking;
+	                               ImGuiWindowFlags_NoDocking |
+	                               ImGuiWindowFlags_MenuBar;
 	ImGui::Begin("Particle Editor", nullptr, windowFlags);
 	{
 		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
 		ImGui::SetWindowSize(ImVec2(375.f, Engine::Instance()->GetWindowHeight()));
 
-		ImGui::BeginChild("Type", ImVec2(0.f, 635.f), true);
+		if (ImGui::BeginMenuBar()) {
+			if (ImGui::BeginMenu("File")) {
+				// TODO: Add save and load option
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::BeginChild("Emitter", ImVec2(0.f, 115.f), true);
+		ImGui::Text("Emitter Parameters:");
+		ImGui::Indent();
+		{
+			static float s_interval = s_particleEmitter->Interval();
+			static int s_amount = s_particleEmitter->Amount();
+			static Math::Vec2 s_positionRange = s_particleEmitter->PositionRange();
+			if (ImGui::SliderFloat("Interval", &s_interval, 1.f / 60.f, 5.f)) {
+				s_particleEmitter->Interval(s_interval);
+			}
+			if (ImGui::DragInt("Amount", &s_amount, 1, 1, 1000)) {
+				s_particleEmitter->Amount(s_amount);
+			}
+			if (ImGui::DragFloat2("Position Range", &s_positionRange.x, 0.1f, 0.f, 100.f)) {
+				s_particleEmitter->PositionRange(s_positionRange);
+			}
+		}
+		int activeAmount = s_particleSystem->ActiveAmount();
+		ImGui::PushItemWidth(160.f);
+		ImGui::LabelText("##ActiveAmount", "Amount:%4d", activeAmount); ImGui::SameLine();
+		ImGui::PopItemWidth();
+		static int s_maxActiveAmount = activeAmount;
+		s_maxActiveAmount = Math_Max(s_maxActiveAmount, activeAmount);
+		ImGui::PushItemWidth(70.f);
+		ImGui::LabelText("##MaxActiveAmount", "Max:%4d", s_maxActiveAmount); ImGui::SameLine();
+		ImGui::PopItemWidth();
+		if (ImGui::Button("Clear Max")) {
+			s_maxActiveAmount = 0;
+		}
+		ImGui::EndChild();
+
+				ImGui::BeginChild("Type", ImVec2(0.f, 0.f), true);
 		ImGui::Text("Colors:");
 		ImGui::Indent();
 		{
@@ -121,26 +162,6 @@ void ParticleEditor::Update()
 			ImGui::Checkbox("Use Actual Delta Time", &s_particleType->m_useActualDeltaTime);
 		}
 		ImGui::Unindent();
-
-		ImGui::EndChild();
-
-		ImGui::BeginChild("Emitter", ImVec2(0.f, 0.f), true);
-		ImGui::Text("Emitter Parameters:");
-		ImGui::Indent();
-		{
-			static float s_interval = s_particleEmitter->Interval();
-			static int s_amount = s_particleEmitter->Amount();
-			static Math::Vec2 s_positionRange = s_particleEmitter->PositionRange();
-			if (ImGui::SliderFloat("Interval", &s_interval, 1.f / 60.f, 5.f)) {
-				s_particleEmitter->Interval(s_interval);
-			}
-			if (ImGui::DragInt("Amount", &s_amount, 1, 1, 1000)) {
-				s_particleEmitter->Amount(s_amount);
-			}
-			if (ImGui::DragFloat2("Position Range", &s_positionRange.x, 0.1f, 0.f, 100.f)) {
-				s_particleEmitter->PositionRange(s_positionRange);
-			}
-		}
 		ImGui::EndChild();
 	}
 	ImGui::End();
@@ -167,9 +188,9 @@ void ParticleEditor::Initialize()
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	scene->Add(renderer);
 
-	auto particleSystem = new ParticleSystem(-1, 1000);
+	s_particleSystem = new ParticleSystem(-1, 1000);
 	s_particleType = new ParticleType();
-	scene->Add(particleSystem);
+	scene->Add(s_particleSystem);
 
 	s_particleType->m_speedMin = 0.f;
 	s_particleType->m_speedMax = 100.f;
@@ -177,7 +198,7 @@ void ParticleEditor::Initialize()
 	s_particleType->m_lifeMax = 1.f;
 	s_particleType->m_directionRange = Math::Pi2;
 	auto entity = new Entity();
-	s_particleEmitter = new ParticleEmitter(particleSystem, s_particleType, Vec2_Zero, Vec2_Zero, 100, 1.0f);
+	s_particleEmitter = new ParticleEmitter(s_particleSystem, s_particleType, Vec2_Zero, Vec2_Zero, 100, 1.0f);
 	entity->Add(new OriginGraphicsCompoent);
 	entity->Add(s_particleEmitter);
 
