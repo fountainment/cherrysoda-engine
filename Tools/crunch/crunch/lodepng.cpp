@@ -3952,6 +3952,14 @@ static unsigned auto_choose_color(LodePNGColorMode* mode_out,
     }
   }
 
+  // CHERRYSODA_TODO: Fix grey and grey alpha texture rendering and remove this temporary fix
+  if (mode_out->colortype == LCT_GREY) {
+    mode_out->colortype = LCT_RGB;
+  }
+  if (mode_out->colortype == LCT_GREY_ALPHA) {
+    mode_out->colortype = LCT_RGBA;
+  }
+
   return error;
 }
 
