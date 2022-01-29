@@ -25,7 +25,7 @@ def create_project(path, name):
                     ['cherrysodatemplate', processed_name.lower()],
                     ['CHERRYSODATEMPLATE', processed_name.upper()]]
     for f in file_list:
-        if cherry.get_file_extention(f) in ('.cpp', '.h', '.txt'):
+        if cherry.get_file_extention(f) in ('.cpp', '.h', '.txt', '.py'):
             cherry.replace_file_str(f, replace_list)
         cherry.replace_file_name(f, replace_list)
     cherry.append_str_to_file('add_subdirectory(%s)\n' % (name,), 'CMakeLists.txt')
