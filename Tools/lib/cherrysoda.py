@@ -287,8 +287,8 @@ def run(target_name, folder='build', build_type='Release'):
     folder_list = get_folder_list_of_path(path)
     for folder in folder_list:
         if os.path.basename(folder) == target_name:
-            target_prefix = './'
+            target_path = join_path(folder, target_name)
             if is_windows_system():
-                target_prefix += build_type + '/'
-            execute_command([target_prefix + target_name], working_dir=folder)
+                target_path = join_path(folder, build_type, target_name + executable_suffix)
+            execute_command([target_path], working_dir=folder, show_command=True)
             break

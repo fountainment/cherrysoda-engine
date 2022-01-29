@@ -4,5 +4,4 @@
 import cherrysoda
 
 
-cherrysoda.update_assets()
 cherrysoda.run('CherrySodaOriginal')
