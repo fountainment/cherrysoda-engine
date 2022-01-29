@@ -26,7 +26,7 @@ public:
 };
 
 ParticleEditor::ParticleEditor()
-	: base(1280, 800, "Particle Editor (Work In Progress)")
+	: base(1280, 800, "Particle Editor (Work In Progress) - CherrySoda Engine")
 {
 	SetClearColor(Color::Black);
 }
@@ -67,7 +67,7 @@ void ParticleEditor::Update()
 			if (ImGui::DragInt("Amount", &s_amount, 1, 1, 1000)) {
 				s_particleEmitter->Amount(s_amount);
 			}
-			if (ImGui::DragFloat2("Position Range", &s_positionRange.x, 0.1f, 0.f, 100.f)) {
+			if (ImGui::DragFloat2("Position Range", &s_positionRange.x, 1.0f, 0.f, 1000.f)) {
 				s_particleEmitter->PositionRange(s_positionRange);
 			}
 		}
