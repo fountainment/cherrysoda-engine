@@ -3913,6 +3913,10 @@ static unsigned auto_choose_color(LodePNGColorMode* mode_out,
 
   gray_ok = !stats->colored;
   if(!stats->allow_greyscale) gray_ok = 0;
+
+  // CHERRYSODA_TODO: Fix grey and grey alpha texture rendering and remove this temporary fix
+  gray_ok = 0;
+
   if(!gray_ok && bits < 8) bits = 8;
 
   n = stats->numcolors;
@@ -3950,14 +3954,6 @@ static unsigned auto_choose_color(LodePNGColorMode* mode_out,
       mode_out->key_b = stats->key_b & mask;
       mode_out->key_defined = 1;
     }
-  }
-
-  // CHERRYSODA_TODO: Fix grey and grey alpha texture rendering and remove this temporary fix
-  if (mode_out->colortype == LCT_GREY) {
-    mode_out->colortype = LCT_RGB;
-  }
-  if (mode_out->colortype == LCT_GREY_ALPHA) {
-    mode_out->colortype = LCT_RGBA;
   }
 
   return error;
