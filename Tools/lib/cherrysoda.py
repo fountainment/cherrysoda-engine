@@ -151,6 +151,16 @@ def get_file_list_of_path(path):
     return file_list
 
 
+def get_folder_list_of_path(path):
+    walkList = os.walk(path)
+    folder_list = []
+    for i in walkList:
+        root, dirs, files = i
+        for d in dirs:
+            folder_list.append(os.path.join(root, d))
+    return folder_list
+
+
 def copy(src, dest):
     src_list = get_file_list_from_wildcard(src)
     for source in src_list:
@@ -260,11 +270,25 @@ def pack_atlas(path=None, verbose=False, args='-j -p -u -t -s2048 -p8'):
     execute_command(crunch_command, working_dir=path)
 
 
-def update_assets(path=join_path(project_path, 'build', '')):
+def update_assets(folder='build'):
+    path = join_path(project_path, folder, '')
     make_sure_folder_exist(path)
     execute_command(['cmake', project_path], working_dir=path)
 
 
-def build(path=join_path(project_path, 'build', ''), build_type='Release'):
+def build(folder='build', build_type='Release'):
+    path = join_path(project_path, folder, '')
     make_sure_folder_exist(path)
     execute_command(['cmake', '--build', '.', '--config', build_type], working_dir=path)
+
+
+def run(target_name, folder='build', build_type='Release'):
+    path = join_path(project_path, folder, '')
+    folder_list = get_folder_list_of_path(path)
+    for folder in folder_list:
+        if os.path.basename(folder) == target_name:
+            target_prefix = './'
+            if is_windows_system():
+                target_prefix += build_type + '/'
+            execute_command([target_prefix + target_name], working_dir=folder)
+            break
