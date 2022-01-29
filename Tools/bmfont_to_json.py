@@ -49,9 +49,9 @@ def main():
                     continue
                 if value.find(',') != -1:
                     value = '[' + value + ']'
-                cur_str += '"%s":%s, ' % (key, value)
-        if cur_str[-2:] == ', ':
-            cur_str = cur_str[:-2]
+                cur_str += '"%s":%s,' % (key, value)
+        if cur_str[-1:] == ',':
+            cur_str = cur_str[:-1]
         cur_str += '},'
         if data:
             if data[0] == 'page':
