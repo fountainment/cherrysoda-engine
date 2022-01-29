@@ -230,7 +230,7 @@ def get_aseprite_location():
     return 'aseprite'
 
 
-def pack_atlas(path=None, verbose=False):
+def pack_atlas(path=None, verbose=False, args='-j -p -u -t -s2048 -p8'):
     aseprite = get_aseprite_location()
     aseprite_folder = join_path(path, 'aseprites')
     if exists(aseprite_folder):
@@ -252,9 +252,9 @@ def pack_atlas(path=None, verbose=False):
     crunch_command = [
             crunch,
             'assets/atlases/atlas',
-            'textures/',
-            '-j', '-p', '-u', '-t', '-s2048', '-p8'
+            'textures/'
         ]
+    crunch_command += args.split(' ')
     if verbose:
         crunch_command.append('-v')
     execute_command(crunch_command, working_dir=path)
