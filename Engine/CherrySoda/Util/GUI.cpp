@@ -556,6 +556,7 @@ void GUI::BuildFontTexture()
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* data;
 	int width, height;
+	io.Fonts->ClearTexData();
 	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
 	ms_fontTexture.Dispose();
 	ms_fontTexture = Texture2D::FromRGBA(data, width, height);
