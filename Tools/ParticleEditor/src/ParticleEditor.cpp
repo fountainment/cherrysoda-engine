@@ -28,31 +28,44 @@ public:
 ParticleEditor::ParticleEditor()
 	: base(1280, 800, "Particle Editor (Work In Progress) - CherrySoda Engine")
 {
-	SetClearColor(Color::Black);
+	SetClearColor(Color("#606060"));
 }
 
 void ParticleEditor::Update()
 {
 	base::Update();
 
+	float menuHeight = 0.f;
+	static Color s_backgroundColor = GetClearColor();
+
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Options")) {
+			if (ImGui::BeginMenu("Background Color")) {
+				if (ImGui::ColorPicker3("Color", reinterpret_cast<float*>(&s_backgroundColor))) {
+					SetClearColor(s_backgroundColor);
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		menuHeight = ImGui::GetWindowSize().y;
+		ImGui::EndMainMenuBar();
+	}
+
 	ImGuiWindowFlags windowFlags = 0 |
 	                               ImGuiWindowFlags_NoResize |
 	                               ImGuiWindowFlags_NoMove |
 	                               ImGuiWindowFlags_NoSavedSettings |
 	                               ImGuiWindowFlags_NoDocking |
-	                               ImGuiWindowFlags_MenuBar;
+	                               ImGuiWindowFlags_NoTitleBar;
+
 	ImGui::Begin("Particle Editor", nullptr, windowFlags);
 	{
-		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
-		ImGui::SetWindowSize(ImVec2(375.f, Engine::Instance()->GetWindowHeight()));
-
-		if (ImGui::BeginMenuBar()) {
-			if (ImGui::BeginMenu("File")) {
-				// TODO: Add save and load option
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
+		ImGui::SetWindowPos(ImVec2(GetWindowWidth() - 375.f, menuHeight));
+		ImGui::SetWindowSize(ImVec2(375.f, GetWindowHeight() - menuHeight));
 
 		ImGui::BeginChild("Emitter", ImVec2(0.f, 115.f), true);
 		ImGui::Text("Emitter Parameters:");
@@ -85,7 +98,7 @@ void ParticleEditor::Update()
 		}
 		ImGui::EndChild();
 
-				ImGui::BeginChild("Type", ImVec2(0.f, 0.f), true);
+		ImGui::BeginChild("Type", ImVec2(0.f, 0.f), true);
 		ImGui::Text("Colors:");
 		ImGui::Indent();
 		{
@@ -149,7 +162,7 @@ void ParticleEditor::Update()
 			ImGui::SliderFloat("Spin Max", &s_particleType->m_spinMax, 0.f, Math::Pi2 * 5.f);
 			ImGui::Checkbox("Spin Flipped Chance", &s_particleType->m_spinFlippedChance);
 			static int s_rotationMode = static_cast<int>(s_particleType->m_rotationMode);
-			ImGui::Combo("Rotation Mode", &s_rotationMode, "None\0Random\0SameAsDirection\0");	
+			ImGui::Combo("Rotation Mode", &s_rotationMode, "None\0Random\0SameAsDirection\0");
 			s_particleType->m_rotationMode = static_cast<ParticleType::RotationModes>(s_rotationMode);
 		}
 		ImGui::Unindent();
