@@ -28,9 +28,108 @@ public:
 };
 
 ParticleEditor::ParticleEditor()
-	: base(1280, 800, "Particle Editor (Work In Progress) - CherrySoda Engine")
+	: base(1280, 800, "Particle Editor 0.1 - CherrySoda Engine")
 {
 	SetClearColor(Color("#606060"));
+}
+
+static String GetParticleCode()
+{
+	ParticleType defaultParticleType;
+	String result;
+	result += "{\n";
+	result += "\tauto particleSystem = new ParticleSystem(-1, 1000);\n";
+	result += "\tauto particleType = new ParticleType();\n";
+	if (s_particleType->m_color != defaultParticleType.m_color) {
+		result += StringUtil::Format("\tparticleType->m_color = Color(%.3ff,%.3ff,%.3ff,%.3ff);\n"
+			, s_particleType->m_color.R()
+			, s_particleType->m_color.G()
+			, s_particleType->m_color.B()
+			, s_particleType->m_color.A());
+	}
+	if (s_particleType->m_color2 != defaultParticleType.m_color2) {
+		result += StringUtil::Format("\tparticleType->m_color2 = Color(%.3ff,%.3ff,%.3ff,%.3ff);\n"
+			, s_particleType->m_color2.R()
+			, s_particleType->m_color2.G()
+			, s_particleType->m_color2.B()
+			, s_particleType->m_color2.A());
+	}
+	if (s_particleType->m_colorMode != defaultParticleType.m_colorMode) {
+		const char* colorModes[] = { "Static", "Choose", "Blink", "Fade" };
+		result += StringUtil::Format("\tparticleType->m_colorMode = ParticleType::ColorModes::%s;\n", colorModes[(int)s_particleType->m_colorMode]);
+	}
+	if (s_particleType->m_fadeMode != defaultParticleType.m_fadeMode) {
+		const char* fadeModes[] = { "None", "Linear", "Late", "InAndOut" };
+		result += StringUtil::Format("\tparticleType->m_fadeMode = ParticleType::FadeModes::%s;\n", fadeModes[(int)s_particleType->m_fadeMode]);
+	}
+	if (s_particleType->m_speedMin != defaultParticleType.m_speedMin) {
+		result += StringUtil::Format("\tparticleType->m_speedMin = %.3ff;\n", s_particleType->m_speedMin);
+	}
+	if (s_particleType->m_speedMax != defaultParticleType.m_speedMax) {
+		result += StringUtil::Format("\tparticleType->m_speedMax = %.3ff;\n", s_particleType->m_speedMax);
+	}
+	if (s_particleType->m_speedMultiplier != defaultParticleType.m_speedMultiplier) {
+		result += StringUtil::Format("\tparticleType->m_speedMultiplier = %.3ff;\n", s_particleType->m_speedMultiplier);
+	}
+	if (s_particleType->m_acceleration != defaultParticleType.m_acceleration) {
+		result += StringUtil::Format("\tparticleType->m_acceleration = Math::Vec2(%.3ff,%.3ff);\n", s_particleType->m_acceleration.x, s_particleType->m_acceleration.y);
+	}
+	if (s_particleType->m_friction != defaultParticleType.m_friction) {
+		result += StringUtil::Format("\tparticleType->m_friction = %.3ff;\n", s_particleType->m_friction);
+	}
+	if (s_particleType->m_direction != defaultParticleType.m_direction) {
+		result += StringUtil::Format("\tparticleType->m_direction = %.3ff;\n", s_particleType->m_direction);
+	}
+	if (s_particleType->m_directionRange != defaultParticleType.m_directionRange) {
+		result += StringUtil::Format("\tparticleType->m_directionRange = %.3ff;\n", s_particleType->m_directionRange);
+	}
+	if (s_particleType->m_lifeMin != defaultParticleType.m_lifeMin) {
+		result += StringUtil::Format("\tparticleType->m_lifeMin = %.3ff;\n", s_particleType->m_lifeMin);
+	}
+	if (s_particleType->m_lifeMax != defaultParticleType.m_lifeMax) {
+		result += StringUtil::Format("\tparticleType->m_lifeMax = %.3ff;\n", s_particleType->m_lifeMax);
+	}
+	if (s_particleType->m_size != defaultParticleType.m_size) {
+		result += StringUtil::Format("\tparticleType->m_size = %.3ff;\n", s_particleType->m_size);
+	}
+	if (s_particleType->m_sizeRange != defaultParticleType.m_sizeRange) {
+		result += StringUtil::Format("\tparticleType->m_sizeRange = %.3ff;\n", s_particleType->m_sizeRange);
+	}
+	if (s_particleType->m_spinMin != defaultParticleType.m_spinMin) {
+		result += StringUtil::Format("\tparticleType->m_spinMin = %.3ff;\n", s_particleType->m_spinMin);
+	}
+	if (s_particleType->m_spinMax != defaultParticleType.m_spinMax) {
+		result += StringUtil::Format("\tparticleType->m_spinMax = %.3ff;\n", s_particleType->m_spinMax);
+	}
+	if (s_particleType->m_spinFlippedChance != defaultParticleType.m_spinFlippedChance) {
+		result += StringUtil::Format("\tparticleType->m_spinFlippedChance = %s;\n", s_particleType->m_spinFlippedChance ? "true" : "false");
+	}
+	if (s_particleType->m_rotationMode != defaultParticleType.m_rotationMode) {
+		const char* rotationModes[] = { "None", "Random", "SameAsDirection" };
+		result += StringUtil::Format("\tparticleType->m_rotationMode = ParticleType::RotationModes::%s;\n", rotationModes[(int)s_particleType->m_rotationMode]);
+	}
+	if (s_particleType->m_scaleOut != defaultParticleType.m_scaleOut) {
+		result += StringUtil::Format("\tparticleType->m_scaleOut = %s;\n", s_particleType->m_scaleOut ? "true" : "false");
+	}
+	if (s_particleType->m_useActualDeltaTime != defaultParticleType.m_useActualDeltaTime) {
+		result += StringUtil::Format("\tparticleType->m_useActualDeltaTime = %s;\n", s_particleType->m_useActualDeltaTime ? "true" : "false");
+	}
+	result += StringUtil::Format("\tauto particleEmitter = new ParticleEmitter(particleSystem, particleType, Vec2_Zero, Math::Vec2(%.3ff, %.3ff), %d, %.3ff);\n"
+		, s_particleEmitter->PositionRange().x
+		, s_particleEmitter->PositionRange().y
+		, s_particleEmitter->Amount()
+		, s_particleEmitter->Interval());
+	result += "\t// You need to add the particleSystem to the scene and\n";
+	result += "\t// add the particleEmitter to an entity in the scene.\n";
+	result += "}\n";
+	return result;
+}
+
+const String GetParticleJson()
+{
+	String result;
+	result = "Not Implemented Yet!\n";
+	return result;
 }
 
 void ParticleEditor::Update()
@@ -45,8 +144,9 @@ void ParticleEditor::Update()
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu(LANGS(u8"文件", "File"))) {
-			if (ImGui::Button(LANGS(u8"导出到剪贴板", "Export to Clipboard"))) {
-
+			if (ImGui::Button(LANGS(u8"导出代码到剪贴板", "Export Code to Clipboard"))) {
+				String result = GetParticleCode();
+				ImGui::SetClipboardText(result.c_str());
 			}
 			ImGui::EndMenu();
 		}
@@ -127,7 +227,7 @@ void ParticleEditor::Update()
 				s_particleType->m_colorMode = static_cast<ParticleType::ColorModes>(s_colorMode);
 			}
 			static int s_fadeMode = 0;
-			if (ImGui::Combo(LANGS(u8"褪色模式", "Fade Mode"), &s_fadeMode, LANGS(u8"无\0线性\0延迟\0缓动进出\0", "None\0Linear\0Late\0InAndOut\0"))) {
+			if (ImGui::Combo(LANGS(u8"褪色模式", "Fade Mode"), &s_fadeMode, LANGS(u8"无\0线性\0延迟\0进出\0", "None\0Linear\0Late\0InAndOut\0"))) {
 				s_particleType->m_fadeMode = static_cast<ParticleType::FadeModes>(s_fadeMode);
 			}
 		}
@@ -178,9 +278,9 @@ void ParticleEditor::Update()
 		{
 			ImGui::SliderFloat(LANGS(u8"最小旋转速度", "Spin Min"), &s_particleType->m_spinMin, 0.f, Math::Pi2 * 5.f);
 			ImGui::SliderFloat(LANGS(u8"最大旋转速度", "Spin Max"), &s_particleType->m_spinMax, 0.f, Math::Pi2 * 5.f);
-			ImGui::Checkbox(LANGS(u8"一定概率反向旋转", "Spin Flipped Chance"), &s_particleType->m_spinFlippedChance);
+			ImGui::Checkbox(LANGS(u8"一半概率反向旋转", "Spin Flipped Chance"), &s_particleType->m_spinFlippedChance);
 			static int s_rotationMode = static_cast<int>(s_particleType->m_rotationMode);
-			ImGui::Combo(LANGS(u8"转向模式", "Rotation Mode"), &s_rotationMode, LANGS(u8"无\0随机\0与运动方向相同\0", "None\0Random\0SameAsDirection\0"));
+			ImGui::Combo(LANGS(u8"转向模式", "Rotation Mode"), &s_rotationMode, LANGS(u8"无\0随机\0与运动方向保持一致\0", "None\0Random\0SameAsDirection\0"));
 			s_particleType->m_rotationMode = static_cast<ParticleType::RotationModes>(s_rotationMode);
 		}
 		ImGui::Unindent();

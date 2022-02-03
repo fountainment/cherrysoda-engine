@@ -93,6 +93,9 @@ public:
 	constexpr Color operator * (float scale) const { return Color(m_r * scale, m_g * scale, m_b * scale, m_a * scale); }
 	constexpr void operator *= (float scale) { *this = *this * scale; }
 
+	constexpr bool operator == (const Color& other) const { return (m_r == other.m_r) && (m_g == other.m_g) && (m_b == other.m_b) && (m_a == other.m_a); }
+	constexpr bool operator != (const Color& other) const { return (m_r != other.m_r) || (m_g != other.m_g) || (m_b != other.m_b) || (m_a != other.m_a); }
+
 	static constexpr Color Lerp(const Color& color1, const Color& color2, float ease)
 	{
 		return color1 + (color2 - color1) * ease;
