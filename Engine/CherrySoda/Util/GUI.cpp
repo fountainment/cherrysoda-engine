@@ -102,6 +102,7 @@ ImGuiKey CherrySodaKeyToImGuiKey(Keys key)
 		case Keys::RightShift: return ImGuiKey_RightShift;
 		case Keys::RightAlt: return ImGuiKey_RightAlt;
 		case Keys::RightSuper: return ImGuiKey_RightSuper;
+		case Keys::Apps: return ImGuiKey_Menu;
 		case Keys::D0: return ImGuiKey_0;
 		case Keys::D1: return ImGuiKey_1;
 		case Keys::D2: return ImGuiKey_2;
@@ -292,7 +293,6 @@ void GUI::Update()
 
 	ImGuiIO& io = ImGui::GetIO();
 
-
 	// Window size update
 	auto winSize = Engine::Instance()->GetWindowSize();	
 	io.DisplaySize.x = winSize.x;
@@ -319,18 +319,12 @@ void GUI::Update()
 			for (; it2 != keyboardKeys.end(); ++it2) {
 				io.AddKeyEvent(CherrySodaKeyToImGuiKey(*it2), true);
 			}
-			bool keyShift = false, keyCtrl = false, keyAlt = false, keySuper = false;
+
 			MInput::KeyboardState keyboard = MInput::GetKeyboardState();
-			keyCtrl  = keyboard.IsKeyDown(Keys::LeftControl) || keyboard.IsKeyDown(Keys::RightControl);
-			keyShift = keyboard.IsKeyDown(Keys::LeftShift)   || keyboard.IsKeyDown(Keys::RightShift);
-			keyAlt   = keyboard.IsKeyDown(Keys::LeftAlt)     || keyboard.IsKeyDown(Keys::RightAlt);
-			keySuper = keyboard.IsKeyDown(Keys::LeftSuper)   || keyboard.IsKeyDown(Keys::RightSuper);
-			ImGuiKeyModFlags keyMods =
-				(keyCtrl  ? ImGuiKeyModFlags_Ctrl  : 0) |
-				(keyShift ? ImGuiKeyModFlags_Shift : 0) |
-				(keyAlt   ? ImGuiKeyModFlags_Alt   : 0) |
-				(keySuper ? ImGuiKeyModFlags_Super : 0);
-			io.AddKeyModsEvent(keyMods);
+			io.AddKeyEvent(ImGuiKey_ModCtrl, keyboard.IsKeyDown(Keys::LeftControl) || keyboard.IsKeyDown(Keys::RightControl));
+			io.AddKeyEvent(ImGuiKey_ModShift, keyboard.IsKeyDown(Keys::LeftShift) || keyboard.IsKeyDown(Keys::RightShift));
+			io.AddKeyEvent(ImGuiKey_ModAlt, keyboard.IsKeyDown(Keys::LeftAlt) || keyboard.IsKeyDown(Keys::RightAlt));
+			io.AddKeyEvent(ImGuiKey_ModSuper, keyboard.IsKeyDown(Keys::LeftSuper) || keyboard.IsKeyDown(Keys::RightSuper));
 		}
 
 		s_previousKeyboardKeys = keyboardKeys;
