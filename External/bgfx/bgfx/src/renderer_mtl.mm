@@ -1,6 +1,6 @@
 /*
  * Copyright 2011-2016 Attila Kocsis. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "bgfx_p.h"
@@ -2916,7 +2916,7 @@ namespace bgfx { namespace mtl
 				temp = (uint8_t*)BX_ALLOC(g_allocator, ti.width*ti.height*4);
 			}
 
-			for (uint8_t side = 0; side < numSides; ++side)
+			for (uint16_t side = 0; side < numSides; ++side)
 			{
 				uint32_t width  = ti.width;
 				uint32_t height = ti.height;

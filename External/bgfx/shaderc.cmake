@@ -31,7 +31,7 @@ file(GLOB GLSLANG_SRC ${GLSLANG}/glslang/*/*.cpp
                       ${GLSLANG}/hlsl/*.h
                       ${GLSLANG}/SPIRV/*.cpp
                       ${GLSLANG}/SPIRV/*.h
-                      ${GLSLANG}/SPIRV//*/*.cpp
+                      ${GLSLANG}/SPIRV/*/*.cpp
                       ${GLSLANG}/SPIRV/*/*.h
                       ${GLSLANG}/OGLCompilersDLL/*.cpp
                       ${GLSLANG}/OGLCompilersDLL/*.h)
