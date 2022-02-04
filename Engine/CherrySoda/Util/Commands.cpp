@@ -108,7 +108,7 @@ void Commands::ExecuteCommand()
 	ms_commandHistoryIndex = -1;
 	ms_currentText[0] = '\0';
 	Log("cherrysoda # " + currentText);
-	ExecuteCommand(currentText);	
+	ExecuteCommand(currentText);
 }
 
 void Commands::ExecuteCommand(const String& command)
