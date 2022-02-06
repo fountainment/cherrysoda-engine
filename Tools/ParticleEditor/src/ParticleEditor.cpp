@@ -22,7 +22,7 @@ public:
 
 	void Render() override
 	{
-		Draw::Line(Math::Vec2(RenderPosition()), Math::Vec2(RenderPosition()) + Math::Vec2(0.f, 10.f));
+		Draw::Line(Math::Vec2(RenderPosition()) + Math::Vec2(0.f, 10.f), Math::Vec2(RenderPosition()));
 		Draw::Line(Math::Vec2(RenderPosition()), Math::Vec2(RenderPosition()) + Math::Vec2(10.f, 0.f));
 	}
 };
@@ -350,4 +350,3 @@ void ParticleEditor::LoadContent()
 {
 	base::LoadContent();
 }
-
