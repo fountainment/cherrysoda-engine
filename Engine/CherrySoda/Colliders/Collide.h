@@ -9,6 +9,9 @@ namespace cherrysoda {
 
 class Entity;
 
+enum class PointSectors { Center = 0, Top = 1, Bottom = 2, TopLeft = 9, TopRight = 5, Left = 8, Right = 4, BottomLeft = 10, BottomRight = 6 };
+CHERRYSODA_DECLARE_ENUM_FLAG(PointSectors);
+
 class Collide
 {
 public:
@@ -27,6 +30,10 @@ public:
 
 	static const STL::List<Entity*> All(const Entity* a, const STL::List<Entity*>& b);
 
+	// Line
+	static bool LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2);
+	static bool LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2, Math::Vec2& intersection);
+
 	// Circle
 	static inline bool CircleToLine(const Math::Vec2& cPosition, float cRadius, const Math::Vec2& lineFrom, const Math::Vec2& lineTo)
 	{
@@ -34,10 +41,16 @@ public:
 	}
 
 	// Rect
+	static bool RectToCircle(float rX, float rY, float rW, float rH, const Math::Vec2& cPosition, float cRadius);
+	static bool RectToLine(float rX, float rY, float rW, float rH, const Math::Vec2& lineFrom, const Math::Vec2& lineTo);
+
 	static inline bool RectToPoint(float rX, float rY, float rW, float rH, const Math::Vec2& point)
 	{
 		return point.x >= rX && point.y >= rY && point.x < rX + rW && point.y < rY + rH;
 	}
+
+	// Sectors
+	static PointSectors GetSector(float rX, float rY, float rW, float rH, const Math::Vec2& point);
 };
 
 } // namespace cherrysoda

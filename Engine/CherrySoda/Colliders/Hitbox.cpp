@@ -18,9 +18,7 @@ using cherrysoda::Math;
 
 bool Hitbox::Collide(const Circle* circle) const
 {
-	// TODO
-	// return Collide::RectToCircle(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, circle->AbsolutePosition2D(), circle->Radius());
-	return false;
+	return Collide::RectToCircle(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, circle->AbsolutePosition2D(), circle->Radius());
 }
 
 bool Hitbox::Collide(const Hitbox* hitbox) const
@@ -35,8 +33,7 @@ bool Hitbox::Collide(const Math::Vec2& point) const
 
 bool Hitbox::Collide(const Math::Vec2& from, const Math::Vec2& to) const
 {
-	// TODO
-	return false;
+	return Collide::RectToLine(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, from, to);
 }
 
 void Hitbox::Render(const Camera* camera, const Color& color) const

@@ -24,8 +24,7 @@ bool Circle::Collide(const Circle* circle) const
 
 bool Circle::Collide(const Hitbox* hitbox) const
 {
-	// TODO
-	return false;
+	return hitbox->Collide(this);
 }
 
 bool Circle::Collide(const Math::Vec2& point) const
