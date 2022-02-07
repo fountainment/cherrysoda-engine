@@ -4,6 +4,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/GUI.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -40,6 +41,7 @@ BX_PRAGMA_DIAGNOSTIC_POP()
 
 using cherrysoda::Color;
 using cherrysoda::Graphics;
+using cherrysoda::GUI;
 using cherrysoda::Keys;
 using cherrysoda::MInput;
 using cherrysoda::String;
