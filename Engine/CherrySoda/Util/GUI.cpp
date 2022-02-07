@@ -33,7 +33,7 @@ namespace type = cherrysoda::type;
 Effect GUI::ms_guiEffect;
 Texture2D GUI::ms_fontTexture;
 type::UInt16 GUI::ms_guiRenderPass = 0;
-bool GUI::ms_disable = false;
+bool GUI::ms_enabled = true;
 bool GUI::ms_frameStarted = false;
 bool GUI::ms_consoleFocused = false;
 bool GUI::ms_sliderFocused = false;
@@ -289,7 +289,7 @@ void GUI::Terminate()
 
 void GUI::Update()
 {
-	if (ms_disable) return;
+	if (!Enabled()) return;
 
 	ImGuiIO& io = ImGui::GetIO();
 

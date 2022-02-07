@@ -10,10 +10,11 @@ namespace cherrysoda {
 class GUI
 {
 public:
-	static void SetEffect(const Effect& effect) { ms_guiEffect = effect; }
+	static inline void SetEffect(const Effect& effect) { ms_guiEffect = effect; }
 
-	static void Disable() { ms_disable = true; }
-	static void Enable() { ms_disable = false; }
+	static inline void Disable() { ms_enabled = false; }
+	static inline void Enable() { ms_enabled = true; }
+	static inline bool Enabled() { return ms_enabled;  }
 
 	static void BuildFontTexture();
 
@@ -34,7 +35,7 @@ private:
 	static Effect ms_guiEffect;
 	static Texture2D ms_fontTexture;
 	static type::UInt16 ms_guiRenderPass;
-	static bool ms_disable;
+	static bool ms_enabled;
 	static bool ms_frameStarted;
 	static bool ms_consoleFocused;
 	static bool ms_sliderFocused;
