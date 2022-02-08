@@ -18,6 +18,20 @@ Its design is quite simple and handy, then I think if I can use it to make game 
 The result is this engine, it inherited most of the design from Monocle engine, and added some useful features.
 I have to admit that the port quality is not very good, anyway, after a few gamejam, it's less buggy now.
 
+## Pros and Cons
+
+### Pros
+
+- The engine code has less than 20k lines, which means it only take a very limitted time to read through
+- And it's not too time consuming to build the engine on low-end devices like PocketCHIP and GameShell (sometimes the cross compiling environment is hard to establish)
+- The webassembly build size can be very small (mininal around 2 MB), so it will load fast on web
+
+### Cons
+
+- The engine only support a very limitted amount of features (see Current Features)
+- There is no scripting support, all game coding needs to be done in C++
+- The memory management is not done well at the moment
+
 ## Contribution
 
 Feature requests and pull requests are welcome, but don't expect the response to be very quick.
@@ -42,12 +56,13 @@ So before putting too much work in pull request, please create an issue that we 
 - RapidJSON Integrated for JSON Parsing
 - TinyXML2 Integrated for XML Parsing
 - CMixer Integrated for Audio Mixing
+- Cgltf Integrated for gltf model loading
 - GoogleTest Integrated for Testing
 - Simple Entity-Component System
 - Simple Sprite System (quite handy imo)
 - Minimalism 2D Collision Detection (too simple but useful in common situations)
 - BMFont File Loading and Pixel Font Rendering
-- Simple 2D Particle System
+- Simple 2D Particle System (with a particle editor)
 - Audio Play (support wav and ogg loading)
 - SIMD Compile Option
 - HTML5 Support
@@ -155,8 +170,6 @@ You can use Bench/MathBench to see how glm's performance changes.
 ### To Build on Specific Device
 
 Curently, there are cmake options provided for these devices:
-
-Lemote Fuloong 2.0: ```cmake .. -DLOONGSON=1``` (use GALLIUM_DRIVER=softpipe)
 
 PocketCHIP: ```cmake .. -DCHIP=1```
 

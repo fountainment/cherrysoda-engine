@@ -65,12 +65,6 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(mips64)|(MIPS64)")
   add_definitions(-Umips)
 endif()
 
-# Lemote Fuloong 2.0
-if(LOONGSON)
-  message(STATUS "Build on Loongson3A platform")
-  add_definitions(-march=loongson3a -mmsa)
-endif()
-
 # PocketCHIP
 if(CHIP)
   message(STATUS "Build on PocketCHIP")
