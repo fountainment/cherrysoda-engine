@@ -18,6 +18,15 @@ Its design is quite simple and handy, then I think if I can use it to make game 
 The result is this engine, it inherited most of the design from Monocle engine, and added some useful features.
 I have to admit that the port quality is not very good, anyway, after a few gamejams, it's basically usable now.
 
+## Demos
+
+[https://fountainment.github.io/demo/](https://fountainment.github.io/demo/)
+
+[https://fountainment.gitee.io/](https://fountainment.gitee.io/) (use this link if github.io is slow in your region)
+
+Demo source:
+- [BulletHellJam2021_BulletHellTrial](https://github.com/fountainment/bullethelljam2021-bullethelltrial)
+
 ## Pros and Cons
 
 ### Pros
@@ -33,19 +42,6 @@ I have to admit that the port quality is not very good, anyway, after a few game
 - There is no scripting support, all game coding needs to be done in C++
 - The memory management is not done well at the moment
 - This engine requires the user to be comfortable with command-line workflow
-
-## Contribution
-
-Feature requests and pull requests are welcome, but don't expect the response to be very quick.
-
-The top priority is to make this engine more robust and more handy.
-So before putting too much work in pull request, please create an issue that we can discuss it first.
-
-## Demos
-
-[https://fountainment.github.io/demo/](https://fountainment.github.io/demo/)
-
-[backup at gitee.io](https://fountainment.gitee.io/) (use this link if github.io is slow in your region)
 
 ## Current Features
 
@@ -68,6 +64,13 @@ So before putting too much work in pull request, please create an issue that we 
 - Audio Play (support wav and ogg loading)
 - SIMD Compile Option
 - HTML5 Support
+
+## Contribution
+
+Feature requests and pull requests are welcome, but don't expect the response to be very quick.
+
+The top priority is to make this engine more robust and more handy.
+So before putting too much work in pull request, please create an issue that we can discuss it first.
 
 ## Requirements
 
