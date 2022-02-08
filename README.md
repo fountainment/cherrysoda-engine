@@ -16,21 +16,23 @@ In 2018, I tried using Monocle engine (the engine of the game Celeste) which is 
 Its design is quite simple and handy, then I think if I can use it to make game for different platforms.
 
 The result is this engine, it inherited most of the design from Monocle engine, and added some useful features.
-I have to admit that the port quality is not very good, anyway, after a few gamejam, it's less buggy now.
+I have to admit that the port quality is not very good, anyway, after a few gamejams, it's basically usable now.
 
 ## Pros and Cons
 
 ### Pros
 
-- The engine code has less than 20k lines, which means it only take a very limitted time to read through
-- And it's not too time consuming to build the engine on low-end devices like PocketCHIP and GameShell (sometimes the cross compiling environment is hard to establish)
+- The engine code is less than 20k lines, which means it only take a very limitted time to read through
+- And it's not too time consuming to build this engine on low-end devices like PocketCHIP and GameShell (sometimes the cross compiling environment is hard to establish)
 - The webassembly build size can be very small (mininal around 2 MB), so it will load fast on web
+- Some tedious workflow processes are handled by python script
 
 ### Cons
 
-- The engine only support a very limitted amount of features (see Current Features)
+- This engine only support a very limitted amount of features (see Current Features)
 - There is no scripting support, all game coding needs to be done in C++
 - The memory management is not done well at the moment
+- This engine requires the user to be comfortable with command-line workflow
 
 ## Contribution
 
@@ -141,6 +143,17 @@ cd tracy/profiler/build/unix/
 make -j8
 ```
 
+### How to Create Project
+
+Use Tools/create_project.py, it will copy the project template and do some string replacement.
+
+For example:
+
+```
+cd Playground
+python3 ../Tools/create_projects.py HelloWorld
+```
+
 ## Tips
 
 ### To Use The Sublime Project
@@ -149,13 +162,13 @@ You need to install the CMakeBuilder plugin first
 
 ### To Pack Texture Atlas
 
-You need to use Tools/crunch (build it youself)
+First, you need to build "Tools/crunch".
 
-The recommended parameters for crunch is: ```-j -p -u -t -s2048 -p8```
+And if you did use "create_project.py" to create a project, you will see a "pack_atlas.py" in project folder.
 
-The ```-j``` arg is required, because engine only support json atlas file parsing at the moment.
+Create a folder called "textures" in your project folder,
 
-For more information about crunch you can look into https://github.com/fountainment/crunch
+put your textures into it, and then ```python3 pack_atlas.py```.
 
 ### To Enable SIMD
 
