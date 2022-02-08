@@ -176,6 +176,24 @@ void Audio::SetParam(Audio::EventInstance instance, double volume, double pitch,
 	cm_set_pan(src, pan);
 }
 
+void Audio::SetVolume(Audio::EventInstance instance, double volume)
+{
+	cm_Source* src = s_sources[instance.id];
+	cm_set_gain(src, volume);
+}
+
+void Audio::SetPitch(Audio::EventInstance instance, double pitch)
+{
+	cm_Source* src = s_sources[instance.id];
+	cm_set_pitch(src, pitch);
+}
+
+void Audio::SetPan(Audio::EventInstance instance, double pan)
+{
+	cm_Source* src = s_sources[instance.id];
+	cm_set_pan(src, pan);
+}
+
 void Audio::SetLoop(Audio::EventInstance instance, bool loop)
 {
 	cm_Source* src = s_sources[instance.id];
