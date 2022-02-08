@@ -39,6 +39,10 @@ BX_PRAGMA_DIAGNOSTIC_POP()
 #   undef CreateWindow
 #endif // defined(CreateWindow)
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif // __EMSCRIPTEN__
+
 using cherrysoda::Color;
 using cherrysoda::Graphics;
 using cherrysoda::GUI;
@@ -563,6 +567,12 @@ void cherrysoda::Window::Show()
 void cherrysoda::Window::ShowCursor(bool show)
 {
 	SDL_ShowCursor(show ? SDL_ENABLE : SDL_DISABLE);
+#ifdef __EMSCRIPTEN__
+	if (!show) {
+		// Help hiding OS cursor on canvas, seems there is no reverse operation in emscripten
+		emscripten_hide_mouse();
+	}
+#endif // __EMSCRIPTEN__
 }
 
 void cherrysoda::Window::Resizable(bool resizable)
