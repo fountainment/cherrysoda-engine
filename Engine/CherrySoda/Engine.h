@@ -46,6 +46,8 @@ public:
 	inline void ShowCursor() { ShowCursor(true); }
 	inline void HideCursor() { ShowCursor(false); }
 	void WindowResizable(bool resizable);
+	static const char* GetClipboardText();
+	static void SetClipboardText(const char* text);
 
 	inline float RawGameTime() const { return static_cast<float>(m_rawGameTime); }
 	inline float GameTime() const { return static_cast<float>(m_gameTime); }

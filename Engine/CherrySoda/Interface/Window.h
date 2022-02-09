@@ -9,10 +9,25 @@ struct CHERRYSODA_WINDOW;
 
 namespace cherrysoda {
 
+enum class CursorTypes
+{
+	Arrow = 0,
+	TextInput,
+	ResizeAll,
+	ResizeNS,
+	ResizeEW,
+	ResizeNESW,
+	ResizeNWSE,
+	Hand,
+	NotAllowed,
+	Count
+};
+
 class Window
 {
 private:
 	friend class Engine;
+	friend class GUI;
 
 	Window() = default;
 
@@ -30,7 +45,10 @@ private:
 	void Hide();
 	void Show();
 
-	void ShowCursor(bool show);
+	static void ShowCursor(bool show);
+	static void SetCursor(CursorTypes cursor);
+	static void InitializeCursor();
+	static void TerminateCursor();
 
 	void Resizable(bool resizable);
 

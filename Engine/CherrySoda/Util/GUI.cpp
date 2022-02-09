@@ -3,6 +3,7 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Input/MInput.h>
+#include <CherrySoda/Interface/Window.h>
 #include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
@@ -10,14 +11,12 @@
 #include <CherrySoda/Graphics/Texture.h>
 
 #include <imgui.h>
-#include <SDL.h>
-
-#include <cstring>
 
 using cherrysoda::GUI;
 
 using cherrysoda::ButtonState;
 using cherrysoda::Commands;
+using cherrysoda::CursorTypes;
 using cherrysoda::Effect;
 using cherrysoda::Engine;
 using cherrysoda::Graphics;
@@ -27,6 +26,7 @@ using cherrysoda::MInput;
 using cherrysoda::String;
 using cherrysoda::StringUtil;
 using cherrysoda::Texture2D;
+using cherrysoda::Window;
 
 namespace type = cherrysoda::type;
 
@@ -38,16 +38,14 @@ bool GUI::ms_frameStarted = false;
 bool GUI::ms_consoleFocused = false;
 bool GUI::ms_sliderFocused = false;
 
-static SDL_Cursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = {};
-
-const char* GetClipboardText_SDL2ImplForImGui(void*)
+const char* GetClipboardText_CherrySodaImplForImGui(void*)
 {
-	return SDL_GetClipboardText();
+	return Engine::GetClipboardText();
 }
 
-void SetClipboardText_SDL2ImplForImGui(void*, const char* text)
+void SetClipboardText_CherrySodaImplForImGui(void*, const char* text)
 {
-	SDL_SetClipboardText(text);
+	return Engine::SetClipboardText(text);
 }
 
 ImGuiKey CherrySodaKeyToImGuiKey(Keys key)
@@ -243,21 +241,9 @@ void GUI::Initialize()
 
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
 
-	// TODO: Hide SDL2 from ImGui, provide engine interface
-	// Load mouse cursors
-	g_MouseCursors[ImGuiMouseCursor_Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-	g_MouseCursors[ImGuiMouseCursor_TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-	g_MouseCursors[ImGuiMouseCursor_ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-	g_MouseCursors[ImGuiMouseCursor_ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-	g_MouseCursors[ImGuiMouseCursor_ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-	g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-	g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-	g_MouseCursors[ImGuiMouseCursor_Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-	g_MouseCursors[ImGuiMouseCursor_NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
-
 	// Clipboard
-	io.GetClipboardTextFn = GetClipboardText_SDL2ImplForImGui;
-	io.SetClipboardTextFn = SetClipboardText_SDL2ImplForImGui;
+	io.GetClipboardTextFn = GetClipboardText_CherrySodaImplForImGui;
+	io.SetClipboardTextFn = SetClipboardText_CherrySodaImplForImGui;
 	io.ClipboardUserData = nullptr;
 
 	// Font texture 
@@ -273,16 +259,6 @@ void GUI::Initialize()
 
 void GUI::Terminate()
 {
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_Arrow]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_TextInput]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeAll]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeNS]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeEW]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeNESW]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_ResizeNWSE]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_Hand]);
-	SDL_FreeCursor(g_MouseCursors[ImGuiMouseCursor_NotAllowed]);
-
 	ms_fontTexture.Dispose();
 	ImGui::DestroyContext();
 }
@@ -346,17 +322,17 @@ void GUI::Update()
 			if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
 			{
 				// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
-				SDL_ShowCursor(SDL_DISABLE);
+				Window::ShowCursor(false);
 			}
 			else
 			{
 				// Show OS mouse cursor
-				SDL_SetCursor(g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
-				if (Engine::Instance()->DoShowCursor()) {
-					SDL_ShowCursor(SDL_ENABLE);
+				if (Engine::Instance()->DoShowCursor() || Engine::Instance()->ConsoleOpened()) {
+					Window::ShowCursor(true);
+					Window::SetCursor((CursorTypes)imgui_cursor);
 				}
-				else if (!Engine::Instance()->ConsoleOpened()) {
-					SDL_ShowCursor(SDL_DISABLE);
+				else {
+					Window::ShowCursor(false);
 				}
 			}
 		}
@@ -416,9 +392,6 @@ void GUI::Update()
 	ms_consoleFocused = false;
 	ms_sliderFocused = false;
 	if (Engine::Instance()->ConsoleOpened()) {
-		if (!Engine::Instance()->DoShowCursor() && !io.MouseDrawCursor) {
-			SDL_ShowCursor(SDL_ENABLE);
-		}
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
 		{

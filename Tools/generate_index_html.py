@@ -13,7 +13,7 @@ def generate_simple_index_file(executable_name, index_file_path):
         <style>
             * { margin:0; padding:0; }
             html, body { width: 100%; height: 100%; }
-            #canvas { height: 100vh; width: 100vw; display: block; }
+            #canvas { height: 100vh; width: 100vw; display: block; border: 0px; }
         </style>
         <script type='text/javascript'>
             window.onload = focuswindow;

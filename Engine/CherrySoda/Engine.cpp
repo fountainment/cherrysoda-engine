@@ -18,6 +18,8 @@
 #include <emscripten.h>
 #endif // __EMSCRIPTEN__
 
+#include <SDL.h>
+
 using cherrysoda::Engine;
 
 using cherrysoda::Audio;
@@ -140,6 +142,18 @@ void Engine::WindowResizable(bool resizable)
 	if (m_window) {
 		m_window->Resizable(resizable);
 	}
+}
+
+const char* Engine::GetClipboardText()
+{
+	// TODO: make it work on emscripten build
+	return SDL_GetClipboardText();
+}
+
+void Engine::SetClipboardText(const char* text)
+{
+	// TODO: make it work on emscripten build
+	SDL_SetClipboardText(text);
 }
 
 void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
