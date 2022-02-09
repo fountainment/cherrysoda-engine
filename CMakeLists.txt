@@ -76,7 +76,7 @@ endif()
 if(CPI)
   message(STATUS "Build on GameShell")
   add_definitions(-DCLOCKWORK_PI)
-  add_definitions(-mcpu=cortex-a7 -ftree-vectorize -ffast-math)
+  add_definitions(-march=armv7-a -mtune=cortex-a7 -ftree-vectorize -ffast-math)
 endif()
 
 if(APPLE AND NOT XCODE)
