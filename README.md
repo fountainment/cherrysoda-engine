@@ -27,6 +27,10 @@ I have to admit that the port quality is not very good, anyway, after a few game
 Demo source:
 - [BulletHellJam2021_BulletHellTrial](https://github.com/fountainment/bullethelljam2021-bullethelltrial)
 
+## API Document
+
+[https://fountainment.github.io/doc/](https://fountainment.github.io/doc/)
+
 ## Pros and Cons
 
 ### Pros
