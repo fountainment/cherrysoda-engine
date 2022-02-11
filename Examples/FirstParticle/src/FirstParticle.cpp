@@ -27,7 +27,6 @@ void FirstParticle::Initialize()
 	// Initialize and set scene here
 	auto scene = new Scene();
 
-	auto entity = new Entity();
 	auto renderer = new EverythingRenderer();
 
 	auto camera = renderer->GetCamera();
@@ -38,27 +37,39 @@ void FirstParticle::Initialize()
 	renderer->KeepCameraCenterOrigin(true);
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 
-	scene->Add(entity);
+	auto entity = new Entity();
+	entity->PositionY(-50.f);
+
 	scene->Add(renderer);
+	scene->Add(entity);
 
-	auto pSys = new ParticleSystem(-1, 20000);
-	auto pType = new ParticleType();
-	pType->m_color = Color::Yellow;
-	pType->m_color2 = Color::Transparent;
-	pType->m_speedMin = 0.f;
-	pType->m_speedMax = 200.f;
-	pType->m_sizeRange = .5f;
-	pType->m_lifeMin = 1.f;
-	pType->m_lifeMax = 2.f;
-	pType->m_directionRange = Math::Pi2;
-	pType->m_colorMode = ParticleType::ColorModes::Fade;
-	pType->m_rotationMode = ParticleType::RotationModes::Random;
-	pType->m_acceleration = Math::Vec2(0.f, -100.f);
-	pType->m_scaleOut = true;
+	{
+		// Generated from ParticleEditor
+		auto particleSystem = new ParticleSystem(-1, 1000);
+		auto particleType = new ParticleType();
+		particleType->m_color = Color(0.000f,0.765f,1.000f,1.000f);
+		particleType->m_color2 = Color(0.189f,0.543f,0.990f,1.000f);
+		particleType->m_colorMode = ParticleType::ColorModes::Choose;
+		particleType->m_fadeMode = ParticleType::FadeModes::Late;
+		particleType->m_speedMin = 325.792f;
+		particleType->m_speedMax = 500.000f;
+		particleType->m_speedMultiplier = 0.995f;
+		particleType->m_acceleration = Math::Vec2(0.000f,-500.000f);
+		particleType->m_direction = 1.571f;
+		particleType->m_directionRange = 0.512f;
+		particleType->m_lifeMin = 0.769f;
+		particleType->m_lifeMax = 1.946f;
+		particleType->m_spinMin = 11.514f;
+		particleType->m_spinMax = 18.196f;
+		particleType->m_spinFlippedChance = true;
+		particleType->m_rotationMode = ParticleType::RotationModes::Random;
+		particleType->m_scaleOut = true;
+		auto particleEmitter = new ParticleEmitter(particleSystem, particleType, Vec2_Zero, Math::Vec2(0.000f, 0.000f), 20, 0.017f);
+		// Generated from ParticleEditor
 
-	auto pEmitter = new ParticleEmitter(pSys, pType, Math::Vec2(0.f, 50.f), Vec2_Zero, 500, 1.0f);
-	entity->Add(pEmitter);
-	scene->Add(pSys);
+		scene->Add(particleSystem);
+		entity->Add(particleEmitter);
+	}
 
 	SetScene(scene);
 }

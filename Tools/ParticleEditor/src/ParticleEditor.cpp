@@ -38,6 +38,7 @@ static String GetParticleCode()
 	ParticleType defaultParticleType;
 	String result;
 	result += "{\n";
+	result += "\t// Generated from ParticleEditor\n";
 	result += "\tauto particleSystem = new ParticleSystem(-1, 1000);\n";
 	result += "\tauto particleType = new ParticleType();\n";
 	if (s_particleType->m_color != defaultParticleType.m_color) {
@@ -119,8 +120,10 @@ static String GetParticleCode()
 		, s_particleEmitter->PositionRange().y
 		, s_particleEmitter->Amount()
 		, s_particleEmitter->Interval());
-	result += "\t// You need to add the particleSystem to the scene and\n";
-	result += "\t// add the particleEmitter to an entity in the scene.\n";
+	result += "\t// Generated from ParticleEditor\n";
+	result += "\n";
+	result += "\t// scene->Add(particleSystem);\n";
+	result += "\t// entity->Add(particleEmitter);\n";
 	result += "}\n";
 	return result;
 }
