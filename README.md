@@ -22,8 +22,6 @@ I have to admit that the port quality is not very good, anyway, after a few game
 
 [https://fountainment.github.io/demo/](https://fountainment.github.io/demo/)
 
-[https://fountainment.gitee.io/](https://fountainment.gitee.io/) (use this link if github.io is slow in your region)
-
 Demo source:
 - [BulletHellJam2021_BulletHellTrial](https://github.com/fountainment/bullethelljam2021-bullethelltrial)
 
