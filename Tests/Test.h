@@ -10,8 +10,8 @@ class Vec2TestWrapper
 {
 public:
 	Vec2TestWrapper(const Math::Vec2& v2)
-	: x(v2.x)
-	, y(v2.y)
+		: x(v2.x)
+		, y(v2.y)
 	{}
 
 	friend void PrintTo(const Vec2TestWrapper& v2, std::ostream* os) {

@@ -247,8 +247,8 @@ public:
 		inline GamePadThumbSticks() = default;
 
 		inline GamePadThumbSticks(const Math::Vec2& leftThumbstick, const Math::Vec2& rightThumbStick)
-		: m_left(leftThumbstick)
-		, m_right(rightThumbStick)
+			: m_left(leftThumbstick)
+			, m_right(rightThumbStick)
 		{}
 
 		Math::Vec2 m_left  = Vec2_Zero;
@@ -260,8 +260,8 @@ public:
 		inline GamePadTriggers() = default;
 
 		inline GamePadTriggers(float left, float right)
-		: m_left(left)
-		, m_right(right)
+			: m_left(left)
+			, m_right(right)
 		{}
 
 		float m_left  = 0.f;
@@ -273,7 +273,7 @@ public:
 		inline GamePadButtons() = default;
 
 		inline GamePadButtons(Buttons buttons)
-		: m_buttons(buttons)
+			: m_buttons(buttons)
 		{}
 
 		Buttons m_buttons = Buttons::None;
@@ -284,10 +284,10 @@ public:
 		inline GamePadDPad() = default;
 
 		inline GamePadDPad(ButtonState dpadUp, ButtonState dpadDown, ButtonState dpadLeft, ButtonState dpadRight)
-		: m_up(dpadUp)
-		, m_down(dpadDown)
-		, m_left(dpadLeft)
-		, m_right(dpadRight)
+			: m_up(dpadUp)
+			, m_down(dpadDown)
+			, m_left(dpadLeft)
+			, m_right(dpadRight)
 		{}
 
 		ButtonState m_up = ButtonState::Released;
@@ -301,10 +301,10 @@ public:
 		inline GamePadState() = default;
 
 		inline GamePadState(const GamePadThumbSticks& thumSticks, const GamePadTriggers& triggers, const GamePadButtons& buttons, const GamePadDPad& dpad)
-		: m_thumbSticks(thumSticks)
-		, m_triggers(triggers)
-		, m_buttons(buttons)
-		, m_dpad(dpad)
+			: m_thumbSticks(thumSticks)
+			, m_triggers(triggers)
+			, m_buttons(buttons)
+			, m_dpad(dpad)
 		{}
 
 		inline bool IsButtonDown(Buttons buttons) const
@@ -406,7 +406,7 @@ public:
 
 	private:
 		inline GamePadData(PlayerIndex playerIndex)
-		: m_playerIndex(playerIndex)
+			: m_playerIndex(playerIndex)
 		{}
 
 		PlayerIndex m_playerIndex;
@@ -516,14 +516,14 @@ public:
 		MouseState(int x, int y, int scrollWheel,
 			ButtonState leftButton, ButtonState middleButton, ButtonState rightButton,
 			ButtonState xButton1, ButtonState xButton2)
-		: m_x(x)
-		, m_y(y)
-		, m_scrollWheelValue(scrollWheel)
-		, m_leftButton(leftButton)
-		, m_middleButton(middleButton)
-		, m_rightButton(rightButton)
-		, m_xButton1(xButton1)
-		, m_xButton2(xButton2)
+			: m_x(x)
+			, m_y(y)
+			, m_scrollWheelValue(scrollWheel)
+			, m_leftButton(leftButton)
+			, m_middleButton(middleButton)
+			, m_rightButton(rightButton)
+			, m_xButton1(xButton1)
+			, m_xButton2(xButton2)
 		{}
 
 		int m_x = 0;

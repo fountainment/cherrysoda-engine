@@ -128,7 +128,7 @@ public:
 #else // CHERRYSODA_ENABLE_DEBUG
 public:
 	constexpr StringID(const char* str)
-	: m_id(StringUtil::GetHashBKDR(str))
+		: m_id(StringUtil::GetHashBKDR(str))
 	{}
 
 	inline String GetStr() const { return ""; }

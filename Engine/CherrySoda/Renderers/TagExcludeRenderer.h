@@ -11,7 +11,7 @@ class TagExcludeRenderer : public RendererBase
 {
 public:
 	TagExcludeRenderer(int excludeTag)
-	: m_excludeTag(excludeTag)
+		: m_excludeTag(excludeTag)
 	{}
 
 	void Render(Scene* scene) override;

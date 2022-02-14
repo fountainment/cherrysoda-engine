@@ -12,8 +12,8 @@ public:
 	struct Choice
 	{
 		Choice(const T& data, float weight)
-		: m_data(data)
-		, m_weight(weight)
+			: m_data(data)
+			, m_weight(weight)
 		{}
 
 		T m_data;

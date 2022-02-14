@@ -15,8 +15,8 @@ public:
 	CHERRYSODA_DECLARE_COLLIDER(Hitbox, Collider);
 
 	Hitbox(float width, float height, float x = 0.f, float y = 0.f)
-	: m_width(width)
-	, m_height(height)
+		: m_width(width)
+		, m_height(height)
 	{
 		Position2D(Math::Vec2(x, y));
 	}

@@ -14,7 +14,7 @@ using cherrysoda::String;
 
 
 PixelText::PixelText(PixelFont* font, const String& text, const Color& color)
-: base(false, true)
+	: base(false, true)
 {
 	Font(font);
 	Text(text);

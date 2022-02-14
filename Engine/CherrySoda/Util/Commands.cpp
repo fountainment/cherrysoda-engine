@@ -19,7 +19,8 @@ using cherrysoda::StringID;
 using cherrysoda::StringUtil;
 
 
-struct CommandTrieNode {
+struct CommandTrieNode
+{
 	STL::Map<char,CommandTrieNode*> next;
 	bool exists = false;
 };

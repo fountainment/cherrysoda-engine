@@ -15,7 +15,7 @@ public:
 	CHERRYSODA_DECLARE_COMPONENT(StateMachine, Component);
 
 	StateMachine(int maxStates = 32)
-	: base(true, false)
+		: base(true, false)
 	{
 		STL::Resize(m_begins, maxStates);
 		STL::Resize(m_updates, maxStates);

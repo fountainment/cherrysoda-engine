@@ -15,16 +15,14 @@ public:
 	CHERRYSODA_DECLARE_COMPONENT(Image, GraphicsComponent);
 
 	Image(const MTexture& texture)
-	: base(false)
-	, m_texture(texture)
-	{
-	}
+		: base(false)
+		, m_texture(texture)
+	{}
 
 	Image(const MTexture& texture, bool active)
-	: base(active)
-	, m_texture(texture)
-	{
-	}
+		: base(active)
+		, m_texture(texture)
+	{}
 
 	void Render() override
 	{
