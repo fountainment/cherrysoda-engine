@@ -32,5 +32,5 @@ jobs:
 
     - name: Test
       shell: bash
-      working-directory: ${{github.workspace}}/build
-      run: Tests/AllTests
+      working-directory: ${{github.workspace}}/build/Tests
+      run: ./AllTests
