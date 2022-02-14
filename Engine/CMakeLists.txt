@@ -19,6 +19,8 @@ set(ENGINE_SRC
   CherrySoda/Colliders/Hitbox.h
   CherrySoda/Components/Component.cpp
   CherrySoda/Components/Component.h
+  CherrySoda/Components/CollidableComponent.cpp
+  CherrySoda/Components/CollidableComponent.h
   CherrySoda/Components/Graphics/GraphicsComponent.cpp
   CherrySoda/Components/Graphics/GraphicsComponent.h
   CherrySoda/Components/Graphics/Image.h

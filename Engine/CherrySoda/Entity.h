@@ -10,6 +10,7 @@
 namespace cherrysoda {
 
 class Camera;
+class CollidableComponent;
 class Collider;
 class Component;
 class Scene;
@@ -53,6 +54,8 @@ public:
 	bool CollideCheck(const BitTag& tag, const Math::Vec2& at);
 	bool CollideCheck(const Entity* other) const;
 	bool CollideCheck(const Entity* other, const Math::Vec2& at);
+	bool CollideCheck(const CollidableComponent* other) const;
+	bool CollideCheck(const CollidableComponent* other, const Math::Vec2& at);
 	bool CollidePoint(const Math::Vec2& point) const;
 	bool CollideLine(const Math::Vec2& from, const Math::Vec2& to) const;
 	int CollideCount(const BitTag& tag) const;

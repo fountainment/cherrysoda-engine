@@ -21,6 +21,7 @@ namespace cherrysoda {
 class Circle;
 class Color;
 class Camera;
+class CollidableComponent;
 class Component;
 class Hitbox;
 
@@ -32,12 +33,10 @@ public:
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 
-	inline bool Collide(const Entity* entity) const
-	{
-		return Collide(entity->GetCollider());
-	}
-
+	inline bool Collide(const Entity* entity) const { return Collide(entity->GetCollider()); }
+	bool Collide(const CollidableComponent* component) const;
 	bool Collide(const Collider* collider) const;
+
 	virtual bool Collide(const Circle* circle) const = 0;
 	virtual bool Collide(const Hitbox* hitbox) const = 0;
 	virtual bool Collide(const Math::Vec2& point) const = 0;
@@ -68,10 +67,12 @@ public:
 	virtual const char* TypeCStr() const = 0;
 
 private:
+	friend class CollidableComponent;
 	friend class Entity;
 
 	void Removed();
 	virtual void Added(Entity* entity);
+	virtual void Added(Component* component);
 
 	Math::Vec3 m_position = Vec3_Zero;
 

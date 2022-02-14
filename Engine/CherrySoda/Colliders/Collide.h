@@ -7,6 +7,7 @@
 
 namespace cherrysoda {
 
+class CollidableComponent;
 class Entity;
 
 enum class PointSectors { Center = 0, Top = 1, Bottom = 2, TopLeft = 9, TopRight = 5, Left = 8, Right = 4, BottomLeft = 10, BottomRight = 6 };
@@ -17,6 +18,8 @@ class Collide
 public:
 	static bool Check(const Entity* a, const Entity* b);
 	static bool Check(Entity* a, const Entity* b, const Math::Vec2& at);
+	static bool Check(const Entity* a, const CollidableComponent* b);
+	static bool Check(Entity* a, const CollidableComponent* b, const Math::Vec2& at);
 
 	static bool Check(const Entity* a, const STL::List<Entity*>& b);
 	static bool Check(Entity* a, const STL::List<Entity*>& b, const Math::Vec2& at);

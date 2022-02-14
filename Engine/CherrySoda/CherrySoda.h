@@ -12,6 +12,7 @@
 #include <CherrySoda/Colliders/Collider.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 
+#include <CherrySoda/Components/CollidableComponent.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Components/Graphics/Image.h>

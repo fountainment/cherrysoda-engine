@@ -1,6 +1,7 @@
 #include <CherrySoda/Colliders/Collide.h>
 
 #include <CherrySoda/Colliders/Collider.h>
+#include <CherrySoda/Components/CollidableComponent.h>
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
@@ -8,6 +9,7 @@
 
 using cherrysoda::Collide;
 
+using cherrysoda::CollidableComponent;
 using cherrysoda::Entity;
 using cherrysoda::Math;
 using cherrysoda::PointSectors;
@@ -23,11 +25,30 @@ bool Collide::Check(const Entity* a, const Entity* b)
 
 bool Collide::Check(Entity* a, const Entity* b, const Math::Vec2& at)
 {
-	Math::Vec2 position = a->Position2D();
+	Math::Vec2 old = a->Position2D();
 	a->Position2D(at);
-	bool result = Check(a, b);
-	a->Position2D(position);
-	return result;
+	bool ret = Check(a, b);
+	a->Position2D(old);
+	return ret;
+}
+
+bool Collide::Check(const Entity* a, const CollidableComponent* b)
+{
+	if (a->GetCollider() == nullptr && b->GetCollider() == nullptr) {
+		return false;
+	}
+	else {
+		return b->Collidable() && b->GetEntity()->Collidable() && a->GetCollider()->Collide(b);
+	}
+}
+
+bool Collide::Check(Entity* a, const CollidableComponent* b, const Math::Vec2& at)
+{
+	Math::Vec2 old = a->Position2D();
+	a->Position2D(at);
+	bool ret = Check(a, b);
+	a->Position2D(old);
+	return ret;
 }
 
 bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)

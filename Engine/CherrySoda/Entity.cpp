@@ -3,6 +3,7 @@
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/Collider.h>
+#include <CherrySoda/Components/CollidableComponent.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
@@ -17,6 +18,7 @@ using cherrysoda::Entity;
 using cherrysoda::BitTag;
 using cherrysoda::BitTagValueType;
 using cherrysoda::Camera;
+using cherrysoda::CollidableComponent;
 using cherrysoda::Collide;
 using cherrysoda::Collider;
 using cherrysoda::Component;
@@ -122,6 +124,16 @@ bool Entity::CollideCheck(const Entity* other) const
 }
 
 bool Entity::CollideCheck(const Entity* other, const Math::Vec2& at)
+{
+	return Collide::Check(this, other, at);
+}
+
+bool Entity::CollideCheck(const CollidableComponent* other) const
+{
+	return Collide::Check(this, other);
+}
+
+bool Entity::CollideCheck(const CollidableComponent* other, const Math::Vec2& at)
 {
 	return Collide::Check(this, other, at);
 }
