@@ -165,6 +165,8 @@ python3 ../Tools/create_projects.py HelloWorld
 
 You need to install the CMakeBuilder plugin first
 
+It's recommended to use ```git update-index --assume-unchanged cherrysoda.sublime-project``` to ignore project file change locally.
+
 ### To Pack Texture Atlas
 
 First, you need to build "Tools/crunch".

@@ -36,7 +36,6 @@ build_*/
 
 # Local
 *.sublime-workspace
-*.sublime-project
 Projects/
 Tools/bin/shaderc.local*
 Tools/bin/crunch*
