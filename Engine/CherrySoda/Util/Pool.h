@@ -39,7 +39,7 @@ public:
 	void Destroy(void* ptr)
 	{
 		SizeType loc = (T*)ptr - (T*)m_buffer;
-		CHERRYSODA_ASSERT(STL::Contains(m_allocated, loc), "Element not exist in this pool!\n")
+		CHERRYSODA_ASSERT(STL::Contains(m_allocated, loc), "Element not exist in this pool!\n");
 		((T*)ptr)->~T();
 		STL::Push(m_available, loc);
 		STL::Remove(m_allocated, loc);

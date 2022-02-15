@@ -1,6 +1,7 @@
 #include <CherrySoda/Colliders/Circle.h>
 
 #include <CherrySoda/Colliders/Collide.h>
+#include <CherrySoda/Colliders/ColliderList.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
@@ -11,6 +12,7 @@ using cherrysoda::Circle;
 
 using cherrysoda::Camera;
 using cherrysoda::Collide;
+using cherrysoda::ColliderList;
 using cherrysoda::Color;
 using cherrysoda::Draw;
 using cherrysoda::Hitbox;
@@ -22,6 +24,11 @@ bool Circle::Collide(const Circle* circle) const
 	return Math_LengthSq(vec) <= (Radius() + circle->Radius()) * (Radius() + circle->Radius());
 }
 
+bool Circle::Collide(const ColliderList* list) const
+{
+	return list->Collide(this);
+}
+
 bool Circle::Collide(const Hitbox* hitbox) const
 {
 	return hitbox->Collide(this);
@@ -31,6 +38,11 @@ bool Circle::Collide(const Math::Vec2& point) const
 {
 	const Math::Vec2 vec = AbsolutePosition2D() - point;
 	return Math_LengthSq(vec) <= RadiusSq();
+}
+
+bool Circle::Collide(const Math::Rectangle& rect) const
+{
+	return Collide::RectToCircle(rect, AbsolutePosition2D(), Radius());
 }
 
 bool Circle::Collide(const Math::Vec2& from, const Math::Vec2& to) const

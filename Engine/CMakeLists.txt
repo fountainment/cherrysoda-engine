@@ -13,6 +13,8 @@ set(ENGINE_SRC
   CherrySoda/Colliders/Collide.h
   CherrySoda/Colliders/Collider.cpp
   CherrySoda/Colliders/Collider.h
+  CherrySoda/Colliders/ColliderList.cpp
+  CherrySoda/Colliders/ColliderList.h
   CherrySoda/Colliders/Circle.cpp
   CherrySoda/Colliders/Circle.h
   CherrySoda/Colliders/Hitbox.cpp

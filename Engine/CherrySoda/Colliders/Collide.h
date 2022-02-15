@@ -45,11 +45,24 @@ public:
 
 	// Rect
 	static bool RectToCircle(float rX, float rY, float rW, float rH, const Math::Vec2& cPosition, float cRadius);
+	static inline bool RectToCircle(const Math::Rectangle& rect, const Math::Vec2& cPosition, float cRadius)
+	{
+		return RectToCircle(rect.X(), rect.Y(), rect.Width(), rect.Height(), cPosition, cRadius);
+	}
+
 	static bool RectToLine(float rX, float rY, float rW, float rH, const Math::Vec2& lineFrom, const Math::Vec2& lineTo);
+	static inline bool RectToLine(const Math::Rectangle& rect, const Math::Vec2& lineFrom, const Math::Vec2& lineTo)
+	{
+		return RectToLine(rect.X(), rect.Y(), rect.Width(), rect.Height(), lineFrom, lineTo);
+	}
 
 	static inline bool RectToPoint(float rX, float rY, float rW, float rH, const Math::Vec2& point)
 	{
 		return point.x >= rX && point.y >= rY && point.x < rX + rW && point.y < rY + rH;
+	}
+	static inline bool RectToPoint(const Math::Rectangle& rect, const Math::Vec2& point)
+	{
+		return RectToPoint(rect.X(), rect.Y(), rect.Width(), rect.Height(), point);	
 	}
 
 	// Sectors

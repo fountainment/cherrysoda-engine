@@ -13,6 +13,8 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <cmath>
+#include <limits>
 #include <type_traits>
 
 
@@ -174,10 +176,28 @@ namespace cherrysoda {
 class Math
 {
 public:
-	static constexpr float Pi     = 3.14159265357878323846f;
+	static constexpr float Pi     = 3.14159265358979323846f;
 	static constexpr float Pi2    = Pi * 2.0f;
 	static constexpr float PiHalf = Pi * 0.5f;
 	static constexpr float epsf   = 1E-06f;
+
+	static constexpr float FloatMin = std::numeric_limits<float>::min();
+	static constexpr float FloatMax = std::numeric_limits<float>::max();
+
+	static constexpr int IntMin = std::numeric_limits<int>::min();
+	static constexpr int IntMax = std::numeric_limits<int>::max();
+
+	static const double NaN()
+	{
+		static double nan = std::nan("");
+		return nan;
+	}
+
+	static const float NaNf()
+	{
+		static float nanf = std::nanf("");
+		return nanf;
+	}
 
 	using Vec2 = glm::vec2;
 	using Vec3 = glm::vec3;

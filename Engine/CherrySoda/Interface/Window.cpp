@@ -667,7 +667,7 @@ void cherrysoda::Window::PollEvents()
 	Keys key;
 #ifdef CHERRYSODA_ENABLE_DEBUG
 	bool first = true;
-#endif
+#endif // CHERRYSODA_ENABLE_DEBUG
 	while (SDL_PollEvent(&event)) {
 #ifdef CHERRYSODA_ENABLE_DEBUG
 		if (first) {

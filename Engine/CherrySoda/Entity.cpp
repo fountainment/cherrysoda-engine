@@ -284,7 +284,7 @@ void Entity::SetCollider(Collider* collider)
 	if (m_collider == collider) {
 		return;
 	}
-	CHERRYSODA_ASSERT(collider->GetEntity() == nullptr, "Setting an Entity's Collider to a Collider already in use by another object\n")
+	CHERRYSODA_ASSERT(collider->GetEntity() == nullptr, "Setting an Entity's Collider to a Collider already in use by another object\n");
 
 	if (m_collider != nullptr) {
 		m_collider->Removed();

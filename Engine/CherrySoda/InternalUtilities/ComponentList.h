@@ -31,6 +31,8 @@ public:
 	inline Entity* GetEntity() { return m_entity; }
 
 private:
+	CHERRYSODA_ITERABLE(m_components);
+
 	friend class Entity;
 
 	ComponentList(Entity* entity);
@@ -62,8 +64,6 @@ private:
 	HashSetComponents m_removing;
 
 	Entity* m_entity;
-
-	CHERRYSODA_ITERABLE(m_components);
 };
 
 } // namespace cherrysoda

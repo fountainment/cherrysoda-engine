@@ -6,6 +6,7 @@
 namespace cherrysoda {
 
 class Camera;
+class ColliderList;
 class Color;
 class Hitbox;
 
@@ -23,8 +24,10 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, Radius, m_radius);
 
 	bool Collide(const Circle* circle) const override;
+	bool Collide(const ColliderList* list) const override;
 	bool Collide(const Hitbox* hitbox) const override;
 	bool Collide(const Math::Vec2& point) const override;
+	bool Collide(const Math::Rectangle& rect) const override;
 	bool Collide(const Math::Vec2& from, const Math::Vec2& to) const override;
 	void Render(const Camera* camera, const Color& color) const override;
 

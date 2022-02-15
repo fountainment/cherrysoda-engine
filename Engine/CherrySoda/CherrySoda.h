@@ -10,6 +10,7 @@
 #include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/Collider.h>
+#include <CherrySoda/Colliders/ColliderList.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 
 #include <CherrySoda/Components/CollidableComponent.h>

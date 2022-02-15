@@ -11,7 +11,7 @@ class Scene;
 class RendererList
 {
 public:
-	friend class Scene;
+	CHERRYSODA_ITERABLE(m_renderers);
 
 	typedef STL::List<Renderer*> IterableRenderers;
 
@@ -22,6 +22,8 @@ public:
 	Renderer* First();
 
 private:
+	friend class Scene;
+
 	RendererList(Scene* scene);
 
 	void UpdateLists();
@@ -34,9 +36,6 @@ private:
 	IterableRenderers m_adding;
 	IterableRenderers m_removing;
 	Scene* m_scene = nullptr;
-
-public:
-	CHERRYSODA_ITERABLE(m_renderers);
 };
 
 } // namespace cherrysoda

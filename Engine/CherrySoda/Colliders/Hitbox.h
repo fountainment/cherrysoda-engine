@@ -22,8 +22,10 @@ public:
 	}
 
 	bool Collide(const Circle* circle) const override;
+	bool Collide(const ColliderList* list) const override;
 	bool Collide(const Hitbox* hitbox) const override;
 	bool Collide(const Math::Vec2& point) const override;
+	bool Collide(const Math::Rectangle& rect) const override;
 	bool Collide(const Math::Vec2& from, const Math::Vec2& to) const override;
 	void Render(const Camera* camera, const Color& color) const override;
 
@@ -43,11 +45,10 @@ public:
 		PositionY(-m_height / 2.f);
 	}
 
-	bool Intersects(const Hitbox* hitbox) const
+	inline bool Intersects(const Hitbox* hitbox) const
 	{
 		return AbsoluteLeft() < hitbox->AbsoluteRight() && AbsoluteRight() > hitbox->AbsoluteLeft() &&
 			AbsoluteBottom() < hitbox->AbsoluteTop() && AbsoluteTop() > hitbox->AbsoluteBottom();
-		return false;
 	}
 
 private:

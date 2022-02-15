@@ -14,6 +14,8 @@ class Scene;
 class EntityList
 {
 public:
+	CHERRYSODA_ITERABLE(m_entities);
+
 	typedef STL::List<Entity*> IterableEntities;
 	typedef STL::HashSet<Entity*> HashSetEntities;
 
@@ -56,9 +58,6 @@ private:
 	bool m_unsorted = false;
 
 	Scene* m_scene = nullptr;
-
-public:
-	CHERRYSODA_ITERABLE(m_entities);
 };
 
 } // namespace cherrysoda
