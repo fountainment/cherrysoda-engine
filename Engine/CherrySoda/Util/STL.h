@@ -88,7 +88,7 @@ public:
 	template <typename T>
 	using Vector = std::vector<T>;
 
-	template <typename T, int S>
+	template <typename T, size_t S>
 	using Array = std::array<T, S>;
 
 	template <typename T>
