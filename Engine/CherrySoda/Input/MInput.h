@@ -462,7 +462,7 @@ public:
 		void UpdateNull()
 		{
 			m_previousState = m_currentState;
-			m_currentState = KeyboardState();	
+			m_currentState = KeyboardState();
 		}
 
 		inline bool Check(Keys key) const { return m_currentState.IsKeyDown(key); }
@@ -556,7 +556,7 @@ public:
 		bool CheckLeftButton() const { return m_currentState.m_leftButton == ButtonState::Pressed; }
 		bool CheckRightButton() const { return m_currentState.m_rightButton == ButtonState::Pressed; }
 		bool CheckMiddleButton() const { return m_currentState.m_middleButton == ButtonState::Pressed; }
-	
+
 		bool PressedLeftButton() const { return m_currentState.m_leftButton == ButtonState::Pressed && m_previousState.m_leftButton == ButtonState::Released; }
 		bool PressedRightButton() const { return m_currentState.m_rightButton == ButtonState::Pressed && m_previousState.m_rightButton == ButtonState::Released; }
 		bool PressedMiddleButton() const { return m_currentState.m_middleButton == ButtonState::Pressed && m_previousState.m_middleButton == ButtonState::Released; }
@@ -626,7 +626,7 @@ private:
 	static void* ms_internalDevices[4];
 	static STL::Map<int,int> ms_internalInstanceMap;
 
-	static int ms_internalMouseWheel; 
+	static int ms_internalMouseWheel;
 	static bool ms_supportsGlobalMouse;
 };
 

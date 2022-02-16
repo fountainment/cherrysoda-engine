@@ -71,7 +71,7 @@ public:
 
 	inline bool IsPlaying(const StringID& id) const
 	{
-		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str()); 
+		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str());
 		return id == m_currentAnimationID;
 	}
 
@@ -94,7 +94,7 @@ public:
 	{
 		return CloneInto(new Sprite());
 	}
-	
+
 	Sprite* CloneInto(Sprite* sprite);
 
 private:

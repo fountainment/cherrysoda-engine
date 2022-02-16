@@ -83,7 +83,7 @@ void Wiggler::Start(float duration, float frequency)
 void Wiggler::StopAndClear()
 {
 	Stop();
-	m_value = 0.f;	
+	m_value = 0.f;
 }
 
 void Wiggler::Update()
@@ -99,7 +99,7 @@ void Wiggler::Update()
 
 	if (m_counter <= 0.f) {
 		m_counter = 0.f;
-		Active(false);	
+		Active(false);
 		if (m_removeSelfOnFinish) {
 			RemoveSelf();
 		}

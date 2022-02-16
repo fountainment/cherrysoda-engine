@@ -26,7 +26,7 @@ private:
 	Atlas* m_atlas;
 	bool m_ownAtlas = false;
 	json::Document m_json;
-	STL::HashMap<StringID, SpriteData*> m_spriteData;	
+	STL::HashMap<StringID, SpriteData*> m_spriteData;
 };
 
 } // namespace cherrysoda

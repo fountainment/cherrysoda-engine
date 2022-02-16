@@ -120,7 +120,7 @@ endif()
 
 add_definitions(-D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS)
 if(MSVC)
-  add_definitions(-D_HAS_EXCEPTIONS=0 -D_HAS_ITERATOR_DEBUGGING=0 
+  add_definitions(-D_HAS_EXCEPTIONS=0 -D_HAS_ITERATOR_DEBUGGING=0
                   -D_SCL_SECURE=0 -D_SECURE_SCL=0
                   -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
   # no-exception
@@ -146,7 +146,7 @@ if(EMSCRIPTEN)
                                           --preload-file assets \
                                           -Wno-unused-command-line-argument")
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -gsource-map -DCHERRYSODA_ENABLE_DEBUG")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz --closure 1") 
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz --closure 1")
   # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
   #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
   #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1")

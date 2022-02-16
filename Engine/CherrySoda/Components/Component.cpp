@@ -73,7 +73,7 @@ void Component::RemoveSelf()
 {
 	if (m_entity != nullptr) {
 		m_entity->Remove(this);
-	}	
+	}
 }
 
 Scene* Component::GetScene() const

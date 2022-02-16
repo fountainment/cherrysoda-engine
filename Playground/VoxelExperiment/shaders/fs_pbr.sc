@@ -56,10 +56,10 @@ void main()
 
 	// Get current fragment's normal and transform to world space.
 	vec3 N = normalize(v_normal);
-	
+
 	// Angle between surface normal and outgoing light direction.
 	float cosLo = max(0.0, dot(N, Lo));
-		
+
 	// Specular reflection vector.
 	vec3 Lr = 2.0 * cosLo * N - Lo;
 

@@ -39,7 +39,7 @@ void MainScene::Begin()
 	base::Begin();
 
 	m_uniformMtx = Graphics::CreateUniformMat4("u_mtx");
-	
+
 	Graphics::SetRenderPassOrder({ 0, 1, 2 });
 	Graphics::UseRenderPass(1)->SetClearDiscard();
 	Graphics::UseRenderPass(2)->SetClearDiscard();

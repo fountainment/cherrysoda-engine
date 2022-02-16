@@ -47,7 +47,7 @@ void PixelText::Refresh()
 		if (c == ' ') {
 			offset.x += m_size.SpaceWidth();
 			continue;
-		}	
+		}
 
 		// add char
 		auto fontChar = m_size.Get(c);
@@ -56,7 +56,7 @@ void PixelText::Refresh()
 			{
 				offset + Math::Vec2(fontChar->m_xOffset, m_size.LineHeight() - fontChar->m_texture.Height() - fontChar->m_yOffset),
 				fontChar,
-				fontChar->m_texture.ClipRect()	
+				fontChar->m_texture.ClipRect()
 			});
 			if (offset.x > widest) {
 				widest = static_cast<int>(offset.x);

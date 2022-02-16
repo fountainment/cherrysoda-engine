@@ -36,11 +36,11 @@ public:
 
 private:
 	int m_state = -1;
-	int m_previousState = -1;	
+	int m_previousState = -1;
 
 	bool m_changedStates = false;
 	// TODO: log state change in debug console
-	// bool m_log = false; 
+	// bool m_log = false;
 	bool m_locked = false;
 
 	STL::Vector<STL::Action<>> m_begins;

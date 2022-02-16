@@ -142,7 +142,7 @@ public:
 	struct PosNormalTexCoord0Vertex // default Model vertex
 	{
 		float m_x, m_y, m_z;
-		type::UInt32 m_normal;	
+		type::UInt32 m_normal;
 		float m_u, m_v;
 
 		static void Init();
@@ -162,7 +162,7 @@ public:
 	{
 		float m_x, m_y, m_z;
 		type::UInt32 m_abgr;
-		type::UInt32 m_normal;	
+		type::UInt32 m_normal;
 		float m_u, m_v;
 
 		static void Init();
@@ -326,7 +326,7 @@ private:
 	Graphics() {}
 
 	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
-	inline type::UInt16 RenderPass() { return m_renderPassId; }	
+	inline type::UInt16 RenderPass() { return m_renderPassId; }
 
 	static inline ShaderHandle CurrentShader() { return ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader; }
 
@@ -344,7 +344,7 @@ private:
 
 	static ShaderHandle ms_defaultShader;
 	static ShaderHandle ms_defaultShaderOverride;
-	
+
 	static STL::HashMap<StringID, UniformHandle> ms_uniformHashMap;
 
 	static UniformHandle ms_samplerTex;

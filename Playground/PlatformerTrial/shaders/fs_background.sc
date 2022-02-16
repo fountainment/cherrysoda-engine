@@ -34,7 +34,7 @@ void main()
 	for (int i = 0; i < MAXITER; i++) {
 		vec3 f2 = field(pos);
 		float f = min(min(f2.x,f2.y),f2.z);
-		
+
 		pos += dir*f;
 		color += float(MAXITER-i)/(f2+.001);
 	}

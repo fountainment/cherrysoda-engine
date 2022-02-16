@@ -83,7 +83,7 @@ void Entity::Tag(BitTagValueType tag)
 		{
 			BitTagValueType check = 1 << i;
 			bool add = (tag & check) != 0;
-			bool has = (m_tag & check) != 0; 
+			bool has = (m_tag & check) != 0;
 			if (has != add)
 			{
 				if (add)
@@ -97,7 +97,7 @@ void Entity::Tag(BitTagValueType tag)
 			}
 		}
 	}
-	m_tag = tag;	
+	m_tag = tag;
 }
 
 const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
@@ -140,7 +140,7 @@ bool Entity::CollideCheck(const CollidableComponent* other, const Math::Vec2& at
 
 bool Entity::CollidePoint(const Math::Vec2& point) const
 {
-	return Collide::CheckPoint(this, point);	
+	return Collide::CheckPoint(this, point);
 }
 
 bool Entity::CollideLine(const Math::Vec2& from, const Math::Vec2& to) const
@@ -289,7 +289,7 @@ void Entity::SetCollider(Collider* collider)
 	if (m_collider != nullptr) {
 		m_collider->Removed();
 	}
-	m_collider = collider;	
+	m_collider = collider;
 	if (m_collider) {
 		m_collider->Added(this);
 	}

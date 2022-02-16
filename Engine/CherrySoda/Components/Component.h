@@ -45,7 +45,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 
-	virtual void DebugRender(Camera* camera); 
+	virtual void DebugRender(Camera* camera);
 
 	virtual void HandleGraphicsReset();
 	virtual void HandleGraphicsCreate();
@@ -53,7 +53,7 @@ public:
 	virtual type::Int32 TypeID() const = 0;
 	virtual const char* TypeCStr() const = 0;
 
-	void RemoveSelf();	
+	void RemoveSelf();
 
 	template <class T>
 	T* SceneAs() { return static_cast<T*>(GetScene()); }

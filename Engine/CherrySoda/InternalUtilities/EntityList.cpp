@@ -27,13 +27,13 @@ void EntityList::UpdateLists()
 			if (!STL::Contains(m_current, entity)) {
 				STL::Add(m_current, entity);
 				STL::Add(m_entities, entity);
-			}	
+			}
 
 			if (m_scene != nullptr) {
 				// TODO: Add Tracker
-				m_scene->Tags()->EntityAdded(entity);	
-				// m_scene->Tracker()->EntityAdded(entity);	
-				entity->Added(m_scene);	
+				m_scene->Tags()->EntityAdded(entity);
+				// m_scene->Tracker()->EntityAdded(entity);
+				entity->Added(m_scene);
 			}
 		}
 
@@ -62,7 +62,7 @@ void EntityList::UpdateLists()
 
 	if (m_unsorted) {
 		m_unsorted = false;
-		STL::Sort(m_entities, CompareDepth);	
+		STL::Sort(m_entities, CompareDepth);
 	}
 
 	if (STL::IsNotEmpty(m_toAdd)) {
@@ -124,7 +124,7 @@ void EntityList::RenderOnlyFullMatch(BitTagValueType matchTags)
 		if (entity->m_visible && entity->TagFullCheck(matchTags)) {
 			entity->Render();
 		}
-	}	
+	}
 }
 
 void EntityList::RenderExcept(BitTagValueType excludeTags)

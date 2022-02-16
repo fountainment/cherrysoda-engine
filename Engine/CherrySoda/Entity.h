@@ -26,7 +26,7 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Visible, m_visible);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Collidable, m_collidable);
-	
+
 	virtual void SceneBegin(Scene* scene);
 	virtual void SceneEnd(Scene* scene);
 	virtual void Awake(Scene* scene);
@@ -70,9 +70,9 @@ public:
 	void Bottom(float bottom);
 	void Top(float top);
 
-	void Add(Component* component); 
+	void Add(Component* component);
 	void Remove(Component* component);
-	void Add(ComponentList::IterableComponents& components); 
+	void Add(ComponentList::IterableComponents& components);
 	void Remove(ComponentList::IterableComponents& components);
 
 	void OnRemoved(STL::Action<Entity*, Scene*> onRemoved) { m_onRemoved = onRemoved; }

@@ -20,7 +20,7 @@ public:
 	static void DestroyDebugPixelTexture();
 
 	static inline Renderer* GetRenderer() { return ms_renderer; }
-	static inline void SetRenderer(Renderer* renderer) { ms_renderer = renderer; } 
+	static inline void SetRenderer(Renderer* renderer) { ms_renderer = renderer; }
 
 	static inline SpriteBatch* GetSpriteBatch() { return ms_spriteBatch; }
 

@@ -53,13 +53,13 @@ void StateMachine::SetCallbacks(int state, STL::Func<int> onUpdate, STL::Func<vo
 {
 	m_updates[state] = onUpdate;
 	m_begins[state] = begin;
-	m_ends[state] = end;	
+	m_ends[state] = end;
 	// TODO: Add coroutine
 }
 
 void StateMachine::Update()
 {
-	m_changedStates = false;	
+	m_changedStates = false;
 
 	if (m_updates[m_state] != nullptr) {
 		// TODO: Log

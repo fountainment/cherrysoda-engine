@@ -28,7 +28,7 @@ void ColliderList::Add(const ColliderList::IterableColliders& toAdd)
 		else if (c == nullptr)
 			CHERRYSODA_ASSERT(false, "Cannot add a null Collider to a ColliderList.\n");
 	}
-#endif // CHERRYSODA_ENABLE_DEBUG  
+#endif // CHERRYSODA_ENABLE_DEBUG
 
 	for (auto c : toAdd) {
 		STL::Add(m_colliders, c);

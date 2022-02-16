@@ -236,7 +236,7 @@ public:
 		Clear();
 		for (auto& vertex : mesh.vertices) {
 			AddVertex(MK_VERT(vertex));
-		}	
+		}
 		STL::AddRange(m_indices, mesh.indices);
 		SubmitBuffer();
 	}

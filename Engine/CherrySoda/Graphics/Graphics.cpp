@@ -596,7 +596,7 @@ void Graphics::SetPointTextureSampling()
 Math::IVec2 Graphics::GetRenderTargetSize(RenderTarget2D* renderTarget)
 {
 	if (renderTarget) {
-		return Math::IVec2(renderTarget->Width(), renderTarget->Height()); 
+		return Math::IVec2(renderTarget->Width(), renderTarget->Height());
 	}
 	else return Engine::Instance()->GetViewSize();
 }
@@ -1003,7 +1003,7 @@ void Graphics::SetScissor(int x, int y, int w, int h)
 void Graphics::SetEffect(const Effect* effect)
 {
 	SetShader(effect != nullptr ? effect->GetShader() : Graphics::InvalidHandle);
-} 
+}
 
 void Graphics::SetTexture(Graphics::UniformHandle uniform, Graphics::TextureHandle texture)
 {
@@ -1078,7 +1078,7 @@ void Graphics::SetTextureCube(const TextureCube* texture)
 
 void Graphics::SetTextureCubeIrr(const TextureCube* texture)
 {
-	SetTexture(1, ms_samplerTexCubeIrr, texture->GetHandle());	
+	SetTexture(1, ms_samplerTexCubeIrr, texture->GetHandle());
 }
 
 type::UInt64 Graphics::ms_blendFunctions[(int)BlendFunction::Count];

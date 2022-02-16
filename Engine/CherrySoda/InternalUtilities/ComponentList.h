@@ -17,7 +17,7 @@ public:
 
 	enum class LockModes { Open, Locked, Error };
 
-	template<class T> 
+	template<class T>
 	T* Get()
 	{
 		for (auto component : m_components) {
@@ -68,4 +68,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_ 
+#endif // _CHERRYSODA_INTERNALUTILITIES_COMPONENTLIST_H_

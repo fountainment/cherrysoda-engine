@@ -68,7 +68,7 @@ void Audio::Initialize()
 	fmt.format    = AUDIO_S16;
 	fmt.channels  = 2;
 	fmt.samples   = 1024;
-	fmt.callback  = audio_callback;	
+	fmt.callback  = audio_callback;
 
 	s_sdlAudioDev = SDL_OpenAudioDevice(NULL, 0, &fmt, &got, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
 	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioDev, "Error: failed to open audio device '%s'\n", SDL_GetError());
@@ -227,11 +227,11 @@ void Audio::Pause(Audio::EventInstance instance)
 void Audio::Resume(Audio::EventInstance instance)
 {
 	cm_Source* src = s_sources[instance.id];
-	cm_play(src);	
+	cm_play(src);
 }
 
 void Audio::Stop(Audio::EventInstance instance)
 {
 	cm_Source* src = s_sources[instance.id];
-	cm_stop(src);	
+	cm_stop(src);
 }

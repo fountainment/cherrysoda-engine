@@ -58,7 +58,7 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, const cherrysoda:
 	fontSize.m_outline = outline;
 
 	// get characters
-	const auto& chars = data["chars"].GetArray(); 
+	const auto& chars = data["chars"].GetArray();
 	for (const auto& character : chars) {
 		cherrysoda::type::UInt32 id = character["id"].GetInt();
 		int page = character["page"].GetInt();

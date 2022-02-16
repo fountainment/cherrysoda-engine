@@ -20,7 +20,7 @@ Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::V
 	particle->m_track = entity;
 	particle->m_type = this;
 	particle->m_active = true;
-	particle->m_position = position;	
+	particle->m_position = position;
 
 	// source texture
 	if (!m_sourceChooser.IsEmpty()) {

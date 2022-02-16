@@ -119,7 +119,7 @@ void Scene::AfterRender()
 
 Renderer* Scene::FirstRenderer()
 {
-	return Renderers()->First();	
+	return Renderers()->First();
 }
 
 const STL::List<Entity*>& Scene::operator [] (const BitTag& tag) const
@@ -204,7 +204,7 @@ void Scene::INTERNAL_SetActualDepth(Entity* entity)
 		STL::Add(m_actualDepthLookup, STL::MakePair(entity->Depth(), (double)theta));
 	}
 	entity->m_actualDepth = (double)entity->Depth() - add;
-	m_entities->MarkUnsorted();	
+	m_entities->MarkUnsorted();
 	for (int i = 0; i < BitTag::TotalTags(); ++i) {
 		if (entity->TagCheck(1 << i)) {
 			m_tagLists->MarkUnsorted(i);

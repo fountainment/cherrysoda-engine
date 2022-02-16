@@ -75,7 +75,7 @@ public:
 
 		if (STL::Count(choices) == 1 && StringUtil::IndexOf(choices[0], ':') == -1) {
 			chooser.Add(static_cast<T>(choices[0]), 1.f);
-			return chooser;	
+			return chooser;
 		}
 
 		for (auto& choice : choices) {

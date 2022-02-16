@@ -18,7 +18,7 @@ class Chunk : public cherrysoda::Entity
 public:
 	CHERRYSODA_ITERABLE(m_blocks);
 
-	typedef cherrysoda::Entity base;	
+	typedef cherrysoda::Entity base;
 
 	Chunk();
 

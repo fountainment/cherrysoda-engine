@@ -46,7 +46,7 @@ void FirstTriangle::Initialize()
 
 	entity->Add(triangle);
 	scene->Add(entity);
-	
+
 	renderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 4.f));
 	scene->Add(renderer);
 

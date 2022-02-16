@@ -17,14 +17,14 @@ public:
 		: base(true, false)
 	{
 		On(on);
-		m_onShake = onShake;	
+		m_onShake = onShake;
 	}
 
 	Shaker* ShakeFor(float seconds, bool removeOnFinish = false)
 	{
 		On(true);
 		m_timer = seconds;
-		m_removeOnFinish = removeOnFinish;	
+		m_removeOnFinish = removeOnFinish;
 		return this;
 	}
 
@@ -46,7 +46,7 @@ private:
 	}
 
 	Math::Vec2 m_value;
-	float m_interval = .05f;	
+	float m_interval = .05f;
 	float m_timer;
 	bool m_removeOnFinish;
 	bool m_on;

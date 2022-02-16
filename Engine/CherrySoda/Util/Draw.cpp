@@ -80,5 +80,5 @@ void Draw::Circle(const Math::Vec2& position, float radius, const Color& color/*
 
 		last = at;
 		lastP = atP;
-	}	
+	}
 }

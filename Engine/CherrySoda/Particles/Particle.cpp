@@ -30,7 +30,7 @@ void Particle::Update()
 void Particle::Update(float dt)
 {
 	float ease = m_life / m_startLife;
-	
+
 	// life
 	m_life -= dt;
 	if (m_life < 0.f) {

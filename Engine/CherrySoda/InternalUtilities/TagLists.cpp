@@ -37,7 +37,7 @@ void TagLists::MarkUnsorted(int index)
 void TagLists::UpdateLists()
 {
 	if (!m_areAnyUnsorted) {
-		return;	
+		return;
 	}
 	for (int i = 0; i < BitTag::TotalTags(); ++i) {
 		if (m_unsorted[i]) {

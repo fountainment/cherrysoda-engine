@@ -223,7 +223,7 @@ static void ImGuiStyleCherrySoda(ImGuiStyle *dst)
 	style->ChildRounding = 3.f;
 	style->FrameRounding = 3.f;
 	style->GrabRounding = 3.f;
-	style->WindowTitleAlign = ImVec2(0.5f, 0.4f);	
+	style->WindowTitleAlign = ImVec2(0.5f, 0.4f);
 	style->FrameBorderSize = 1.f;
 	style->TabBorderSize = 1.f;
 }
@@ -246,7 +246,7 @@ void GUI::Initialize()
 	io.SetClipboardTextFn = SetClipboardText_CherrySodaImplForImGui;
 	io.ClipboardUserData = nullptr;
 
-	// Font texture 
+	// Font texture
 	BuildFontTexture();
 
 	// Style
@@ -270,7 +270,7 @@ void GUI::Update()
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Window size update
-	auto winSize = Engine::Instance()->GetWindowSize();	
+	auto winSize = Engine::Instance()->GetWindowSize();
 	io.DisplaySize.x = winSize.x;
 	io.DisplaySize.y = winSize.y;
 

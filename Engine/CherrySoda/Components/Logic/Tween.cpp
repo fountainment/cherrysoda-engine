@@ -51,7 +51,7 @@ void Tween::Init(TweenMode mode, Easer easer, float duration, bool start)
 
 void Tween::Removed(Entity* entity)
 {
-	base::Removed(entity);	
+	base::Removed(entity);
 	STL::Push(ms_cached, this);
 }
 

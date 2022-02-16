@@ -21,11 +21,11 @@ public:
 	virtual ~Scene();
 
 	virtual void Begin();
-	virtual void End(); 
+	virtual void End();
 
-	virtual void BeforeUpdate();	
-	virtual void Update();	
-	virtual void AfterUpdate();	
+	virtual void BeforeUpdate();
+	virtual void Update();
+	virtual void AfterUpdate();
 
 	virtual void BeforeRender();
 	virtual void Render();
@@ -39,7 +39,7 @@ public:
 
 	void Add(Entity* entity);
 	void Remove(Entity* entity);
-	
+
 	const STL::List<Entity*> GetEntitiesByTagMask(BitTagValueType mask) const;
 	const STL::List<Entity*> GetEntitiesExcludingTagMask(BitTagValueType mask) const;
 

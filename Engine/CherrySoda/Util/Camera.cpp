@@ -65,7 +65,7 @@ void Camera::Approach(const Math::Vec3& pos, float ease, float maxDistance)
 		Position(Position() + Math_Normalize(move) * maxDistance);
 	}
 	else {
-		Position(Position() + move);	
+		Position(Position() + move);
 	}
 }
 

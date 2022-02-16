@@ -12,7 +12,7 @@ enum class AlarmMode
 {
 	Persist,
 	Oneshot,
-	Looping	
+	Looping
 };
 
 class Alarm : public Component
@@ -21,7 +21,7 @@ public:
 	CHERRYSODA_DECLARE_COMPONENT(Alarm, Component);
 
 	inline AlarmMode Mode() const { return m_mode; }
-	inline float Duration() const { return m_duration; }	
+	inline float Duration() const { return m_duration; }
 	inline float TimeLeft() const { return m_timeLeft; }
 	inline float ProgressLeft() const { return TimeLeft() / Duration(); }
 	inline float Progress() const { return 1.0f - ProgressLeft(); }

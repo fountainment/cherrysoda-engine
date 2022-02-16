@@ -155,7 +155,7 @@ void ResetParams()
 	p_lpf_ramp=0.0f;
 	p_hpf_freq=0.0f;
 	p_hpf_ramp=0.0f;
-	
+
 	p_pha_offset=0.0f;
 	p_pha_ramp=0.0f;
 
@@ -333,7 +333,7 @@ void SynthSample(int length, float* buffer, FILE* file)
 		if(period<8) period=8;
 		square_duty+=square_slide;
 		if(square_duty<0.0f) square_duty=0.0f;
-		if(square_duty>0.5f) square_duty=0.5f;		
+		if(square_duty>0.5f) square_duty=0.5f;
 		// volume envelope
 		env_time++;
 		if(env_time>env_length[env_stage])
@@ -543,7 +543,7 @@ bool ExportWAV(const char* filename)
 		emscripten_run_script(cmd.c_str());
 	}
 #endif // __EMSCRIPTEN__
-	
+
 	return true;
 }
 
@@ -654,7 +654,7 @@ void DrawScreen()
 	{
 		ImGui::SetWindowPos(ImVec2(0.f, 0.f));
 		ImGui::SetWindowSize(ImVec2(Engine::Instance()->GetWidth(), Engine::Instance()->GetHeight()));
-		
+
 		ImGui::BeginGroup();
 		{
 			ImGui::BeginChild("Generator", ImVec2(182.f, 0), true);

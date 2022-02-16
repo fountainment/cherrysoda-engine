@@ -58,7 +58,7 @@ bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)
 		if (Check(a, e)) {
 			return true;
 		}
-	}	
+	}
 	return false;
 }
 
@@ -96,7 +96,7 @@ int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 		if (Check(a, e)) {
 			++count;
 		}
-	}	
+	}
 	return count;
 }
 
@@ -178,7 +178,7 @@ bool Collide::RectToCircle(float rX, float rY, float rW, float rH, const Math::V
 	// Check the circle against the relevant edges
 	Math::Vec2 edgeFrom;
 	Math::Vec2 edgeTo;
-	PointSectors sector = GetSector(rX, rY, rW, rH, cPosition);	
+	PointSectors sector = GetSector(rX, rY, rW, rH, cPosition);
 
 	if (static_cast<int>(sector & PointSectors::Bottom) != 0) {
 		edgeFrom = Math::Vec2(rX, rY);
@@ -223,7 +223,7 @@ bool Collide::RectToLine(float rX, float rY, float rW, float rH, const Math::Vec
 	else {
 		PointSectors both = fromSector | toSector;
 
-		// Do line checks against the edges 
+		// Do line checks against the edges
 		Math::Vec2 edgeFrom;
 		Math::Vec2 edgeTo;
 

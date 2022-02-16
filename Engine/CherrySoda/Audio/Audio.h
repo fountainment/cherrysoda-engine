@@ -56,7 +56,7 @@ public:
 	static EventInstance CreateLoopInstance(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
 
 	static double GetLength(EventInstance instance);
-	static double GetPosition(EventInstance instance); 
+	static double GetPosition(EventInstance instance);
 	static void SetParam(EventInstance instance, double volume, double pitch, double pan);
 	static void SetVolume(EventInstance instance, double volume);
 	static void SetPitch(EventInstance instance, double pitch);

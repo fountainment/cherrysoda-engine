@@ -23,4 +23,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_RENDERERS_SINGLETAGRENDERER_H_ 
+#endif // _CHERRYSODA_RENDERERS_SINGLETAGRENDERER_H_

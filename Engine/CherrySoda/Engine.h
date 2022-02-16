@@ -16,9 +16,9 @@ class Window;
 class Engine
 {
 public:
-#ifdef __EMSCRIPTEN__ 
+#ifdef __EMSCRIPTEN__
 	static void MainLoop();
-#endif // __EMSCRIPTEN__ 
+#endif // __EMSCRIPTEN__
 
 	Engine() : Engine(500, 500, "CherrySoda") {}
 	Engine(int width, int height, const String& title) : Engine(width, height, width, height, title, false) {}

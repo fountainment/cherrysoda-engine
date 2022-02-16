@@ -62,7 +62,7 @@ public:
 	}
 	static inline bool RectToPoint(const Math::Rectangle& rect, const Math::Vec2& point)
 	{
-		return RectToPoint(rect.X(), rect.Y(), rect.Width(), rect.Height(), point);	
+		return RectToPoint(rect.X(), rect.Y(), rect.Width(), rect.Height(), point);
 	}
 
 	// Sectors

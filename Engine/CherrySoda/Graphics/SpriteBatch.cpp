@@ -49,10 +49,10 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 	Math::Vec2 LBCorner = (Vec2_Zero                      - origin) * scale;
 	Math::Vec2 LTCorner = (Math::Vec2(0.f, rect.Height()) - origin) * scale;
 	if ((effects & SpriteEffects::RoundRenderingPosition) == SpriteEffects::RoundRenderingPosition) {
-		RBCorner = Math_Floor(RBCorner);	
-		RTCorner = Math_Floor(RTCorner);	
-		LBCorner = Math_Floor(LBCorner);	
-		LTCorner = Math_Floor(LTCorner);	
+		RBCorner = Math_Floor(RBCorner);
+		RTCorner = Math_Floor(RTCorner);
+		LBCorner = Math_Floor(LBCorner);
+		LTCorner = Math_Floor(LTCorner);
 	}
 	const Math::Mat4 rotationMat = rotation == 0 ? Math_Identity<Math::Mat4>() : Math_Rotate(Math_Identity<Math::Mat4>(), rotation, Vec3_ZUp);
 	AddQuad(

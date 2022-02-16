@@ -60,7 +60,7 @@ public:
 
 	static inline float UpDown(float eased)
 	{
-		return (eased <= 0.5f) ? eased * 2.f : 1.f - (eased - .5f) * 2.f; 
+		return (eased <= 0.5f) ? eased * 2.f : 1.f - (eased - .5f) * 2.f;
 	}
 };
 

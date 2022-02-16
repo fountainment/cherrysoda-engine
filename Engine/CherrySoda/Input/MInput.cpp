@@ -130,7 +130,7 @@ void MInput::Initialize()
 	SDL_Event evt[1];
 	while (SDL_PeepEvents(evt, 1, SDL_GETEVENT, SDL_CONTROLLERDEVICEADDED, SDL_CONTROLLERDEVICEADDED) == 1) {
 		AddControllerInstance(evt[0].cdevice.which);
-	}	
+	}
 
 	ms_keyboard = new KeyboardData();
 	ms_mouse = new MouseData();

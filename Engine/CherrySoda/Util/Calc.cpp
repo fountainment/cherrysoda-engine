@@ -25,7 +25,7 @@ Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float
 	Math::Vec2 diff = target - val;
 	float lengthSq = Math_LengthSq(diff);
 	if (lengthSq < maxMove * maxMove) {
-		return target;	
+		return target;
 	}
 	else {
 		diff = Math_Normalize(diff);

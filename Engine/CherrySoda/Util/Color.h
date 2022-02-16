@@ -111,7 +111,7 @@ public:
 	static const Color Yellow;
 	static const Color DarkYellow;
 	static const Color Orange;
-	static const Color Gray; 
+	static const Color Gray;
 
 private:
 	float m_r;

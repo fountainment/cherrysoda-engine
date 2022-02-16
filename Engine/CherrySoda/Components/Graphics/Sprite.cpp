@@ -43,7 +43,7 @@ void Sprite::Update()
 					if (!m_currentAnimation->m_goto.IsEmpty()) {
 						m_currentAnimationID = m_currentAnimation->m_goto.Choose();
 						if (m_onChange) {
-							m_onChange(m_lastAnimationID, m_currentAnimationID);	
+							m_onChange(m_lastAnimationID, m_currentAnimationID);
 						}
 						m_lastAnimationID = m_currentAnimationID;
 						m_currentAnimation = &m_animations[m_lastAnimationID];
@@ -98,7 +98,7 @@ void Sprite::SetFrame(MTexture texture)
 void Sprite::Play(const StringID& id, bool restart/* = false*/, bool randomizeFrame/* = false*/)
 {
 	if (m_currentAnimationID != id || restart) {
-		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str()); 
+		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str());
 
 		if (m_onChange) {
 			m_onChange(m_lastAnimationID, id);

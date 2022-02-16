@@ -38,7 +38,7 @@ void Alarm::Init(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.
 
 	m_mode = mode;
 	m_duration = duration;
-	m_onComplete = onComplete;	
+	m_onComplete = onComplete;
 
 	Active(false);
 	m_timeLeft = 0.f;
@@ -50,12 +50,12 @@ void Alarm::Init(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.
 
 void Alarm::Update()
 {
-	m_timeLeft -= Engine::Instance()->DeltaTime(); 
+	m_timeLeft -= Engine::Instance()->DeltaTime();
 	if (m_timeLeft <= 0) {
 		m_timeLeft = 0.f;
 		if (m_onComplete != nullptr) {
 			m_onComplete();
-		}	
+		}
 		if (m_mode == AlarmMode::Looping) {
 			Start();
 		}
@@ -77,7 +77,7 @@ void Alarm::Removed(Entity* entity)
 void Alarm::Start()
 {
 	Active(true);
-	m_timeLeft = m_duration;	
+	m_timeLeft = m_duration;
 }
 
 void Alarm::Start(float duration)

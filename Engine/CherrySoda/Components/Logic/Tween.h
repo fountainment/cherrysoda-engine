@@ -39,7 +39,7 @@ public:
 	inline float Eased() const { return m_eased; }
 
 	inline const Easer GetEaser() const { return m_easer; }
-	inline void SetEaser(Easer easer) { m_easer = easer; } 
+	inline void SetEaser(Easer easer) { m_easer = easer; }
 
 	static Tween* Create(TweenMode mode, Easer easer = nullptr, float duration = 1.f, bool start = false);
 
@@ -54,7 +54,7 @@ private:
 	TweenMode m_mode;
 	float m_duration;
 	float m_timeLeft;
-	float m_percent;	
+	float m_percent;
 	float m_eased;
 	bool m_useRawDeltaTime;
 	bool m_startedReversed;

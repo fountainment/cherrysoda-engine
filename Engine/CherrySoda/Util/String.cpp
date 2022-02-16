@@ -21,7 +21,7 @@ namespace type = cherrysoda::type;
 STL::Map<type::Int32,String>& StringID::INTERNAL_GetHashCollisionCheckMap()
 {
 	static STL::Map<type::Int32,String> hashCollisionCheckMap;
-	return hashCollisionCheckMap;	
+	return hashCollisionCheckMap;
 }
 #endif // CHERRYSODA_ENABLE_DEBUG
 

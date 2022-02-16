@@ -26,7 +26,7 @@ SpriteData::SpriteData(Atlas* atlas)
 }
 
 SpriteData::~SpriteData()
-{	
+{
 	if (m_sprite) {
 		delete m_sprite;
 		m_sprite = nullptr;
@@ -111,7 +111,7 @@ void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& ove
 		// Origin
 		if (jsonObj.HasMember("Center")) {
 			m_sprite->CenterOrigin();
-			m_sprite->Justify(Math::Vec2(0.5f));	
+			m_sprite->Justify(Math::Vec2(0.5f));
 		}
 		else if (jsonObj.HasMember("Justify")) {
 			auto& justifyObj = jsonObj["Justify"];
@@ -135,15 +135,15 @@ void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& ove
 		// Start Animation
 		if (jsonObj.HasMember("start")) {
 			m_sprite->Play(jsonObj["start"].GetString());
-		}	
+		}
 	}
 
-	STL::Add(m_sources, source);	
+	STL::Add(m_sources, source);
 }
 
 Sprite* SpriteData::Create()
 {
-	return m_sprite->CreateClone(); 
+	return m_sprite->CreateClone();
 }
 
 Sprite* SpriteData::CreateOn(Sprite* clone)
