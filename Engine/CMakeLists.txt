@@ -126,6 +126,7 @@ set(ENGINE_SRC
   CherrySoda/Util/String.h
   CherrySoda/Util/Time.cpp
   CherrySoda/Util/Time.h
+  CherrySoda/Util/VirtualMap.h
   CherrySoda/Util/XML.cpp
   CherrySoda/Util/XML.h
 )

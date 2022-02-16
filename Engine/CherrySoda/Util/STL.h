@@ -2,6 +2,7 @@
 #define _CHERRYSODA_UTIL_STL_H_
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <list>
 #include <map>
@@ -86,6 +87,9 @@ public:
 
 	template <typename T>
 	using Vector = std::vector<T>;
+
+	template <typename T, int S>
+	using Array = std::array<T, S>;
 
 	template <typename T>
 	static inline void Resize(T& container, size_t size)

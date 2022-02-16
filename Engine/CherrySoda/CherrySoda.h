@@ -77,6 +77,7 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/Time.h>
+#include <CherrySoda/Util/VirtualMap.h>
 #include <CherrySoda/Util/XML.h>
 
 #include <imgui.h>
