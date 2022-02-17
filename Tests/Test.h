@@ -14,7 +14,8 @@ public:
 		, y(v2.y)
 	{}
 
-	friend void PrintTo(const Vec2TestWrapper& v2, std::ostream* os) {
+	friend void PrintTo(const Vec2TestWrapper& v2, std::ostream* os)
+	{
 		*os << "Math::Vec2(" << v2.x << "," << v2.y << ")";
 	}
 

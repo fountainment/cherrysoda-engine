@@ -36,7 +36,7 @@ public:
 		STL::Clear(m_segments);
 	}
 
-	T GetValue(int x, int y) const
+	T Get(int x, int y) const
 	{
 		int cx = x / ms_segmentSize;
 		int cy = y / ms_segmentSize;
@@ -48,7 +48,7 @@ public:
 		return (*seg)[x - cx * ms_segmentSize][y - cy * ms_segmentSize];
 	}
 
-	void SetValue(int x, int y, const T& value)
+	void Set(int x, int y, const T& value)
 	{
 		int cx = x / ms_segmentSize;
 		int cy = y / ms_segmentSize;
