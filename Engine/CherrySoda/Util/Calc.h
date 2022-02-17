@@ -10,7 +10,7 @@ namespace cherrysoda {
 class Random
 {
 public:
-	Random() {}
+	Random() = default;
 	Random(type::UInt32 seed) { Seed(seed); }
 
 	inline void Seed(type::UInt32 seed) { STL::RandomSeed(m_random, seed); }

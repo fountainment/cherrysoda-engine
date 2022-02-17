@@ -323,7 +323,7 @@ public:
 private:
 	friend class Engine;
 
-	Graphics() {}
+	Graphics() = default;
 
 	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
 	inline type::UInt16 RenderPass() { return m_renderPassId; }

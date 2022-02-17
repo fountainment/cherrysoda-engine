@@ -15,9 +15,7 @@ static constexpr int TagBitsAmount = sizeof(BitTagValueType) * 8;
 class BitTag
 {
 public:
-	BitTag()
-	{
-	}
+	BitTag() = default;
 
 	BitTag(const StringID& name)
 	{
