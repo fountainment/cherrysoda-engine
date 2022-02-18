@@ -3,6 +3,7 @@
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/ColliderList.h>
 #include <CherrySoda/Colliders/Circle.h>
+#include <CherrySoda/Colliders/Grid.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Draw.h>
@@ -16,6 +17,7 @@ using cherrysoda::Collide;
 using cherrysoda::ColliderList;
 using cherrysoda::Color;
 using cherrysoda::Draw;
+using cherrysoda::Grid;
 using cherrysoda::Math;
 
 bool Hitbox::Collide(const Circle* circle) const
@@ -31,6 +33,11 @@ bool Hitbox::Collide(const ColliderList* list) const
 bool Hitbox::Collide(const Hitbox* hitbox) const
 {
 	return Intersects(hitbox);
+}
+
+bool Hitbox::Collide(const Grid* grid) const
+{
+	return grid->Collide(Bounds());
 }
 
 bool Hitbox::Collide(const Math::Vec2& point) const

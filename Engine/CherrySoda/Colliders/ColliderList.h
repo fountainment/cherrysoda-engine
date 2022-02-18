@@ -3,11 +3,17 @@
 
 #include <CherrySoda/Colliders/Collider.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/Log.h>
 
 namespace cherrysoda {
 
+class Camera;
+class Circle;
+class Color;
 class Component;
 class Entity;
+class Grid;
+class Hitbox;
 
 class ColliderList : public Collider
 {
@@ -42,12 +48,10 @@ public:
 	void Add(const IterableColliders& toAdd);
 	void Remove(const IterableColliders& toRemove);
 
-	float Width() const { return Right() - Left(); }
-	float Height() const { return Top() - Bottom(); }
-
 	bool Collide(const Circle* circle) const override;
 	bool Collide(const ColliderList* list) const override;
 	bool Collide(const Hitbox* hitbox) const override;
+	bool Collide(const Grid* grid) const override;
 	bool Collide(const Math::Vec2& point) const override;
 	bool Collide(const Math::Rectangle& rect) const override;
 	bool Collide(const Math::Vec2& from, const Math::Vec2& to) const override;
@@ -57,6 +61,9 @@ public:
 	float Right() const override;
 	float Bottom() const override;
 	float Top() const override;
+
+	float Width() const override { return Right() - Left(); }
+	float Height() const override { return Top() - Bottom(); }
 
 	inline void SetOwnColliders(bool own) { m_ownColliders = own; }
 

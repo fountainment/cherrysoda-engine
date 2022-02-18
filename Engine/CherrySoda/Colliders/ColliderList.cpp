@@ -1,6 +1,7 @@
 #include <CherrySoda/Colliders/ColliderList.h>
 
 #include <CherrySoda/Colliders/Circle.h>
+#include <CherrySoda/Colliders/Grid.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Util/Camera.h>
@@ -15,6 +16,7 @@ using cherrysoda::Circle;
 using cherrysoda::Color;
 using cherrysoda::Component;
 using cherrysoda::Entity;
+using cherrysoda::Grid;
 using cherrysoda::Hitbox;
 using cherrysoda::Math;
 using cherrysoda::STL;
@@ -72,6 +74,14 @@ bool ColliderList::Collide(const Hitbox* hitbox) const
 {
 	for (auto c : m_colliders)
 		if (c->Collide(hitbox))
+			return true;
+	return false;
+}
+
+bool ColliderList::Collide(const Grid* grid) const
+{
+	for (auto c : m_colliders)
+		if (c->Collide(grid))
 			return true;
 	return false;
 }

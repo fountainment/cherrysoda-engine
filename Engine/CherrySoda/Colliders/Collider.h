@@ -24,6 +24,7 @@ class Camera;
 class CollidableComponent;
 class ColliderList;
 class Component;
+class Grid;
 class Hitbox;
 
 class Collider
@@ -40,6 +41,7 @@ public:
 
 	virtual bool Collide(const Circle* circle) const = 0;
 	virtual bool Collide(const Hitbox* hitbox) const = 0;
+	virtual bool Collide(const Grid* grid) const = 0;
 	virtual bool Collide(const ColliderList* list) const = 0;
 	virtual bool Collide(const Math::Vec2& point) const = 0;
 	virtual bool Collide(const Math::Rectangle& rect) const = 0;
@@ -50,14 +52,19 @@ public:
 	virtual float Bottom() const = 0;
 	virtual float Top() const = 0;
 
-	inline Math::Vec2 AbsolutePosition2D() const
-	{
-		return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D();
-	}
+	virtual float Width() const = 0;
+	virtual float Height() const = 0;
 
-	inline Math::Vec3 AbsolutePosition() const
+	inline Math::Vec2 AbsolutePosition2D() const { return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D(); }
+	inline Math::Vec3 AbsolutePosition() const { return m_entity != nullptr ? m_entity->Position() + Position() : Position(); }
+	inline float AbsoluteTop() const { return m_entity != nullptr ? Top() + m_entity->PositionY() : Top(); }
+	inline float AbsoluteBottom() const { return m_entity != nullptr ? Bottom() + m_entity->PositionY() : Bottom(); }
+	inline float AbsoluteLeft() const { return m_entity != nullptr ? Left() + m_entity->PositionX() : Left(); }
+	inline float AbsoluteRight() const { return m_entity != nullptr ? Right() + m_entity->PositionX() : Right(); }
+
+	inline Math::Rectangle Bounds() const
 	{
-		return m_entity != nullptr ? m_entity->Position() + Position() : Position();
+		return Math::Rectangle{ Math::Vec2(AbsoluteLeft(), AbsoluteBottom()), Math::Vec2(Width(), Height()) };
 	}
 
 	void Render(const Camera* camera) const;

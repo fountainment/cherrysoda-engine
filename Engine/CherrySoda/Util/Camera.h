@@ -46,6 +46,11 @@ public:
 	inline const Math::Vec3 GetFrontVector() const { return m_direction; }
 	inline const Math::Vec3 GetBackVector() const { return -m_direction; }
 
+	inline float Left()   const { return (m_inverseMatrix * Math::Vec4(-Vec3_XUp, 1.f)).x; }
+	inline float Right()  const { return (m_inverseMatrix * Math::Vec4( Vec3_XUp, 1.f)).x; }
+	inline float Bottom() const { return (m_inverseMatrix * Math::Vec4(-Vec3_YUp, 1.f)).y; }
+	inline float Top()    const { return (m_inverseMatrix * Math::Vec4( Vec3_YUp, 1.f)).y; }
+
 	inline void CenterOrigin()
 	{
 		CHERRYSODA_ASSERT(UseOrthoProjection(), "Shouldn't call CenterOrigin() on perspective camera.\n");

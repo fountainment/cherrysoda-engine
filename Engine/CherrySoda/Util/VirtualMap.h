@@ -64,6 +64,9 @@ public:
 		(*m_segments[cx][cy])[x - cx * ms_segmentSize][y - cy * ms_segmentSize] = value;
 	}
 
+	inline int Columns() const { return m_columns; }
+	inline int Rows() const { return m_rows; }
+
 private:
 	int m_columns;
 	int m_rows;

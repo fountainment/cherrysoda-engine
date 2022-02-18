@@ -7,7 +7,9 @@ namespace cherrysoda {
 
 class Camera;
 class Circle;
+class ColliderList;
 class Color;
+class Grid;
 
 class Hitbox : public Collider
 {
@@ -24,6 +26,7 @@ public:
 	bool Collide(const Circle* circle) const override;
 	bool Collide(const ColliderList* list) const override;
 	bool Collide(const Hitbox* hitbox) const override;
+	bool Collide(const Grid* grid) const override;
 	bool Collide(const Math::Vec2& point) const override;
 	bool Collide(const Math::Rectangle& rect) const override;
 	bool Collide(const Math::Vec2& from, const Math::Vec2& to) const override;
@@ -33,6 +36,9 @@ public:
 	float Right() const override { return InternalRight(); }
 	float Bottom() const override { return InternalBottom(); }
 	float Top() const override { return InternalTop(); }
+
+	float Width() const override { return m_width; }
+	float Height() const override { return m_height; }
 
 	inline float AbsoluteLeft() const { return GetEntity() ? InternalLeft() + GetEntity()->PositionX() : InternalLeft(); }
 	inline float AbsoluteRight() const { return GetEntity() ? InternalRight() + GetEntity()->PositionX() : InternalRight(); }
