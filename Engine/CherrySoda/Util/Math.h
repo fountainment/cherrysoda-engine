@@ -139,6 +139,7 @@ inline ENUM_T operator - (ENUM_T lhs, ENUM_T rhs) \
 
 #define Math_Atan2      glm::atan
 #define Math_Abs        glm::abs
+#define Math_Ceiling    glm::ceil
 #define Math_Cross      glm::cross
 #define Math_Cos        glm::cos
 #define Math_Clamp      glm::clamp
@@ -146,8 +147,8 @@ inline ENUM_T operator - (ENUM_T lhs, ENUM_T rhs) \
 #define Math_Floor      glm::floor
 #define Math_Length     glm::length
 #define Math_LengthSq   glm::length2
-#define Math_Min        glm::min
 #define Math_Max        glm::max
+#define Math_Min        glm::min
 #define Math_Mod        glm::mod
 #define Math_Normalize  glm::normalize
 #define Math_Pow        glm::pow
@@ -232,6 +233,11 @@ public:
 
 		inline void Move(const Vec2& delta) { m_coord += delta; }
 		inline Vec2 Clamp(const Vec2& pos) { return Vec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
+
+		inline bool Intersects(const Rectangle& rect) const
+		{
+			return Left() < rect.Right() && Right() > rect.Left() && Bottom() < rect.Top() && Top() > rect.Bottom();
+		}
 	};
 
 	struct IRectangle
