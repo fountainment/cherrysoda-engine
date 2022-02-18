@@ -29,6 +29,16 @@ public:
 		m_colliders = colliders;
 	}
 
+	~ColliderList()
+	{
+		if (m_ownColliders) {
+			for (auto c : m_colliders) {
+				delete c;
+			}
+		}
+		STL::Clear(m_colliders);
+	}
+
 	void Add(const IterableColliders& toAdd);
 	void Remove(const IterableColliders& toRemove);
 
@@ -48,12 +58,15 @@ public:
 	float Bottom() const override;
 	float Top() const override;
 
+	inline void SetOwnColliders(bool own) { m_ownColliders = own; }
+
 private:
 	void Added(Entity* entity) override;
 	void Added(Component* component) override;
 	void Removed() override;
 
 	IterableColliders m_colliders;
+	bool m_ownColliders = false;
 };
 
 } // namespace cherrysoda
