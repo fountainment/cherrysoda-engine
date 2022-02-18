@@ -40,7 +40,7 @@ bool Hitbox::Collide(const Math::Vec2& point) const
 
 bool Hitbox::Collide(const Math::Rectangle& rect) const
 {
-	return AbsoluteRight() > rect.Left() && AbsoluteBottom() > rect.Top() && AbsoluteLeft() < rect.Right() && AbsoluteTop() < rect.Bottom();
+	return AbsoluteLeft() < rect.Right() && AbsoluteRight() > rect.Left() && AbsoluteBottom() < rect.Top() && AbsoluteTop() > rect.Bottom();
 }
 
 bool Hitbox::Collide(const Math::Vec2& from, const Math::Vec2& to) const
