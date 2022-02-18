@@ -11,7 +11,7 @@ namespace xml {
 
 using namespace ::tinyxml2;
 
-} // namespace json
+} // namespace xml
 
 class XMLUtil
 {
