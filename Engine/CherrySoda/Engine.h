@@ -88,6 +88,7 @@ protected:
 	virtual void Initialize();
 	virtual void Terminate();
 	virtual void LoadContent();
+	virtual void UnloadContent();
 
 	virtual void Update();
 	virtual void Draw();

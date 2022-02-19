@@ -268,11 +268,7 @@ void Engine::Initialize()
 
 void Engine::Terminate()
 {
-	// TODO: What if the scene is not allocated on heap
-	if (m_scene) {
-		delete m_scene;
-		m_scene = nullptr;
-	}
+	UnloadContent();
 
 	Commands::Terminate();
 	Audio::Terminate();
@@ -291,6 +287,10 @@ void Engine::Terminate()
 }
 
 void Engine::LoadContent()
+{
+}
+
+void Engine::UnloadContent()
 {
 }
 

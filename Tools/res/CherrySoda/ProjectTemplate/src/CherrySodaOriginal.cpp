@@ -46,3 +46,9 @@ void CherrySodaTemplate::LoadContent()
 	// Load textures, sprites, shaders and other resources here
 }
 
+void CherrySodaTemplate::UnloadContent()
+{
+	// Unload resources here
+
+	base::UnloadContent();
+}

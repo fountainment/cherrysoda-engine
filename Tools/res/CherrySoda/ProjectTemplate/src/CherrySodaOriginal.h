@@ -12,6 +12,7 @@ public:
 	void Update() override;
 	void Initialize() override;
 	void LoadContent() override;
+	void UnloadContent() override;
 };
 
 } // namespace cherrysodatemplate
