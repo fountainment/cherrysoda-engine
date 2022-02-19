@@ -65,6 +65,7 @@ set(ENGINE_SRC
   CherrySoda/Graphics/SpriteEffects.h
   CherrySoda/Graphics/Texture.cpp
   CherrySoda/Graphics/Texture.h
+  CherrySoda/Graphics/TileSet.h
   CherrySoda/Input/MInput.cpp
   CherrySoda/Input/MInput.h
   CherrySoda/Interface/Window.cpp

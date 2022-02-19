@@ -40,6 +40,7 @@
 #include <CherrySoda/Graphics/SpriteData.h>
 #include <CherrySoda/Graphics/SpriteEffects.h>
 #include <CherrySoda/Graphics/Texture.h>
+#include <CherrySoda/Graphics/TileSet.h>
 
 #include <CherrySoda/Input/MInput.h>
 
