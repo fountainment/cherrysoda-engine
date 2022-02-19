@@ -13,6 +13,7 @@ using cherrysoda::TileGrid;
 using cherrysoda::Math;
 using cherrysoda::STL;
 using cherrysoda::TileSet;
+using cherrysoda::MTexture;
 using cherrysoda::VirtualMap;
 
 void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX/* = 0*/, int offsetY/* = 0*/)
