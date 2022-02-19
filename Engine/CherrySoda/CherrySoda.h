@@ -22,6 +22,7 @@
 #include <CherrySoda/Components/Graphics/ParticleEmitter.h>
 #include <CherrySoda/Components/Graphics/PixelText.h>
 #include <CherrySoda/Components/Graphics/Sprite.h>
+#include <CherrySoda/Components/Graphics/TileGrid.h>
 #include <CherrySoda/Components/Logic/Alarm.h>
 #include <CherrySoda/Components/Logic/CounterSet.h>
 #include <CherrySoda/Components/Logic/Shaker.h>

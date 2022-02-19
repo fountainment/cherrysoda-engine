@@ -26,7 +26,7 @@ public:
 	inline int TileHeight() const { return m_tileHeight; }
 
 	inline const MTexture* Get(int x, int y) const { return &m_tiles[x][y]; }
-	inline const MTexture* operator [] (int index) const { return index < 0 ? nullptr : &m_tiles[index % STL::Count(m_tiles)][index / STL::Count(m_tiles)]; }
+	inline const MTexture* Get(int index) const { return index < 0 ? nullptr : &m_tiles[index % STL::Count(m_tiles)][index / STL::Count(m_tiles)]; }
 
 private:
 	MTexture m_texture;

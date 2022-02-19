@@ -14,7 +14,7 @@ private:
 public:
 	typedef STL::Array<STL::Array<T, ms_segmentSize>, ms_segmentSize> SegmentType;
 
-	VirtualMap(int columns, int rows, T emptyValue = T{})
+	VirtualMap(int columns, int rows, const T& emptyValue = T{})
 	{
 		m_columns = columns;
 		m_rows = rows;
@@ -54,6 +54,7 @@ public:
 		int cy = y / ms_segmentSize;
 
 		if (m_segments[cx][cy] == nullptr) {
+			if (value == m_emptyValue) return;
 			m_segments[cx][cy] = new SegmentType;
 			if (m_emptyValue != T{}) {
 				for (int tx = 0; tx < ms_segmentSize; ++tx)
