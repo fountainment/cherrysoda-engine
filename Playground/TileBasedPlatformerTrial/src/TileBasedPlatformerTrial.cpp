@@ -13,7 +13,7 @@ using namespace cherrysoda;
 Atlas* TileBasedPlatformerTrial::ms_atlas = nullptr;
 
 TileBasedPlatformerTrial::TileBasedPlatformerTrial()
-	: base(720, 504, "TileBasedPlatformerTrial")
+	: base(720, 504, "TileBasedPlatformerTrial (WIP)")
 {
 	SetClearColor(Color::Black);
 }
