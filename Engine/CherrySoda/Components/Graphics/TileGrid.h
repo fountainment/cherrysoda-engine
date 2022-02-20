@@ -20,7 +20,7 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Position, m_position);
 
 	TileGrid(int tileWidth, int tileHeight, int tilesX, int tilesY)
-		: base(false, false)
+		: base(false, true)
 		, m_tileWidth(tileWidth)
 		, m_tileHeight(tileHeight)
 	{
@@ -37,6 +37,8 @@ public:
 	void Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX = 0, int offsetY = 0);
 	void FillRect(int x, int y, int columns, int rows, const MTexture* tile);
 	void Clear();
+
+	inline void ClipCamera(Camera* camera) { m_clipCamera = camera; }
 
 	Math::Rectangle GetClippedRenderTiles() const;
 

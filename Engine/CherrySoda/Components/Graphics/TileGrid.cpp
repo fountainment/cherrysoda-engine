@@ -58,17 +58,17 @@ Math::Rectangle TileGrid::GetClippedRenderTiles() const
 		auto camera = m_clipCamera;
 		left = (int)Math_Max(0.f, Math_Floor((camera->Left() - pos.x) / TileWidth()) - m_visualExtend);
 		bottom = (int)Math_Max(0.f, Math_Floor((camera->Bottom() - pos.y) / TileHeight()) - m_visualExtend);
-		right = (int)Math_Min(TilesX() - 1.f, Math_Ceiling((camera->Right() - pos.x) / TileWidth()) + m_visualExtend);
-		top = (int)Math_Min(TilesY() - 1.f, Math_Ceiling((camera->Top() - pos.y) / TileHeight()) + m_visualExtend);
+		right = (int)Math_Min((float)TilesX(), Math_Ceiling((camera->Right() - pos.x) / TileWidth()) + m_visualExtend);
+		top = (int)Math_Min((float)TilesY(), Math_Ceiling((camera->Top() - pos.y) / TileHeight()) + m_visualExtend);
 	}
 
 	// clamp
 	left = Math_Max(left, 0);
-	bottom = Math_Max(top, 0);
+	bottom = Math_Max(bottom, 0);
 	right = Math_Min(right, TilesX());
-	top = Math_Min(bottom, TilesY());
+	top = Math_Min(top, TilesY());
 
-	return Math::Rectangle{ Math::Vec2(left, top), Math::Vec2(right - left, bottom - top) };
+	return Math::Rectangle{ Math::Vec2(left, bottom), Math::Vec2(right - left, top - bottom) };
 }
 
 void TileGrid::Render()
