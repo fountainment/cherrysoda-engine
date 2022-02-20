@@ -31,6 +31,15 @@ TEST(UtilTestVirtualMap, Normal)
 			}
 		}
 	}
+
+	// Default Empty Value
+	VirtualMap<bool> v2(40, 23);
+	v2.Set(1, 1, true);
+	for (int i = 0; i < 40; ++i) {
+		for (int j = 0; j < 23; ++j) {
+			EXPECT_EQ(i == 1 && j == 1, v2.Get(i, j));
+		}
+	}
 }
 
 TEST(UtilTestVirtualMap, Extrem)

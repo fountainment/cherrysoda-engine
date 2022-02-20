@@ -55,7 +55,7 @@ public:
 
 		if (m_segments[cx][cy] == nullptr) {
 			if (value == m_emptyValue) return;
-			m_segments[cx][cy] = new SegmentType;
+			m_segments[cx][cy] = new SegmentType();
 			if (m_emptyValue != T{}) {
 				for (int tx = 0; tx < ms_segmentSize; ++tx)
 					for (int ty = 0; ty < ms_segmentSize; ++ty)
