@@ -121,21 +121,21 @@ void Audio::LoadFileFromMemory(const StringID& path, void* data, int size)
 	s_descriptions[path] = Audio::EventDescription{ "", (cherrysoda::type::UInt8*)data, size };
 }
 
-Audio::EventInstance Audio::Play(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 1.0*/)
+Audio::EventInstance Audio::Play(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
 {
 	Audio::EventInstance instance = CreateInstance(path, volume, pitch, pan);
 	cm_play(s_sources[instance.id]);
 	return instance;
 }
 
-Audio::EventInstance Audio::Loop(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 1.0*/)
+Audio::EventInstance Audio::Loop(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
 {
 	Audio::EventInstance instance = CreateLoopInstance(path, volume, pitch, pan);
 	cm_play(s_sources[instance.id]);
 	return instance;
 }
 
-Audio::EventInstance Audio::CreateInstance(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 1.0*/)
+Audio::EventInstance Audio::CreateInstance(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
 {
 	Audio::EventInstance instance = s_descriptions[path].CreateInstance();
 	cm_Source* src = s_sources[instance.id];
@@ -145,7 +145,7 @@ Audio::EventInstance Audio::CreateInstance(const StringID& path, double volume/*
 	return instance;
 }
 
-Audio::EventInstance Audio::CreateLoopInstance(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 1.0*/)
+Audio::EventInstance Audio::CreateLoopInstance(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
 {
 	Audio::EventInstance instance = s_descriptions[path].CreateInstance();
 	cm_Source* src = s_sources[instance.id];
