@@ -212,9 +212,10 @@ public:
 		auto entity = GetEntity();
 		auto physComp = entity->Get<Simple2DPhysicsComponent>();
 		float deltaTime = Engine::Instance()->DeltaTime();
-		bool jumpButtonPressed = MInput::GamePads(0)->Pressed(Buttons::A);
-		bool jumpButtonCheck = MInput::GamePads(0)->Check(Buttons::A);
+		bool jumpButtonPressed = MInput::GamePads(0)->Pressed(Buttons::A) || MInput::Keyboard()->Pressed(Keys::Space);
+		bool jumpButtonCheck = MInput::GamePads(0)->Check(Buttons::A) || MInput::Keyboard()->Check(Keys::Space);
 		float extraDropSpeed = -Math_Min(MInput::GamePads(0)->GetLeftStick().y, 0.f) * 300.f;
+		if (MInput::Keyboard()->Check(Keys::S)) extraDropSpeed = 300.f;
 		if (jumpButtonCheck) {
 			extraDropSpeed -= 400.f;
 		}
@@ -233,6 +234,9 @@ public:
 			}
 		}
 		float speedX = MInput::GamePads(0)->GetLeftStick(0.2f).x * 100.f;
+		if (!MInput::GamePads(0)->Attached() || speedX == 0.f) {
+			speedX = MInput::Keyboard()->AxisCheck(Keys::A, Keys::D) * 100.f;
+		}
 		physComp->Move(Math::Vec2(speedX, m_speedY) * deltaTime);
 	}
 
