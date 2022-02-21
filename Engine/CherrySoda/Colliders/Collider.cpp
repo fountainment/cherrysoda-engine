@@ -2,6 +2,7 @@
 
 #include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/ColliderList.h>
+#include <CherrySoda/Colliders/Grid.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Components/CollidableComponent.h>
 #include <CherrySoda/Components/Component.h>
@@ -19,6 +20,8 @@ using cherrysoda::ColliderList;
 using cherrysoda::Component;
 using cherrysoda::Circle;
 using cherrysoda::Entity;
+using cherrysoda::Grid;
+using cherrysoda::Hitbox;
 using cherrysoda::Math;
 
 bool Collider::Collide(const CollidableComponent* component) const
@@ -31,6 +34,9 @@ bool Collider::Collide(const Collider* collider) const
 	const auto typeID = collider->TypeID();
 	if (typeID == Hitbox::ColliderTypeID()) {
 		return Collide(static_cast<const Hitbox*>(collider));
+	}
+	else if (typeID == Grid::ColliderTypeID()) {
+		return Collide(static_cast<const Grid*>(collider));
 	}
 	else if (typeID == ColliderList::ColliderTypeID()) {
 		return Collide(static_cast<const ColliderList*>(collider));
