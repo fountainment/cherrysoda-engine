@@ -453,7 +453,7 @@ void GUI::Update()
 		ImGui::End();
 		if (STL::IsNotEmpty(Commands::ms_sliderInfo)) {
 			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f, 170.f), ImVec2(FLT_MAX, FLT_MAX));
-			ImGui::Begin("Sliders");
+			ImGui::Begin("Sliders", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
 			{
 				ms_sliderFocused = ImGui::IsWindowFocused();
 				for (auto& slider : Commands::ms_sliderInfo) {
