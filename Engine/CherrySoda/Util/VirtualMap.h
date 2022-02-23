@@ -20,7 +20,7 @@ public:
 		m_rows = rows;
 		m_segmentColumns = (columns / ms_segmentSize) + 1;
 		m_segmentRows = (rows / ms_segmentSize) + 1;
-		m_segments = STL::Vector<STL::Vector<SegmentType*>>(m_segmentRows, STL::Vector<SegmentType*>(m_segmentColumns, nullptr));
+		m_segments = STL::Vector<STL::Vector<SegmentType*>>(m_segmentColumns, STL::Vector<SegmentType*>(m_segmentRows, nullptr));
 		m_emptyValue = emptyValue;
 	}
 

@@ -40,6 +40,22 @@ TEST(UtilTestVirtualMap, Normal)
 			EXPECT_EQ(i == 1 && j == 1, v2.Get(i, j));
 		}
 	}
+
+	// Bug 2022.02.23
+	VirtualMap<bool> v3(80, 46);
+	v3.Set(1, 1, true);
+	for (int i = 0; i < 80; ++i) {
+		for (int j = 0; j < 46; ++j) {
+			EXPECT_EQ(i == 1 && j == 1, v3.Get(i, j));
+		}
+	}
+	VirtualMap<bool> v4(46, 80);
+	v4.Set(1, 1, true);
+	for (int i = 0; i < 46; ++i) {
+		for (int j = 0; j < 80; ++j) {
+			EXPECT_EQ(i == 1 && j == 1, v4.Get(i, j));
+		}
+	}
 }
 
 TEST(UtilTestVirtualMap, Extrem)
