@@ -14,10 +14,10 @@ static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##VA
 		cherrysoda::StringUtil::SafeTo<TYPE>(args[0],VAR); \
 	cherrysoda::Commands::Log(cherrysoda::StringUtil::ToString(VAR)); \
 	cherrysoda::Commands::Return(static_cast<float>(VAR)); \
-},HELP);
+},HELP)
 
 #define CHERRYSODA_REGISTER_COMMAND(COMMAND,FUNC,HELP) \
-static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##COMMAND(#COMMAND,FUNC,HELP);
+static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##COMMAND(#COMMAND,FUNC,HELP)
 
 #define CHERRYSODA_COMMAND(COMMAND,HELP) \
 void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \

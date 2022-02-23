@@ -26,21 +26,21 @@ Camera::Camera(int width, int height)
 
 void Camera::UpdateMatrices()
 {
-	if (m_changed) {
-		if (UseOrthoProjection()) {
-			// This assume that the ratio between camera coordinate and pixel coordinate is 1
-			Math::Vec2 texelHalfVec = Math::Vec2(Graphics::TexelHalf() / ScaleX(), Graphics::TexelHalf() / ScaleY());
-			m_viewMatrix = Math_Translate(Math_Scale(Math_Rotate(Math_Translate(Math_Identity<Math::Mat4>(), Origin()), -ZRotation(), Vec3_ZUp), Scale()), -Position());
-			m_projMatrix = Math_Ortho(texelHalfVec.x, m_width + texelHalfVec.x, -texelHalfVec.y, m_height - texelHalfVec.y, -10000.f, 10000.f);
-		}
-		else {
-			const Math::Vec3 actualPos = Position() - Origin();
-			m_viewMatrix = Math_LookAt(actualPos, actualPos + Direction(), Math_RotateVector(GetUpVector(), ZRotation(), Vec3_ZUp));
-			m_projMatrix = Math_Scale(Math_Perspective(Math_Radians(FOV()), Ratio(), 0.1f, 10000.f), m_zoom);
-		}
-		m_inverseMatrix = Math_Inverse(m_projMatrix * m_viewMatrix);
-		m_changed = false;
+	if (UseOrthoProjection()) {
+		// This assume that the ratio between camera coordinate and pixel coordinate is 1
+		Math::Vec2 texelHalfVec = Math::Vec2(Graphics::TexelHalf() / ScaleX(), Graphics::TexelHalf() / ScaleY());
+		m_viewMatrix = Math_Translate(Math_Scale(Math_Rotate(Math_Translate(Math_Identity<Math::Mat4>(), Origin()), -ZRotation(), Vec3_ZUp), Scale()), -Position());
+		m_projMatrix = Math_Ortho(texelHalfVec.x, m_width + texelHalfVec.x, -texelHalfVec.y, m_height - texelHalfVec.y, -10000.f, 10000.f);
+		// Inverse matrix shouldn't be influenced by texelHalf hack
+		m_inverseMatrix = Math_Inverse(Math_Ortho(0.f, m_width, 0.f, m_height, -10000.f, 10000.f) * m_viewMatrix);
 	}
+	else {
+		const Math::Vec3 actualPos = Position() - Origin();
+		m_viewMatrix = Math_LookAt(actualPos, actualPos + Direction(), Math_RotateVector(GetUpVector(), ZRotation(), Vec3_ZUp));
+		m_projMatrix = Math_Scale(Math_Perspective(Math_Radians(FOV()), Ratio(), 0.1f, 10000.f), m_zoom);
+		m_inverseMatrix = Math_Inverse(m_projMatrix * m_viewMatrix);
+	}
+	m_changed = false;
 }
 
 void Camera::Approach(const Math::Vec2& pos, float ease)

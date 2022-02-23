@@ -660,8 +660,7 @@ void Graphics::SetViewport(int x, int y, int w, int h)
 
 void Graphics::SetCamera(Camera* camera)
 {
-	camera->UpdateMatrices();
-	bgfx::setViewTransform(RenderPass(), &camera->m_viewMatrix, &camera->m_projMatrix);
+	bgfx::setViewTransform(RenderPass(), camera->GetViewMatrix(), camera->GetProjectionMatrix());
 }
 
 void Graphics::SetViewProjectionMatrix(const Math::Mat4& viewMatrix, const Math::Mat4& projMatrix)
