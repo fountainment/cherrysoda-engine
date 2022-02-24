@@ -87,7 +87,7 @@ public:
 	inline bool IsAnythingAbove() const { return m_isAnythingAbove; }
 
 private:
-	Math::Vec2 m_remainder;
+	Math::Vec2 m_remainder = Vec2_Zero;
 	bool m_isOnGround = false;
 	bool m_isAnythingAbove = false;
 };
@@ -153,6 +153,7 @@ public:
 	void Update() override
 	{
 		auto actor = EntityAs<Actor>();
+		auto spriteSheet = actor->Get<SpriteSheet<StringID>>();
 		float deltaTime = Engine::Instance()->DeltaTime();
 		bool jumpButtonPressed = MInput::GamePads(0)->Pressed(Buttons::A) || MInput::Keyboard()->Pressed(Keys::Space);
 		bool jumpButtonCheck = MInput::GamePads(0)->Check(Buttons::A) || MInput::Keyboard()->Check(Keys::Space);
@@ -166,9 +167,11 @@ public:
 			if (jumpButtonPressed) {
 				Jump();
 			}
+			spriteSheet->Play("normal");
 		}
 		else {
 			m_speedY -= (actor_drop_acceleration + extraDropSpeed) * deltaTime;
+			spriteSheet->Play("jump");
 		}
 		if (actor->IsAnythingAbove()) {
 			if (m_speedY > 0.f) {
@@ -178,6 +181,12 @@ public:
 		float speedX = MInput::GamePads(0)->GetLeftStick(0.2f).x * actor_horizontal_move_speed;
 		if (!MInput::GamePads(0)->Attached() || speedX == 0.f) {
 			speedX = MInput::Keyboard()->AxisCheck(Keys::A, Keys::D) * actor_horizontal_move_speed;
+		}
+		if (speedX > 0.f) {
+			spriteSheet->SetSpriteEffects(SpriteEffects::FlipHorizontally);
+		}
+		else if (speedX < 0.f) {
+			spriteSheet->SetSpriteEffects(SpriteEffects::None);
 		}
 		actor->Move(Math::Vec2(speedX, m_speedY) * deltaTime);
 	}
@@ -189,30 +198,6 @@ public:
 
 private:
 	float m_speedY = 0.f;
-};
-
-class HollowRectGraphicsComponent : public GraphicsComponent
-{
-public:
-	CHERRYSODA_DECLARE_COMPONENT(HollowRectGraphicsComponent, GraphicsComponent);
-
-	HollowRectGraphicsComponent(int width, int height, float x = 0.f, float y = 0.f)
-	: base(false)
-	, m_width(width)
-	, m_height(height)
-	{
-		SetColor(Color::Black);
-		Position2D(Math::Vec2(x, y));
-	}
-
-	void Render() override
-	{
-		Draw::HollowRect(RenderPosition().x, RenderPosition().y, m_width, m_height, GetColor());
-	}
-
-private:
-	int m_width;
-	int m_height;
 };
 
 void MainScene::Begin()
@@ -315,8 +300,13 @@ void MainScene::Begin()
 	player->Add(new PlayerControl());
 	player->Add(new CameraFollow(camera));
 	player->Add(new CameraRestrict(camera, 0.f, tilesX * tileWidth, 0.f, tilesY * tileHeight));
-	player->Add(new HollowRectGraphicsComponent(10, 16, -5.f, 0.f));
-	player->SetCollider(new Hitbox(10.f, 16.f, -5.f, 0.f));
+	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->GetAtlasSubtextureAt("characters_packed", 0), 24, 24);
+	spriteSheet->Add("normal", 0);
+	spriteSheet->Add("jump", 1);
+	spriteSheet->Play("normal");
+	spriteSheet->JustifyOrigin(Math::Vec2(0.5f, 0.f));
+	player->Add(spriteSheet);
+	player->SetCollider(new Hitbox(12.f, 16.f, -6.f, 0.f));
 	player->Position2D(Math::Vec2(30.f, 100.f));
 	Add(player);
 

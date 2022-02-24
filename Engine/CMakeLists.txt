@@ -35,6 +35,7 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/PixelText.h
   CherrySoda/Components/Graphics/Sprite.cpp
   CherrySoda/Components/Graphics/Sprite.h
+  CherrySoda/Components/Graphics/SpriteSheet.h
   CherrySoda/Components/Graphics/TileGrid.cpp
   CherrySoda/Components/Graphics/TileGrid.h
   CherrySoda/Components/Logic/Alarm.cpp

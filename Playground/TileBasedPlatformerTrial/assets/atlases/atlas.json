@@ -3,7 +3,8 @@
 		{
 			"name":"atlas0",
 			"images":[
-				{ "n":"tiles_packed", "x":0, "y":0, "w":360, "h":160, "fx":0, "fy":0, "fw":360, "fh":162 }
+				{ "n":"tiles_packed", "x":0, "y":0, "w":360, "h":162 },
+				{ "n":"characters_packed", "x":361, "y":0, "w":216, "h":72 }
 			]
 		}
 	]

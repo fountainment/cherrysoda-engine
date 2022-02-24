@@ -31,8 +31,8 @@ public:
 
 	inline const MTexture& Texture() const { return m_texture; }
 	inline void Texture(const MTexture& texture) { m_texture = texture; }
-	inline float Width() const { return static_cast<float>(m_texture.Width()); }
-	inline float Height() const { return static_cast<float>(m_texture.Height()); }
+	virtual float Width() const { return static_cast<float>(m_texture.Width()); }
+	virtual float Height() const { return static_cast<float>(m_texture.Height()); }
 	inline const Math::Vec2 Size() const { return Math::Vec2(Width(), Height()); }
 	inline const Math::Vec2 HalfSize() const { return Size() * 0.5f; }
 	inline SpriteEffects GetSpriteEffects() { return m_effects; }
