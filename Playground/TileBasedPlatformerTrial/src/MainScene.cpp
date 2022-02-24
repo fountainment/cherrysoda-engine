@@ -281,11 +281,22 @@ void MainScene::Begin()
 			data[x][y] = dataArray[i].GetInt() - 1;
 		}
 		if (layerIndex == 0) {
-			auto mapGrid = new Grid(tilesX, tilesY, tileWidth, tileHeight);
+			auto mapGrid = new Grid(tilesX * 2, tilesY * 2, tileWidth / 2, tileHeight / 2);
 			for (int x = 0; x < tilesX; ++x) {
 				for (int y = 0; y < tilesY; ++y) {
-					if (data[x][y] >= 0)
-						mapGrid->Set(x, y, true);
+					int v = data[x][y];
+					if (v >= 0) {
+						int xx = x * 2;
+						int yy = y * 2;
+						if (v != 98 && v != 118) {
+							if (v != 99 && v != 119) {
+								mapGrid->Set(xx, yy, true);
+								mapGrid->Set(xx + 1, yy, true);
+							}
+							mapGrid->Set(xx, yy + 1, true);
+						}
+						mapGrid->Set(xx + 1, yy + 1, true);
+					}
 				}
 			}
 			mapEntity->SetCollider(mapGrid);
