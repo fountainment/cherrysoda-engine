@@ -1889,10 +1889,10 @@ namespace bx
 		float ta0 = 0.0f, tb0 = 0.0f;
 		const bool i0 = intersect(ta0, tb0, ab, line);
 
-		float ta1, tb1;
+		float ta1 = 0.0f, tb1 = 0.0f;
 		const bool i1 = intersect(ta1, tb1, bc, line);
 
-		float ta2, tb2;
+		float ta2 = 0.0f, tb2 = 0.0f;
 		const bool i2 = intersect(ta2, tb2, ca, line);
 
 		if (!i0
@@ -1959,10 +1959,10 @@ namespace bx
 		float ta0 = 0.0f, tb0 = 0.0f;
 		const bool i0 = intersect(ta0, tb0, ab, line);
 
-		float ta1, tb1;
+		float ta1 = 0.0f, tb1 = 0.0f;
 		const bool i1 = intersect(ta1, tb1, bc, line);
 
-		float ta2, tb2;
+		float ta2 = 0.0f, tb2 = 0.0f;
 		const bool i2 = intersect(ta2, tb2, ca, line);
 
 		if (!i0

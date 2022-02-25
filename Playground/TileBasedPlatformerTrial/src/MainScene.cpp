@@ -255,11 +255,11 @@ void MainScene::Begin()
 	int tileHeight = map["tileheight"].GetInt();
 	auto mapEntity = new Entity;
 	auto tileSet = new TileSet(GameApp::GetAtlas()->GetAtlasSubtextureAt("tiles_packed", 0), tileWidth, tileHeight);
-	for (int layerIndex = 0; layerIndex < layerArray.Size(); ++layerIndex) {
+	for (int layerIndex = 0; layerIndex < static_cast<int>(layerArray.Size()); ++layerIndex) {
 		const auto& layer = layerArray[layerIndex];
 		const auto& dataArray = layer["data"].GetArray();
 		STL::Vector<STL::Vector<int>> data = STL::Vector<STL::Vector<int>>(tilesX, STL::Vector<int>(tilesY));
-		for (int i = 0; i < dataArray.Size(); ++i) {
+		for (int i = 0; i < static_cast<int>(dataArray.Size()); ++i) {
 			int x = i % tilesX;
 			int y = i / tilesX;
 			y = tilesY - y - 1;

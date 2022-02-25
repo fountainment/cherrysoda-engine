@@ -51,7 +51,7 @@ public:
 				m_animationTimer -= Math_Sign(m_animationTimer) * m_currentAnimation.m_delay;	
 
 				// End of Animation
-				if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= STL::Count(m_currentAnimation.m_frames)) {
+				if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation.m_frames))) {
 					// Looped
 					if (m_currentAnimation.m_loop) {
 						m_currentAnimationFrame -= Math_Sign(m_currentAnimationFrame) * STL::Count(m_currentAnimation.m_frames);

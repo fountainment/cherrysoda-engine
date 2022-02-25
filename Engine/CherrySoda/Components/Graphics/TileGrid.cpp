@@ -19,8 +19,8 @@ using cherrysoda::VirtualMap;
 void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX/* = 0*/, int offsetY/* = 0*/)
 {
 	if (STL::IsEmpty(tiles)) return;
-	for (int x = 0; x < STL::Count(tiles) && x + offsetX < TilesX(); ++x)
-		for (int y = 0; y < STL::Count(tiles[0]) && y + offsetY < TilesY(); ++y)
+	for (int x = 0; x < static_cast<int>(STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
+		for (int y = 0; y < static_cast<int>(STL::Count(tiles[0])) && y + offsetY < TilesY(); ++y)
 			m_tiles->Set(x + offsetX, y + offsetY, tileset->Get(tiles[x][y]));
 }
 
