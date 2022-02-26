@@ -10,12 +10,12 @@ A lightweight cross-platform C++ game engine based on bgfx and SDL2 (inspired by
 
 ## Introduction
 
-This is an engine that I made for anticipating gamejam.
+This is an engine I made for anticipating gamejam.
 
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
-Its design is quite simple and handy, then I think if I can use it to make game for different platforms.
+Its design is quite simple and handy, then I wonder if I can use it to make game for different platforms.
 
-The result is this engine, it inherited most of the design from Monocle engine, and added some useful features.
+The result is this engine, it inherited most parts of Monocle engine, and added some useful features.
 I have to admit that the port quality is not very good, anyway, after a few gamejams, it's basically usable now.
 
 ## Demos
@@ -60,7 +60,7 @@ Demo source:
 - GoogleTest Integrated for Testing
 - Simple Entity-Component System
 - Simple Sprite System (quite handy imo)
-- Minimalism 2D Collision Detection (too simple but useful in common situations)
+- Minimalism 2D Collision Detection (very simple but useful in common situations)
 - BMFont File Loading and Pixel Font Rendering
 - Simple 2D Particle System (with a particle editor)
 - Audio Play (support wav and ogg loading)
@@ -69,10 +69,13 @@ Demo source:
 
 ## Contribution
 
-Feature requests and pull requests are welcome, but don't expect the response to be very quick.
+At current stage, the top priority is to make this engine more robust and more handy.
 
-The top priority is to make this engine more robust and more handy.
-So before putting too much work in pull request, please create an issue that we can discuss it first.
+So, please don't hesitate to create an issue or pull request if you saw a silly bug.
+
+And if you encounter any problem or inconvenience when using this engine,
+
+you can create an issue, then I might be able to help you.
 
 ## Requirements
 
@@ -179,7 +182,7 @@ put your textures into it, and then ```python3 pack_atlas.py```.
 
 ### To Enable SIMD
 
-You need to add somthing like ```-DCHERRYSODA_USE_XXXX=1``` with cmake.
+You need to add somthing like ```-DCHERRYSODA_USE_XXXX=1``` with cmake command.
 
 Currently, available options are "SSE2" "SSE42" "AVX2" and "NEON".
 
@@ -195,9 +198,13 @@ PocketCHIP: ```cmake .. -DCHIP=1```
 
 GameShell: ```cmake .. -DCPI=1```
 
-### To Use Shader Compiler on Non-x86_64 Platform
+### To Use Shader Compiler
 
-You need to add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake.
+Prebuilt shaderc binary are available on x86_64-Windows and x86_64-Linux.
+
+If you want or have to build shader compiler on your own, you can add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake command.
+
+You can also copy the shaderc binary from bgfx build, copy to "Tools/bin/shaderc.local" (add .exe suffix on Windows)
 
 
 ## Licence
