@@ -6798,7 +6798,7 @@ namespace bgfx { namespace gl
 
 			m_num = uint8_t(colorIdx);
 
-			if (BX_ENABLED(BGFX_CONFIG_RENDERER_OPENGL) || s_renderGL->m_gles3 )
+			if (BX_ENABLED(BGFX_CONFIG_RENDERER_OPENGL) || (s_renderGL->m_gles3 && NULL != glDrawBuffers) )
 			{
 				if (0 == colorIdx)
 				{
