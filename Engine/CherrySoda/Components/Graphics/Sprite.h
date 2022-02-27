@@ -43,7 +43,7 @@ public:
 	void operator = (const Sprite& sprite) = delete;
 
 	void Update() override;
-	void SetFrame(MTexture texture);
+	void SetFrame(const MTexture& texture);
 
 	inline STL::Vector<MTexture> GetFrames(const String& path)
 	{
@@ -104,7 +104,7 @@ private:
 
 	struct Animation
 	{
-		float m_delay;
+		float m_delay = 0.f;
 		STL::Vector<MTexture> m_frames;
 		Chooser<StringID> m_goto;
 	};

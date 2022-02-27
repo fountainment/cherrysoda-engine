@@ -74,9 +74,10 @@ MTexture::MTexture(const MTexture& parent, const String& atlasPath, const Math::
 
 MTexture::MTexture(int width, int height, const Color& color)
 {
-	unsigned char* data = new unsigned char[width * height * 4];
+	const size_t pixelCount = static_cast<size_t>(width) * static_cast<size_t>(height);
+	unsigned char* data = new unsigned char[pixelCount << 2];
 	type::UInt32 colorValue = color.U32ABGR();
-	for (int i = 0; i < width * height; ++i) {
+	for (size_t i = 0; i < pixelCount; ++i) {
 		*((type::UInt32*)(data + (i << 2))) = colorValue;
 	}
 	m_texture = Texture2D::FromRGBA(data, width, height);

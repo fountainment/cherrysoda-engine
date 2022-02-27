@@ -86,7 +86,7 @@ void Sprite::Update()
 	}
 }
 
-void Sprite::SetFrame(MTexture texture)
+void Sprite::SetFrame(const MTexture& texture)
 {
 	Texture(texture);
 	Origin(Math::Vec2(Texture().Size()) * m_justify);
