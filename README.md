@@ -56,16 +56,23 @@ Demo source:
 - RapidJSON Integrated for JSON Parsing
 - TinyXML2 Integrated for XML Parsing
 - CMixer Integrated for Audio Mixing
-- Cgltf Integrated for gltf model loading
+- Cgltf Integrated for GLTF Model File Loading
 - GoogleTest Integrated for Testing
-- Simple Entity-Component System
-- Simple Sprite System (quite handy imo)
-- Minimalism 2D Collision Detection (very simple but useful in common situations)
-- BMFont File Loading and Pixel Font Rendering
-- Simple 2D Particle System (with a particle editor)
+- MeshGraphicsComponent
 - Audio Play (support wav and ogg loading)
 - SIMD Compile Option
 - HTML5 Support
+- Features Ported From Monocle Engine:
+  - Entity-Component System
+  - BitTag and Tag-Based Renderer
+  - 2D Sprite Animation System
+  - 2D Collision Detection
+  - 2D Camera
+  - Tile-Based Game Utilities (TileSet, TileGrid, Grid)
+  - BMFont File Loading and Pixel Font Rendering
+  - 2D Particle System
+  - Ease Functions
+  - Some Useful Components (Alarm, StateMachine, Tween, ...)
 
 ## Contribution
 
