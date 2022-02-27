@@ -68,7 +68,9 @@ void SpriteBench::Initialize()
 		entity->Add(sprite);
 		entity->Add(new SpriteRotate(Calc::GetRandom()->NextFloat(-Math::Pi2, Math::Pi2)));
 		scene->Add(entity);
-		entity->Position2D(Math::Vec2(Calc::GetRandom()->NextInt(-200, 200), Calc::GetRandom()->NextInt(-200, 200)));
+		float posX = Calc::GetRandom()->NextInt(-200, 200);
+		float posY = Calc::GetRandom()->NextInt(-200, 200);
+		entity->Position2D(Math::Vec2(posX, posY));
 	}
 
 	SetScene(scene);
