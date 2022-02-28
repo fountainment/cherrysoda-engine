@@ -24,19 +24,18 @@ Atlas::~Atlas()
 	}
 }
 
-const MTexture Atlas::GetOrDefault(const StringID& id, const MTexture& defaultTexture)
+const MTexture& Atlas::GetOrDefault(const StringID& id, const MTexture& defaultTexture) const
 {
 	if (id.IsEmpty() || !Has(id)) {
 		return defaultTexture;
 	}
-	return m_textures[id];
+	return m_textures.at(id);
 }
 
-const STL::Vector<MTexture> Atlas::GetAtlasSubtextures(const String& key)
+const STL::Vector<MTexture>& Atlas::GetAtlasSubtextures(const String& key) const
 {
-	STL::Vector<MTexture> list;
-
-	if (!STL::TryGetValue(m_orderedTexturesCache, key, list)) {
+	if (!STL::ContainsKey(m_orderedTexturesCache, key)) {
+		STL::Vector<MTexture> list;
 		for (int index = 0; ; ++index) {
 			MTexture texture = GetAtlasSubtextureFromAtlasAt(key, index);
 			if (texture.IsValid())
@@ -44,14 +43,13 @@ const STL::Vector<MTexture> Atlas::GetAtlasSubtextures(const String& key)
 			else
 				break;
 		}
-
 		m_orderedTexturesCache[key] = list;
 	}
 
-	return list;
+	return m_orderedTexturesCache.at(key);
 }
 
-const MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index)
+const MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index) const
 {
 	STL::Vector<MTexture> list;
 	if (STL::TryGetValue(m_orderedTexturesCache, key, list)) {
@@ -62,15 +60,15 @@ const MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index)
 	}
 }
 
-const MTexture Atlas::GetAtlasSubtextureFromCacheAt(const StringID& key, int index)
+const MTexture& Atlas::GetAtlasSubtextureFromCacheAt(const StringID& key, int index) const
 {
-	return m_orderedTexturesCache[key][index];
+	return m_orderedTexturesCache.at(key)[index];
 }
 
-const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index)
+const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index) const
 {
 	if (index == 0 && STL::ContainsKey(m_textures, key)) {
-		return m_textures[key];
+		return m_textures.at(key);
 	}
 
 	char format[] = "%s%00d";
