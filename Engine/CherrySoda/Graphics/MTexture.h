@@ -48,11 +48,16 @@ public:
 
 	bool operator == (const MTexture& texture) const
 	{
-		if (m_texture != texture.m_texture || m_clipRect != texture.m_clipRect)
+		if (m_texture != texture.m_texture)
+			return false;
+		if (m_atlasPath.size() != 0 || texture.m_atlasPath.size() != 0) {
+			return m_atlasPath == texture.m_atlasPath;
+		}
+		if (m_width != texture.m_width || m_height != texture.m_height)
 			return false;
 		if (m_actualDrawOffset != texture.m_actualDrawOffset)
 			return false;
-		if (m_width != texture.m_width || m_height != texture.m_height)
+		if (m_clipRect != texture.m_clipRect)
 			return false;
 		return true;
 	}
