@@ -15,7 +15,7 @@ This is an engine I made for anticipating gamejam.
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
 Its design is quite simple and handy, then I wonder if I can use it to make game for different platforms.
 
-The result is this engine, it inherited most parts of Monocle engine, and added some useful features.
+The result is this engine, it ported most parts of Monocle engine, and added some useful features.
 I have to admit that the port quality is not very good, anyway, after a few gamejams, it's basically usable now.
 
 ## Demos
@@ -47,21 +47,6 @@ Demo source:
 
 ## Current Features
 
-- BGFX Integrated for Cross-Platform Graphics Rendering
-- SDL2 Integrated for Cross-Platform Window and Audio
-- GLM Intergrated for Math
-- STB Intergrated (for now only) for OGG Audio File Loading
-- ImGui Integrated for Engine GUI
-- TracyProfiler Integrated for Profiling
-- RapidJSON Integrated for JSON Parsing
-- TinyXML2 Integrated for XML Parsing
-- CMixer Integrated for Audio Mixing
-- Cgltf Integrated for GLTF Model File Loading
-- GoogleTest Integrated for Testing
-- MeshGraphicsComponent
-- Audio Play (support wav and ogg loading)
-- SIMD Compile Option
-- HTML5 Support
 - Features Ported From Monocle Engine:
   - Entity-Component System
   - BitTag and Tag-Based Renderer
@@ -73,6 +58,26 @@ Demo source:
   - 2D Particle System
   - Ease Functions
   - Some Useful Components (Alarm, StateMachine, Tween, ...)
+- Tools:
+  - Crunch (a texture packer) (modified) (under MIT Licence)
+  - Sfxr (an 8-bit sound effect generator) (ported) (under MIT Licence)
+  - A Particle Effect Editor
+- BGFX Integrated for Cross-Platform Graphics Rendering
+- SDL2 Integrated for Cross-Platform Window and Audio
+- GLM Intergrated for Math
+- STB Intergrated (for now only) for OGG Audio File Loading
+- ImGui Integrated for Engine GUI
+- TracyProfiler Integrated for Profiling
+- RapidJSON Integrated for JSON Parsing
+- TinyXML2 Integrated for XML Parsing
+- GoogleTest Integrated for Testing
+- CMixer Integrated for Audio Mixing
+- Cgltf Integrated for GLTF Model File Loading
+- Audio Play (support wav and ogg loading)
+- MeshGraphicsComponent
+- SIMD Compile Option
+- HTML5 Support
+
 
 ## Contribution
 
