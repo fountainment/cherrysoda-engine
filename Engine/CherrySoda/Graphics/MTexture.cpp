@@ -15,6 +15,7 @@ using cherrysoda::Draw;
 using cherrysoda::Math;
 using cherrysoda::SpriteEffects;
 using cherrysoda::String;
+using cherrysoda::StringID;
 using cherrysoda::Texture2D;
 
 namespace type = cherrysoda::type;
