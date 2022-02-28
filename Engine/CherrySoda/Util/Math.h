@@ -257,6 +257,9 @@ public:
 
 		inline void Move(const IVec2& delta) { m_coord += delta; }
 		inline IVec2 Clamp(const IVec2& pos) { return IVec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
+
+		inline bool operator == (const IRectangle& rect) const { return m_coord == rect.m_coord && m_size == rect.m_size; }
+		inline bool operator != (const IRectangle& rect) const { return m_coord != rect.m_coord || m_size != rect.m_size; }
 	};
 
 	static inline Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis = Vec3_ZUp)

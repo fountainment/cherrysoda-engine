@@ -46,6 +46,17 @@ public:
 
 	inline const Texture2D& Texture() const { return m_texture; }
 
+	bool operator == (const MTexture& texture) const
+	{
+		if (m_texture != texture.m_texture || m_clipRect != texture.m_clipRect)
+			return false;
+		if (m_actualDrawOffset != texture.m_actualDrawOffset)
+			return false;
+		if (m_width != texture.m_width || m_height != texture.m_height)
+			return false;
+		return true;
+	}
+
 private:
 	inline Math::Vec2 ActualDrawOffset() const { return m_actualDrawOffset; }
 

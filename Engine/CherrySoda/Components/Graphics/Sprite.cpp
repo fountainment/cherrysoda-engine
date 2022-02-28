@@ -88,8 +88,8 @@ void Sprite::Update()
 
 void Sprite::SetFrame(const MTexture& texture)
 {
-	// if (Texture() == texture)
-	// 	return;
+	if (Texture() == texture)
+		return;
 
 	Texture(texture);
 	if (m_justifyHasValue) {
