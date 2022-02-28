@@ -23,7 +23,7 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 					SpriteEffects effects, float layerDepth)
 {
 	if (VertexIsNotEmpty()) {
-		if (tex.GetHandle() != m_previousTexture.GetHandle()) {
+		if (tex != m_previousTexture) {
 			End(); Begin();
 		}
 		else {

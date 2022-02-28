@@ -20,8 +20,8 @@ public:
 	MTexture(const Texture2D& texture);
 	MTexture(const MTexture& parent, int x, int y, int width, int height);
 	MTexture(const MTexture& parent, const Math::IRectangle& clipRect);
-	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect);
-	MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height);
+	MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect);
+	MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height);
 	MTexture(int width, int height, const Color& color);
 
 	Math::IRectangle GetRelativeRect(int x, int y, int width, int height) const;
@@ -48,16 +48,16 @@ public:
 
 	bool operator == (const MTexture& texture) const
 	{
-		if (m_texture != texture.m_texture)
-			return false;
-		if (m_atlasPath.size() != 0 || texture.m_atlasPath.size() != 0) {
+		if (!m_atlasPath.IsEmpty() || !texture.m_atlasPath.IsEmpty()) {
 			return m_atlasPath == texture.m_atlasPath;
 		}
-		if (m_width != texture.m_width || m_height != texture.m_height)
+		if (m_texture != texture.m_texture)
+			return false;
+		if (m_clipRect != texture.m_clipRect)
 			return false;
 		if (m_actualDrawOffset != texture.m_actualDrawOffset)
 			return false;
-		if (m_clipRect != texture.m_clipRect)
+		if (m_width != texture.m_width || m_height != texture.m_height)
 			return false;
 		return true;
 	}
@@ -73,7 +73,7 @@ private:
 
 	Texture2D m_texture;
 	Math::IRectangle m_clipRect = { IVec2_Zero, IVec2_Zero };
-	String m_atlasPath = "";
+	StringID m_atlasPath;
 	Math::Vec2 m_drawOffset = Vec2_Zero;
 	Math::Vec2 m_actualDrawOffset = Vec2_Zero;
 	int m_width = 0;

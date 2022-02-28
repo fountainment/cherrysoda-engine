@@ -53,13 +53,13 @@ MTexture::MTexture(const MTexture& parent, const Math::IRectangle& clipRect)
 {
 }
 
-MTexture::MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect)
+MTexture::MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect)
 : MTexture(parent, clipRect)
 {
 	m_atlasPath = atlasPath;
 }
 
-MTexture::MTexture(const MTexture& parent, const String& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height)
+MTexture::MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height)
 {
 	m_texture = parent.Texture();
 	m_atlasPath = atlasPath;
