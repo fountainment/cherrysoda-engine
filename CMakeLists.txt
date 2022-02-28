@@ -147,9 +147,6 @@ if(EMSCRIPTEN)
                                           -Wno-unused-command-line-argument")
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -gsource-map -DCHERRYSODA_ENABLE_DEBUG")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz --closure 1")
-  # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Oz -s ASSERTIONS=0 -s GL_ASSERTIONS=0 \
-  #                                                         --closure 1 -s WASM_OBJECT_FILES=0 --llvm-lto 1 \
-  #                                                         -s AGGRESSIVE_VARIABLE_ELIMINATION=1")
 elseif(NOT MSVC)
   if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
@@ -160,7 +157,6 @@ elseif(NOT MSVC)
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -pedantic -Wno-pedantic -fPIE ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wall -pedantic -Wno-pedantic -fPIE ${CHERRYSODA_SIMD}")
   set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -O0 -g -DCHERRYSODA_ENABLE_DEBUG")
-  set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_PROFILE} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
   set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O1 -g -pg -DCHERRYSODA_ENABLE_PROFILE -DTRACY_ENABLE")
 else() # MSVC
