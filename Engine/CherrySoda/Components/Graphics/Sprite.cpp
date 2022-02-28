@@ -88,8 +88,13 @@ void Sprite::Update()
 
 void Sprite::SetFrame(const MTexture& texture)
 {
+	// if (Texture() == texture)
+	// 	return;
+
 	Texture(texture);
-	Origin(Math::Vec2(Texture().Size()) * m_justify);
+	if (m_justifyHasValue) {
+		Origin(Math::Vec2(Texture().Size()) * m_justify);
+	}
 	if (m_onFrameChange) {
 		m_onFrameChange(m_currentAnimationID);
 	}
@@ -125,8 +130,14 @@ Sprite* Sprite::CloneInto(Sprite* clone)
 	clone->Justify(Justify());
 	clone->Origin(Origin());
 
+	clone->m_justifyHasValue = m_justifyHasValue;
 	clone->m_animations = m_animations;
-	clone->m_currentAnimation = m_currentAnimation;
+	if (STL::ContainsKey(m_animations, m_currentAnimationID)) {
+		clone->m_currentAnimation = &clone->m_animations[m_currentAnimationID];
+	}
+	else {
+		clone->m_currentAnimation = nullptr;
+	}
 	clone->m_animationTimer = m_animationTimer;
 	clone->m_width = m_width;
 	clone->m_height = m_height;

@@ -38,7 +38,8 @@ public:
 		}
 	}
 
-	CHERRYSODA_GETTER_SETTER_OF_VEC2(Justify, m_justify);
+	CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(Justify, m_justify, CHERRYSODA_NONE_OP, m_justifyHasValue = true);
+	void ClearJustify() { m_justifyHasValue = false; }
 
 	void operator = (const Sprite& sprite) = delete;
 
@@ -49,6 +50,8 @@ public:
 	{
 		auto ret = m_atlas->GetAtlasSubtextures(m_path + path);
 		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
+		m_width = Math_Max(m_width, ret[0].Width());
+		m_height = Math_Max(m_height, ret[0].Height());
 		return ret;
 	}
 
@@ -90,6 +93,9 @@ public:
 	inline void OnLastFrame(STL::Action<StringID> onLastFrame) { m_onLastFrame = onLastFrame; }
 	inline void OnChange(STL::Action<StringID,StringID> onChange) { m_onChange = onChange; }
 
+	float Width() const override { return m_width; }
+	float Height() const override { return m_height; }
+
 	inline Sprite* CreateClone()
 	{
 		return CloneInto(new Sprite());
@@ -111,7 +117,10 @@ private:
 
 	float m_rate = 1.f;
 	Math::Vec2 m_justify = Vec2_Zero;
+	bool m_justifyHasValue = false;
 	bool m_useRawDeltaTime = false;
+	bool m_animating = false;
+	bool m_ownAtlas = false;
 	STL::Action<StringID> m_onFinish;
 	STL::Action<StringID> m_onLoop;
 	STL::Action<StringID> m_onFrameChange;
@@ -126,12 +135,9 @@ private:
 	int m_width = 0;
 	int m_height = 0;
 
-	bool m_animating = false;
-	bool m_ownAtlas = false;
 	StringID m_currentAnimationID;
 	StringID m_lastAnimationID;
 	int m_currentAnimationFrame = 0;
-	// int m_currentAnimationTotalFrame = 0;
 };
 
 } // namespace cherrysoda
