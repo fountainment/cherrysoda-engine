@@ -319,8 +319,7 @@ void GUI::Update()
 		// Mouse cursor control
 		if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)) {
 			ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
-			if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
-			{
+			if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None) {
 				// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
 				Window::ShowCursor(false);
 			}

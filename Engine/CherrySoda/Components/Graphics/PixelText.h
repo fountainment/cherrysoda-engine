@@ -31,8 +31,7 @@ public:
 
 	void Size(float size)
 	{
-		if (m_size.Size() != size)
-		{
+		if (m_size.Size() != size) {
 			m_size = m_font->Get(size);
 			m_dirty = true;
 		}

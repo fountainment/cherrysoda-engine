@@ -338,25 +338,21 @@ bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
 
 void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
 {
-	if (bx::open(_reader, _filePath) )
-	{
+	if (bx::open(_reader, _filePath) ) {
 		uint32_t size = (uint32_t)bx::getSize(_reader);
 		void* data = BX_ALLOC(_allocator, size);
 		bx::read(_reader, data, size, bx::ErrorAssert{});
 		bx::close(_reader);
-		if (NULL != _size)
-		{
+		if (NULL != _size) {
 			*_size = size;
 		}
 		return data;
 	}
-	else
-	{
+	else {
 		DBG("Failed to open: %s.", _filePath);
 	}
 
-	if (NULL != _size)
-	{
+	if (NULL != _size) {
 		*_size = 0;
 	}
 
@@ -391,10 +387,8 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 	{
 		bimg::ImageContainer* imageContainer = bimg::imageParse(entry::getAllocator(), data, size);
 
-		if (NULL != imageContainer)
-		{
-			if (NULL != _orientation)
-			{
+		if (NULL != imageContainer) {
+			if (NULL != _orientation) {
 				*_orientation = imageContainer->m_orientation;
 			}
 
@@ -406,8 +400,7 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 			);
 			unload(data);
 
-			if (imageContainer->m_cubeMap)
-			{
+			if (imageContainer->m_cubeMap) {
 				handle = bgfx::createTextureCube(
 					uint16_t(imageContainer->m_width)
 					, 1 < imageContainer->m_numMips
@@ -417,8 +410,7 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 					, mem
 				);
 			}
-			else if (1 < imageContainer->m_depth)
-			{
+			else if (1 < imageContainer->m_depth) {
 				handle = bgfx::createTexture3D(
 					uint16_t(imageContainer->m_width)
 					, uint16_t(imageContainer->m_height)
@@ -429,8 +421,7 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 					, mem
 				);
 			}
-			else if (bgfx::isTextureValid(0, false, imageContainer->m_numLayers, bgfx::TextureFormat::Enum(imageContainer->m_format), _flags))
-			{
+			else if (bgfx::isTextureValid(0, false, imageContainer->m_numLayers, bgfx::TextureFormat::Enum(imageContainer->m_format), _flags)) {
 				handle = bgfx::createTexture2D(
 					uint16_t(imageContainer->m_width)
 					, uint16_t(imageContainer->m_height)
@@ -442,13 +433,11 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 				);
 			}
 
-			if (bgfx::isValid(handle))
-			{
+			if (bgfx::isValid(handle)) {
 				bgfx::setName(handle, _filePath);
 			}
 
-			if (NULL != _info)
-			{
+			if (NULL != _info) {
 				bgfx::calcTextureSize(
 					*_info
 					, uint16_t(imageContainer->m_width)

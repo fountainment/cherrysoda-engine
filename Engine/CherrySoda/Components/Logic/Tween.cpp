@@ -32,8 +32,7 @@ Tween* Tween::Create(TweenMode mode, Easer easer/* = nullptr*/, float duration/*
 
 void Tween::Init(TweenMode mode, Easer easer, float duration, bool start)
 {
-	if (duration <= 0)
-	{
+	if (duration <= 0) {
 		duration = Math::epsf;
 	}
 	m_useRawDeltaTime = false;
@@ -43,8 +42,7 @@ void Tween::Init(TweenMode mode, Easer easer, float duration, bool start)
 	m_timeLeft = 0;
 	m_percent = 0;
 	Active(false);
-	if (start)
-	{
+	if (start) {
 		Start();
 	}
 }
@@ -59,33 +57,26 @@ void Tween::Update()
 {
 	m_timeLeft -= (m_useRawDeltaTime ? Engine::Instance()->RawDeltaTime() : Engine::Instance()->DeltaTime());
 	m_percent = Math_Max(0.f, m_timeLeft) / m_duration;
-	if (!m_reverse)
-	{
+	if (!m_reverse) {
 		m_percent = 1.f - m_percent;
 	}
-	if (m_easer != nullptr)
-	{
+	if (m_easer != nullptr) {
 		m_eased = m_easer(m_percent);
 	}
-	else
-	{
+	else {
 		m_eased = m_percent;
 	}
-	if (m_onUpdate != nullptr)
-	{
+	if (m_onUpdate != nullptr) {
 		m_onUpdate(this);
 	}
-	if (!(m_timeLeft <= 0.f))
-	{
+	if (!(m_timeLeft <= 0.f)) {
 		return;
 	}
 	m_timeLeft = 0.f;
-	if (m_onComplete != nullptr)
-	{
+	if (m_onComplete != nullptr) {
 		m_onComplete(this);
 	}
-	switch (m_mode)
-	{
+	switch (m_mode) {
 	case TweenMode::Persist:
 		Active(false);
 		break;
@@ -97,13 +88,11 @@ void Tween::Update()
 		Start(m_reverse);
 		break;
 	case TweenMode::YoyoOneshot:
-		if (m_reverse == m_startedReversed)
-		{
+		if (m_reverse == m_startedReversed) {
 			Start(!m_reverse);
 			m_startedReversed = !m_reverse;
 		}
-		else
-		{
+		else {
 			Active(false);
 			RemoveSelf();
 		}
@@ -120,8 +109,7 @@ void Tween::Start(bool reverse/* = false*/)
 	m_timeLeft = m_duration;
 	m_eased = (m_percent = (m_reverse ? 1 : 0));
 	Active(true);
-	if (m_onStart != nullptr)
-	{
+	if (m_onStart != nullptr) {
 		m_onStart(this);
 	}
 }

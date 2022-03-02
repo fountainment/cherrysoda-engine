@@ -394,8 +394,7 @@ namespace entry {
 		SDL_SysWMinfo wmi;
 		SDL_VERSION(&wmi.version);
 #ifndef __EMSCRIPTEN__
-		if (!SDL_GetWindowWMInfo(_window, &wmi))
-		{
+		if (!SDL_GetWindowWMInfo(_window, &wmi)) {
 			return nullptr;
 		}
 #endif // __EMSCRIPTEN__
@@ -405,8 +404,7 @@ namespace entry {
 #	elif BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #		if ENTRY_CONFIG_USE_WAYLAND
 		wl_egl_window* win_impl = (wl_egl_window*)SDL_GetWindowData(_window, "wl_egl_window");
-		if (!win_impl)
-		{
+		if (!win_impl) {
 			int width, height;
 			SDL_GetWindowSize(_window, &width, &height);
 			struct wl_surface* surface = wmi.info.wl.surface;
@@ -437,8 +435,7 @@ namespace entry {
 		SDL_SysWMinfo wmi;
 		SDL_VERSION(&wmi.version);
 #ifndef __EMSCRIPTEN__
-		if (!SDL_GetWindowWMInfo(_window, &wmi))
-		{
+		if (!SDL_GetWindowWMInfo(_window, &wmi)) {
 			return false;
 		}
 #endif // __EMSCRIPTEN__
@@ -478,8 +475,7 @@ namespace entry {
 #	if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #		if ENTRY_CONFIG_USE_WAYLAND
 		wl_egl_window* win_impl = (wl_egl_window*)SDL_GetWindowData(_window, "wl_egl_window");
-		if (win_impl)
-		{
+		if (win_impl) {
 			SDL_SetWindowData(_window, "wl_egl_window", nullptr);
 			wl_egl_window_destroy(win_impl);
 		}

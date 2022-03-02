@@ -73,25 +73,19 @@ void Entity::Render()
 
 void Entity::Tag(BitTagValueType tag)
 {
-	if (m_tag == tag)
-	{
+	if (m_tag == tag) {
 		return;
 	}
-	if (m_scene != nullptr)
-	{
-		for (int i = 0; i < BitTag::TotalTags(); ++i)
-		{
+	if (m_scene != nullptr) {
+		for (int i = 0; i < BitTag::TotalTags(); ++i) {
 			BitTagValueType check = 1 << i;
 			bool add = (tag & check) != 0;
 			bool has = (m_tag & check) != 0;
-			if (has != add)
-			{
-				if (add)
-				{
+			if (has != add) {
+				if (add) {
 					STL::Add(m_scene->Tags()->operator[](i), this);
 				}
-				else
-				{
+				else {
 					STL::Remove(m_scene->Tags()->operator[](i), this);
 				}
 			}

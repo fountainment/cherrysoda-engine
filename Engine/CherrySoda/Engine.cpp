@@ -353,8 +353,7 @@ void Engine::Update()
 	}
 
 	// Changing scenes
-	if (m_scene != m_nextScene)
-	{
+	if (m_scene != m_nextScene) {
 		auto lastScene = m_scene;
 		if (m_scene != nullptr) {
 			m_scene->End();

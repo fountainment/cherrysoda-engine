@@ -35,17 +35,14 @@ Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float
 
 Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 {
-	if (vec == Vec2_Zero)
-	{
+	if (vec == Vec2_Zero) {
 		return Vec2_Zero;
 	}
 	vec = AngleToVector((float)Math_Floor((Angle(vec) + (float)Math::Pi / 8.f) / ((float)Math::Pi / 4.f)) * ((float)Math::Pi / 4.f), 1.f);
-	if (Math_Abs(vec.x) < 0.5f)
-	{
+	if (Math_Abs(vec.x) < 0.5f) {
 		vec.x = 0.f;
 	}
-	else if (Math_Abs(vec.y) < 0.5f)
-	{
+	else if (Math_Abs(vec.y) < 0.5f) {
 		vec.y = 0.f;
 	}
 	return vec;

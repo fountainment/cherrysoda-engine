@@ -11,11 +11,9 @@ using cherrysoda::Engine;
 
 void Shaker::Update()
 {
-	if (m_on && m_timer > 0)
-	{
+	if (m_on && m_timer > 0) {
 		m_timer -= Engine::Instance()->DeltaTime();
-		if (m_timer <= 0)
-		{
+		if (m_timer <= 0) {
 			On(false);
 			m_value = Vec2_Zero;
 			if (m_onShake != nullptr)

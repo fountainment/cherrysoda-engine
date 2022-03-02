@@ -85,8 +85,7 @@ const Easer Ease::BounceOut = [](float t)
 
 const Easer Ease::BounceInOut = [](float t)
 	{
-		if (t < .5f)
-		{
+		if (t < .5f) {
 			t = 1 - t * 2;
 			if (t < B1)
 				return (1 - 7.5625f * t * t) / 2;
