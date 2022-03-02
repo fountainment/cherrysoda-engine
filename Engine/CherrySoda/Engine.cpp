@@ -346,7 +346,10 @@ void Engine::Update()
 	CommandBatches::Update();
 
 	// Update current scene
-	if (m_scene != nullptr) {
+	if (m_freezeTimer > 0.0) {
+		m_freezeTimer = Math_Max(m_freezeTimer - m_rawDeltaTime, 0.0);
+	}
+	else if (m_scene != nullptr) {
 		m_scene->BeforeUpdate();
 		m_scene->Update();
 		m_scene->AfterUpdate();

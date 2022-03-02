@@ -26,6 +26,8 @@ public:
 
 	virtual ~Engine();
 
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(double, FreezeTimer, m_freezeTimer);
+
 	inline int GetWidth() { return m_width; }
 	inline int GetHeight() { return m_height; }
 	inline Math::IVec2 GetViewSize() { return Math::IVec2(GetWidth(), GetHeight()); }
@@ -124,9 +126,10 @@ private:
 	bool m_showCursor = true;
 	bool m_windowResizable = true;
 
+	double m_deltaTime = 0.0;
 	double m_rawDeltaTime = 0.0;
 	double m_timeRate = 1.0;
-	double m_deltaTime = 0.0;
+	double m_freezeTimer = 0.0;
 	double m_rawGameTime = 0.0;
 	double m_gameTime = 0.0;
 	double m_currentTime = 0.0;
