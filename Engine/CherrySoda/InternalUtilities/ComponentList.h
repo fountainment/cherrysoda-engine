@@ -42,8 +42,8 @@ private:
 
 	void Add(Component* component);
 	void Remove(Component* component);
-	void Add(IterableComponents& component);
-	void Remove(IterableComponents& component);
+	void Add(const IterableComponents& component);
+	void Remove(const IterableComponents& component);
 
 	void Update();
 	void Render();

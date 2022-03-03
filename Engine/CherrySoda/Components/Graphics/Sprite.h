@@ -98,7 +98,9 @@ public:
 
 	inline Sprite* CreateClone()
 	{
-		return CloneInto(new Sprite());
+		auto sprite = new Sprite();
+		sprite->AutoDeleteWhenRemoved();
+		return CloneInto(sprite);
 	}
 
 	Sprite* CloneInto(Sprite* sprite);

@@ -7,6 +7,7 @@
 #include <CherrySoda/Components/CollidableComponent.h>
 #include <CherrySoda/Components/Component.h>
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
@@ -62,6 +63,9 @@ void Collider::Added(Component* component)
 
 void Collider::Removed()
 {
+	if (m_onRemoved != nullptr) {
+		m_onRemoved(this, m_entity);
+	}
 	m_entity = nullptr;
 	m_component = nullptr;
 }
@@ -69,4 +73,23 @@ void Collider::Removed()
 void Collider::Render(const Camera* camera) const
 {
 	Render(camera, Color::Yellow);
+}
+
+void Collider::AutoDeleteWhenRemoved(PoolInterface* pool)
+{
+	m_onRemoved =
+		[pool](Collider* collider, Entity* entity)
+		{
+			pool->INTERNAL_Hide(collider);
+			entity->GetScene()->AddActionOnEndOfFrame(
+				[collider, pool]()
+				{
+					pool->INTERNAL_Destroy(collider);
+				});
+		};
+}
+
+void Collider::DeleteCollider(Collider* collider, Entity* entity)
+{
+	entity->GetScene()->AddActionOnEndOfFrame([collider](){ delete collider; });
 }

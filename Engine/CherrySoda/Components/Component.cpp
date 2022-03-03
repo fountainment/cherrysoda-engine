@@ -1,10 +1,13 @@
 #include <CherrySoda/Components/Component.h>
 
 #include <CherrySoda/Entity.h>
+#include <CherrySoda/Scene.h>
+#include <CherrySoda/Util/Pool.h>
 
 using cherrysoda::Camera;
 using cherrysoda::Component;
 using cherrysoda::Entity;
+using cherrysoda::PoolInterface;
 using cherrysoda::Scene;
 
 Component::Component(bool active, bool visible)
@@ -27,6 +30,9 @@ void Component::Removed(Entity* entity)
 	Scene* scene = entity->GetScene();
 	if (scene != nullptr) {
 		// TODO: scene->Tracker()->ComponentRemoved(this);
+	}
+	if (m_onRemoved != nullptr) {
+		m_onRemoved(this, entity);
 	}
 	m_entity = nullptr;
 }
@@ -76,7 +82,27 @@ void Component::RemoveSelf()
 	}
 }
 
+void Component::AutoDeleteWhenRemoved(PoolInterface* pool)
+{
+	m_onRemoved =
+		[pool](Component* component, Entity* entity)
+		{
+			pool->INTERNAL_Hide(component);
+			entity->GetScene()->AddActionOnEndOfFrame(
+				[pool, component]()
+				{
+					pool->INTERNAL_Destroy(component);
+				}
+			);
+		};
+}
+
 Scene* Component::GetScene() const
 {
 	return m_entity != nullptr ? m_entity->GetScene() : nullptr;
+}
+
+void Component::DeleteComponent(Component* component, Entity* entity)
+{
+	entity->GetScene()->AddActionOnEndOfFrame([component](){ delete component; });
 }

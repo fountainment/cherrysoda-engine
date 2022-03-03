@@ -3,6 +3,7 @@
 
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/String.h>
 
 
@@ -54,6 +55,8 @@ public:
 	virtual const char* TypeCStr() const = 0;
 
 	void RemoveSelf();
+	void AutoDeleteWhenRemoved() { m_onRemoved = Component::DeleteComponent; }
+	void CancleAutoDelete() { m_onRemoved = nullptr; }
 
 	template <class T>
 	T* SceneAs() { return static_cast<T*>(GetScene()); }
@@ -66,7 +69,14 @@ public:
 	Scene* GetScene() const;
 
 private:
+	CHERRYSODA_FRIEND_CLASS_POOL;
+
+	void AutoDeleteWhenRemoved(PoolInterface* pool);
+
+	static void DeleteComponent(Component* component, Entity* entity);
+
 	Entity* m_entity = nullptr;
+	STL::Action<Component*, Entity*> m_onRemoved = nullptr;
 
 	bool m_active;
 	bool m_visible;

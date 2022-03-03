@@ -10,6 +10,7 @@
 #include <CherrySoda/InternalUtilities/TagLists.h>
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -24,6 +25,7 @@ using cherrysoda::Collider;
 using cherrysoda::Component;
 using cherrysoda::ComponentList;
 using cherrysoda::Math;
+using cherrysoda::PoolInterface;
 using cherrysoda::Scene;
 using cherrysoda::STL;
 
@@ -209,14 +211,37 @@ void Entity::Remove(Component* component)
 	m_components->Remove(component);
 }
 
-void Entity::Add(ComponentList::IterableComponents& components)
+void Entity::Add(const ComponentList::IterableComponents& components)
 {
 	m_components->Add(components);
 }
 
-void Entity::Remove(ComponentList::IterableComponents& components)
+void Entity::Remove(const ComponentList::IterableComponents& components)
 {
 	m_components->Remove(components);
+}
+
+void Entity::RemoveAllComponents()
+{
+	ComponentList::IterableComponents componentsCopy = m_components->m_components;
+	m_components->Remove(componentsCopy);
+}
+
+void Entity::AutoDeleteWhenRemoved(PoolInterface* pool)
+{
+	m_onRemoved =
+		[pool](Entity* entity, Scene* scene)
+		{
+			pool->INTERNAL_Hide(entity);
+			entity->SetCollider(nullptr);
+			entity->RemoveAllComponents();
+			scene->AddActionOnEndOfFrame(
+				[pool, entity]()
+				{
+					pool->INTERNAL_Destroy(entity);
+				}
+			);
+		};
 }
 
 void Entity::Depth(int depth)
@@ -267,10 +292,10 @@ void Entity::Removed(Scene* scene)
 	for (auto component : *m_components) {
 		component->EntityRemoved(scene);
 	}
-	m_scene = nullptr;
 	if (m_onRemoved) {
 		m_onRemoved(this, scene);
 	}
+	m_scene = nullptr;
 }
 
 void Entity::SetCollider(Collider* collider)
@@ -278,7 +303,7 @@ void Entity::SetCollider(Collider* collider)
 	if (m_collider == collider) {
 		return;
 	}
-	CHERRYSODA_ASSERT(collider->GetEntity() == nullptr, "Setting an Entity's Collider to a Collider already in use by another object\n");
+	CHERRYSODA_ASSERT(collider == nullptr || collider->GetEntity() == nullptr, "Setting an Entity's Collider to a Collider already in use by another object\n");
 
 	if (m_collider != nullptr) {
 		m_collider->Removed();
@@ -287,4 +312,11 @@ void Entity::SetCollider(Collider* collider)
 	if (m_collider) {
 		m_collider->Added(this);
 	}
+}
+
+void Entity::CleanAndDeleteEntity(Entity* entity, Scene* scene)
+{
+	entity->SetCollider(nullptr);
+	entity->RemoveAllComponents();
+	scene->AddActionOnEndOfFrame([entity](){ delete entity; });
 }

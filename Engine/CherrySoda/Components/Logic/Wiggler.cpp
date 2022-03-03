@@ -27,6 +27,7 @@ Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onC
 
 void Wiggler::Removed(Entity* entity)
 {
+	CancleAutoDelete();	
 	base::Removed(entity);
 	STL::Push(ms_cache, this);
 }

@@ -5,6 +5,7 @@
 
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
@@ -72,10 +73,13 @@ public:
 
 	void Add(Component* component);
 	void Remove(Component* component);
-	void Add(ComponentList::IterableComponents& components);
-	void Remove(ComponentList::IterableComponents& components);
+	void Add(const ComponentList::IterableComponents& components);
+	void Remove(const ComponentList::IterableComponents& components);
 
-	void OnRemoved(STL::Action<Entity*, Scene*> onRemoved) { m_onRemoved = onRemoved; }
+	void RemoveAllComponents();
+
+	void AutoDeleteWhenRemoved() { m_onRemoved = Entity::CleanAndDeleteEntity; }
+	void CancleAutoDelete() { m_onRemoved = nullptr; }
 
 	void Depth(int depth);
 	inline int Depth() const { return m_depth; }
@@ -93,8 +97,14 @@ public:
 	void SetCollider(Collider* collider);
 
 private:
+	CHERRYSODA_FRIEND_CLASS_POOL;
+
 	friend class EntityList;
 	friend class Scene;
+
+	void AutoDeleteWhenRemoved(PoolInterface* pool);
+
+	static void CleanAndDeleteEntity(Entity* entity, Scene* scene);
 
 	virtual void Added(Scene* scene);
 	virtual void Removed(Scene* scene);

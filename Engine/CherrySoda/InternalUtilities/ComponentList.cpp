@@ -30,8 +30,8 @@ void ComponentList::LockMode(LockModes lockMode)
 			}
 		}
 
-		m_adding.clear();
-		m_toAdd.clear();
+		STL::Clear(m_adding);
+		STL::Clear(m_toAdd);
 	}
 
 	if (STL::IsNotEmpty(m_toRemove)) {
@@ -43,8 +43,8 @@ void ComponentList::LockMode(LockModes lockMode)
 			}
 		}
 
-		m_removing.clear();
-		m_toRemove.clear();
+		STL::Clear(m_removing);
+		STL::Clear(m_toRemove);
 	}
 }
 
@@ -91,17 +91,18 @@ void ComponentList::Remove(Component* component)
 
 	case LockModes::Error:
 		CHERRYSODA_LOG("Cannot add or remove Entities at this time!\n");
+		CHERRYSODA_ASSERT(false, "Cannot add or remove Entities at this time!\n");
 	}
 }
 
-void ComponentList::Add(ComponentList::IterableComponents& components)
+void ComponentList::Add(const ComponentList::IterableComponents& components)
 {
 	for (auto component : components) {
 		Add(component);
 	}
 }
 
-void ComponentList::Remove(ComponentList::IterableComponents& components)
+void ComponentList::Remove(const ComponentList::IterableComponents& components)
 {
 	for (auto component : components) {
 		Remove(component);

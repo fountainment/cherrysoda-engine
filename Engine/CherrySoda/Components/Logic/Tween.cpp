@@ -49,6 +49,7 @@ void Tween::Init(TweenMode mode, Easer easer, float duration, bool start)
 
 void Tween::Removed(Entity* entity)
 {
+	CancleAutoDelete();	
 	base::Removed(entity);
 	STL::Push(ms_cached, this);
 }

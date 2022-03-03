@@ -3,6 +3,8 @@
 
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Pool.h>
+#include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
 
@@ -76,10 +78,19 @@ public:
 	virtual type::Int32 TypeID() const = 0;
 	virtual const char* TypeCStr() const = 0;
 
+	void AutoDeleteWhenRemoved() { m_onRemoved = Collider::DeleteCollider; }
+	void CancleAutoDelete() { m_onRemoved = nullptr; }
+
 private:
+	CHERRYSODA_FRIEND_CLASS_POOL;
+
 	friend class CollidableComponent;
 	friend class ColliderList;
 	friend class Entity;
+
+	void AutoDeleteWhenRemoved(PoolInterface* pool);
+
+	static void DeleteCollider(Collider* collider, Entity* entity);
 
 	virtual void Added(Entity* entity);
 	virtual void Added(Component* component);
@@ -89,6 +100,7 @@ private:
 
 	Component* m_component = nullptr;
 	Entity* m_entity = nullptr;
+	STL::Action<Collider*, Entity*> m_onRemoved = nullptr;
 };
 
 } // namespace cherrysoda

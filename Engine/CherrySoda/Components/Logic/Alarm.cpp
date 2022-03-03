@@ -70,6 +70,7 @@ void Alarm::Update()
 
 void Alarm::Removed(Entity* entity)
 {
+	CancleAutoDelete();
 	base::Removed(entity);
 	STL::Push(ms_cached, this);
 }
