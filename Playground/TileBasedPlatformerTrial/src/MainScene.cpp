@@ -9,6 +9,7 @@ using namespace cherrysoda;
 using main::MainScene;
 
 static BitTag s_solidTag("solid");
+static BitTag s_playerTag("player");
 static BitTag s_renderTargetTag("render_target");
 
 CHERRYSODA_CONSOLE_VARIABLE(actor_drop_acceleration, float, 1500.f, "");
@@ -207,6 +208,7 @@ void MainScene::Begin()
 	Commands::ExecuteCommand("addslider actor_jump_speed 0 1000");
 	Commands::ExecuteCommand("addslider actor_horizontal_move_speed 0 1000");
 
+	// Initialize Renderers
 	auto renderer = new TagExcludeRenderer(s_renderTargetTag);
 	auto finalRenderer = new SingleTagRenderer(s_renderTargetTag);
 
@@ -244,6 +246,7 @@ void MainScene::Begin()
 	Add(renderer);
 	Add(finalRenderer);
 
+	// Load Map
 	json::Document map;
 	JsonUtil::ReadJsonFile(map, "assets/maps/test.tmj");
 	Graphics::UseRenderPass(kNormalRenderPass)->SetClearColor(map["backgroundcolor"].GetString());
@@ -253,54 +256,81 @@ void MainScene::Begin()
 	int tilesY = map["height"].GetInt();
 	int tileWidth = map["tilewidth"].GetInt();
 	int tileHeight = map["tileheight"].GetInt();
-	auto mapEntity = new Entity;
-	auto tileSet = new TileSet(GameApp::GetAtlas()->GetAtlasSubtextureAt("tiles_packed", 0), tileWidth, tileHeight);
+	int mapHeight = tilesY * tileHeight;
+	auto mapEntity = new Entity();
+	mapEntity->AutoDeleteWhenRemoved();
+	mapEntity->Tag(s_solidTag);
+	Add(mapEntity);
+	auto tileSet = new TileSet(GameApp::GetAtlas()->Get("tiles_packed"), tileWidth, tileHeight);
 	for (int layerIndex = 0; layerIndex < static_cast<int>(layerArray.Size()); ++layerIndex) {
 		const auto& layer = layerArray[layerIndex];
-		const auto& dataArray = layer["data"].GetArray();
-		STL::Vector<STL::Vector<int>> data = STL::Vector<STL::Vector<int>>(tilesX, STL::Vector<int>(tilesY));
-		for (int i = 0; i < static_cast<int>(dataArray.Size()); ++i) {
-			int x = i % tilesX;
-			int y = i / tilesX;
-			y = tilesY - y - 1;
-			data[x][y] = dataArray[i].GetInt() - 1;
-		}
-		if (layerIndex == 0) {
-			auto mapGrid = new Grid(tilesX * 2, tilesY * 2, tileWidth / 2, tileHeight / 2);
-			for (int x = 0; x < tilesX; ++x) {
-				for (int y = 0; y < tilesY; ++y) {
-					int v = data[x][y];
-					if (v >= 0) {
-						int xx = x * 2;
-						int yy = y * 2;
-						if (v != 98 && v != 118) {
-							if (v != 99 && v != 119) {
-								mapGrid->Set(xx, yy, true);
-								mapGrid->Set(xx + 1, yy, true);
+		if (layer["data"].IsArray()) {
+			const auto& dataArray = layer["data"].GetArray();
+			STL::Vector<STL::Vector<int>> data = STL::Vector<STL::Vector<int>>(tilesX, STL::Vector<int>(tilesY));
+			for (int i = 0; i < static_cast<int>(dataArray.Size()); ++i) {
+				int x = i % tilesX;
+				int y = i / tilesX;
+				y = tilesY - y - 1;
+				data[x][y] = dataArray[i].GetInt() - 1;
+			}
+			if (layerIndex == 0) {
+				auto mapGrid = new Grid(tilesX * 2, tilesY * 2, tileWidth / 2, tileHeight / 2);
+				mapGrid->AutoDeleteWhenRemoved();
+				for (int x = 0; x < tilesX; ++x) {
+					for (int y = 0; y < tilesY; ++y) {
+						int v = data[x][y];
+						if (v >= 0) {
+							int xx = x * 2;
+							int yy = y * 2;
+							if (v != 98 && v != 118) {
+								if (v != 99 && v != 119) {
+									mapGrid->Set(xx, yy, true);
+									mapGrid->Set(xx + 1, yy, true);
+								}
+								mapGrid->Set(xx, yy + 1, true);
 							}
-							mapGrid->Set(xx, yy + 1, true);
+							mapGrid->Set(xx + 1, yy + 1, true);
 						}
-						mapGrid->Set(xx + 1, yy + 1, true);
 					}
 				}
+				mapEntity->SetCollider(mapGrid);
 			}
-			mapEntity->SetCollider(mapGrid);
+			auto mapTile = new TileGrid(tileWidth, tileHeight, tilesX, tilesY);
+			mapTile->AutoDeleteWhenRemoved();
+			mapTile->Populate(tileSet, data);
+			mapTile->ClipCamera(camera);
+			mapEntity->Add(mapTile);
 		}
-		auto mapTile = new TileGrid(tileWidth, tileHeight, tilesX, tilesY);
-		mapTile->Populate(tileSet, data);
-		mapTile->ClipCamera(camera);
-		mapEntity->Add(mapTile);
+		else if (layer["objects"].IsArray()) {
+			const auto& objectArray = layer["objects"].GetArray();
+			for (const auto& object : objectArray) {
+				auto entity = new Entity();
+				entity->AutoDeleteWhenRemoved();
+				Add(entity);
+				int id = object["gid"].GetInt() - 1;
+				int x = object["x"].GetInt();
+				int y = object["y"].GetInt();
+				// TODO: Initialize object according to tile id
+				auto spriteSheet = new SpriteSheet<int>(GameApp::GetAtlas()->Get("tiles_packed"), tileWidth, tileHeight);
+				spriteSheet->AutoDeleteWhenRemoved();
+				spriteSheet->Add(0, id);
+				spriteSheet->Play(0);
+				entity->Add(spriteSheet);
+				entity->PositionX(x);
+				entity->PositionY(mapHeight - y);
+				auto collider = new Hitbox(tileWidth, tileHeight);
+				collider->AutoDeleteWhenRemoved();
+				entity->SetCollider(collider);
+			}
+		}
 	}
 
-	mapEntity->Tag(s_solidTag);
-
-	Add(mapEntity);
-
+	// Initialize Player
 	auto player = new Actor();
 	player->Add(new PlayerControl());
 	player->Add(new CameraFollow(camera));
 	player->Add(new CameraRestrict(camera, 0.f, tilesX * tileWidth, 0.f, tilesY * tileHeight));
-	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->GetAtlasSubtextureAt("characters_packed", 0), 24, 24);
+	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->Get("characters_packed"), 24, 24);
 	spriteSheet->Add("normal", 0);
 	spriteSheet->Add("jump", 1);
 	spriteSheet->Play("normal");
@@ -308,6 +338,7 @@ void MainScene::Begin()
 	player->Add(spriteSheet);
 	player->SetCollider(new Hitbox(12.f, 16.f, -6.f, 0.f));
 	player->Position2D(Math::Vec2(30.f, 100.f));
+	player->Tag(s_playerTag);
 	Add(player);
 
 	base::Begin();
