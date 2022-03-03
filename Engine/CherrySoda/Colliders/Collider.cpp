@@ -11,6 +11,7 @@
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/Pool.h>
 
 using cherrysoda::Collider;
 
@@ -24,6 +25,7 @@ using cherrysoda::Entity;
 using cherrysoda::Grid;
 using cherrysoda::Hitbox;
 using cherrysoda::Math;
+using cherrysoda::PoolInterface;
 
 bool Collider::Collide(const CollidableComponent* component) const
 {

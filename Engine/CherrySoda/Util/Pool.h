@@ -2,6 +2,7 @@
 #define _CHERRYSODA_UTIL_POOL_H_
 
 #include <CherrySoda/Util/NumType.h>
+#include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
