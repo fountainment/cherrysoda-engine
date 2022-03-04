@@ -28,7 +28,17 @@ void CollidableComponent::Added(Entity* entity)
 
 void CollidableComponent::Removed(Entity* entity)
 {
-	SetCollider(nullptr);
+	if (AutoDeleteEnabled()) {
+		SetCollider(nullptr);
+	}
+	if (m_collider != nullptr) {
+		m_collider->m_entity = nullptr;
+		if (m_collider->TypeID() == ColliderList::ColliderTypeID()) {
+			for (auto c : *static_cast<ColliderList*>(m_collider)) {
+				c->m_entity = nullptr;
+			}
+		}
+	}
 	base::Removed(entity);
 }
 
