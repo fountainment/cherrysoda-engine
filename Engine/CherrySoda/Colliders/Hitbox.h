@@ -39,6 +39,8 @@ public:
 
 	float Width() const override { return m_width; }
 	float Height() const override { return m_height; }
+	void Width(float width) { m_width = width; }
+	void Height(float height) { m_height = height; }
 
 	inline float AbsoluteLeft() const { return GetEntity() ? InternalLeft() + GetEntity()->PositionX() : InternalLeft(); }
 	inline float AbsoluteRight() const { return GetEntity() ? InternalRight() + GetEntity()->PositionX() : InternalRight(); }

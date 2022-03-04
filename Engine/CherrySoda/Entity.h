@@ -20,6 +20,7 @@ class Entity
 {
 public:
 	Entity() : Entity(Math::Vec3(0.f)) {}
+	Entity(const Math::Vec2& position) : Entity(Math::Vec3(position, 0.f)) {}
 	Entity(const Math::Vec3& position);
 	virtual ~Entity();
 

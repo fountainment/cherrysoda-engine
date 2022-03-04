@@ -18,7 +18,13 @@ public:
 	typedef cherrysoda::Scene base;
 
 	void Begin() override;
-	void Update() override;
+
+	void InitializeTileObject(int id, cherrysoda::Entity* entity, int tileWidth, int tileHeight);
+
+	static float GetControlAxisX();
+	static float GetControlAxisY();
+	static bool JumpButtonPressed();
+	static bool JumpButtonCheck();
 };
 
 } // namespace main
