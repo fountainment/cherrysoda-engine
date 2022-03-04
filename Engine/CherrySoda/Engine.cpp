@@ -339,6 +339,11 @@ void Engine::Update()
 	// Update input
 	MInput::Update();
 
+	if (ExitOnEscapeKeypress() && MInput::Keyboard()->Pressed(Keys::Escape)) {
+		Exit();
+		return;
+	}
+
 	// Update GUI
 	GUI::Update();
 
