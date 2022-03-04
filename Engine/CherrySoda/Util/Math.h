@@ -232,7 +232,8 @@ public:
 		inline float Bottom() const { return Y(); }
 
 		inline void Move(const Vec2& delta) { m_coord += delta; }
-		inline Vec2 Clamp(const Vec2& pos) { return Vec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
+		inline void Size(const Vec2& size) { m_size = size; }
+		inline Vec2 Clamp(const Vec2& pos) const { return Vec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
 
 		inline bool Intersects(const Rectangle& rect) const
 		{
@@ -256,7 +257,7 @@ public:
 		inline int Bottom() const { return Y(); }
 
 		inline void Move(const IVec2& delta) { m_coord += delta; }
-		inline IVec2 Clamp(const IVec2& pos) { return IVec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
+		inline IVec2 Clamp(const IVec2& pos) const { return IVec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())); }
 
 		inline bool operator == (const IRectangle& rect) const { return m_coord == rect.m_coord && m_size == rect.m_size; }
 		inline bool operator != (const IRectangle& rect) const { return m_coord != rect.m_coord || m_size != rect.m_size; }

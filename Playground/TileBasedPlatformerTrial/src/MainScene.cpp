@@ -20,6 +20,8 @@ CHERRYSODA_CONSOLE_VARIABLE(actor_extra_drop_acceleration, float, 400.f, "");
 CHERRYSODA_CONSOLE_VARIABLE(actor_jump_speed, float, 360.f, "");
 CHERRYSODA_CONSOLE_VARIABLE(actor_horizontal_move_speed, float, 100.f, "");
 CHERRYSODA_CONSOLE_VARIABLE(actor_vertical_climb_speed, float, 100.f, "");
+CHERRYSODA_CONSOLE_VARIABLE(camera_follow_rect_width, float, 100.f, "");
+CHERRYSODA_CONSOLE_VARIABLE(camera_follow_rect_height, float, 60.f, "");
 
 static constexpr int kNormalRenderPass = 1;
 static constexpr int kFinalRenderPass = 2;
@@ -72,7 +74,7 @@ public:
 			while (move != 0) {
 				bool moveHasNoCollide = !CollideCheck(s_solidTag, Position2D() + Math::Vec2(0, sign));
 				if (sign < 0) {
-					if (!CollideCheck(s_platformTag, Position2D())) {
+					if (!CollideCheck(s_platformTag)) {
 						moveHasNoCollide &= !CollideCheck(s_platformTag, Position2D() + Math::Vec2(0, sign));
 					}
 				}
@@ -93,7 +95,7 @@ public:
 	void Update() override
 	{
 		m_isOnGround = false;
-		if (CollideCheck(s_solidTag, Position2D() - Vec2_YUp) || (!CollideCheck(s_platformTag, Position2D()) && CollideCheck(s_platformTag, Position2D() - Vec2_YUp))) {
+		if (CollideCheck(s_solidTag, Position2D() - Vec2_YUp) || (!CollideCheck(s_platformTag) && CollideCheck(s_platformTag, Position2D() - Vec2_YUp))) {
 			m_isOnGround = true;
 		}
 		m_isAnythingAbove = false;
@@ -105,6 +107,10 @@ public:
 		}
 		else if (MainScene::GetControlAxisY() > 0.5f) {
 			m_isOnClimb = true;
+		}
+
+		if (CollideCheck(s_spikeTag)) {
+			Position2D(Math::Vec2(30.f, 100.f));
 		}
 
 		base::Update();
@@ -126,50 +132,81 @@ class CameraFollow : public Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(CameraFollow, Component);
 
-	CameraFollow(Camera* camera)
+	CameraFollow(Camera* camera, const Math::Rectangle& followRect, const Math::Rectangle& restrictionRect)
 		: base(true, false)
 		, m_camera(camera)
+		, m_followRect(followRect)
+		, m_restrictionRect(restrictionRect)
 	{}
 
 	void Update() override
 	{
-		m_camera->Approach(GetEntity()->Position2D(), Math::Rectangle{ Math::Vec2(-50.f, -30.f), Math::Vec2(100.f, 60.f) }, 0.1f);
+		m_followRect =
+			Math::Rectangle{
+				Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f,
+				Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)
+			};
+
+		auto followRectCopy = m_followRect;
+		auto restrictionRectCopy = m_restrictionRect;
+		followRectCopy.Move(GetEntity()->Position2D());
+		auto shrinkBuffer = Math::Vec2(10.f);
+		auto shrinkSize = m_camera->Size() / m_camera->Scale2D() * 0.5f - shrinkBuffer;
+		restrictionRectCopy.Move(shrinkSize);
+		restrictionRectCopy.Size(restrictionRectCopy.Size() - shrinkSize * 2.f);
+
+		auto target = m_camera->Position2D();
+		target = followRectCopy.Clamp(target);
+		target = restrictionRectCopy.Clamp(target);
+
+		m_camera->Approach(target, 0.1f);
 		m_camera->RoundPosition();
+
+		shrinkSize = m_camera->Size() / m_camera->Scale2D() * 0.5f;
+		restrictionRectCopy = m_restrictionRect;
+		restrictionRectCopy.Move(shrinkSize);
+		restrictionRectCopy.Size(restrictionRectCopy.Size() - shrinkSize * 2.f);
+		m_camera->Position2D(restrictionRectCopy.Clamp(m_camera->Position2D()));
+		m_camera->RoundPosition();
+	}
+
+	void DebugRender(Camera* camera) override
+	{
+		auto followRectCopy = m_followRect;
+		followRectCopy.Move(camera->Position2D());
+		Draw::HollowRect(followRectCopy);
+		Draw::HollowRect(m_restrictionRect, Color::Red);
 	}
 
 private:
 	Camera* m_camera = nullptr;
+	Math::Rectangle m_followRect;
+	Math::Rectangle m_restrictionRect;
 };
 
-class CameraRestrict : public Component
+class CameraAutoScale : public Component
 {
 public:
-	CHERRYSODA_DECLARE_COMPONENT(CameraRestrict, Component);
+	CHERRYSODA_DECLARE_COMPONENT(CameraAutoScale, Component);
 
-	CameraRestrict(Camera* camera, float left, float right, float bottom, float top)
+	CameraAutoScale(Camera* camera, Camera* scaleCamera)
 		: base(true, false)
 		, m_camera(camera)
-	{
-		m_rect = Math::Rectangle{ Math::Vec2(left, bottom), Math::Vec2(right - left, top - bottom) };
-	}
+		, m_scaleCamera(scaleCamera)
+	{}
 
 	void Update() override
 	{
-		float rd = m_rect.Right() - m_camera->Right();
-		if (rd < 0.f) m_camera->MovePositionX(rd);
-		float td = m_rect.Top() - m_camera->Top();
-		if (td < 0.f) m_camera->MovePositionY(td);
-		float ld = m_rect.Left() - m_camera->Left();
-		if (ld > 0.f) m_camera->MovePositionX(ld);
-		float bd = m_rect.Bottom() - m_camera->Bottom();
-		if (bd > 0.f) m_camera->MovePositionY(bd);
-
-		m_camera->RoundPosition();
+		Math::IVec2 winSize = Engine::Instance()->GetWindowSize();
+		Math::IVec2 cameraSize = m_camera->GetSize();
+		Math::IVec2 scaleVec = winSize / cameraSize;
+		int scale = Math_Max(1, Math_Min(scaleVec.x, scaleVec.y));
+		m_scaleCamera->Scale2D(Math::Vec2(scale));
 	}
 
 private:
 	Camera* m_camera;
-	Math::Rectangle m_rect;
+	Camera* m_scaleCamera;
 };
 
 class PlayerControl : public Component
@@ -238,6 +275,10 @@ void MainScene::Begin()
 	Commands::ExecuteCommand("addslider actor_extra_drop_acceleration 0 3000");
 	Commands::ExecuteCommand("addslider actor_jump_speed 0 1000");
 	Commands::ExecuteCommand("addslider actor_horizontal_move_speed 0 1000");
+	Commands::ExecuteCommand("addslider actor_vertical_climb_speed 0 1000");
+	Commands::ExecuteCommand("addslider camera_follow_rect_width 0 500");
+	Commands::ExecuteCommand("addslider camera_follow_rect_height 0 500");
+	Commands::ExecuteCommand("clear");
 
 	// Initialize Renderers
 	auto renderer = new TagExcludeRenderer(s_renderTargetTag);
@@ -367,8 +408,10 @@ void MainScene::Begin()
 	// Initialize Player
 	auto player = new Actor();
 	player->Add(new PlayerControl());
-	player->Add(new CameraFollow(camera));
-	player->Add(new CameraRestrict(camera, 0.f, tilesX * tileWidth, 0.f, tilesY * tileHeight));
+	player->Add(new CameraAutoScale(camera, finalCamera));
+	player->Add(new CameraFollow(camera,
+		Math::Rectangle{Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f, Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)},
+		Math::Rectangle{Vec2_Zero, Math::Vec2(tilesX * tileWidth, tilesY * tileHeight)}));
 	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->Get("characters_packed"), 24, 24);
 	spriteSheet->Add("normal", 0);
 	spriteSheet->Add("jump", 1);

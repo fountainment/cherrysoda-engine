@@ -29,6 +29,8 @@ public:
 
 	inline Math::Vec2 GetSize() const { return Math::Vec2(m_width, m_height); }
 	inline void SetSize(const Math::Vec2& size) { Width(size[0]); Height(size[1]); Ratio(Width() / Height()); }
+	inline Math::Vec2 Size() const { return GetSize(); }
+	inline void Size(const Math::Vec2& size) { SetSize(size); }
 
 	void UpdateMatrices();
 

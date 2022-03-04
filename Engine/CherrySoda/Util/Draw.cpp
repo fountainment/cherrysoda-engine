@@ -64,6 +64,11 @@ void Draw::HollowRect(float x, float y, float width, float height, const Color& 
 	LineAngle(Math::Vec2(x, y + height), Math::PiHalf * 3.f, height, color);
 }
 
+void Draw::HollowRect(const Math::Rectangle& rect, const Color& color/* = Color::White*/)
+{
+	HollowRect(rect.X(), rect.Y(), rect.Width(), rect.Height(), color);
+}
+
 void Draw::Circle(const Math::Vec2& position, float radius, const Color& color/* = Color::White*/, float resolution/* = 4.f*/)
 {
 	Math::Vec2 last = Vec2_XUp * radius;

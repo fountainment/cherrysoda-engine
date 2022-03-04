@@ -28,6 +28,7 @@ public:
 	static void Line(const Math::Vec2& start, const Math::Vec2& end, const Color& color = Color::White, float thickness = 1.f);
 
 	static void HollowRect(float x, float y, float width, float height, const Color& color = Color::White);
+	static void HollowRect(const Math::Rectangle& rect, const Color& color = Color::White);
 	static void Circle(const Math::Vec2& pos, float radius, const Color& color = Color::White, float resolution = 4.f);
 
 	static const MTexture& PixelTexture() { return ms_pixel; }
