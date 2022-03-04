@@ -6,7 +6,7 @@ using namespace cherrysoda;
 
 void PlayerControl::Update()
 {
-	auto player = EntityAs<Player>();
+	auto player = GetEntityAs<Player>();
 
 	float deltaTime = Engine::Instance()->DeltaTime();
 
@@ -32,7 +32,7 @@ void PlayerControl::Update()
 
 void PlayerCamera::Update()
 {
-	auto player = EntityAs<Player>();
+	auto player = GetEntityAs<Player>();
 
 	GetCamera()->Direction(player->FacingDirection());
 	GetCamera()->Position(player->Position());

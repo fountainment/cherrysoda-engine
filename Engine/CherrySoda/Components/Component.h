@@ -61,13 +61,13 @@ public:
 	void CancleAutoDelete() { m_onRemoved = nullptr; }
 
 	template <class T>
-	T* SceneAs() { return static_cast<T*>(GetScene()); }
+	inline T* GetSceneAs() { return static_cast<T*>(GetScene()); }
 
 	template <class T>
-	T* EntityAs() { return static_cast<T*>(GetEntity()); }
+	inline T* GetEntityAs() { return static_cast<T*>(GetEntity()); }
 
-	inline Entity* GetEntity() { return m_entity; };
-	inline const Entity* GetEntity() const { return m_entity; };
+	inline Entity* GetEntity() { return m_entity; }
+	inline const Entity* GetEntity() const { return m_entity; }
 	Scene* GetScene() const;
 
 private:

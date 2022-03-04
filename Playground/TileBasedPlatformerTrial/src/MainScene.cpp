@@ -181,7 +181,7 @@ public:
 
 	void Update() override
 	{
-		auto actor = EntityAs<Actor>();
+		auto actor = GetEntityAs<Actor>();
 		auto spriteSheet = actor->Get<SpriteSheet<StringID>>();
 		float deltaTime = Engine::Instance()->DeltaTime();
 		bool jumpButtonPressed = MainScene::JumpButtonPressed();
