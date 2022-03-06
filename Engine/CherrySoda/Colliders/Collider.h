@@ -78,7 +78,7 @@ public:
 	virtual type::Int32 TypeID() const = 0;
 	virtual const char* TypeCStr() const = 0;
 
-	void AutoDeleteWhenRemoved() { m_onRemoved = Collider::DeleteCollider; }
+	void AutoDeleteWhenRemoved() { if (m_onRemoved == nullptr) m_onRemoved = Collider::DeleteCollider; }
 	void CancleAutoDelete() { m_onRemoved = nullptr; }
 
 private:

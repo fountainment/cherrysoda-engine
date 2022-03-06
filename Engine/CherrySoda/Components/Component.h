@@ -56,7 +56,7 @@ public:
 
 	void RemoveSelf();
 
-	void AutoDeleteWhenRemoved() { m_onRemoved = Component::DeleteComponent; }
+	void AutoDeleteWhenRemoved() { if (m_onRemoved == nullptr) m_onRemoved = Component::DeleteComponent; }
 	inline bool AutoDeleteEnabled() const { return m_onRemoved != nullptr; }
 	void CancleAutoDelete() { m_onRemoved = nullptr; }
 

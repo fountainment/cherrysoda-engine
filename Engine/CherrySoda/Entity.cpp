@@ -314,6 +314,17 @@ void Entity::SetCollider(Collider* collider)
 	}
 }
 
+void Entity::AutoDeleteAllInsideWhenRemoved()
+{
+	AutoDeleteWhenRemoved();
+	if (m_collider != nullptr) {
+		m_collider->AutoDeleteWhenRemoved();
+	}
+	for (auto component : *m_components) {
+		component->AutoDeleteWhenRemoved();
+	}	
+}
+
 void Entity::CleanAndDeleteEntity(Entity* entity, Scene* scene)
 {
 	entity->SetCollider(nullptr);
