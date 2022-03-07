@@ -23,6 +23,7 @@ public:
 
 	static float GetControlAxisX();
 	static float GetControlAxisY();
+	static bool GetControlDownPressed();
 	static bool JumpButtonPressed();
 	static bool JumpButtonCheck();
 };

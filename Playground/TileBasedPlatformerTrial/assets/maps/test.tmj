@@ -53,6 +53,29 @@
         }, 
         {
          "draworder":"topdown",
+         "id":9,
+         "name":"back_object",
+         "objects":[
+                {
+                 "gid":147,
+                 "height":18,
+                 "id":45,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":18,
+                 "x":306,
+                 "y":198
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":6,
          "name":"object",
          "objects":[
@@ -422,8 +445,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":9,
- "nextobjectid":45,
+ "nextlayerid":10,
+ "nextobjectid":46,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

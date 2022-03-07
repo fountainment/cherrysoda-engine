@@ -33,7 +33,9 @@ enum TileType
 	TILE_COIN_BOX = 11,
 	TILE_LOCK = 28,
 	TILE_LADDER_TOP = 51,
-	TILE_LADDER = 71
+	TILE_LADDER = 71,
+	TILE_PLATFORM_0 = 146,
+	TILE_PLATFORM_1 = 147,
 };
 
 class Actor : public Entity
@@ -102,11 +104,8 @@ public:
 		if (CollideCheck(s_solidTag, Position2D() + Vec2_YUp)) {
 			m_isAnythingAbove = true;
 		}
-		if (!CollideCheck(s_climbTag)) {
+		if (m_isOnClimb && !CollideCheck(s_climbTag)) {
 			m_isOnClimb = false;
-		}
-		else if (MainScene::GetControlAxisY() > 0.5f) {
-			m_isOnClimb = true;
 		}
 
 		if (CollideCheck(s_spikeTag)) {
@@ -114,6 +113,17 @@ public:
 		}
 
 		base::Update();
+	}
+
+	void TryClimb() { if (CollideCheck(s_climbTag)) { m_isOnClimb = true; } }
+	void CancelClimb() { m_isOnClimb = false; }
+
+	void GetDownPlatform()
+	{
+		if (!CollideCheck(s_solidTag, Position2D() - Vec2_YUp) && !CollideCheck(s_platformTag) && CollideCheck(s_platformTag, Position2D() - Vec2_YUp)) {
+			MovePositionY(-1.f);
+			TryClimb();
+		}
 	}
 
 	inline bool IsOnGround() const { return m_isOnGround; }
@@ -227,6 +237,9 @@ public:
 		if (jumpButtonCheck) {
 			extraDropSpeed -= actor_extra_drop_acceleration;
 		}
+		if (MainScene::GetControlAxisY() > 0.5f) {
+			actor->TryClimb();
+		}
 		if (actor->IsOnClimb() || actor->IsOnGround()) {
 			if (jumpButtonPressed) {
 				Jump();
@@ -236,6 +249,9 @@ public:
 		else {
 			m_speedY -= (actor_drop_acceleration + extraDropSpeed) * deltaTime;
 			spriteSheet->Play("jump");
+		}
+		if (MainScene::GetControlDownPressed()) {
+			actor->GetDownPlatform();
 		}
 		if (actor->IsOnClimb()) {
 			m_speedY = MainScene::GetControlAxisY() * actor_vertical_climb_speed;
@@ -262,7 +278,9 @@ public:
 
 	void Jump()
 	{
+		auto actor = GetEntityAs<Actor>();
 		m_speedY = actor_jump_speed;
+		actor->CancelClimb();
 	}
 
 private:
@@ -441,7 +459,7 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 	switch (id) {
 	case TILE_LADDER_TOP:
 		entity->AddTag(s_platformTag);
-		hitbox->Height(tileHeight - 3);
+		hitbox->Height(15.f);
 	case TILE_LADDER:
 		entity->AddTag(s_climbTag);
 		break;
@@ -451,12 +469,19 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 	case TILE_COIN_BOX:
 		entity->AddTag(s_solidTag);
 		break;
+	case TILE_PLATFORM_0:
+		entity->AddTag(s_climbTag);
+	case TILE_PLATFORM_1:
+		entity->AddTag(s_platformTag);
+		hitbox->PositionY(7.f);
+		hitbox->Height(11.f);
+		break;
 	}
 }
 
 float MainScene::GetControlAxisX()
 {
-	float axisX = MInput::GamePads(0)->GetLeftStick(0.2f).x;
+	float axisX = MInput::GamePads(0)->LeftStickHorizontal(0.2f);
 	if (!MInput::GamePads(0)->Attached() || axisX == 0.f) {
 		axisX = MInput::Keyboard()->AxisCheck(Keys::A, Keys::D);
 		if (axisX == 0.f) {
@@ -468,7 +493,7 @@ float MainScene::GetControlAxisX()
 
 float MainScene::GetControlAxisY()
 {
-	float axisY = MInput::GamePads(0)->GetLeftStick(0.2f).y;
+	float axisY = MInput::GamePads(0)->LeftStickVertical(0.2f);
 	if (!MInput::GamePads(0)->Attached() || axisY == 0.f) {
 		axisY = MInput::Keyboard()->AxisCheck(Keys::S, Keys::W);
 		if (axisY == 0.f) {
@@ -476,6 +501,15 @@ float MainScene::GetControlAxisY()
 		}
 	}
 	return axisY;
+}
+
+bool MainScene::GetControlDownPressed()
+{
+	bool result = MInput::GamePads(0)->LeftStickDownPressed(0.2f);
+	if (!MInput::GamePads(0)->Attached() || !result) {
+		result = MInput::Keyboard()->Pressed(Keys::S, Keys::Down);
+	}
+	return result;
 }
 
 bool MainScene::JumpButtonPressed()
