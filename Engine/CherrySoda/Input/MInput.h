@@ -371,6 +371,54 @@ public:
 			return ret;
 		}
 
+		// Left Stick Directions
+		inline bool LeftStickLeftCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_left.x <= -deadzone; }
+		inline bool LeftStickLeftPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_left.x <= -deadzone && m_previousState.m_thumbSticks.m_left.x > -deadzone; }
+		inline bool LeftStickLeftReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_left.x > -deadzone && m_previousState.m_thumbSticks.m_left.x <= -deadzone; }
+		inline bool LeftStickRightCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_left.x >= deadzone; }
+		inline bool LeftStickRightPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_left.x >= deadzone && m_previousState.m_thumbSticks.m_left.x < deadzone; }
+		inline bool LeftStickRightReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_left.x < deadzone && m_previousState.m_thumbSticks.m_left.x >= deadzone; }
+		inline bool LeftStickDownCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_left.y <= -deadzone; }
+		inline bool LeftStickDownPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_left.y <= -deadzone && m_previousState.m_thumbSticks.m_left.y > -deadzone; }
+		inline bool LeftStickDownReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_left.y > -deadzone && m_previousState.m_thumbSticks.m_left.y <= -deadzone; }
+		inline bool LeftStickUpCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_left.y >= deadzone; }
+		inline bool LeftStickUpPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_left.y >= deadzone && m_previousState.m_thumbSticks.m_left.y < deadzone; }
+		inline bool LeftStickUpReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_left.y < deadzone && m_previousState.m_thumbSticks.m_left.y >= deadzone; }
+		inline float LeftStickHorizontal(float deadzone) const
+		{
+			float h = m_currentState.m_thumbSticks.m_left.x;
+			return Math_Abs(h) < deadzone ? 0.f : h;
+		}
+		inline float LeftStickVertical(float deadzone) const
+		{
+			float v = m_currentState.m_thumbSticks.m_left.y;
+			return Math_Abs(v) < deadzone ? 0.f : v;
+		}
+
+		// Right Stick Directions
+		inline bool RightStickLeftCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_right.x <= -deadzone; }
+		inline bool RightStickLeftPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_right.x <= -deadzone && m_previousState.m_thumbSticks.m_right.x > -deadzone; }
+		inline bool RightStickLeftReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_right.x > -deadzone && m_previousState.m_thumbSticks.m_right.x <= -deadzone; }
+		inline bool RightStickRightCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_right.x >= deadzone; }
+		inline bool RightStickRightPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_right.x >= deadzone && m_previousState.m_thumbSticks.m_right.x < deadzone; }
+		inline bool RightStickRightReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_right.x < deadzone && m_previousState.m_thumbSticks.m_right.x >= deadzone; }
+		inline bool RightStickDownCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_right.y <= -deadzone; }
+		inline bool RightStickDownPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_right.y <= -deadzone && m_previousState.m_thumbSticks.m_right.y > -deadzone; }
+		inline bool RightStickDownReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_right.y > -deadzone && m_previousState.m_thumbSticks.m_right.y <= -deadzone; }
+		inline bool RightStickUpCheck(float deadzone) const { return m_currentState.m_thumbSticks.m_right.y >= deadzone; }
+		inline bool RightStickUpPressed(float deadzone) const { return m_currentState.m_thumbSticks.m_right.y >= deadzone && m_previousState.m_thumbSticks.m_right.y < deadzone; }
+		inline bool RightStickUpReleased(float deadzone) const { return m_currentState.m_thumbSticks.m_right.y < deadzone && m_previousState.m_thumbSticks.m_right.y >= deadzone; }
+		inline float RightStickHorizontal(float deadzone) const
+		{
+			float h = m_currentState.m_thumbSticks.m_right.x;
+			return Math_Abs(h) < deadzone ? 0.f : h;
+		}
+		inline float RightStickVertical(float deadzone) const
+		{
+			float v = m_currentState.m_thumbSticks.m_right.y;
+			return Math_Abs(v) < deadzone ? 0.f : v;
+		}
+
 		// Triggers
 		inline float GetLeftTrigger() const { return m_currentState.m_triggers.m_left; }
 		inline float GetRightTrigger() const { return m_currentState.m_triggers.m_right; }
