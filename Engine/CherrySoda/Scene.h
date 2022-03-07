@@ -68,6 +68,7 @@ public:
 	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision) const;
 
 	const STL::List<Entity*>& operator [] (const BitTag& tag) const;
+	const STL::List<Entity*>& Get(const BitTag& tag) const;
 
 	void AddActionOnEndOfFrame(STL::Action<> func);
 

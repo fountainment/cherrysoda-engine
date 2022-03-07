@@ -24,10 +24,10 @@ public:
 	Atlas() = default;
 	~Atlas();
 
-	inline const MTexture& operator [] (const StringID& id) const { return m_textures.at(id); }
+	inline const MTexture& operator [] (const StringID& id) const { return Get(id); }
 
 	inline bool Has(const StringID& id) const { return STL::ContainsKey(m_textures, id); }
-	inline const MTexture& Get(const StringID& id) const { return (*this)[id]; }
+	inline const MTexture& Get(const StringID& id) const { return m_textures.at(id); }
 	const MTexture& GetOrDefault(const StringID& id, const MTexture& defaultTexture) const;
 
 	const STL::Vector<MTexture>& GetAtlasSubtextures(const String& key) const;

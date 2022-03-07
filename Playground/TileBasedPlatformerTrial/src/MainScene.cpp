@@ -10,10 +10,12 @@ using main::MainScene;
 
 static BitTag s_solidTag("solid");
 static BitTag s_climbTag("climb");
+static BitTag s_pickUpItemTag("pickupitem");
 static BitTag s_platformTag("platform");
-static BitTag s_spikeTag("spike");
 static BitTag s_playerTag("player");
 static BitTag s_renderTargetTag("render_target");
+static BitTag s_spikeTag("spike");
+static BitTag s_lockTag("lock");
 
 CHERRYSODA_CONSOLE_VARIABLE(actor_drop_acceleration, float, 1500.f, "");
 CHERRYSODA_CONSOLE_VARIABLE(actor_extra_drop_acceleration, float, 400.f, "");
@@ -31,12 +33,69 @@ enum TileType
 	TILE_EMPTY_BOX = 9,
 	TILE_WOW_BOX = 10,
 	TILE_COIN_BOX = 11,
+	TILE_KEY = 27,
 	TILE_LOCK = 28,
 	TILE_LADDER_TOP = 51,
+	TILE_DIAMOND = 67,
 	TILE_LADDER = 71,
+	TILE_ROPE_H_LEFT = 90,
+	TILE_ROPE_H_MIDDLE = 91,
+	TILE_ROPE_H_RIGHT = 92,
 	TILE_PLATFORM_0 = 146,
 	TILE_PLATFORM_1 = 147,
 };
+
+
+class Actor;
+
+
+class PickUpItemCallbackComponent : public Component
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(PickUpItemCallbackComponent, Component);
+
+	PickUpItemCallbackComponent(STL::Action<Actor*> onPickUp) : base(false, false) { OnPickUp(onPickUp); }
+
+	void OnPickUp(STL::Action<Actor*> onPickUp) { m_onPickUp = onPickUp; }
+	void CallOnPickUp(Actor* actor) { if (m_onPickUp != nullptr) m_onPickUp(actor); }
+
+private:
+	STL::Action<Actor*> m_onPickUp = nullptr;
+};
+
+
+class InventoryComponent : public Component
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(InventoryComponent, Component);
+
+	InventoryComponent() : base(false, false) {}
+
+	void AddItem(const StringID& id, int amount = 1)
+	{
+		++m_items[id];
+	}
+
+	bool RemoveItem(const StringID& id, int amount = 1)
+	{
+		if (STL::ContainsKey(m_items, id)) {
+			if (m_items[id] > 0) {
+				--m_items[id];
+				return true;
+			}
+		}
+		return false;
+	}
+
+	int Get(const StringID& id)
+	{
+		return m_items[id];
+	}
+
+private:
+	STL::HashMap<StringID, int> m_items;
+};
+
 
 class Actor : public Entity
 {
@@ -53,7 +112,11 @@ public:
 			int sign = Math_Sign(move);
 
 			while (move != 0) {
-				if (!CollideCheck(s_solidTag, Position2D() + Math::Vec2(sign, 0))) {
+				bool moveHasNoCollide = !CollideCheck(s_solidTag, Position2D() + Math::Vec2(sign, 0));
+				if (!CollideCheck(s_platformTag)) {
+					moveHasNoCollide &= !CollideCheck(s_platformTag, Position2D() + Math::Vec2(sign, 0));
+				}
+				if (moveHasNoCollide) {
 					MovePositionX(sign);
 					move -= sign;
 				}
@@ -112,6 +175,27 @@ public:
 			Position2D(Math::Vec2(30.f, 100.f));
 		}
 
+		auto pickUpItem = CollideFirst(s_pickUpItemTag);
+		if (pickUpItem != nullptr) {
+			auto pickUpItemCallbackComp = pickUpItem->Get<PickUpItemCallbackComponent>();
+			if (pickUpItemCallbackComp) {
+				pickUpItemCallbackComp->CallOnPickUp(this);
+			}
+			pickUpItem->RemoveSelf();
+		}
+
+		auto sensor = Get<CollidableComponent>();
+		auto invectory = Get<InventoryComponent>();
+		if (sensor && invectory) {
+			for (auto lock : GetScene()->Get(s_lockTag)) {
+				if (lock->CollideCheck(sensor)) {
+					if (invectory->RemoveItem("key")) {
+						lock->RemoveSelf();
+					}
+				}
+			}
+		}
+
 		base::Update();
 	}
 
@@ -136,6 +220,7 @@ private:
 	bool m_isAnythingAbove = false;
 	bool m_isOnClimb = false;
 };
+
 
 class CameraFollow : public Component
 {
@@ -194,6 +279,7 @@ private:
 	Math::Rectangle m_restrictionRect;
 };
 
+
 class CameraAutoScale : public Component
 {
 public:
@@ -218,6 +304,7 @@ private:
 	Camera* m_camera;
 	Camera* m_scaleCamera;
 };
+
 
 class PlayerControl : public Component
 {
@@ -269,9 +356,11 @@ public:
 		float speedX = MainScene::GetControlAxisX() * actor_horizontal_move_speed;
 		if (speedX > 0.f) {
 			spriteSheet->SetSpriteEffects(SpriteEffects::FlipHorizontally);
+			actor->Get<CollidableComponent>()->GetCollider()->PositionX(0.f);
 		}
 		else if (speedX < 0.f) {
 			spriteSheet->SetSpriteEffects(SpriteEffects::None);
+			actor->Get<CollidableComponent>()->GetCollider()->PositionX(-8.f);
 		}
 		actor->Move(Math::Vec2(speedX, m_speedY) * deltaTime);
 	}
@@ -286,6 +375,7 @@ public:
 private:
 	float m_speedY = 0.f;
 };
+
 
 void MainScene::Begin()
 {
@@ -430,6 +520,7 @@ void MainScene::Begin()
 	player->Add(new CameraFollow(camera,
 		Math::Rectangle{Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f, Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)},
 		Math::Rectangle{Vec2_Zero, Math::Vec2(tilesX * tileWidth, tilesY * tileHeight)}));
+	player->Add(new InventoryComponent);
 	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->Get("characters_packed"), 24, 24);
 	spriteSheet->Add("normal", 0);
 	spriteSheet->Add("jump", 1);
@@ -439,21 +530,26 @@ void MainScene::Begin()
 	player->SetCollider(new Hitbox(12.f, 16.f, -6.f, 0.f));
 	player->Position2D(Math::Vec2(30.f, 100.f));
 	player->Tag(s_playerTag);
+	auto sensorHitbox = new Hitbox(8.f, 12.f, -8.f, 2.f);
+	sensorHitbox->AutoDeleteWhenRemoved();
+	auto sensorComponent = new CollidableComponent(false, false, true);
+	sensorComponent->SetCollider(sensorHitbox);
+	player->Add(sensorComponent);
+	player->AutoDeleteAllInsideWhenRemoved();
 	Add(player);
 
 	base::Begin();
 }
 
+
 void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int tileHeight)
 {
 	auto spriteSheet = new SpriteSheet<int>(GameApp::GetAtlas()->Get("tiles_packed"), tileWidth, tileHeight);
-	spriteSheet->AutoDeleteWhenRemoved();
 	entity->Add(spriteSheet);
 
 	spriteSheet->Add(0, id);
 	spriteSheet->Play(0);
 	auto hitbox = new Hitbox(tileWidth, tileHeight);
-	hitbox->AutoDeleteWhenRemoved();
 	entity->SetCollider(hitbox);
 
 	switch (id) {
@@ -464,6 +560,9 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 		entity->AddTag(s_climbTag);
 		break;
 	case TILE_LOCK:
+		entity->AddTag(s_lockTag);
+		entity->AddTag(s_solidTag);
+		break;
 	case TILE_EMPTY_BOX:
 	case TILE_WOW_BOX:
 	case TILE_COIN_BOX:
@@ -476,8 +575,31 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 		hitbox->PositionY(7.f);
 		hitbox->Height(11.f);
 		break;
+	case TILE_KEY:
+		hitbox->PositionY(3.f);
+		hitbox->Height(12.f);
+		entity->AddTag(s_pickUpItemTag);
+		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ entity->Get<InventoryComponent>()->AddItem("key"); }));
+		break;
+	case TILE_DIAMOND:
+		hitbox->Position2D(Math::Vec2(2.f));
+		hitbox->Width(14.f);
+		hitbox->Height(14.f);
+		entity->AddTag(s_pickUpItemTag);
+		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ entity->Get<InventoryComponent>()->AddItem("diamond"); }));
+		break;
+	case TILE_ROPE_H_LEFT:
+	case TILE_ROPE_H_MIDDLE:
+	case TILE_ROPE_H_RIGHT:
+		entity->AddTag(s_platformTag);
+		hitbox->Height(6.f);
+		hitbox->PositionY(6.f);
+		break;
 	}
+
+	entity->AutoDeleteAllInsideWhenRemoved();
 }
+
 
 float MainScene::GetControlAxisX()
 {
@@ -491,6 +613,7 @@ float MainScene::GetControlAxisX()
 	return axisX;
 }
 
+
 float MainScene::GetControlAxisY()
 {
 	float axisY = MInput::GamePads(0)->LeftStickVertical(0.2f);
@@ -503,6 +626,7 @@ float MainScene::GetControlAxisY()
 	return axisY;
 }
 
+
 bool MainScene::GetControlDownPressed()
 {
 	bool result = MInput::GamePads(0)->LeftStickDownPressed(0.2f);
@@ -512,10 +636,12 @@ bool MainScene::GetControlDownPressed()
 	return result;
 }
 
+
 bool MainScene::JumpButtonPressed()
 {
 	return MInput::GamePads(0)->Pressed(Buttons::A) || MInput::Keyboard()->Pressed(Keys::Space, Keys::J);
 }
+
 
 bool MainScene::JumpButtonCheck()
 {

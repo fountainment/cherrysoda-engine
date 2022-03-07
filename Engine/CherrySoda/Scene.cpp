@@ -124,7 +124,12 @@ Renderer* Scene::FirstRenderer()
 
 const STL::List<Entity*>& Scene::operator [] (const BitTag& tag) const
 {
-	return m_tagLists->operator[](tag.ID());
+	return (*m_tagLists)[tag.ID()];
+}
+
+const STL::List<Entity*>& Scene::Get(const BitTag& tag) const
+{
+	return (*m_tagLists)[tag.ID()];
 }
 
 void Scene::AddActionOnEndOfFrame(STL::Action<> func)
