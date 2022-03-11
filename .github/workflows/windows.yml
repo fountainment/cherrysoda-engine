@@ -35,6 +35,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/build/Tests
       run: ./AllTests.exe
+      if: matrix.build_type == 'Debug'
 
 
   msvc-vs2017:

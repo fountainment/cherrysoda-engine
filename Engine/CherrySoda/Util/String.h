@@ -13,12 +13,6 @@
 #define CHERRYSODA_LOG_FORMAT(format,...)              CHERRYSODA_LOG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 #define CHERRYSODA_ASSERT_FORMAT(condition,format,...) CHERRYSODA_ASSERT(condition,CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 
-#ifdef CHERRYSODA_ENABLE_DEBUG
-#	define CHERRYSODA_STRINGID_CONSTEXPR inline
-#else
-#	define CHERRYSODA_STRINGID_CONSTEXPR constexpr
-#endif
-
 namespace cherrysoda {
 
 typedef std::string String;
@@ -36,7 +30,11 @@ public:
 		return hash & 0x7fffffff;
 	}
 
+#ifdef CHERRYSODA_ENABLE_DEBUG
+	static type::UInt32 HexStrToUInt32(const char* str, int len = -1)
+#else
 	static constexpr type::UInt32 HexStrToUInt32(const char* str, int len = -1)
+#endif // CHERRYSODA_ENABLE_DEBUG
 	{
 		type::UInt32 ans = 0;
 		for (int i = 0; (len == -1 || i < len) && str[i]; ++i) {
