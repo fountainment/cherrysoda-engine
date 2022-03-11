@@ -18,6 +18,9 @@ jobs:
       with:
         platform: ${{ matrix.architecture }}
 
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
@@ -60,7 +63,7 @@ jobs:
     - name: Test
       shell: bash
       working-directory: ${{github.workspace}}/build/Tests
-      run: ./$BUILD_TYPE/AllTests.exe
+      run: ./${{ matrix.build_type }}/AllTests.exe
 
 
   msvc-latest:
@@ -79,14 +82,14 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -A ${{ matrix.architecture }}
 
     - name: Build
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake --build . --config $BUILD_TYPE --parallel 8
+      run: cmake --build . --config ${{ matrix.build_type }} --parallel 8
 
     - name: Test
       shell: bash
       working-directory: ${{github.workspace}}/build/Tests
-      run: ./$BUILD_TYPE/AllTests.exe
+      run: ./${{ matrix.build_type }}/AllTests.exe
