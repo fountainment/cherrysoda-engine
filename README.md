@@ -101,7 +101,7 @@ you can create an issue, then I might be able to help you.
 
 ### Windows
 
-- Visual Studio >=2017
+- Visual Studio >=2017 or MinGW(GCC >= 5.2)
 
 ### MacOS
 
@@ -110,7 +110,7 @@ you can create an issue, then I might be able to help you.
 ## How to Build
 
 ```sh
-# Native on Linux, Windows or MacOS
+# How to build executable
 git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
 cmake -E make_directory build
@@ -120,20 +120,31 @@ cmake --build . --config Release
 ```
 
 ```sh
-# Web Assembly on Linux or MacOS
+# How to build webassembly
 git clone https://github.com/emscripten-core/emsdk.git
 ./emsdk/emsdk install latest
 ./emsdk/emsdk activate latest
 source ./emsdk/emsdk_env.sh
 git clone https://github.com/fountainment/cherrysoda-engine.git
 cd cherrysoda-engine
-mkdir build
+cmake -E make_directory build
 cd build
 emcmake cmake ..
 make -j8
 ```
 
-### How to Do Performance Profiling with Tracy Profiler
+## How to Create Project
+
+Use Tools/create_project.py, it will copy the project template and do some string replacement.
+
+For example:
+
+```
+cd Playground
+python3 ../Tools/create_projects.py HelloWorld
+```
+
+## How to Do Performance Profiling with Tracy Profiler
 
 First, clone the tracy profiler and put the tracy folder into "Engine" directory:
 
