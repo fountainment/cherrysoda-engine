@@ -38,4 +38,4 @@ jobs:
     - name: Build
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake --build . --config $BUILD_TYPE
+      run: cmake --build . --config $BUILD_TYPE --parallel 8
