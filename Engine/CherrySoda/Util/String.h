@@ -13,6 +13,12 @@
 #define CHERRYSODA_LOG_FORMAT(format,...)              CHERRYSODA_LOG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 #define CHERRYSODA_ASSERT_FORMAT(condition,format,...) CHERRYSODA_ASSERT(condition,CHERRYSODA_FORMAT(format,##__VA_ARGS__))
 
+#ifdef CHERRYSODA_ENABLE_DEBUG
+#	define CHERRYSODA_STRINGID_CONSTEXPR inline
+#else
+#	define CHERRYSODA_STRINGID_CONSTEXPR constexpr
+#endif
+
 namespace cherrysoda {
 
 typedef std::string String;
