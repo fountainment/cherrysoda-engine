@@ -114,7 +114,7 @@ cd cherrysoda-engine
 cmake -E make_directory build
 cd build
 cmake ..
-cmake --build . --config Release
+cmake --build . --config Release --parallel 8
 ```
 
 ```sh
@@ -128,7 +128,7 @@ cd cherrysoda-engine
 cmake -E make_directory build
 cd build
 emcmake cmake ..
-make -j8
+cmake --build . --config Release --parallel 8
 ```
 
 ## How to Create Project
