@@ -10,13 +10,11 @@ A lightweight cross-platform C++ game engine based on bgfx and SDL2 (inspired by
 
 ## Introduction
 
-This is an engine I made for anticipating gamejam.
+This engine is a C++ port of Monocle engine, with some changes and additional functionalities. 
 
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
-Its design is quite simple and handy, then I wonder if I can use it to make game for different platforms.
-
-The result is this engine, it ported most parts of Monocle engine, and added some useful features.
-I have to admit that the port quality is not very good, anyway, after a few gamejams, it's basically usable now.
+Its design is quite simple and handy for 2d sprite game, so I wish like to combine it with my previous C++ cross-platform experience.
+This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio play, command console UI are rewritten in ImGui and has a parameter tweaking slider, some minor changes are done for 3d capability, but this engine is still mainly for making 2d game.
 
 ## Demos
 
@@ -42,7 +40,7 @@ Demo source:
 
 - This engine only support a very limitted amount of features (see Current Features)
 - There is no scripting support, all game coding needs to be done in C++
-- The memory management is not done well at the moment
+- The memory management is not done elegantly at the moment
 - This engine requires the user to be comfortable with command-line workflow
 
 ## Current Features
@@ -59,8 +57,8 @@ Demo source:
   - Ease Functions
   - Some Useful Components (Alarm, StateMachine, Tween, ...)
 - Tools:
-  - Crunch (a texture packer) (modified) (under MIT Licence)
-  - Sfxr (an 8-bit sound effect generator) (ported) (under MIT Licence)
+  - crunch (a texture packer) (modified) (MIT Licence)
+  - sfxr (an 8-bit sound effect generator) (ported) (MIT Licence)
   - A Particle Effect Editor
 - BGFX Integrated for Cross-Platform Graphics Rendering
 - SDL2 Integrated for Cross-Platform Window and Audio
@@ -73,8 +71,8 @@ Demo source:
 - GoogleTest Integrated for Testing
 - CMixer Integrated for Audio Mixing
 - Cgltf Integrated for GLTF Model File Loading
-- Audio Play (support wav and ogg loading)
-- MeshGraphicsComponent
+- Simple Audio Play (support wav and ogg loading)
+- Mesh and MeshGraphicsComponent
 - SIMD Compile Option
 - HTML5 Support
 
@@ -83,7 +81,7 @@ Demo source:
 
 At current stage, the top priority is to make this engine more robust and more handy.
 
-So, please don't hesitate to create an issue or pull request if you saw a silly bug.
+So, please don't hesitate to create a pull request if you saw something wrong in the engine.
 
 And if you encounter any problem or inconvenience when using this engine,
 
@@ -172,17 +170,6 @@ Then you can use tracy profiler to monitor performance.
 git clone https://github.com/wolfpld/tracy.git
 cd tracy/profiler/build/unix/
 make -j8
-```
-
-### How to Create Project
-
-Use Tools/create_project.py, it will copy the project template and do some string replacement.
-
-For example:
-
-```
-cd Playground
-python3 ../Tools/create_projects.py HelloWorld
 ```
 
 ## Tips
