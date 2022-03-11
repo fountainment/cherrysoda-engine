@@ -6,7 +6,7 @@
 [![Emscripten](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml/badge.svg)](https://github.com/fountainment/cherrysoda-engine/actions/workflows/emscripten.yml)
 [![Licence](https://img.shields.io/github/license/fountainment/cherrysoda-engine)](https://github.com/fountainment/cherrysoda-engine/blob/master/LICENSE)
 
-A lightweight cross-platform C++ game engine based on bgfx and SDL2 (inspired by Monocle engine)
+A lightweight cross-platform C++ game engine based on bgfx and SDL2
 
 ## Introduction
 
@@ -14,7 +14,7 @@ This engine is a C++ port of Monocle engine, with some changes and additional fu
 
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
 Its design is quite simple and handy for 2d sprite game, so I wish like to combine it with my previous C++ cross-platform experience.
-This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio play, command console UI are rewritten in ImGui and has a parameter tweaking slider, some minor changes are done for 3d capability, but this engine is still mainly for making 2d game.
+This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio play, command console UI are rewritten in ImGui and has a parameter tweaking slider, some minor changes are made for 3d capability, but this engine is still mainly for making 2d game.
 
 ## Demos
 
