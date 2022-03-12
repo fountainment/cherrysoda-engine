@@ -13,13 +13,13 @@ A lightweight cross-platform C++ game engine based on bgfx and SDL2
 This engine is a C++ port of Monocle engine, with some changes and additional functionalities. 
 
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
-Its design is quite simple and handy for 2d sprite game, so I wish like to combine it with my previous C++ cross-platform experience.
+Its design is quite simple and handy for making 2d sprite game, so I wish like to combine it with my previous C++ cross-platform experience.
 
-This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio play. Command console UI are rewritten in ImGui and has a parameter tweaking slider. Some minor changes are made for 3d capability, but this engine is still mainly for making 2d games.
+This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio playback. Command console UI are rewritten in ImGui and has a parameter tweaking slider. And some minor changes are made in order to get 3d capability, but this engine is still mainly for 2d games.
 
 ## Screenshots
 
-![图片](https://user-images.githubusercontent.com/8925165/158010302-c24ca486-272c-4a51-9d42-e3904b696c00.png)
+![image](https://user-images.githubusercontent.com/8925165/158010302-c24ca486-272c-4a51-9d42-e3904b696c00.png)
 
 ## Demos
 
