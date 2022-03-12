@@ -444,7 +444,7 @@ void MainScene::Begin()
 	auto tileSet = new TileSet(GameApp::GetAtlas()->Get("tiles_packed"), tileWidth, tileHeight);
 	for (int layerIndex = 0; layerIndex < static_cast<int>(layerArray.Size()); ++layerIndex) {
 		const auto& layer = layerArray[layerIndex];
-		if (layer["data"].IsArray()) {
+		if (layer.HasMember("data") && layer["data"].IsArray()) {
 			const auto& dataArray = layer["data"].GetArray();
 			STL::Vector<STL::Vector<int>> data = STL::Vector<STL::Vector<int>>(tilesX, STL::Vector<int>(tilesY));
 			for (int i = 0; i < static_cast<int>(dataArray.Size()); ++i) {
@@ -499,7 +499,7 @@ void MainScene::Begin()
 			mapTile->ClipCamera(camera);
 			mapEntity->Add(mapTile);
 		}
-		else if (layer["objects"].IsArray()) {
+		else if (layer.HasMember("objects") && layer["objects"].IsArray()) {
 			const auto& objectArray = layer["objects"].GetArray();
 			for (const auto& object : objectArray) {
 				int id = object["gid"].GetInt() - 1;
