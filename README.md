@@ -10,12 +10,14 @@ A lightweight cross-platform C++ game engine based on bgfx and SDL2
 
 ## Introduction
 
-This engine is a C++ port of Monocle engine, with some changes and additional functionalities. 
+CherrySoda engine is a C++ port of Monocle engine, with some changes and additional functionalities.
 
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
 Its design is quite simple and handy for making 2d sprite game, so I wish like to combine it with my previous C++ cross-platform experience.
 
 This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio playback. Command console UI are rewritten in ImGui with a parameter tweaking slider. And some minor changes are made in order to get 3d capability, but this engine is still mainly for 2d games.
+
+As a hobby project, it's still quite unmature in many aspects, but it's basically ok to be used in some small 2d projects, I used it to participate several gamejams.
 
 ## Screenshots
 
@@ -58,7 +60,7 @@ Demo source:
   - 2D Camera
   - Tile-Based Game Utilities (TileSet, TileGrid, Grid)
   - BMFont File Loading and Pixel Font Rendering
-  - 2D Particle System
+  - 2D CPU Particle System
   - Ease Functions
   - Some Useful Components (Alarm, StateMachine, Tween, ...)
 - Tools:
@@ -76,11 +78,10 @@ Demo source:
 - GoogleTest Integrated for Testing
 - CMixer Integrated for Audio Mixing
 - Cgltf Integrated for GLTF Model File Loading
-- Simple Audio Play (support wav and ogg loading)
+- Simple Audio Playback (support wav and ogg loading)
 - Mesh and MeshGraphicsComponent
 - SIMD Compile Option
 - HTML5 Support
-
 
 ## Contribution
 
