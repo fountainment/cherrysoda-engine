@@ -38,8 +38,8 @@ Demo source:
 
 ### Pros
 
-- It's a lightweight engine, core engine code is less than 20k lines, so, build time is short, and build size is small
-- The sprite animation import can be fully data driven and is very handy
+- Core engine code is less than 20k lines, so, build time will be short, and build size will be small
+- The sprite animation import can be fully data driven and is very handy imo
 - The BitTag utility makes rendering and collision logic coding very intuitive
 - Some tedious workflow processes are handled by python script
 
