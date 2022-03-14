@@ -17,7 +17,7 @@ Its design is quite simple and handy for making 2d sprite game, so I wish like t
 
 This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio playback. Command console UI are rewritten in ImGui with a parameter tweaking slider. And some minor changes are made in order to get 3d capability, but this engine is still mainly for 2d.
 
-It's a hobby project, and tbh, the port quality is not very good, but it's basically ok to be used in some small 2d games, I used it to participate in several gamejams.
+It's a hobby project, and tbh, the code quality is not very good for the moment, but it's basically ok to be used in some small 2d games, I used it to participate in several gamejams.
 
 ## Screenshots
 
