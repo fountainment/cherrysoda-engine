@@ -16,6 +16,7 @@ static BitTag s_playerTag("player");
 static BitTag s_renderTargetTag("render_target");
 static BitTag s_spikeTag("spike");
 static BitTag s_lockTag("lock");
+static BitTag s_boxTag("box");
 
 CHERRYSODA_CONSOLE_VARIABLE(actor_drop_acceleration, float, 1500.f, "");
 CHERRYSODA_CONSOLE_VARIABLE(actor_extra_drop_acceleration, float, 400.f, "");
@@ -43,6 +44,7 @@ enum TileType
 	TILE_ROPE_H_RIGHT = 92,
 	TILE_PLATFORM_0 = 146,
 	TILE_PLATFORM_1 = 147,
+	TILE_COIN = 151
 };
 
 
@@ -89,11 +91,32 @@ public:
 
 	int Get(const StringID& id)
 	{
+		if (!STL::ContainsKey(m_items, id)) {
+			return 0;
+		}
 		return m_items[id];
 	}
 
 private:
 	STL::HashMap<StringID, int> m_items;
+};
+
+
+class FrontSensorComponent : public CollidableComponent
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(FrontSensorComponent, CollidableComponent);
+
+	FrontSensorComponent() : base(false, false, true) {}
+};
+
+
+class UpSensorComponent : public CollidableComponent
+{
+public:
+	CHERRYSODA_DECLARE_COMPONENT(UpSensorComponent, CollidableComponent);
+
+	UpSensorComponent() : base(false, false, true) {}
 };
 
 
@@ -143,6 +166,13 @@ public:
 						moveHasNoCollide &= !CollideCheck(s_platformTag, Position2D() + Math::Vec2(0, sign));
 					}
 				}
+				if (sign > 0) {
+					for (auto box : GetScene()->Get(s_boxTag)) {
+						if (box->CollideCheck(Get<UpSensorComponent>())) {
+							box->Get<SpriteSheet<int>>()->Play(1);
+						}
+					}
+				}
 				if (moveHasNoCollide) {
 					MovePositionY(sign);
 					move -= sign;
@@ -184,11 +214,11 @@ public:
 			pickUpItem->RemoveSelf();
 		}
 
-		auto sensor = Get<CollidableComponent>();
+		auto frontSensor = Get<FrontSensorComponent>();
 		auto invectory = Get<InventoryComponent>();
-		if (sensor && invectory) {
+		if (frontSensor && invectory) {
 			for (auto lock : GetScene()->Get(s_lockTag)) {
-				if (lock->CollideCheck(sensor)) {
+				if (lock->CollideCheck(frontSensor)) {
 					if (invectory->RemoveItem("key")) {
 						lock->RemoveSelf();
 					}
@@ -356,11 +386,11 @@ public:
 		float speedX = MainScene::GetControlAxisX() * actor_horizontal_move_speed;
 		if (speedX > 0.f) {
 			spriteSheet->SetSpriteEffects(SpriteEffects::FlipHorizontally);
-			actor->Get<CollidableComponent>()->GetCollider()->PositionX(0.f);
+			actor->Get<FrontSensorComponent>()->GetCollider()->PositionX(0.f);
 		}
 		else if (speedX < 0.f) {
 			spriteSheet->SetSpriteEffects(SpriteEffects::None);
-			actor->Get<CollidableComponent>()->GetCollider()->PositionX(-8.f);
+			actor->Get<FrontSensorComponent>()->GetCollider()->PositionX(-8.f);
 		}
 		actor->Move(Math::Vec2(speedX, m_speedY) * deltaTime);
 	}
@@ -518,8 +548,8 @@ void MainScene::Begin()
 	player->Add(new PlayerControl());
 	player->Add(new CameraAutoScale(camera, finalCamera));
 	player->Add(new CameraFollow(camera,
-		Math::Rectangle{Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f, Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)},
-		Math::Rectangle{Vec2_Zero, Math::Vec2(tilesX * tileWidth, tilesY * tileHeight)}));
+		Math::Rectangle{ Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f, Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) },
+		Math::Rectangle{ Vec2_Zero, Math::Vec2(tilesX * tileWidth, tilesY * tileHeight) }));
 	player->Add(new InventoryComponent);
 	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->Get("characters_packed"), 24, 24);
 	spriteSheet->Add("normal", 0);
@@ -530,11 +560,16 @@ void MainScene::Begin()
 	player->SetCollider(new Hitbox(12.f, 16.f, -6.f, 0.f));
 	player->Position2D(Math::Vec2(30.f, 100.f));
 	player->Tag(s_playerTag);
-	auto sensorHitbox = new Hitbox(8.f, 12.f, -8.f, 2.f);
-	sensorHitbox->AutoDeleteWhenRemoved();
-	auto sensorComponent = new CollidableComponent(false, false, true);
-	sensorComponent->SetCollider(sensorHitbox);
-	player->Add(sensorComponent);
+	auto frontSensorHitbox = new Hitbox(8.f, 12.f, -8.f, 2.f);
+	frontSensorHitbox->AutoDeleteWhenRemoved();
+	auto upSensorHitbox = new Hitbox(12.f, 3.f, -6.f, 14.f);
+	upSensorHitbox->AutoDeleteWhenRemoved();
+	auto frontSensorComponent = new FrontSensorComponent();
+	frontSensorComponent->SetCollider(frontSensorHitbox);
+	auto upSensorComponent = new UpSensorComponent();
+	upSensorComponent->SetCollider(upSensorHitbox);
+	player->Add(frontSensorComponent);
+	player->Add(upSensorComponent);
 	player->AutoDeleteAllInsideWhenRemoved();
 	Add(player);
 
@@ -567,6 +602,8 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 	case TILE_WOW_BOX:
 	case TILE_COIN_BOX:
 		entity->AddTag(s_solidTag);
+		entity->AddTag(s_boxTag);
+		spriteSheet->Add(1, TILE_EMPTY_BOX);
 		break;
 	case TILE_PLATFORM_0:
 		entity->AddTag(s_climbTag);
@@ -594,6 +631,12 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 		entity->AddTag(s_platformTag);
 		hitbox->Height(6.f);
 		hitbox->PositionY(6.f);
+		break;
+	case TILE_COIN:
+		entity->AddTag(s_pickUpItemTag);
+		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ entity->Get<InventoryComponent>()->AddItem("coin"); }));
+		spriteSheet->Add(1, 0.5f, { TILE_COIN, TILE_COIN + 1 });
+		spriteSheet->Play(1);
 		break;
 	}
 
