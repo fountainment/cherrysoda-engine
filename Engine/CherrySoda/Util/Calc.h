@@ -79,7 +79,7 @@ public:
 	static inline bool BetweenInterval(float val, float interval) { return Math_Mod(val, interval * 2.f) >= interval; }
 
 	// Save and Load Data
-	bool FileExists(const String& filename);
+	static bool FileExists(const String& filename);
 
 private:
 	static STL::Stack<Random> ms_randomStack;

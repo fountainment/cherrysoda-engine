@@ -92,7 +92,7 @@ Math::Vec2 Calc::ClosestPointOnLine(const Math::Vec2& lineA, const Math::Vec2& l
 	return lineA + v * t;
 }
 
-bool FileExists(const String& filename)
+bool Calc::FileExists(const String& filename)
 {
 	std::ifstream file(filename);
 	if (file.is_open()) {
