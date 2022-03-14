@@ -15,9 +15,9 @@ CherrySoda engine is a C++ port of Monocle engine, with some changes and additio
 In 2018, I tried using Monocle engine (the engine of the game Celeste) which is written in C#.
 Its design is quite simple and handy for making 2d sprite game, so I wish like to combine it with my previous C++ cross-platform experience.
 
-This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio playback. Command console UI are rewritten in ImGui with a parameter tweaking slider. And some minor changes are made in order to get 3d capability, but this engine is still mainly for 2d games.
+This engine ported most parts of Monocle engine to C++, and added some useful features like simple audio playback. Command console UI are rewritten in ImGui with a parameter tweaking slider. And some minor changes are made in order to get 3d capability, but this engine is still mainly for 2d.
 
-As a hobby project, it's still quite unmature in many aspects, but it's basically ok to be used in some small 2d projects, I used it to participate in several gamejams.
+It's a hobby project, and tbh, the port quality is not very good, but it's basically ok to be used in some small 2d games, I used it to participate in several gamejams.
 
 ## Screenshots
 
@@ -38,9 +38,9 @@ Demo source:
 
 ### Pros
 
-- The engine code is less than 20k lines, which means it only take a very limitted time to read through
-- And it's not too time consuming to build this engine on low-end devices like PocketCHIP and GameShell (sometimes the cross compiling environment is hard to establish)
-- The webassembly build size can be very small (mininal around 2 MB), so it will load fast on web
+- It's a lightweight engine, core engine code is less than 20k lines, so, build time is short, and build size is small
+- The sprite animation import can be fully data driven and is very handy
+- The BitTag utility makes rendering and collision logic coding very intuitive
 - Some tedious workflow processes are handled by python script
 
 ### Cons
@@ -54,9 +54,9 @@ Demo source:
 
 - Features Ported From Monocle Engine:
   - Entity-Component System
-  - BitTag and Tag-Based Renderer
-  - 2D Sprite Animation System
-  - 2D Collision Detection
+  - 2D Sprite Animation System (very handy imo)
+  - Tag-Based Renderer
+  - Tag-Based 2D Collision Detection
   - 2D Camera
   - Tile-Based Game Utilities (TileSet, TileGrid, Grid)
   - BMFont File Loading and Pixel Font Rendering
