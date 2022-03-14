@@ -144,6 +144,7 @@ inline ENUM_T operator - (ENUM_T lhs, ENUM_T rhs) \
 #define Math_Cos        glm::cos
 #define Math_Clamp      glm::clamp
 #define Math_Dot        glm::dot
+#define Math_Degrees    glm::degrees
 #define Math_Floor      glm::floor
 #define Math_Length     glm::length
 #define Math_LengthSq   glm::length2
