@@ -181,6 +181,7 @@ public:
 	static constexpr float Pi     = 3.14159265358979323846f;
 	static constexpr float Pi2    = Pi * 2.0f;
 	static constexpr float PiHalf = Pi * 0.5f;
+	static constexpr float PiQuarter = Pi * 0.25f;
 	static constexpr float epsf   = 1E-06f;
 
 	static constexpr float FloatMin = std::numeric_limits<float>::min();

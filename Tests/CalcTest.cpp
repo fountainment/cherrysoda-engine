@@ -33,4 +33,10 @@ TEST(CalcTestClosestPointOnLine, Extreme)
 	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(0.0f,0.0f),Math::Vec2(100.0f,0.0f),Math::Vec2(0.0f,0.0f));
 }
 
+TEST(CalcTestFileExist, Normal)
+{
+	EXPECT_TRUE(Calc::FileExists("gamecontrollerdb.txt"));
+	EXPECT_FALSE(Calc::FileExists("123.txt"));
+}
+
 } // namespace

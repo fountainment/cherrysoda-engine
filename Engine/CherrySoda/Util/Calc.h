@@ -4,6 +4,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
@@ -47,6 +48,7 @@ private:
 class Calc
 {
 public:
+	// Random
 	static void PushRandom(type::UInt32 seed) { STL::Push(ms_randomStack, Random(seed)); }
 	static void PushRandom() { STL::Push(ms_randomStack, Random()); }
 	static void PopRandom() { STL::Pop(ms_randomStack); }
@@ -60,7 +62,9 @@ public:
 
 	static Math::Vec2 Approach(const Math::Vec2& val, const Math::Vec2& target, float maxMove);
 
+	static Math::Vec2 FourWayNormal(Math::Vec2 vec);
 	static Math::Vec2 EightWayNormal(Math::Vec2 vec);
+	static Math::Vec2 SnapedNormal(Math::Vec2 vec, float slices);
 
 	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec, const Math::Vec2& ifZero)
 	{
@@ -73,6 +77,9 @@ public:
 	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return Math::Vec2(vec.y, -vec.x); }
 
 	static inline bool BetweenInterval(float val, float interval) { return Math_Mod(val, interval * 2.f) >= interval; }
+
+	// Save and Load Data
+	bool FileExists(const String& filename);
 
 private:
 	static STL::Stack<Random> ms_randomStack;

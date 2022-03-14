@@ -3,13 +3,19 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
+
+#include <fstream>
 
 using cherrysoda::Calc;
 using cherrysoda::Math;
 using cherrysoda::Random;
 using cherrysoda::STL;
+using cherrysoda::String;
 
 namespace type = cherrysoda::type;
+
+STL::Stack<Random> Calc::ms_randomStack({ Random() });
 
 type::UInt32 Random::TrueRandomNext()
 {
@@ -33,19 +39,46 @@ Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float
 	}
 }
 
+Math::Vec2 Calc::FourWayNormal(Math::Vec2 vec)
+{
+	if (vec == Vec2_Zero)
+		return Vec2_Zero;
+
+	float angle = (float)Math_Floor((Calc::Angle(vec) + (float)Math::PiHalf * .5f) / Math::PiHalf) * Math::PiHalf;
+
+	vec = AngleToVector(angle, 1.f);
+	if (Math_Abs(vec.x) < .5f)
+		vec.x = 0;
+	else
+		vec.x = Math_Sign(vec.x);
+
+	if (Math_Abs(vec.y) < .5f)
+		vec.y = 0;
+	else
+		vec.y = Math_Sign(vec.y);
+
+	return vec;
+}
+
 Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 {
-	if (vec == Vec2_Zero) {
+	if (vec == Vec2_Zero)
 		return Vec2_Zero;
-	}
-	vec = AngleToVector((float)Math_Floor((Angle(vec) + (float)Math::Pi / 8.f) / ((float)Math::Pi / 4.f)) * ((float)Math::Pi / 4.f), 1.f);
-	if (Math_Abs(vec.x) < 0.5f) {
+
+	vec = AngleToVector((float)Math_Floor((Angle(vec) + (float)Math::PiQuarter * .5f) / ((float)Math::PiQuarter)) * ((float)Math::PiQuarter), 1.f);
+	if (Math_Abs(vec.x) < .5f)
 		vec.x = 0.f;
-	}
-	else if (Math_Abs(vec.y) < 0.5f) {
+	else if (Math_Abs(vec.y) < .5f)
 		vec.y = 0.f;
-	}
 	return vec;
+}
+
+Math::Vec2 Calc::SnapedNormal(Math::Vec2 vec, float slices)
+{
+	float divider = Math::Pi2 / slices;
+
+	float angle = (float)Math_Floor((Calc::Angle(vec) + divider * .5f) / divider) * divider;
+	return AngleToVector(angle, 1.f);
 }
 
 Math::Vec2 Calc::ClosestPointOnLine(const Math::Vec2& lineA, const Math::Vec2& lineB, const Math::Vec2& closestTo)
@@ -59,4 +92,14 @@ Math::Vec2 Calc::ClosestPointOnLine(const Math::Vec2& lineA, const Math::Vec2& l
 	return lineA + v * t;
 }
 
-STL::Stack<Random> Calc::ms_randomStack({ Random() });
+bool FileExists(const String& filename)
+{
+	std::ifstream file(filename);
+	if (file.is_open()) {
+		file.close();
+		return true;
+	}
+	else {
+		return false;
+	}
+}
