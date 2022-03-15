@@ -166,7 +166,7 @@ public:
 						moveHasNoCollide &= !CollideCheck(s_platformTag, Position2D() + Math::Vec2(0, sign));
 					}
 				}
-				if (sign > 0) {
+				if (!moveHasNoCollide && sign > 0) {
 					for (auto box : GetScene()->Get(s_boxTag)) {
 						if (box->CollideCheck(Get<UpSensorComponent>())) {
 							box->Get<SpriteSheet<int>>()->Play(1);
@@ -257,11 +257,11 @@ class CameraFollow : public Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(CameraFollow, Component);
 
-	CameraFollow(Camera* camera, const Math::Rectangle& followRect, const Math::Rectangle& restrictionRect)
+	CameraFollow(Camera* camera, const Math::Rectangle& followRect, const Math::Rectangle& limitRect)
 		: base(true, false)
 		, m_camera(camera)
 		, m_followRect(followRect)
-		, m_restrictionRect(restrictionRect)
+		, m_limitRect(limitRect)
 	{}
 
 	void Update() override
@@ -273,25 +273,25 @@ public:
 			};
 
 		auto followRectCopy = m_followRect;
-		auto restrictionRectCopy = m_restrictionRect;
+		auto limitRectCopy = m_limitRect;
 		followRectCopy.Move(GetEntity()->Position2D());
 		auto shrinkBuffer = Math::Vec2(10.f);
 		auto shrinkSize = m_camera->Size() / m_camera->Scale2D() * 0.5f - shrinkBuffer;
-		restrictionRectCopy.Move(shrinkSize);
-		restrictionRectCopy.Size(restrictionRectCopy.Size() - shrinkSize * 2.f);
+		limitRectCopy.Move(shrinkSize);
+		limitRectCopy.Size(limitRectCopy.Size() - shrinkSize * 2.f);
 
 		auto target = m_camera->Position2D();
 		target = followRectCopy.Clamp(target);
-		target = restrictionRectCopy.Clamp(target);
+		target = limitRectCopy.Clamp(target);
 
 		m_camera->Approach(target, 0.1f);
 		m_camera->RoundPosition();
 
 		shrinkSize = m_camera->Size() / m_camera->Scale2D() * 0.5f;
-		restrictionRectCopy = m_restrictionRect;
-		restrictionRectCopy.Move(shrinkSize);
-		restrictionRectCopy.Size(restrictionRectCopy.Size() - shrinkSize * 2.f);
-		m_camera->Position2D(restrictionRectCopy.Clamp(m_camera->Position2D()));
+		limitRectCopy = m_limitRect;
+		limitRectCopy.Move(shrinkSize);
+		limitRectCopy.Size(limitRectCopy.Size() - shrinkSize * 2.f);
+		m_camera->Position2D(limitRectCopy.Clamp(m_camera->Position2D()));
 		m_camera->RoundPosition();
 	}
 
@@ -300,13 +300,13 @@ public:
 		auto followRectCopy = m_followRect;
 		followRectCopy.Move(camera->Position2D());
 		Draw::HollowRect(followRectCopy);
-		Draw::HollowRect(m_restrictionRect, Color::Red);
+		Draw::HollowRect(m_limitRect, Color::Red);
 	}
 
 private:
 	Camera* m_camera = nullptr;
 	Math::Rectangle m_followRect;
-	Math::Rectangle m_restrictionRect;
+	Math::Rectangle m_limitRect;
 };
 
 

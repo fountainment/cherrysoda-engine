@@ -52,7 +52,7 @@ Demo source:
 
 ## Current Features
 
-- Features Ported From Monocle Engine:
+- Features Ported from Monocle Engine:
   - Entity-Component System
   - 2D Sprite Animation System (very handy imo)
   - Tag-Based Renderer
