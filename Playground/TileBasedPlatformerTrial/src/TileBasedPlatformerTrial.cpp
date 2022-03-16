@@ -41,6 +41,8 @@ void TileBasedPlatformerTrial::LoadContent()
 	base::LoadContent();
 
 	ms_atlas = Atlas::FromAtlas("assets/atlases/atlas.json");
+	Audio::LoadFile("coin", "assets/sounds/coin.wav");
+	Audio::LoadFile("jump", "assets/sounds/jump.wav");
 }
 
 void TileBasedPlatformerTrial::UnloadContent()

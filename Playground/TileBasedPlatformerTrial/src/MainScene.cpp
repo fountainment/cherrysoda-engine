@@ -29,6 +29,9 @@ CHERRYSODA_CONSOLE_VARIABLE(camera_follow_rect_height, float, 60.f, "");
 static constexpr int kNormalRenderPass = 1;
 static constexpr int kFinalRenderPass = 2;
 
+static Audio::EventInstance s_coinSound;
+static Audio::EventInstance s_jumpSound;
+
 enum TileType
 {
 	TILE_EMPTY_BOX = 9,
@@ -400,6 +403,7 @@ public:
 		auto actor = GetEntityAs<Actor>();
 		m_speedY = actor_jump_speed;
 		actor->CancelClimb();
+		s_jumpSound.Play();
 	}
 
 private:
@@ -573,6 +577,9 @@ void MainScene::Begin()
 	player->AutoDeleteAllInsideWhenRemoved();
 	Add(player);
 
+	s_coinSound = Audio::CreateInstance("coin");
+	s_jumpSound = Audio::CreateInstance("jump");
+
 	base::Begin();
 }
 
@@ -634,7 +641,7 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 		break;
 	case TILE_COIN:
 		entity->AddTag(s_pickUpItemTag);
-		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ entity->Get<InventoryComponent>()->AddItem("coin"); }));
+		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ s_coinSound.Stop(); s_coinSound.Play(); entity->Get<InventoryComponent>()->AddItem("coin"); }));
 		spriteSheet->Add(1, 0.5f, { TILE_COIN, TILE_COIN + 1 });
 		spriteSheet->Play(1);
 		break;
