@@ -279,7 +279,7 @@ def update_assets(folder='build'):
 def build(folder='build', build_type='Release'):
     path = join_path(project_path, folder, '')
     make_sure_folder_exist(path)
-    execute_command(['cmake', '--build', '.', '--config', build_type], working_dir=path)
+    execute_command(['cmake', '--build', '.', '--config', build_type, '--parallel', '8'], working_dir=path)
 
 
 def run(target_name, folder='build', build_type='Release'):
