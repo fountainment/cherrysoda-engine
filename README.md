@@ -159,7 +159,7 @@ git clone https://github.com/wolfpld/tracy.git
 
 In this engine, profiling that use tracy profiler is only enabled in "Profile" build:
 
-(for Visual Studio and Xcode, it's the "RelWithDebInfo" build option)
+(for Visual Studio and XCode, it's the "RelWithDebInfo" build option)
 
 ```sh
 # Profile build on Linux
@@ -182,9 +182,9 @@ make -j8
 
 ### To Use The Sublime Project
 
-You need to install the CMakeBuilder plugin first
+You need to install the CMakeBuilder plugin first.
 
-It's recommended to use ```git update-index --assume-unchanged cherrysoda.sublime-project``` to ignore project file change locally.
+And it's recommended to use ```git update-index --assume-unchanged cherrysoda.sublime-project``` to ignore project file change locally.
 
 ### To Pack Texture Atlas
 
@@ -220,7 +220,7 @@ Prebuilt shaderc binary are available on x86_64-Windows and x86_64-Linux.
 
 If you want or have to build shader compiler on your own, you can add ```-DCHERRYSODA_BUILD_SHADERC=1``` with cmake command.
 
-You can also copy the shaderc binary from bgfx build, copy to "Tools/bin/shaderc.local" (add .exe suffix on Windows)
+You can also copy the shaderc binary from bgfx build, copy to "Tools/bin/shaderc.local" (add .exe suffix on Windows).
 
 
 ## Licence
