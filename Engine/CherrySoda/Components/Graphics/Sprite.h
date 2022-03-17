@@ -60,7 +60,7 @@ public:
 		STL::Vector<MTexture> ret;
 		auto fullPath = m_path + path;
 		for (int frameIndex : frames) {
-			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex)
+			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex);
 			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(), frameIndex);
 			STL::Add(ret, frame);	
 		}	
