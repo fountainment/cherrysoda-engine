@@ -55,14 +55,44 @@ public:
 		return ret;
 	}
 
+	inline STL::Vector<MTexture> GetFrames(const String& path, const STL::Vector<int>& frames)
+	{
+		STL::Vector<MTexture> ret;
+		auto fullPath = m_path + path;
+		for (int frameIndex : frames) {
+			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex)
+			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(), frameIndex);
+			STL::Add(ret, frame);	
+		}	
+		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
+		m_width = Math_Max(m_width, ret[0].Width());
+		m_height = Math_Max(m_height, ret[0].Height());
+		return ret;	
+	}
+
 	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f, Chooser<StringID> into = Chooser<StringID>())
 	{
 		m_animations[id] = { delay, GetFrames(path), into };
 	}
 
+	void Add(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
+	{
+		m_animations[id] = { delay, GetFrames(path, frames), Chooser<StringID>() };
+	}
+
+	inline void Add(const StringID& id, const String& path, float delay, Chooser<StringID> into, const STL::Vector<int>& frames)
+	{
+		m_animations[id] = { delay, GetFrames(path, frames), into };
+	}
+
 	inline void AddLoop(const StringID& id, const String& path, float delay = 1.f / 15.f)
 	{
 		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
+	}
+
+	inline void AddLoop(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
+	{
+		m_animations[id] = { delay, GetFrames(path, frames), Chooser<StringID>(id, 1.f) };
 	}
 
 	void Play(const StringID& id, bool restart = false, bool randomizeFrame = false);
