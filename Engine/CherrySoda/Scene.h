@@ -68,6 +68,16 @@ public:
 		return Math_Floor((TimeActive() - offset - Engine::Instance()->DeltaTime()) / interval) < Math_Floor((TimeActive() - offset) / interval);
 	}
 
+	inline bool BetweenInterval(float interval)
+	{
+		return Math_Mod(TimeActive(), interval * 2) > interval;
+	}
+
+	inline bool BetweenInterval(float interval, float offset)
+	{
+		return Math_Mod(TimeActive() - offset, interval * 2) > interval;
+	}
+
 	bool CollideCheck(const Math::Vec2& point, int tag) const;
 	bool CollideCheck(const Math::Vec2& from, const Math::Vec2& to, int tag) const;
 	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision) const;
