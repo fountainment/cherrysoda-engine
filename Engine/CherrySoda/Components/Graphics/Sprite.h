@@ -107,6 +107,16 @@ public:
 		return id == m_currentAnimationID;
 	}
 
+	inline bool IsPlaying(const STL::Vector<StringID>& ids) const
+	{
+		for (auto id : ids) {
+			if (IsPlaying(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	inline void Stop()
 	{
 		m_animating = false;
