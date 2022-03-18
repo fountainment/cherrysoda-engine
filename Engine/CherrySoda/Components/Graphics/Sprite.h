@@ -43,8 +43,16 @@ public:
 
 	void operator = (const Sprite& sprite) = delete;
 
+	MTexture GetFrame(const String& animation, int frame) const
+	{
+		return m_animations.at(animation).m_frames[frame];
+	}
+
+	Math::Vec2 Center() const { return Math::Vec2(Width() * .5f, Height() * .5f); }
+
 	void Update() override;
 	void SetFrame(const MTexture& texture);
+	void SetAnimationFrame(int frame);
 
 	inline STL::Vector<MTexture> GetFrames(const String& path)
 	{
@@ -53,21 +61,6 @@ public:
 		m_width = Math_Max(m_width, ret[0].Width());
 		m_height = Math_Max(m_height, ret[0].Height());
 		return ret;
-	}
-
-	inline STL::Vector<MTexture> GetFrames(const String& path, const STL::Vector<int>& frames)
-	{
-		STL::Vector<MTexture> ret;
-		auto fullPath = m_path + path;
-		for (int frameIndex : frames) {
-			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex);
-			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(), frameIndex);
-			STL::Add(ret, frame);	
-		}	
-		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
-		m_width = Math_Max(m_width, ret[0].Width());
-		m_height = Math_Max(m_height, ret[0].Height());
-		return ret;	
 	}
 
 	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f, Chooser<StringID> into = Chooser<StringID>())
@@ -93,6 +86,12 @@ public:
 	inline void AddLoop(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
 	{
 		m_animations[id] = { delay, GetFrames(path, frames), Chooser<StringID>(id, 1.f) };
+	}
+
+	void ClearAnimations()
+	{
+		Stop();
+		STL::Clear(m_animations);
 	}
 
 	void Play(const StringID& id, bool restart = false, bool randomizeFrame = false);
@@ -126,6 +125,18 @@ public:
 	float Width() const override { return m_width; }
 	float Height() const override { return m_height; }
 
+	inline bool Animating() const { return m_animating; }
+	inline StringID CurrentAnimationID() const { return m_currentAnimationID; }
+	inline StringID LastAnimationID() const { return m_lastAnimationID; }
+	inline int CurrentAnimationFrame() const { return m_currentAnimationFrame; }
+	inline int CurrentAnimationTotalFrame() const
+	{
+		if (m_currentAnimation != nullptr)
+			return STL::Count(m_currentAnimation->m_frames);
+		else
+			return 0;
+	}
+
 	inline Sprite* CreateClone()
 	{
 		auto sprite = new Sprite();
@@ -139,6 +150,21 @@ private:
 	CHERRYSODA_FRIEND_CLASS_POOL;
 
 	Sprite() : base(MTexture(), true) {}
+
+	inline STL::Vector<MTexture> GetFrames(const String& path, const STL::Vector<int>& frames)
+	{
+		STL::Vector<MTexture> ret;
+		auto fullPath = m_path + path;
+		for (int frameIndex : frames) {
+			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex);
+			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(), frameIndex);
+			STL::Add(ret, frame);	
+		}	
+		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
+		m_width = Math_Max(m_width, ret[0].Width());
+		m_height = Math_Max(m_height, ret[0].Height());
+		return ret;	
+	}
 
 	struct Animation
 	{

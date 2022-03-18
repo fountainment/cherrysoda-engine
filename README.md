@@ -159,7 +159,7 @@ git clone https://github.com/wolfpld/tracy.git
 
 In this engine, profiling that use tracy profiler is only enabled in "Profile" build:
 
-(for Visual Studio and XCode, it's the "RelWithDebInfo" build option)
+(for Visual Studio and Xcode, it's the "RelWithDebInfo" build option)
 
 ```sh
 # Profile build on Linux

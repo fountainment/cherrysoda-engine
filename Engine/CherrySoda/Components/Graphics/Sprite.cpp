@@ -100,6 +100,13 @@ void Sprite::SetFrame(const MTexture& texture)
 	}
 }
 
+void Sprite::SetAnimationFrame(int frame)
+{
+	m_animationTimer = 0.f;
+	m_currentAnimationFrame = frame % STL::Count(m_currentAnimation->m_frames);
+	SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
+}
+
 void Sprite::Play(const StringID& id, bool restart/* = false*/, bool randomizeFrame/* = false*/)
 {
 	if (m_currentAnimationID != id || restart) {
