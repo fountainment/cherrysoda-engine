@@ -168,12 +168,12 @@ private:
 		for (int frameIndex : frames) {
 			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex);
 			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(), frameIndex);
-			STL::Add(ret, frame);	
+			STL::Add(ret, frame);
 		}	
 		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
 		m_width = Math_Max(m_width, ret[0].Width());
 		m_height = Math_Max(m_height, ret[0].Height());
-		return ret;	
+		return ret;
 	}
 
 	struct Animation
