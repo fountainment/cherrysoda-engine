@@ -60,6 +60,10 @@ public:
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
 	inline int FPS() { return m_FPS; }
 	inline bool ConsoleOpened() { return m_consoleOpened; }
+	inline void OpenConsole() { m_consoleOpened = true; }
+	inline void CloseConsole() { m_consoleOpened = false; }	
+	inline void ToggleConsole() { m_consoleOpened = !m_consoleOpened; }
+
 	inline bool DoShowCursor() const { return m_showCursor; }
 
 	inline void DisableInternalAudio()
@@ -105,8 +109,6 @@ private:
 
 	inline void SetWindowSize(int width, int height) { m_windowWidth = width; m_windowHeight = height; }
 	inline void SetViewSize(int width, int height) { m_width = width; m_height = height; }
-
-	inline void ToggleConsole() { m_consoleOpened = !m_consoleOpened; }
 
 	void IsActive(bool active);
 

@@ -37,6 +37,7 @@ bool GUI::ms_enabled = true;
 bool GUI::ms_frameStarted = false;
 bool GUI::ms_consoleFocused = false;
 bool GUI::ms_sliderFocused = false;
+bool GUI::ms_internalConsoleEnabled = true;
 
 const char* GetClipboardText_CherrySodaImplForImGui(void*)
 {
@@ -387,9 +388,19 @@ void GUI::Update()
 
 	ms_frameStarted = true;
 
-	// Debug Console GUI
+	// Internal Console GUI
 	ms_consoleFocused = false;
 	ms_sliderFocused = false;
+	if (InternalConsoleEnabled()) {
+		UpdateConsole();
+	}
+}
+
+void GUI::UpdateConsole()
+{
+	if (ImGui::IsKeyPressed(ImGuiKey_GraveAccent, false)) {
+		Engine::Instance()->ToggleConsole();
+	}
 	if (Engine::Instance()->ConsoleOpened()) {
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
@@ -437,11 +448,16 @@ void GUI::Update()
 							data->SelectAll();
 						}
 					}
+					else if (data->EventFlag == ImGuiInputTextFlags_CallbackCharFilter) {
+						if (data->EventChar == '`' || data->EventChar == '~') {
+							return 1;
+						}
+					}
 					return 0;
 				}
 			};
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() * 2.f - 21.f);
-			const ImGuiInputTextFlags inputTextFlag = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
+			const ImGuiInputTextFlags inputTextFlag = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackCharFilter;
 			bool commandInput = ImGui::InputText("##Command", Commands::ms_currentText, IM_ARRAYSIZE(Commands::ms_currentText), inputTextFlag, Funcs::InputTextCallback);
 			ImGui::PopItemWidth();
 			ImGui::SameLine(); commandInput |= ImGui::Button("Enter");

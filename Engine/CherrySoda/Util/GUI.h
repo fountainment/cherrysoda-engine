@@ -16,6 +16,10 @@ public:
 	static inline void Enable() { ms_enabled = true; }
 	static inline bool Enabled() { return ms_enabled;  }
 
+	static inline void DisableInternalConsole() { ms_internalConsoleEnabled = false; }
+	static inline void EnableInternalConsole() { ms_internalConsoleEnabled = true; }
+	static inline bool InternalConsoleEnabled() { return ms_internalConsoleEnabled; }
+
 	static void BuildFontTexture();
 
 	static void TextInput(const char* text);
@@ -32,6 +36,8 @@ private:
 	static void Update();
 	static void Render();
 
+	static void UpdateConsole();
+
 	static Effect ms_guiEffect;
 	static Texture2D ms_fontTexture;
 	static type::UInt16 ms_guiRenderPass;
@@ -39,6 +45,7 @@ private:
 	static bool ms_frameStarted;
 	static bool ms_consoleFocused;
 	static bool ms_sliderFocused;
+	static bool ms_internalConsoleEnabled;
 };
 
 } // namespace cherrysoda

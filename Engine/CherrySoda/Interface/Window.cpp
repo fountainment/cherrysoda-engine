@@ -682,13 +682,7 @@ void cherrysoda::Window::PollEvents()
 
 		case SDL_KEYDOWN:
 		{
-			SDL_Scancode scancode = event.key.keysym.scancode;
-			if (scancode == SDL_SCANCODE_GRAVE) {
-				if (GUI::Enabled()) {
-					Engine::Instance()->ToggleConsole();
-				}
-			}
-			if (STL::TryGetValue(s_scancodeToKeys, (int)scancode, key)) {
+			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.keysym.scancode, key)) {
 				if (!STL::Contains(s_keyboardKeys, key)) {
 					STL::Add(s_keyboardKeys, key);
 				}
