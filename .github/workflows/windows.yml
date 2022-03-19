@@ -33,7 +33,7 @@ jobs:
 
 
   msvc-vs2017:
-    runs-on: windows-2016
+    runs-on: windows-2019
     strategy:
       matrix:
         build_type: [Debug, Release]
@@ -41,6 +41,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-version: '15.9'
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
