@@ -30,7 +30,7 @@ It's a hobby project, and tbh, the code quality is not very good for the moment,
 Demo source:
 - [BulletHellJam2021_BulletHellTrial](https://github.com/fountainment/bullethelljam2021-bullethelltrial)
 
-## API Document
+## API List
 
 [https://fountainment.github.io/doc/](https://fountainment.github.io/doc/)
 
