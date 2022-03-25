@@ -22,7 +22,7 @@ It's a hobby project, I used it to participate in several gamejams.
 
 [https://fountainment.github.io/doc/](https://fountainment.github.io/doc/)
 
-And the UML of Monocle engine might help:
+Monocle engine UML:
 [monocle-engine.png](https://fountainment.github.io/assets/monocle-engine.png)
 
 ## Requirements
@@ -47,15 +47,15 @@ And the UML of Monocle engine might help:
 
 - Features Ported from Monocle Engine:
   - simple entity-component-system
-  - 2d sprite animation system
   - simple tag-based renderer
   - simple tag-based 2d collision detection
   - 2d camera
-  - tile-based game utilities (TileSet, TileGrid, Grid)
-  - bmfont file loading and pixel font rendering
+  - 2d sprite animation system
   - 2d cpu particle system
+  - bmfont file loading and pixel font rendering
   - ease functions
   - some useful components (Alarm, StateMachine, Tween, ...)
+  - tile-based game utilities (TileSet, TileGrid, Grid)
 - Additional Features
   - command console powered by ImGui
   - simple audio playback (support wav and ogg loading)
