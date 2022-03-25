@@ -30,14 +30,14 @@ And the UML of Monocle engine might help:
 - CMake >=3.12
 - Python >=3.6
 
+### Windows
+
+- Visual Studio >=2017 or MinGW(GCC >= 5.2)
+
 ### Linux
 
 - GCC >=5.2 or Clang >=3.4
 - libSDL2-dev
-
-### Windows
-
-- Visual Studio >=2017 or MinGW(GCC >= 5.2)
 
 ### MacOS
 
@@ -59,10 +59,10 @@ And the UML of Monocle engine might help:
 - Additional Features
   - command console powered by ImGui
   - simple audio playback (support wav and ogg loading)
-  - gltf model file loading
-  - Mesh and MeshGraphicsComponent
-  - HTML5 support
+  - gltf file loading (only mesh data)
+  - mesh rendering
+  - html5 support
 - Tools:
   - crunch (a texture packer) (modified) (MIT Licence)
   - sfxr (an 8-bit sound effect generator) (ported) (MIT Licence)
-  - A particle effect editor
+  - particle effect editor
