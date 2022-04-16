@@ -102,6 +102,7 @@ CODE
  - Easy to hack and improve.
  - Minimize setup and maintenance.
  - Minimize state storage on user side.
+ - Minimize state synchronization.
  - Portable, minimize dependencies, run on target (consoles, phones, etc.).
  - Efficient runtime and memory consumption.
 
@@ -392,6 +393,7 @@ CODE
                         - likewise io.MousePos and GetMousePos() will use OS coordinates.
                           If you query mouse positions to interact with non-imgui coordinates you will need to offset them, e.g. subtract GetWindowViewport()->Pos.
 
+ - 2022/04/05 (1.88) - inputs: renamed ImGuiKeyModFlags to ImGuiModFlags. Kept inline redirection enums (will obsolete). This was never used in public API functions but technically present in imgui.h and ImGuiIO.
  - 2022/01/20 (1.87) - inputs: reworded gamepad IO.
                         - Backend writing to io.NavInputs[]            -> backend should call io.AddKeyEvent()/io.AddKeyAnalogEvent() with ImGuiKey_GamepadXXX values.
  - 2022/01/19 (1.87) - sliders, drags: removed support for legacy arithmetic operators (+,+-,*,/) when inputing text. This doesn't break any api/code but a feature that used to be accessible by end-users (which seemingly no one used).
@@ -1286,7 +1288,7 @@ void ImGuiIO::ClearInputKeys()
         KeysData[n].DownDurationPrev = -1.0f;
     }
     KeyCtrl = KeyShift = KeyAlt = KeySuper = false;
-    KeyMods = ImGuiKeyModFlags_None;
+    KeyMods = ImGuiModFlags_None;
     for (int n = 0; n < IM_ARRAYSIZE(NavInputsDownDuration); n++)
         NavInputsDownDuration[n] = NavInputsDownDurationPrev[n] = -1.0f;
 }
@@ -1688,7 +1690,11 @@ const char* ImStrSkipBlank(const char* str)
 // designed using two-passes worst case, which probably could be improved using the stbsp_vsprintfcb() function.)
 #ifdef IMGUI_USE_STB_SPRINTF
 #define STB_SPRINTF_IMPLEMENTATION
+#ifdef IMGUI_STB_SPRINTF_FILENAME
+#include IMGUI_STB_SPRINTF_FILENAME
+#else
 #include "stb_sprintf.h"
+#endif
 #endif
 
 #if defined(_MSC_VER) && !defined(vsnprintf)
@@ -3765,20 +3771,23 @@ void ImGui::GetAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeF
 
 ImGuiContext* ImGui::CreateContext(ImFontAtlas* shared_font_atlas)
 {
+    ImGuiContext* prev_ctx = GetCurrentContext();
     ImGuiContext* ctx = IM_NEW(ImGuiContext)(shared_font_atlas);
-    if (GImGui == NULL)
-        SetCurrentContext(ctx);
-    Initialize(ctx);
+    SetCurrentContext(ctx);
+    Initialize();
+    if (prev_ctx != NULL)
+        SetCurrentContext(prev_ctx); // Restore previous context if any, else keep new one.
     return ctx;
 }
 
 void ImGui::DestroyContext(ImGuiContext* ctx)
 {
-    if (ctx == NULL)
-        ctx = GImGui;
-    Shutdown(ctx);
-    if (GImGui == ctx)
-        SetCurrentContext(NULL);
+    ImGuiContext* prev_ctx = GetCurrentContext();
+    if (ctx == NULL) //-V1051
+        ctx = prev_ctx;
+    SetCurrentContext(ctx);
+    Shutdown();
+    SetCurrentContext((prev_ctx != ctx) ? prev_ctx : NULL);
     IM_DELETE(ctx);
 }
 
@@ -4140,7 +4149,7 @@ static void ImGui::UpdateKeyboardInputs()
 #endif
 
     // Synchronize io.KeyMods with individual modifiers io.KeyXXX bools
-    io.KeyMods = GetMergedKeyModFlags();
+    io.KeyMods = GetMergedModFlags();
 
     // Clear gamepad data if disabled
     if ((io.BackendFlags & ImGuiBackendFlags_HasGamepad) == 0)
@@ -4396,15 +4405,16 @@ void ImGui::UpdateHoveredWindowAndCaptureFlags()
     io.WantTextInput = (g.WantTextInputNextFrame != -1) ? (g.WantTextInputNextFrame != 0) : false;
 }
 
-ImGuiKeyModFlags ImGui::GetMergedKeyModFlags()
+// [Internal] Do not use directly (can read io.KeyMods instead)
+ImGuiModFlags ImGui::GetMergedModFlags()
 {
     ImGuiContext& g = *GImGui;
-    ImGuiKeyModFlags key_mod_flags = ImGuiKeyModFlags_None;
-    if (g.IO.KeyCtrl)   { key_mod_flags |= ImGuiKeyModFlags_Ctrl; }
-    if (g.IO.KeyShift)  { key_mod_flags |= ImGuiKeyModFlags_Shift; }
-    if (g.IO.KeyAlt)    { key_mod_flags |= ImGuiKeyModFlags_Alt; }
-    if (g.IO.KeySuper)  { key_mod_flags |= ImGuiKeyModFlags_Super; }
-    return key_mod_flags;
+    ImGuiModFlags key_mods = ImGuiModFlags_None;
+    if (g.IO.KeyCtrl)   { key_mods |= ImGuiModFlags_Ctrl; }
+    if (g.IO.KeyShift)  { key_mods |= ImGuiModFlags_Shift; }
+    if (g.IO.KeyAlt)    { key_mods |= ImGuiModFlags_Alt; }
+    if (g.IO.KeySuper)  { key_mods |= ImGuiModFlags_Super; }
+    return key_mods;
 }
 
 void ImGui::NewFrame()
@@ -4629,9 +4639,9 @@ void ImGui::NewFrame()
     CallContextHooks(&g, ImGuiContextHookType_NewFramePost);
 }
 
-void ImGui::Initialize(ImGuiContext* context)
+void ImGui::Initialize()
 {
-    ImGuiContext& g = *context;
+    ImGuiContext& g = *GImGui;
     IM_ASSERT(!g.Initialized && !g.SettingsLoaded);
 
     // Add .ini handle for ImGuiWindow type
@@ -4644,11 +4654,11 @@ void ImGui::Initialize(ImGuiContext* context)
         ini_handler.ReadLineFn = WindowSettingsHandler_ReadLine;
         ini_handler.ApplyAllFn = WindowSettingsHandler_ApplyAll;
         ini_handler.WriteAllFn = WindowSettingsHandler_WriteAll;
-        g.SettingsHandlers.push_back(ini_handler);
+        AddSettingsHandler(&ini_handler);
     }
 
     // Add .ini handle for ImGuiTable type
-    TableSettingsInstallHandler(context);
+    TableSettingsAddSettingsHandler();
 
     // Create default viewport
     ImGuiViewportP* viewport = IM_NEW(ImGuiViewportP)();
@@ -4668,10 +4678,10 @@ void ImGui::Initialize(ImGuiContext* context)
 }
 
 // This function is merely here to free heap allocations.
-void ImGui::Shutdown(ImGuiContext* context)
+void ImGui::Shutdown()
 {
     // The fonts atlas can be used prior to calling NewFrame(), so we clear it even if g.Initialized is FALSE (which would happen if we never called NewFrame)
-    ImGuiContext& g = *context;
+    ImGuiContext& g = *GImGui;
     if (g.IO.Fonts && g.FontAtlasOwnedByContext)
     {
         g.IO.Fonts->Locked = false;
@@ -4685,18 +4695,10 @@ void ImGui::Shutdown(ImGuiContext* context)
 
     // Save settings (unless we haven't attempted to load them: CreateContext/DestroyContext without a call to NewFrame shouldn't save an empty file)
     if (g.SettingsLoaded && g.IO.IniFilename != NULL)
-    {
-        ImGuiContext* backup_context = GImGui;
-        SetCurrentContext(&g);
         SaveIniSettingsToDisk(g.IO.IniFilename);
-        SetCurrentContext(backup_context);
-    }
 
     // Destroy platform windows
-    ImGuiContext* backup_context = ImGui::GetCurrentContext();
-    SetCurrentContext(context);
     DestroyPlatformWindows();
-    SetCurrentContext(backup_context);
 
     // Shutdown extensions
     DockContextShutdown(&g);
@@ -8497,7 +8499,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
                     if (key == ImGuiKey_ModShift) { io.KeyShift = keydata->Down; }
                     if (key == ImGuiKey_ModAlt) { io.KeyAlt = keydata->Down; }
                     if (key == ImGuiKey_ModSuper) { io.KeySuper = keydata->Down; }
-                    io.KeyMods = GetMergedKeyModFlags();
+                    io.KeyMods = GetMergedModFlags();
                 }
 
                 // Allow legacy code using io.KeysDown[GetKeyIndex()] with new backends
@@ -8562,9 +8564,12 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
 
 // Helper function to verify ABI compatibility between caller code and compiled version of Dear ImGui.
 // Verify that the type sizes are matching between the calling file's compilation unit and imgui.cpp's compilation unit
-// If the user has inconsistent compilation settings, imgui configuration #define, packing pragma, etc. your user code
-// may see different structures than what imgui.cpp sees, which is problematic.
-// We usually require settings to be in imconfig.h to make sure that they are accessible to all compilation units involved with Dear ImGui.
+// If this triggers you have an issue:
+// - Most commonly: mismatched headers and compiled code version.
+// - Or: mismatched configuration #define, compilation settings, packing pragma etc.
+//   The configuration settings mentioned in imconfig.h must be set for all compilation units involved with Dear ImGui,
+//   which is way it is required you put them in your imconfig file (and not just before including imgui.h).
+//   Otherwise it is possible that different compilation units would see different structure layout
 bool ImGui::DebugCheckVersionAndDataLayout(const char* version, size_t sz_io, size_t sz_style, size_t sz_vec2, size_t sz_vec4, size_t sz_vert, size_t sz_idx)
 {
     bool error = false;
@@ -8598,10 +8603,11 @@ static void ImGui::ErrorCheckNewFrameSanityChecks()
     IM_ASSERT(g.IO.DisplaySize.x >= 0.0f && g.IO.DisplaySize.y >= 0.0f  && "Invalid DisplaySize value!");
     IM_ASSERT(g.IO.Fonts->IsBuilt()                                     && "Font Atlas not built! Make sure you called ImGui_ImplXXXX_NewFrame() function for renderer backend, which should call io.Fonts->GetTexDataAsRGBA32() / GetTexDataAsAlpha8()");
     IM_ASSERT(g.Style.CurveTessellationTol > 0.0f                       && "Invalid style setting!");
-    IM_ASSERT(g.Style.CircleTessellationMaxError  > 0.0f                && "Invalid style setting!");
+    IM_ASSERT(g.Style.CircleTessellationMaxError > 0.0f                 && "Invalid style setting!");
     IM_ASSERT(g.Style.Alpha >= 0.0f && g.Style.Alpha <= 1.0f            && "Invalid style setting!"); // Allows us to avoid a few clamps in color computations
     IM_ASSERT(g.Style.WindowMinSize.x >= 1.0f && g.Style.WindowMinSize.y >= 1.0f && "Invalid style setting.");
     IM_ASSERT(g.Style.WindowMenuButtonPosition == ImGuiDir_None || g.Style.WindowMenuButtonPosition == ImGuiDir_Left || g.Style.WindowMenuButtonPosition == ImGuiDir_Right);
+    IM_ASSERT(g.Style.ColorButtonPosition == ImGuiDir_Left || g.Style.ColorButtonPosition == ImGuiDir_Right);
 #ifndef IMGUI_DISABLE_OBSOLETE_KEYIO
     for (int n = ImGuiKey_NamedKey_BEGIN; n < ImGuiKey_COUNT; n++)
         IM_ASSERT(g.IO.KeyMap[n] >= -1 && g.IO.KeyMap[n] < ImGuiKey_LegacyNativeKey_END && "io.KeyMap[] contains an out of bound value (need to be 0..511, or -1 for unmapped key)");
@@ -8666,11 +8672,11 @@ static void ImGui::ErrorCheckEndFrameSanityChecks()
     // send key release events mid-frame. This would normally trigger this assertion and lead to sheared inputs.
     // We silently accommodate for this case by ignoring/ the case where all io.KeyXXX modifiers were released (aka key_mod_flags == 0),
     // while still correctly asserting on mid-frame key press events.
-    const ImGuiKeyModFlags key_mod_flags = GetMergedKeyModFlags();
-    IM_ASSERT((key_mod_flags == 0 || g.IO.KeyMods == key_mod_flags) && "Mismatching io.KeyCtrl/io.KeyShift/io.KeyAlt/io.KeySuper vs io.KeyMods");
-    IM_UNUSED(key_mod_flags);
+    const ImGuiModFlags key_mods = GetMergedModFlags();
+    IM_ASSERT((key_mods == 0 || g.IO.KeyMods == key_mods) && "Mismatching io.KeyCtrl/io.KeyShift/io.KeyAlt/io.KeySuper vs io.KeyMods");
+    IM_UNUSED(key_mods);
 
-    // Recover from errors
+    // [EXPERIMENTAL] Recover from errors: You may call this yourself before EndFrame().
     //ErrorCheckEndFrameRecover();
 
     // Report when there is a mismatch of Begin/BeginChild vs End/EndChild calls. Important: Remember that the Begin/BeginChild API requires you
@@ -8710,7 +8716,6 @@ void    ImGui::ErrorCheckEndFrameRecover(ImGuiErrorLogCallback log_callback, voi
             IM_ASSERT(window->IsFallbackWindow);
             break;
         }
-        IM_ASSERT(window == g.CurrentWindow);
         if (window->Flags & ImGuiWindowFlags_ChildWindow)
         {
             if (log_callback) log_callback(user_data, "Recovered from missing EndChild() for '%s'", window->Name);
@@ -8853,7 +8858,7 @@ void ImGuiStackSizes::CompareWithCurrentState()
 // - GetWindowContentRegionMin(), GetWindowContentRegionMax()
 // - BeginGroup()
 // - EndGroup()
-// Also see in imgui_widgets: tab bars, columns.
+// Also see in imgui_widgets: tab bars, and in imgui_tables: tables, columns.
 //-----------------------------------------------------------------------------
 
 // Advance cursor given item size for layout.
@@ -12283,6 +12288,20 @@ ImGuiWindowSettings* ImGui::FindOrCreateWindowSettings(const char* name)
     return CreateNewWindowSettings(name);
 }
 
+void ImGui::AddSettingsHandler(const ImGuiSettingsHandler* handler)
+{
+    ImGuiContext& g = *GImGui;
+    IM_ASSERT(FindSettingsHandler(handler->TypeName) == NULL);
+    g.SettingsHandlers.push_back(*handler);
+}
+
+void ImGui::RemoveSettingsHandler(const char* type_name)
+{
+    ImGuiContext& g = *GImGui;
+    if (ImGuiSettingsHandler* handler = FindSettingsHandler(type_name))
+        g.SettingsHandlers.erase(handler);
+}
+
 ImGuiSettingsHandler* ImGui::FindSettingsHandler(const char* type_name)
 {
     ImGuiContext& g = *GImGui;
@@ -12595,7 +12614,7 @@ void ImGui::SetCurrentViewport(ImGuiWindow* current_window, ImGuiViewportP* view
         g.PlatformIO.Platform_OnChangedViewport(g.CurrentViewport);
 }
 
-static void SetWindowViewport(ImGuiWindow* window, ImGuiViewportP* viewport)
+void ImGui::SetWindowViewport(ImGuiWindow* window, ImGuiViewportP* viewport)
 {
     // Abandon viewport
     if (window->ViewportOwned && window->Viewport->Window == window)
@@ -17635,19 +17654,20 @@ void ImGui::ShowMetricsWindow(bool* p_open)
     {
         static ImRect GetTableRect(ImGuiTable* table, int rect_type, int n)
         {
+            ImGuiTableInstanceData* table_instance = TableGetInstanceData(table, table->InstanceCurrent); // Always using last submitted instance
             if (rect_type == TRT_OuterRect)                     { return table->OuterRect; }
             else if (rect_type == TRT_InnerRect)                { return table->InnerRect; }
             else if (rect_type == TRT_WorkRect)                 { return table->WorkRect; }
             else if (rect_type == TRT_HostClipRect)             { return table->HostClipRect; }
             else if (rect_type == TRT_InnerClipRect)            { return table->InnerClipRect; }
             else if (rect_type == TRT_BackgroundClipRect)       { return table->BgClipRect; }
-            else if (rect_type == TRT_ColumnsRect)              { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->MinX, table->InnerClipRect.Min.y, c->MaxX, table->InnerClipRect.Min.y + table->LastOuterHeight); }
+            else if (rect_type == TRT_ColumnsRect)              { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->MinX, table->InnerClipRect.Min.y, c->MaxX, table->InnerClipRect.Min.y + table_instance->LastOuterHeight); }
             else if (rect_type == TRT_ColumnsWorkRect)          { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->WorkRect.Min.y, c->WorkMaxX, table->WorkRect.Max.y); }
             else if (rect_type == TRT_ColumnsClipRect)          { ImGuiTableColumn* c = &table->Columns[n]; return c->ClipRect; }
-            else if (rect_type == TRT_ColumnsContentHeadersUsed){ ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y, c->ContentMaxXHeadersUsed, table->InnerClipRect.Min.y + table->LastFirstRowHeight); } // Note: y1/y2 not always accurate
-            else if (rect_type == TRT_ColumnsContentHeadersIdeal){ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y, c->ContentMaxXHeadersIdeal, table->InnerClipRect.Min.y + table->LastFirstRowHeight); }
-            else if (rect_type == TRT_ColumnsContentFrozen)     { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y, c->ContentMaxXFrozen, table->InnerClipRect.Min.y + table->LastFirstRowHeight); }
-            else if (rect_type == TRT_ColumnsContentUnfrozen)   { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y + table->LastFirstRowHeight, c->ContentMaxXUnfrozen, table->InnerClipRect.Max.y); }
+            else if (rect_type == TRT_ColumnsContentHeadersUsed){ ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y, c->ContentMaxXHeadersUsed, table->InnerClipRect.Min.y + table_instance->LastFirstRowHeight); } // Note: y1/y2 not always accurate
+            else if (rect_type == TRT_ColumnsContentHeadersIdeal){ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y, c->ContentMaxXHeadersIdeal, table->InnerClipRect.Min.y + table_instance->LastFirstRowHeight); }
+            else if (rect_type == TRT_ColumnsContentFrozen)     { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y, c->ContentMaxXFrozen, table->InnerClipRect.Min.y + table_instance->LastFirstRowHeight); }
+            else if (rect_type == TRT_ColumnsContentUnfrozen)   { ImGuiTableColumn* c = &table->Columns[n]; return ImRect(c->WorkMinX, table->InnerClipRect.Min.y + table_instance->LastFirstRowHeight, c->ContentMaxXUnfrozen, table->InnerClipRect.Max.y); }
             IM_ASSERT(0);
             return ImRect();
         }
