@@ -216,7 +216,7 @@ public:
 	{
 		CHERRYSODA_ASSERT(GetBufferType() == Graphics::BufferType::Dynamic, "Only dynamic buffer type can use UpdateVertexBuffer!\n");
 		CHERRYSODA_ASSERT(IsValid(), "Only initialized buffer can be updated!\n");
-		Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, index, m_vertices);
+		Graphics::UpdateDynamicVertexBuffer(m_vertexBuffer, index, vertices);
 	}
 
 	inline void UpdateIndexBuffer(int index, const STL::Vector<type::UInt16>& indices)
