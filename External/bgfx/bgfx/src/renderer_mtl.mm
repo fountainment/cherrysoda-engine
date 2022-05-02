@@ -2764,10 +2764,10 @@ BX_STATIC_ASSERT(BX_COUNTOF(s_accessNames) == Access::Count, "Invalid s_accessNa
 			}
 
 			bx::memCopy(m_dynamic + _offset, _data, _size);
-			uint32_t start = _offset & 4;
+			uint32_t start = bx::alignDown(_offset, 4);
 			uint32_t end   = bx::strideAlign(_offset + _size, 4);
 
-			Buffer temp = s_renderMtl->m_device.newBufferWithBytes(m_dynamic, end - start, 0);
+			Buffer temp = s_renderMtl->m_device.newBufferWithBytes(m_dynamic + start, end - start, 0);
 			bce.copyFromBuffer(temp, 0, m_ptr, start, end - start);
 			s_renderMtl->m_cmd.release(temp);
 		}
