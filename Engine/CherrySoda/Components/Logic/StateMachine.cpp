@@ -5,10 +5,7 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::StateMachine;
-using cherrysoda::STL;
-using cherrysoda::Entity;
-using cherrysoda::Scene;
+namespace cherrysoda {
 
 void StateMachine::Added(Entity* entity)
 {
@@ -67,3 +64,5 @@ void StateMachine::Update()
 	}
 	// TODO: Add coroutine
 }
+
+} // namespace cherrysoda

@@ -5,14 +5,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::Tween;
-
-using cherrysoda::Easer;
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::Math;
-using cherrysoda::STL;
-using cherrysoda::TweenMode;
+namespace cherrysoda {
 
 STL::Stack<Tween*> Tween::ms_cached;
 
@@ -125,3 +118,5 @@ void Tween::Reset()
 	m_timeLeft = m_duration;
 	m_eased = (m_percent = (m_reverse ? 1 : 0));
 }
+
+} // namespace cherrysoda

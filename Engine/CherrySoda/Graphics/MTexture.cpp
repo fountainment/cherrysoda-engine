@@ -8,18 +8,7 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::MTexture;
-
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Math;
-using cherrysoda::SpriteEffects;
-using cherrysoda::String;
-using cherrysoda::StringID;
-using cherrysoda::Texture2D;
-
-namespace type = cherrysoda::type;
-
+namespace cherrysoda {
 
 MTexture MTexture::FromFile(const String& filename)
 {
@@ -132,3 +121,5 @@ void MTexture::SetUtil()
 	m_bottomUV = ClipRect().Top() / (float)Texture().Height();
 	m_topUV = ClipRect().Bottom() / (float)Texture().Height();
 }
+
+} // namespace cherrysoda

@@ -4,11 +4,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Camera;
-
-using cherrysoda::Engine;
-using cherrysoda::Graphics;
-using cherrysoda::Math;
+namespace cherrysoda {
 
 // TODO: finish Camera class
 
@@ -75,3 +71,5 @@ void Camera::Approach(const Math::Vec2& pos, const Math::Rectangle& rect, float 
 	rectCopy.Move(pos);
 	Approach(rectCopy.Clamp(Position2D()), ease);
 }
+
+} // namespace cherrysoda

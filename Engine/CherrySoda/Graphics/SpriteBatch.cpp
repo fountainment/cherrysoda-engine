@@ -7,16 +7,7 @@
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::SpriteBatch;
-
-using cherrysoda::Color;
-using cherrysoda::Graphics;
-using cherrysoda::Math;
-using cherrysoda::SpriteEffects;
-using cherrysoda::STL;
-using cherrysoda::Texture2D;
-
-namespace type = cherrysoda::type;
+namespace cherrysoda {
 
 void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::IRectangle& rect, \
 					const Color& color, float rotation, const Math::Vec2& origin, const Math::Vec2& scale, \
@@ -77,3 +68,5 @@ void SpriteBatch::End()
 		Graphics::Discard();
 	}
 }
+
+} // namespace cherrysoda

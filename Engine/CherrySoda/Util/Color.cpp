@@ -1,6 +1,6 @@
 #include <CherrySoda/Util/Color.h>
 
-using cherrysoda::Color;
+namespace cherrysoda {
 
 const Color Color::Transparent = Color(0.f, 0.f);
 
@@ -14,3 +14,5 @@ const Color Color::Yellow = Color(1.0f, 1.0f, 0.0f);
 const Color Color::DarkYellow = Color(0.5f, 0.5f, 0.0f);
 const Color Color::Orange = Color(1.0f, 0.5f, 0.0f);
 const Color Color::Gray   = Color(0.5f);
+
+} // namespace cherrysoda

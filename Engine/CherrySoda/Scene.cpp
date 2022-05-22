@@ -12,18 +12,7 @@
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::Scene;
-
-using cherrysoda::BitTag;
-using cherrysoda::BitTagValueType;
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::EntityList;
-using cherrysoda::Math;
-using cherrysoda::Renderer;
-using cherrysoda::RendererList;
-using cherrysoda::STL;
-using cherrysoda::TagLists;
+namespace cherrysoda {
 
 Scene::Scene()
 {
@@ -258,3 +247,5 @@ Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, in
 
 	return to;
 }
+
+} // namespace cherrysoda

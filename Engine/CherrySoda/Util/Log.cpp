@@ -8,9 +8,7 @@
 	#include <Windows.h>
 #endif
 
-using cherrysoda::Log;
-
-using cherrysoda::String;
+namespace cherrysoda {
 
 void Log::DebugOutput(const String& output, int channel)
 {
@@ -28,3 +26,5 @@ void Log::LogOutput(const String& output, int channel)
 	std::fprintf(f, "%s", output.c_str());
 	std::fclose(f);
 }
+
+} // namespace cherrysoda

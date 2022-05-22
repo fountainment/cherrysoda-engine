@@ -8,13 +8,7 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/VirtualMap.h>
 
-using cherrysoda::TileGrid;
-
-using cherrysoda::Math;
-using cherrysoda::STL;
-using cherrysoda::TileSet;
-using cherrysoda::MTexture;
-using cherrysoda::VirtualMap;
+namespace cherrysoda {
 
 void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX/* = 0*/, int offsetY/* = 0*/)
 {
@@ -92,3 +86,5 @@ void TileGrid::RenderAt(const Math::Vec2& position)
 		}
 	}
 }
+
+} // namespace cherrysoda

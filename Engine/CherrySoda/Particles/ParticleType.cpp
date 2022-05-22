@@ -5,15 +5,7 @@
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::ParticleType;
-
-using cherrysoda::Calc;
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Entity;
-using cherrysoda::Math;
-using cherrysoda::Particle;
-
+namespace cherrysoda {
 
 Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::Vec2& position, float direction, const Color& color) const
 {
@@ -75,3 +67,5 @@ Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::V
 
 	return particle;
 }
+
+} // namespace cherrysoda

@@ -5,12 +5,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::Graphics;
-using cherrysoda::Math;
-using cherrysoda::Texture;
-using cherrysoda::Texture2D;
-using cherrysoda::TextureCube;
-using cherrysoda::String;
+namespace cherrysoda {
 
 Texture Texture::FromFile(const String& filename)
 {
@@ -64,3 +59,5 @@ TextureCube TextureCube::FromFile(const String& filename)
 	CHERRYSODA_ASSERT(info.m_cubeMap, CHERRYSODA_FORMAT("Loading texture \"%s\" is not a cubemap!\n", filename.c_str()));
 	return result;
 }
+
+} // namespace cherrysoda

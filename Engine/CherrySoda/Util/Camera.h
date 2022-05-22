@@ -5,7 +5,6 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
-
 namespace cherrysoda {
 
 class Camera

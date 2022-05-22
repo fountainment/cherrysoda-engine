@@ -20,21 +20,7 @@
 
 #include <SDL.h>
 
-using cherrysoda::Engine;
-
-using cherrysoda::Audio;
-using cherrysoda::Color;
-using cherrysoda::Commands;
-using cherrysoda::CommandBatches;
-using cherrysoda::Draw;
-using cherrysoda::Graphics;
-using cherrysoda::GUI;
-using cherrysoda::Math;
-using cherrysoda::MInput;
-using cherrysoda::Scene;
-using cherrysoda::String;
-using cherrysoda::Time;
-
+namespace cherrysoda {
 
 #ifdef __EMSCRIPTEN__
 void Engine::MainLoop()
@@ -400,3 +386,5 @@ void Engine::Exit()
 }
 
 Engine* Engine::ms_instance = nullptr;
+
+} // namespace cherrysoda

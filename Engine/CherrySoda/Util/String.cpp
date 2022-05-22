@@ -9,13 +9,7 @@
 #include <string>
 #include <utility>
 
-using cherrysoda::STL;
-using cherrysoda::String;
-using cherrysoda::StringID;
-using cherrysoda::StringUtil;
-
-namespace type = cherrysoda::type;
-
+namespace cherrysoda {
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
 STL::Map<type::Int32,String>& StringID::INTERNAL_GetHashCollisionCheckMap()
@@ -119,3 +113,5 @@ const STL::Vector<type::UInt32> StringUtil::Utf8ToUnicode32(const String& text)
 	}
 	return result;
 }
+
+} // namespace cherrysoda

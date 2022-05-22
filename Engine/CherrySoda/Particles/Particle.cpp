@@ -10,17 +10,7 @@
 #include <CherrySoda/Util/Ease.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Particle;
-
-using cherrysoda::Calc;
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Ease;
-using cherrysoda::Engine;
-using cherrysoda::Math;
-using cherrysoda::ParticleType;
-using cherrysoda::SpriteEffects;
-
+namespace cherrysoda {
 
 void Particle::Update()
 {
@@ -119,3 +109,5 @@ void Particle::Render()
 	}
 	Draw::GetSpriteBatch()->Draw(m_source->Texture(), renderAt, m_source->ClipRect(), m_color, m_rotation, m_source->Center(), Math::Vec2(m_size), SpriteEffects::None, 0);
 }
+
+} // namespace cherrysoda

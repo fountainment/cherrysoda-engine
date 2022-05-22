@@ -3,14 +3,7 @@
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Entity.h>
 
-using cherrysoda::ParticleEmitter;
-
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::Math;
-using cherrysoda::ParticleSystem;
-using cherrysoda::ParticleType;
-
+namespace cherrysoda {
 
 ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, int amount, float interval)
 	: base(true, false)
@@ -56,3 +49,5 @@ void ParticleEmitter::Update()
 		Emit();
 	}
 }
+
+} // namespace cherrysoda

@@ -13,19 +13,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Pool.h>
 
-using cherrysoda::Collider;
-
-using cherrysoda::Camera;
-using cherrysoda::Color;
-using cherrysoda::CollidableComponent;
-using cherrysoda::ColliderList;
-using cherrysoda::Component;
-using cherrysoda::Circle;
-using cherrysoda::Entity;
-using cherrysoda::Grid;
-using cherrysoda::Hitbox;
-using cherrysoda::Math;
-using cherrysoda::PoolInterface;
+namespace cherrysoda {
 
 bool Collider::Collide(const CollidableComponent* component) const
 {
@@ -95,3 +83,5 @@ void Collider::DeleteCollider(Collider* collider, Entity* entity)
 {
 	entity->GetScene()->AddActionOnEndOfFrame([collider](){ delete collider; });
 }
+
+} // namespace cherrysoda

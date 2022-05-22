@@ -9,17 +9,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Entity.h>
 
-using cherrysoda::ColliderList;
-
-using cherrysoda::Camera;
-using cherrysoda::Circle;
-using cherrysoda::Color;
-using cherrysoda::Component;
-using cherrysoda::Entity;
-using cherrysoda::Grid;
-using cherrysoda::Hitbox;
-using cherrysoda::Math;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 void ColliderList::Add(const ColliderList::IterableColliders& toAdd)
 {
@@ -180,3 +170,5 @@ void ColliderList::Removed()
 		c->Removed();
 	}
 }
+
+} // namespace cherrysoda

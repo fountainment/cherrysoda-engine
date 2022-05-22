@@ -5,12 +5,7 @@
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::RendererList;
-
-using cherrysoda::Renderer;
-using cherrysoda::Scene;
-using cherrysoda::Draw;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 RendererList::RendererList(Scene* scene)
 {
@@ -86,3 +81,5 @@ Renderer* RendererList::First()
 	STL::TryGetFirst(m_renderers, first);
 	return first;
 }
+
+} // namespace cherrysoda

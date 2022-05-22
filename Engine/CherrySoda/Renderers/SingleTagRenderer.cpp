@@ -6,11 +6,7 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/Util/Draw.h>
 
-using cherrysoda::SingleTagRenderer;
-
-using cherrysoda::Draw;
-using cherrysoda::Graphics;
-using cherrysoda::Scene;
+namespace cherrysoda {
 
 void SingleTagRenderer::Render(Scene* scene)
 {
@@ -32,3 +28,5 @@ void SingleTagRenderer::Render(Scene* scene)
 	Graphics::SetEffect(nullptr);
 	Graphics::EndRenderPass(RenderPass());
 }
+
+} // namespace cherrysoda

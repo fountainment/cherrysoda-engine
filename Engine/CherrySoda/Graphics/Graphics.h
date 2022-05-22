@@ -9,7 +9,6 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-
 namespace cherrysoda {
 
 class Camera;
@@ -290,7 +289,7 @@ public:
 	static UniformHandle CreateUniformMat4(const String& uniform);
 	static UniformHandle CreateUniformSampler(const String& sampler);
 
-	static void UpdateDynamicIndexBuffer(DynamicIndexBufferHandle handle, int index, const STL::Vector<cherrysoda::type::UInt16>& indices);
+	static void UpdateDynamicIndexBuffer(DynamicIndexBufferHandle handle, int index, const STL::Vector<type::UInt16>& indices);
 
 	static void DestroyVertexBuffer(VertexBufferHandle vertexBuffer);
 	static void DestroyDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer);

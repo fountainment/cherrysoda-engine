@@ -5,12 +5,7 @@
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::TagLists;
-
-using cherrysoda::BitTag;
-using cherrysoda::Entity;
-using cherrysoda::EntityList;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 TagLists::TagLists()
 {
@@ -67,3 +62,5 @@ void TagLists::EntityRemoved(Entity* entity)
 		}
 	}
 }
+
+} // namespace cherrysoda

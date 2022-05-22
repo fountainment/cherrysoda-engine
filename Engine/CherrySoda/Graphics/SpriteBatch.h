@@ -7,7 +7,6 @@
 #include <CherrySoda/Graphics/Mesh.h>
 #include <CherrySoda/Util/NumType.h>
 
-
 namespace cherrysoda {
 
 class SpriteBatch : Mesh<Graphics::PosColorTexCoord0Vertex>

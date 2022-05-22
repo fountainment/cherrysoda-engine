@@ -5,12 +5,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::Wiggler;
-
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::Math;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onChange/* = nullptr*/, bool start/* = false*/, bool removeSelfOnFinish/* = false*/)
 {
@@ -114,3 +109,5 @@ void Wiggler::Update()
 }
 
 STL::Stack<Wiggler*> Wiggler::ms_cache;
+
+} // namespace cherrysoda

@@ -1,6 +1,6 @@
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Math;
+namespace cherrysoda {
 
 const Math::Mat4 Math::GetOrientationMatrix_(const Math::Mat4& matrix)
 {
@@ -49,3 +49,5 @@ bool Math::RaycastAABB_(const Math::Vec3& start, const Math::Vec3& direction, co
 	}
 	return true;
 }
+
+} // namespace cherrysoda

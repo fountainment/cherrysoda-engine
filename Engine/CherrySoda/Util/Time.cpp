@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-using cherrysoda::Time;
+namespace cherrysoda {
 
 double Time::GetSystemTime()
 {
@@ -13,3 +13,5 @@ void Time::SleepForMilliseconds(unsigned int ms)
 {
 	SDL_Delay(ms);
 }
+
+} // namespace cherrysoda

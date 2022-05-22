@@ -12,23 +12,7 @@
 
 #include <imgui.h>
 
-using cherrysoda::GUI;
-
-using cherrysoda::ButtonState;
-using cherrysoda::Commands;
-using cherrysoda::CursorTypes;
-using cherrysoda::Effect;
-using cherrysoda::Engine;
-using cherrysoda::Graphics;
-using cherrysoda::Keys;
-using cherrysoda::Math;
-using cherrysoda::MInput;
-using cherrysoda::String;
-using cherrysoda::StringUtil;
-using cherrysoda::Texture2D;
-using cherrysoda::Window;
-
-namespace type = cherrysoda::type;
+namespace cherrysoda {
 
 Effect GUI::ms_guiEffect;
 Texture2D GUI::ms_fontTexture;
@@ -550,3 +534,5 @@ void GUI::TextInput(const char* text)
 	ImGuiIO& io = ImGui::GetIO();
 	io.AddInputCharactersUTF8(text);
 }
+
+} // namespace cherrysoda

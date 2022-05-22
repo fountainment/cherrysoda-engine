@@ -8,15 +8,7 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::SpriteBank;
-
-using cherrysoda::Atlas;
-using cherrysoda::JsonUtil;
-using cherrysoda::Sprite;
-using cherrysoda::SpriteData;
-using cherrysoda::String;
-using cherrysoda::StringID;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 {
@@ -25,7 +17,7 @@ SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 
 	STL::HashMap<StringID, String> jsons;
 
-	STL::HashMap<StringID, const cherrysoda::json::Value*> elements;
+	STL::HashMap<StringID, const json::Value*> elements;
 	if (m_json.IsObject()) {
 		for (const auto& element : m_json["Sprites"].GetArray()) {
 			const char* elementName = element["Name"].GetString();
@@ -87,3 +79,5 @@ Sprite* SpriteBank::CreateOn(Sprite* sprite, const StringID& id)
 		return nullptr;
 	}
 }
+
+} // namespace cherrysoda

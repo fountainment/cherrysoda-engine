@@ -3,12 +3,12 @@
 
 namespace cherrysoda {
 
-	class Time
-	{
-	public:
-		static double GetSystemTime();
-		static void SleepForMilliseconds(unsigned int ms);
-	};
+class Time
+{
+public:
+	static double GetSystemTime();
+	static void SleepForMilliseconds(unsigned int ms);
+};
 
 } // namespace cherrysoda
 

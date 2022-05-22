@@ -29,30 +29,12 @@
 
 #include "embedded_shaders.h"
 
-using cherrysoda::Graphics;
-
-using cherrysoda::Camera;
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Effect;
-using cherrysoda::Engine;
-using cherrysoda::Math;
-using cherrysoda::MeshInterface;
-using cherrysoda::RenderTarget2D;
-using cherrysoda::STL;
-using cherrysoda::String;
-using cherrysoda::StringID;
-using cherrysoda::StringUtil;
-using cherrysoda::Texture;
-using cherrysoda::Texture2D;
-using cherrysoda::TextureCube;
-
-namespace type = cherrysoda::type;
-
 #define DBG_STRINGIZE(_x) DBG_STRINGIZE_(_x)
 #define DBG_STRINGIZE_(_x) #_x
 #define DBG_FILE_LINE_LITERAL "" __FILE__ "(" DBG_STRINGIZE(__LINE__) "): "
 #define DBG(_format, ...) bx::debugPrintf(DBG_FILE_LINE_LITERAL "" _format "\n", ##__VA_ARGS__)
+
+namespace cherrysoda {
 
 static uint64_t s_defaultTextureSamplerFlags = 0
 	| BGFX_SAMPLER_U_CLAMP
@@ -1163,3 +1145,5 @@ CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorTexCoord0Definition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosNormalTexCoord0Definition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(PosColorNormalTexCoord0Definition);
 CHERRYSODA_VERTEX_IMPLEMENTATION(ImGuiVertexDefinition);
+
+} // namespace cherrysoda

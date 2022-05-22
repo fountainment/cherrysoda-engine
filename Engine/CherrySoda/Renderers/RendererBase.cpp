@@ -5,12 +5,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::RendererBase;
-
-using cherrysoda::Engine;
-using cherrysoda::Graphics;
-using cherrysoda::Math;
-using cherrysoda::Scene;
+namespace cherrysoda {
 
 void RendererBase::RenderPrepare(Scene* scene)
 {
@@ -27,3 +22,5 @@ void RendererBase::RenderPrepare(Scene* scene)
 	Graphics::UseRenderPass(RenderPass())->Touch();
 	Graphics::SetupEngineUniforms();
 }
+
+} // namespace cherrysoda

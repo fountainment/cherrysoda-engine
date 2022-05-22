@@ -7,13 +7,7 @@
 
 #include <fstream>
 
-using cherrysoda::Calc;
-using cherrysoda::Math;
-using cherrysoda::Random;
-using cherrysoda::STL;
-using cherrysoda::String;
-
-namespace type = cherrysoda::type;
+namespace cherrysoda {
 
 STL::Stack<Random> Calc::ms_randomStack({ Random() });
 
@@ -103,3 +97,5 @@ bool Calc::FileExists(const String& filename)
 		return false;
 	}
 }
+
+} // namespace cherrysoda

@@ -3,10 +3,7 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Texture.h>
 
-using cherrysoda::RenderTarget2D;
-
-using cherrysoda::Graphics;
-using cherrysoda::Texture2D;
+namespace cherrysoda {
 
 RenderTarget2D::RenderTarget2D(int width, int height)
 {
@@ -15,3 +12,5 @@ RenderTarget2D::RenderTarget2D(int width, int height)
 	const Graphics::TextureHandle handles[] = { m_texture.GetHandle(), m_depthTexture.GetHandle() };
 	m_frameBuffer = Graphics::CreateFrameBuffer(2, handles);
 }
+
+} // namespace cherrysoda

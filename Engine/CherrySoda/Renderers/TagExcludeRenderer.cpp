@@ -6,11 +6,7 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/Util/Draw.h>
 
-using cherrysoda::TagExcludeRenderer;
-
-using cherrysoda::Draw;
-using cherrysoda::Graphics;
-using cherrysoda::Scene;
+namespace cherrysoda {
 
 void TagExcludeRenderer::Render(Scene* scene)
 {
@@ -34,3 +30,5 @@ void TagExcludeRenderer::Render(Scene* scene)
 	Graphics::SetEffect(nullptr);
 	Graphics::EndRenderPass(RenderPass());
 }
+
+} // namespace cherrysoda

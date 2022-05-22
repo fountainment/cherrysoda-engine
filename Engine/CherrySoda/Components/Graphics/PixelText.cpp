@@ -5,13 +5,7 @@
 #include <CherrySoda/Util/PixelFont.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::PixelText;
-
-using cherrysoda::Color;
-using cherrysoda::Math;
-using cherrysoda::PixelFont;
-using cherrysoda::String;
-
+namespace cherrysoda {
 
 PixelText::PixelText(PixelFont* font, const String& text, const Color& color)
 	: base(false, true)
@@ -78,3 +72,5 @@ void PixelText::Render()
 		character.m_charData->m_texture.Draw(Math::Vec3(m_position + character.m_offset, 0.f), Vec3_Zero, m_color);
 	}
 }
+
+} // namespace cherrysoda

@@ -4,11 +4,7 @@
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/Pool.h>
 
-using cherrysoda::Camera;
-using cherrysoda::Component;
-using cherrysoda::Entity;
-using cherrysoda::PoolInterface;
-using cherrysoda::Scene;
+namespace cherrysoda {
 
 Component::Component(bool active, bool visible)
 {
@@ -106,3 +102,5 @@ void Component::DeleteComponent(Component* component, Entity* entity)
 {
 	entity->GetScene()->AddActionOnEndOfFrame([component](){ delete component; });
 }
+
+} // namespace cherrysoda

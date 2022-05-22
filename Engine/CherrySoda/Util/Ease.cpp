@@ -2,10 +2,7 @@
 
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Ease;
-
-using cherrysoda::Easer;
-using cherrysoda::Math;
+namespace cherrysoda {
 
 const Easer Ease::Linear = [](float t){ return t; };
 
@@ -104,3 +101,5 @@ const Easer Ease::BounceInOut = [](float t)
 			return (7.5625f * (t - B5) * (t - B5) + .9375f) / 2 + .5f;
 		return (7.5625f * (t - B6) * (t - B6) + .984375f) / 2 + .5f;
 	};
+
+} // namespace cherrysoda

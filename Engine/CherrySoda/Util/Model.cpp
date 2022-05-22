@@ -10,13 +10,7 @@
 
 #include <cstring>
 
-using cherrysoda::Model;
-
-using cherrysoda::Graphics;
-using cherrysoda::Math;
-using cherrysoda::STL;
-using cherrysoda::String;
-
+namespace cherrysoda {
 
 Model Model::FromGltf(const String& gltfFile)
 {
@@ -108,3 +102,5 @@ Model Model::FromGltf(const String& gltfFile)
 	CHERRYSODA_DEBUG_FORMAT("    Result: %u\n", result);
 	return ret;
 }
+
+} // namespace cherrysoda

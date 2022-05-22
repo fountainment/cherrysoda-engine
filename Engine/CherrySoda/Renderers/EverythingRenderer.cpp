@@ -6,11 +6,7 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/Util/Draw.h>
 
-using cherrysoda::EverythingRenderer;
-
-using cherrysoda::Draw;
-using cherrysoda::Graphics;
-using cherrysoda::Scene;
+namespace cherrysoda {
 
 void EverythingRenderer::Render(Scene* scene)
 {
@@ -25,3 +21,5 @@ void EverythingRenderer::Render(Scene* scene)
 	Graphics::SetEffect(nullptr);
 	Graphics::EndRenderPass(RenderPass());
 }
+
+} // namespace cherrysoda

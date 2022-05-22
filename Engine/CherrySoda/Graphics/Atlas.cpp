@@ -7,15 +7,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::Atlas;
-
-using cherrysoda::Graphics;
-using cherrysoda::JsonUtil;
-using cherrysoda::Math;
-using cherrysoda::MTexture;
-using cherrysoda::STL;
-using cherrysoda::String;
-using cherrysoda::StringID;
+namespace cherrysoda {
 
 Atlas::~Atlas()
 {
@@ -121,3 +113,5 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 		break;
 	}
 }
+
+} // namespace cherrysoda

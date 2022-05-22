@@ -5,13 +5,7 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Color.h>
 
-using cherrysoda::CollidableComponent;
-
-using cherrysoda::Camera;
-using cherrysoda::Collider;
-using cherrysoda::ColliderList;
-using cherrysoda::Color;
-using cherrysoda::Entity;
+namespace cherrysoda {
 
 void CollidableComponent::Added(Entity* entity)
 {
@@ -73,3 +67,5 @@ Collider* CollidableComponent::GetCollider() const
 		return m_collider;
 	}
 }
+
+} // namespace cherrysoda

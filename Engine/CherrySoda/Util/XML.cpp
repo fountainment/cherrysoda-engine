@@ -1,13 +1,11 @@
 #include <CherrySoda/Util/XML.h>
 
-using cherrysoda::String;
-using cherrysoda::XMLUtil;
+namespace cherrysoda {
 
-
-bool XMLUtil::ReadXMLFile(cherrysoda::xml::XMLDocument& doc, const String& filename)
+bool XMLUtil::ReadXMLFile(xml::XMLDocument& doc, const String& filename)
 {
-	cherrysoda::xml::XMLError result = doc.LoadFile(filename.c_str());
-	if (result != cherrysoda::xml::XMLError::XML_SUCCESS) {
+	xml::XMLError result = doc.LoadFile(filename.c_str());
+	if (result != xml::XMLError::XML_SUCCESS) {
 		// Clean up.
 		doc.Clear();
 		return false;
@@ -15,3 +13,5 @@ bool XMLUtil::ReadXMLFile(cherrysoda::xml::XMLDocument& doc, const String& filen
 
 	return true;
 }
+
+} // namespace cherrysoda

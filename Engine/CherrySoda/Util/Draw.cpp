@@ -5,15 +5,7 @@
 #include <CherrySoda/Util/Calc.h>
 #include <CherrySoda/Util/Color.h>
 
-using cherrysoda::Draw;
-
-using cherrysoda::Calc;
-using cherrysoda::Color;
-using cherrysoda::Math;
-using cherrysoda::MTexture;
-using cherrysoda::Renderer;
-using cherrysoda::SpriteBatch;
-using cherrysoda::SpriteEffects;
+namespace cherrysoda {
 
 MTexture Draw::ms_debugPixelTexture;
 MTexture Draw::ms_pixel;
@@ -87,3 +79,5 @@ void Draw::Circle(const Math::Vec2& position, float radius, const Color& color/*
 		lastP = atP;
 	}
 }
+
+} // namespace cherrysoda

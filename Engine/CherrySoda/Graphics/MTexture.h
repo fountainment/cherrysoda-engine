@@ -8,7 +8,6 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
-
 namespace cherrysoda {
 
 class MTexture

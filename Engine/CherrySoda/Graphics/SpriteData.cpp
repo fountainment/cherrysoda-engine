@@ -8,16 +8,7 @@
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::SpriteData;
-
-using cherrysoda::Atlas;
-using cherrysoda::Chooser;
-using cherrysoda::Math;
-using cherrysoda::Sprite;
-using cherrysoda::SpriteDataSource;
-using cherrysoda::String;
-using cherrysoda::StringID;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 SpriteData::SpriteData(Atlas* atlas)
 {
@@ -37,7 +28,7 @@ SpriteData::~SpriteData()
 	STL::Clear(m_sources);
 }
 
-void SpriteData::Add(const cherrysoda::json::Value* jsonValue, const String& overridePath/* = ""*/)
+void SpriteData::Add(const json::Value* jsonValue, const String& overridePath/* = ""*/)
 {
 	auto jsonObj = jsonValue->GetObject();
 
@@ -150,3 +141,5 @@ Sprite* SpriteData::CreateOn(Sprite* clone)
 {
 	return m_sprite->CloneInto(clone);
 }
+
+} // namespace cherrysoda

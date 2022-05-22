@@ -7,13 +7,7 @@
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::Collide;
-
-using cherrysoda::CollidableComponent;
-using cherrysoda::Entity;
-using cherrysoda::Math;
-using cherrysoda::PointSectors;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 bool Collide::Check(const Entity* a, const Entity* b)
 {
@@ -275,3 +269,5 @@ PointSectors Collide::GetSector(float rX, float rY, float rW, float rH, const Ma
 
 	return sector;
 }
+
+} // namespace cherrysoda

@@ -4,11 +4,7 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Log.h>
 
-using cherrysoda::Alarm;
-using cherrysoda::AlarmMode;
-using cherrysoda::Engine;
-using cherrysoda::Entity;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 STL::Stack<Alarm*> Alarm::ms_cached;
 
@@ -93,3 +89,5 @@ void Alarm::Stop()
 {
 	Active(false);
 }
+
+} // namespace cherrysoda

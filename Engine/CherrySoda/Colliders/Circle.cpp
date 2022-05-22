@@ -9,16 +9,7 @@
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Circle;
-
-using cherrysoda::Camera;
-using cherrysoda::Collide;
-using cherrysoda::ColliderList;
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Grid;
-using cherrysoda::Hitbox;
-using cherrysoda::Math;
+namespace cherrysoda {
 
 bool Circle::Collide(const Circle* circle) const
 {
@@ -61,3 +52,5 @@ void Circle::Render(const Camera* camera, const Color& color) const
 {
 	Draw::Circle(AbsolutePosition2D(), Radius(), color, 4.f);
 }
+
+} // namespace cherrysoda

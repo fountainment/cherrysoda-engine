@@ -1,7 +1,6 @@
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 
-using cherrysoda::GraphicsComponent;
-using cherrysoda::Math;
+namespace cherrysoda {
 
 const Math::Mat4 GraphicsComponent::GetTransformMatrix() const
 {
@@ -15,3 +14,5 @@ const Math::Mat4 GraphicsComponent::GetTransformMatrix() const
 		Scale()),
 	-Origin());
 }
+
+} // namespace cherrysoda

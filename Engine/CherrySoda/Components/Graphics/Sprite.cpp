@@ -7,12 +7,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::Sprite;
-
-using cherrysoda::Calc;
-using cherrysoda::Engine;
-using cherrysoda::MTexture;
-using cherrysoda::StringID;
+namespace cherrysoda {
 
 void Sprite::Update()
 {
@@ -156,3 +151,5 @@ Sprite* Sprite::CloneInto(Sprite* clone)
 
 	return clone;
 }
+
+} // namespace cherrysoda

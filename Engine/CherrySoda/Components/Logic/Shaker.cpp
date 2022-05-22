@@ -4,10 +4,7 @@
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/Calc.h>
 
-using cherrysoda::Shaker;
-
-using cherrysoda::Calc;
-using cherrysoda::Engine;
+namespace cherrysoda {
 
 void Shaker::Update()
 {
@@ -31,3 +28,5 @@ void Shaker::Update()
 			m_onShake(m_value);
 	}
 }
+
+} // namespace cherrysoda

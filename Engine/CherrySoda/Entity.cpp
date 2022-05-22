@@ -14,20 +14,7 @@
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::Entity;
-
-using cherrysoda::BitTag;
-using cherrysoda::BitTagValueType;
-using cherrysoda::Camera;
-using cherrysoda::CollidableComponent;
-using cherrysoda::Collide;
-using cherrysoda::Collider;
-using cherrysoda::Component;
-using cherrysoda::ComponentList;
-using cherrysoda::Math;
-using cherrysoda::PoolInterface;
-using cherrysoda::Scene;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 Entity::Entity(const Math::Vec3& position)
 {
@@ -331,3 +318,5 @@ void Entity::CleanAndDeleteEntity(Entity* entity, Scene* scene)
 	entity->RemoveAllComponents();
 	scene->AddActionOnEndOfFrame([entity](){ delete entity; });
 }
+
+} // namespace cherrysoda

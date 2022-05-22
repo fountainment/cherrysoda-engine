@@ -5,12 +5,13 @@
 #include <rapidjson/istreamwrapper.h>
 #include <fstream>
 
-using cherrysoda::JsonUtil;
-using cherrysoda::String;
+namespace cherrysoda {
 
-void JsonUtil::ReadJsonFile(cherrysoda::json::Document& doc, const String& filename)
+void JsonUtil::ReadJsonFile(json::Document& doc, const String& filename)
 {
 	std::ifstream ifs(filename);
-	cherrysoda::json::IStreamWrapper isw(ifs);
+	json::IStreamWrapper isw(ifs);
 	doc.ParseStream(isw);
 }
+
+} // namespace cherrysoda

@@ -7,13 +7,7 @@
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::EntityList;
-
-using cherrysoda::BitTagValueType;
-using cherrysoda::Camera;
-using cherrysoda::Entity;
-using cherrysoda::Scene;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 EntityList::EntityList(Scene* scene)
 {
@@ -163,3 +157,5 @@ Entity* EntityList::First()
 	STL::TryGetFirst(m_entities, first);
 	return first;
 }
+
+} // namespace cherrysoda

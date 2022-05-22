@@ -6,25 +6,16 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::PixelFont;
-using cherrysoda::PixelFontCharacter;
-using cherrysoda::PixelFontSize;
-
-using cherrysoda::Atlas;
-using cherrysoda::JsonUtil;
-using cherrysoda::MTexture;
-using cherrysoda::String;
-using cherrysoda::StringUtil;
-
+namespace cherrysoda {
 
 const PixelFontSize PixelFont::AddFontSize(const String& path, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
 {
-	cherrysoda::json::Document json;
+	json::Document json;
 	JsonUtil::ReadJsonFile(json, path);
 	return AddFontSize(path, &json, atlas, outline);
 }
 
-const PixelFontSize PixelFont::AddFontSize(const String& path, const cherrysoda::json::Value* jsonValue, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
+const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
 {
 	// check if size already exists
 	auto data = jsonValue->GetObject();
@@ -60,7 +51,7 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, const cherrysoda:
 	// get characters
 	const auto& chars = data["chars"].GetArray();
 	for (const auto& character : chars) {
-		cherrysoda::type::UInt32 id = character["id"].GetInt();
+		type::UInt32 id = character["id"].GetInt();
 		int page = character["page"].GetInt();
 		STL::Add(fontSize.m_characters, STL::MakePair(id, PixelFontCharacter(id, textures[page], &character)));
 	}
@@ -86,3 +77,5 @@ const PixelFontSize PixelFont::Get(float size) const
 	}
 	return STL::Back(m_sizes);
 }
+
+} // namespace cherrysoda

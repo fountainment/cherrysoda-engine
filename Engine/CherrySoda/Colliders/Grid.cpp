@@ -10,16 +10,7 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Grid;
-
-using cherrysoda::Camera;
-using cherrysoda::Circle;
-using cherrysoda::Collide;
-using cherrysoda::ColliderList;
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Hitbox;
-using cherrysoda::Math;
+namespace cherrysoda {
 
 void Grid::SetRect(int x, int y, int width, int height, bool to/* = true*/)
 {
@@ -146,3 +137,5 @@ void Grid::Render(const Camera* camera, const Color& color) const
 					Draw::HollowRect(AbsoluteLeft() + tx * CellWidth(), AbsoluteBottom() + ty * CellHeight(), CellWidth(), CellHeight(), color);
 	}
 }
+
+} // namespace cherrysoda

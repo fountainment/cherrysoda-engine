@@ -43,14 +43,7 @@ BX_PRAGMA_DIAGNOSTIC_POP()
 #include <emscripten.h>
 #endif // __EMSCRIPTEN__
 
-using cherrysoda::Color;
-using cherrysoda::CursorTypes;
-using cherrysoda::Graphics;
-using cherrysoda::GUI;
-using cherrysoda::Keys;
-using cherrysoda::MInput;
-using cherrysoda::String;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 static SDL_Cursor* s_mouseCursors[(size_t)CursorTypes::Count] = {};
 
@@ -486,7 +479,7 @@ namespace entry {
 
 } // namespace entry
 
-void cherrysoda::Window::CreateWindow()
+void Window::CreateWindow()
 {
 	int windowWidth = Engine::Instance()->GetWindowWidth();
 	int windowHeight = Engine::Instance()->GetWindowHeight();
@@ -520,56 +513,56 @@ void cherrysoda::Window::CreateWindow()
 	entry::sdlSetWindow(m_mainWindow);
 }
 
-void cherrysoda::Window::DestroyWindow()
+void Window::DestroyWindow()
 {
 	TerminateCursor();
 
 	entry::sdlDestroyWindow(m_mainWindow);
 }
 
-void cherrysoda::Window::SetSize(int width, int height)
+void Window::SetSize(int width, int height)
 {
 	SDL_SetWindowSize(m_mainWindow, width, height);
 }
 
-void cherrysoda::Window::SetTitle(const String& title)
+void Window::SetTitle(const String& title)
 {
 	SDL_SetWindowTitle(m_mainWindow, title.c_str());
 }
 
-void cherrysoda::Window::SetFullscreen(bool fullscreen)
+void Window::SetFullscreen(bool fullscreen)
 {
 	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }
 
-bool cherrysoda::Window::IsFullscreen()
+bool Window::IsFullscreen()
 {
 	return SDL_GetWindowFlags(m_mainWindow) & SDL_WINDOW_FULLSCREEN;
 }
 
-void cherrysoda::Window::GetPosition(int* x, int* y)
+void Window::GetPosition(int* x, int* y)
 {
 	SDL_GetWindowPosition(m_mainWindow, x, y);
 }
 
-void cherrysoda::Window::SetMousePosition(int x, int y)
+void Window::SetMousePosition(int x, int y)
 {
 	SDL_WarpMouseInWindow(m_mainWindow, x, y);
 }
 
-void cherrysoda::Window::Hide()
+void Window::Hide()
 {
 	SDL_HideWindow(m_mainWindow);
 }
 
-void cherrysoda::Window::Show()
+void Window::Show()
 {
 	SDL_ShowWindow(m_mainWindow);
 }
 
 #define CHERRYSODA_SWITCH_WEB_CURSOR(CURSOR_X) EM_ASM(document.getElementById("canvas").style.cursor=CURSOR_X);
 
-void cherrysoda::Window::ShowCursor(bool show)
+void Window::ShowCursor(bool show)
 {
 	SDL_ShowCursor(show ? SDL_ENABLE : SDL_DISABLE);
 #ifdef __EMSCRIPTEN__
@@ -582,7 +575,7 @@ void cherrysoda::Window::ShowCursor(bool show)
 #endif // __EMSCRIPTEN__
 }
 
-void cherrysoda::Window::SetCursor(CursorTypes cursor)
+void Window::SetCursor(CursorTypes cursor)
 {
 	SDL_SetCursor(s_mouseCursors[(int)cursor] ? s_mouseCursors[(int)cursor] : s_mouseCursors[(int)CursorTypes::Arrow]);
 #ifdef __EMSCRIPTEN__
@@ -623,7 +616,7 @@ void cherrysoda::Window::SetCursor(CursorTypes cursor)
 
 #undef CHERRYSODA_SWITCH_WEB_CURSOR
 
-void cherrysoda::Window::InitializeCursor()
+void Window::InitializeCursor()
 {
 	s_mouseCursors[(int)CursorTypes::Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	s_mouseCursors[(int)CursorTypes::TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
@@ -636,7 +629,7 @@ void cherrysoda::Window::InitializeCursor()
 	s_mouseCursors[(int)CursorTypes::NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 }
 
-void cherrysoda::Window::TerminateCursor()
+void Window::TerminateCursor()
 {
 	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::Arrow]);
 	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::TextInput]);
@@ -649,7 +642,7 @@ void cherrysoda::Window::TerminateCursor()
 	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::NotAllowed]);
 }
 
-void cherrysoda::Window::Resizable(bool resizable)
+void Window::Resizable(bool resizable)
 {
 	CHERRYSODA_ASSERT(SDL_VERSION_ATLEAST(2,0,5), "SDL_SetWindowResizable unavailable for SDL version below 2.0.5\n");
 #if SDL_VERSION_ATLEAST(2,0,5)
@@ -657,7 +650,7 @@ void cherrysoda::Window::Resizable(bool resizable)
 #endif // SDL_VERSION_ATLEAST(2,0,5)
 }
 
-void cherrysoda::Window::PollEvents()
+void Window::PollEvents()
 {
 	SDL_Event event;
 	Keys key;
@@ -745,7 +738,7 @@ void cherrysoda::Window::PollEvents()
 	MInput::SetKeyboardKeys(s_keyboardKeys);
 }
 
-bool cherrysoda::Window::Initialize()
+bool Window::Initialize()
 {
 #ifdef _WIN32
 	SDL_SetMainReady();
@@ -761,8 +754,10 @@ bool cherrysoda::Window::Initialize()
 	return true;
 }
 
-void cherrysoda::Window::Terminate()
+void Window::Terminate()
 {
 	SDL_QuitSubSystem(SDL_INIT_TIMER);
 	SDL_Quit();
 }
+
+} // namespace cherrysoda

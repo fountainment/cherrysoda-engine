@@ -11,19 +11,7 @@
 
 #include <SDL.h>
 
-using cherrysoda::MInput;
-
-using cherrysoda::Buttons;
-using cherrysoda::ButtonState;
-using cherrysoda::Engine;
-using cherrysoda::GUI;
-using cherrysoda::Keys;
-using cherrysoda::Math;
-using cherrysoda::STL;
-using cherrysoda::StringUtil;
-
-namespace type = cherrysoda::type;
-
+namespace cherrysoda {
 
 void MInput::GamePadData::Update()
 {
@@ -440,3 +428,5 @@ STL::Map<int,int> MInput::ms_internalInstanceMap;
 
 int MInput::ms_internalMouseWheel = 0;
 bool MInput::ms_supportsGlobalMouse = true;
+
+} // namespace cherrysoda

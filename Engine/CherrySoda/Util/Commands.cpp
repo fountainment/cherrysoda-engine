@@ -7,17 +7,7 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-using cherrysoda::Commands;
-using cherrysoda::CommandBatches;
-
-using cherrysoda::Color;
-using cherrysoda::Engine;
-using cherrysoda::Graphics;
-using cherrysoda::STL;
-using cherrysoda::String;
-using cherrysoda::StringID;
-using cherrysoda::StringUtil;
-
+namespace cherrysoda {
 
 struct CommandTrieNode
 {
@@ -468,3 +458,5 @@ CHERRYSODA_COMMAND(rawdelay, "Delay raw time (in seconds) in command batch execu
 		CommandBatches::INTERNAL_RawDelay(seconds);
 	}
 }
+
+} // namespace cherrysoda

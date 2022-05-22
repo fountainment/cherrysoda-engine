@@ -4,12 +4,7 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::ComponentList;
-
-using cherrysoda::Camera;
-using cherrysoda::Component;
-using cherrysoda::Entity;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 ComponentList::ComponentList(Entity* entity)
 {
@@ -157,3 +152,5 @@ void ComponentList::HandleGraphicsCreate()
     }
     LockMode(LockModes::Open);
 }
+
+} // namespace cherrysoda

@@ -2,9 +2,10 @@
 
 #include <CherrySoda/Util/STL.h>
 
-using cherrysoda::BitTag;
-using cherrysoda::STL;
+namespace cherrysoda {
 
 int BitTag::ms_totalTags = 0;
 
-BitTag BitTag::ms_byID[cherrysoda::TagBitsAmount];
+BitTag BitTag::ms_byID[TagBitsAmount];
+
+} // namespace cherrysoda

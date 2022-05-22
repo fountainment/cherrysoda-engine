@@ -9,16 +9,7 @@
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Math.h>
 
-using cherrysoda::Hitbox;
-
-using cherrysoda::Camera;
-using cherrysoda::Circle;
-using cherrysoda::Collide;
-using cherrysoda::ColliderList;
-using cherrysoda::Color;
-using cherrysoda::Draw;
-using cherrysoda::Grid;
-using cherrysoda::Math;
+namespace cherrysoda {
 
 bool Hitbox::Collide(const Circle* circle) const
 {
@@ -59,3 +50,5 @@ void Hitbox::Render(const Camera* camera, const Color& color) const
 {
 	Draw::HollowRect(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, color);
 }
+
+} // namespace cherrysoda

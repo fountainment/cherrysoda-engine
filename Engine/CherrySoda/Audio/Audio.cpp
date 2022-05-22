@@ -9,12 +9,7 @@
 
 #include <cstring>
 
-using cherrysoda::Audio;
-
-using cherrysoda::STL;
-using cherrysoda::String;
-using cherrysoda::StringID;
-
+namespace cherrysoda {
 
 double Audio::ms_masterVolume = 0.5;
 bool Audio::ms_initialized = false;
@@ -49,9 +44,9 @@ static void lock_handler(cm_Event* e)
 	}
 }
 
-static void audio_callback(void* udata, cherrysoda::type::UInt8* stream, int size)
+static void audio_callback(void* udata, type::UInt8* stream, int size)
 {
-	cm_process((cherrysoda::type::Int16*) stream, size / 2);
+	cm_process((type::Int16*) stream, size / 2);
 }
 
 void Audio::Initialize()
@@ -118,7 +113,7 @@ void Audio::LoadFile(const StringID& path, const String& filePath)
 
 void Audio::LoadFileFromMemory(const StringID& path, void* data, int size)
 {
-	s_descriptions[path] = Audio::EventDescription{ "", (cherrysoda::type::UInt8*)data, size };
+	s_descriptions[path] = Audio::EventDescription{ "", (type::UInt8*)data, size };
 }
 
 Audio::EventInstance Audio::Play(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
@@ -235,3 +230,5 @@ void Audio::Stop(Audio::EventInstance instance)
 	cm_Source* src = s_sources[instance.id];
 	cm_stop(src);
 }
+
+} // namespace cherrysoda

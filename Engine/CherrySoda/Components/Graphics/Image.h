@@ -5,8 +5,6 @@
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Graphics/SpriteBatch.h>
 
-// TODO: Use shared_ptr for texture?
-
 namespace cherrysoda {
 
 class Image : public GraphicsComponent
