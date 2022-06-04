@@ -2,7 +2,7 @@ $input v_dir
 
 #include <bgfx_shader.sh>
 
-SAMPLERCUBE(s_texCube, 0);
+SAMPLERCUBE(s_texCube, 1);
 
 void main()
 {

@@ -24,6 +24,12 @@ public:
 		if (m_baseColorTexture != Graphics::InvalidHandle) {
 			Graphics::SetTexture(m_baseColorTexture);
 		}
+		if (m_normalTexture != Graphics::InvalidHandle) {
+			Graphics::SetTextureNormal(m_normalTexture);
+		}
+		if (m_metallicRoughnessTexture != Graphics::InvalidHandle) {
+			Graphics::SetTextureMetallicRoughness(m_metallicRoughnessTexture);
+		}
 
 		Graphics::SetTransformMatrix(GetTransformMatrix());
 		Graphics::SubmitMesh(GetMesh());
@@ -33,7 +39,7 @@ public:
 	{
 		m_baseColorTexture = meshInfo.baseColorTexture;
 		m_normalTexture = meshInfo.normalTexture;
-		m_metallicRoughness = meshInfo.metallicRoughnessTexture;
+		m_metallicRoughnessTexture = meshInfo.metallicRoughnessTexture;
 		GetMesh()->SubmitBufferWithMeshInfo(meshInfo);
 	}
 
@@ -43,7 +49,7 @@ private:
 	Mesh<VERTEX_T> m_mesh;
 	Graphics::TextureHandle m_baseColorTexture = Graphics::InvalidHandle;
 	Graphics::TextureHandle m_normalTexture = Graphics::InvalidHandle;
-	Graphics::TextureHandle m_metallicRoughness = Graphics::InvalidHandle;
+	Graphics::TextureHandle m_metallicRoughnessTexture = Graphics::InvalidHandle;
 };
 
 } // namespace cherrysoda

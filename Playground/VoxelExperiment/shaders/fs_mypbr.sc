@@ -4,8 +4,8 @@ $input v_worldPos, v_color0, v_normal
 
 #include "uniform.sh"
 
-SAMPLERCUBE(s_texCube, 0);
-SAMPLERCUBE(s_texCubeIrr, 1);
+SAMPLERCUBE(s_texCube, 1);
+SAMPLERCUBE(s_texCubeIrr, 2);
 
 void main()
 {

@@ -323,6 +323,13 @@ public:
 
 	static void SetTextureCube(const TextureCube* texture);
 	static void SetTextureCubeIrr(const TextureCube* texture);
+	static void SetTextureNormal(const Texture2D* texture);
+	static void SetTextureMetallicRoughness(const Texture2D* texture);
+
+	static void SetTextureCube(TextureHandle texture);
+	static void SetTextureCubeIrr(TextureHandle texture);
+	static void SetTextureNormal(TextureHandle texture);
+	static void SetTextureMetallicRoughness(TextureHandle texture);
 
 private:
 	friend class Engine;

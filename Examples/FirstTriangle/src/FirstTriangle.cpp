@@ -13,6 +13,9 @@ public:
 
 	Triangle() : base(true)
 	{
+		// Currently mesh in this engine has only one primitive
+		GetMesh()->SetPrimitiveType(Graphics::PrimitiveType::Triangles);
+
 		GetMesh()->Clear();
 		GetMesh()->AddTriangle(
 			MK_VERT(Math::Vec3( 0.0f,   1.0f, 0.0f), Color::Red),

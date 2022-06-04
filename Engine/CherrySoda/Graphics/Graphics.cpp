@@ -1050,12 +1050,42 @@ void Graphics::SubmitUniformLight()
 
 void Graphics::SetTextureCube(const TextureCube* texture)
 {
-	SetTexture(ms_samplerTexCube, texture->GetHandle());
+	SetTexture(1, ms_samplerTexCube, texture->GetHandle());
 }
 
 void Graphics::SetTextureCubeIrr(const TextureCube* texture)
 {
-	SetTexture(1, ms_samplerTexCubeIrr, texture->GetHandle());
+	SetTexture(2, ms_samplerTexCubeIrr, texture->GetHandle());
+}
+
+void Graphics::SetTextureNormal(const Texture2D* texture)
+{
+	SetTexture(3, ms_samplerTexNormal, texture->GetHandle());
+}
+
+void Graphics::SetTextureMetallicRoughness(const Texture2D* texture)
+{
+	SetTexture(4, ms_samplerTexMetallicRoughness, texture->GetHandle());
+}
+
+void Graphics::SetTextureCube(TextureHandle texture)
+{
+	SetTexture(1, ms_samplerTexCube, texture);
+}
+
+void Graphics::SetTextureCubeIrr(TextureHandle texture)
+{
+	SetTexture(2, ms_samplerTexCubeIrr, texture);
+}
+
+void Graphics::SetTextureNormal(TextureHandle texture)
+{
+	SetTexture(3, ms_samplerTexNormal, texture);
+}
+
+void Graphics::SetTextureMetallicRoughness(TextureHandle texture)
+{
+	SetTexture(4, ms_samplerTexMetallicRoughness, texture);
 }
 
 type::UInt64 Graphics::ms_blendFunctions[(int)BlendFunction::Count];
