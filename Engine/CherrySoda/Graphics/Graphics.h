@@ -22,6 +22,20 @@ class TextureCube;
 class Graphics
 {
 public:
+	using HandleType = type::UInt16;
+	using BufferHandle = HandleType;
+	using FrameBufferHandle = HandleType;
+	using VertexBufferHandle = HandleType;
+	using IndexBufferHandle  = HandleType;
+	using DynamicVertexBufferHandle = HandleType;
+	using DynamicIndexBufferHandle  = HandleType;
+	using ShaderHandle = HandleType;
+	using UniformHandle = HandleType;
+	using TextureHandle = HandleType;
+	using TransientIndexBufferHandle = HandleType;
+	using TransientVertexBufferHandle = HandleType;
+	static constexpr HandleType InvalidHandle = UINT16_MAX;
+
 	enum class BlendFunction : type::UInt8
 	{
 		Default = 0, // support premultiplied-alpha
@@ -60,6 +74,10 @@ public:
 	{
 		STL::Vector<VertexInfo> vertices;
 		STL::Vector<type::UInt16> indices;
+
+		TextureHandle baseColorTexture = InvalidHandle;
+		TextureHandle normalTexture = InvalidHandle;
+		TextureHandle metallicRoughnessTexture = InvalidHandle;
 	};
 
 	static constexpr type::UInt32 EncodeNormalU32(const Math::Vec3& v)
@@ -197,20 +215,6 @@ public:
 		bool m_cubeMap;
 	};
 
-	using HandleType = type::UInt16;
-	using BufferHandle = HandleType;
-	using FrameBufferHandle = HandleType;
-	using VertexBufferHandle = HandleType;
-	using IndexBufferHandle  = HandleType;
-	using DynamicVertexBufferHandle = HandleType;
-	using DynamicIndexBufferHandle  = HandleType;
-	using ShaderHandle = HandleType;
-	using UniformHandle = HandleType;
-	using TextureHandle = HandleType;
-	using TransientIndexBufferHandle = HandleType;
-	using TransientVertexBufferHandle = HandleType;
-	static constexpr HandleType InvalidHandle = UINT16_MAX;
-
 	static void SetPlatformData(void* platformData);
 
 	static void Initialize();
@@ -305,6 +309,7 @@ public:
 
 	static void SetEffect(const Effect* effect);
 	static void SetTexture(const Texture* texture);
+	static void SetTexture(TextureHandle texture);
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
 	static void SetUniform(StringID uniformName, const void* value, type::UInt16 size = 1U);
@@ -349,6 +354,8 @@ private:
 	static UniformHandle ms_samplerTex;
 	static UniformHandle ms_samplerTexCube;
 	static UniformHandle ms_samplerTexCubeIrr;
+	static UniformHandle ms_samplerTexNormal;
+	static UniformHandle ms_samplerTexMetallicRoughness;
 
 	static UniformHandle ms_uniformTime;
 	static UniformHandle ms_uniformResolution;

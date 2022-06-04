@@ -18,7 +18,6 @@ public:
 
 private:
 	cherrysoda::Model m_model;
-	cherrysoda::Texture2D m_texture;
 };
 
 } // namespace firstmodel

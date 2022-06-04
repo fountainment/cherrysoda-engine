@@ -19,6 +19,7 @@ Model Model::FromGltf(const String& gltfFile)
 	std::memset(&options, 0, sizeof(cgltf_options));
 	cgltf_data* data = nullptr;
 	cgltf_result result = cgltf_parse_file(&options, gltfFile.c_str(), &data);
+	auto gltfDir = StringUtil::Path_GetDirectoryName(gltfFile);
 	CHERRYSODA_DEBUG_FORMAT("Loading gltf model: \"%s\"\n", gltfFile.c_str());
 	if (result == cgltf_result_success) {
 		result = cgltf_load_buffers(&options, data, gltfFile.c_str());
@@ -26,14 +27,31 @@ Model Model::FromGltf(const String& gltfFile)
 		if (result == cgltf_result_success) {
 			CHERRYSODA_DEBUG_FORMAT("    Meshes: %u\n", (unsigned)data->meshes_count);
 			CHERRYSODA_DEBUG_FORMAT("    Textures: %u\n", (unsigned)data->textures_count);
+			STL::Vector<Graphics::TextureHandle> textures;
+			STL::Reserve(textures, data->textures_count);
 			for (int i = 0; i < static_cast<int>(data->textures_count); ++i) {
 				CHERRYSODA_DEBUG_FORMAT("        uri %d: %s\n", i, data->textures[i].image->uri);
+				STL::Add(textures, Graphics::CreateTexture(gltfDir + String(data->textures[i].image->uri)));
 			}
 
 			for (int m = 0; m < static_cast<int>(data->meshes_count); ++m) {
 				for (int n = 0; n < static_cast<int>(data->meshes[m].primitives_count); ++n) {
 					auto& primitive = data->meshes[m].primitives[n];
 					Graphics::MeshInfo mesh;
+                    if (primitive.material->has_pbr_metallic_roughness) {
+                        auto baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
+                        auto metallicRoughnessTexture = primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
+                        if (baseColorTexture) {
+                            mesh.baseColorTexture = textures[baseColorTexture - data->textures];
+                        }
+                        if (metallicRoughnessTexture) {
+                            mesh.metallicRoughnessTexture = textures[metallicRoughnessTexture - data->textures];
+                        }
+                    }
+                    auto normalTexture = primitive.material->normal_texture.texture;
+                    if (normalTexture) {
+                        mesh.normalTexture = textures[normalTexture - data->textures];
+                    }
 					cgltf_accessor* positionAccessor = nullptr;
 					cgltf_accessor* normalAccessor = nullptr;
 					cgltf_accessor* texcoord0Accessor = nullptr;

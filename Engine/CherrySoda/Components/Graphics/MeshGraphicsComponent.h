@@ -21,21 +21,29 @@ public:
 	void Render() override
 	{
 		// TODO: Make mesh state setting more general purpose
-		if (m_tex.IsValid()) {
-			Graphics::SetTexture(&m_tex);
+		if (m_baseColorTexture != Graphics::InvalidHandle) {
+			Graphics::SetTexture(m_baseColorTexture);
 		}
 
 		Graphics::SetTransformMatrix(GetTransformMatrix());
 		Graphics::SubmitMesh(GetMesh());
 	}
 
-	Mesh<VERTEX_T>* GetMesh() { return &m_mesh; }
+	void InitWithMeshInfo(const Graphics::MeshInfo& meshInfo)
+	{
+		m_baseColorTexture = meshInfo.baseColorTexture;
+		m_normalTexture = meshInfo.normalTexture;
+		m_metallicRoughness = meshInfo.metallicRoughnessTexture;
+		GetMesh()->SubmitBufferWithMeshInfo(meshInfo);
+	}
 
-	void SetTexture(const Texture2D& tex) { m_tex = tex; }
+	Mesh<VERTEX_T>* GetMesh() { return &m_mesh; }
 
 private:
 	Mesh<VERTEX_T> m_mesh;
-	Texture2D m_tex;
+	Graphics::TextureHandle m_baseColorTexture = Graphics::InvalidHandle;
+	Graphics::TextureHandle m_normalTexture = Graphics::InvalidHandle;
+	Graphics::TextureHandle m_metallicRoughness = Graphics::InvalidHandle;
 };
 
 } // namespace cherrysoda

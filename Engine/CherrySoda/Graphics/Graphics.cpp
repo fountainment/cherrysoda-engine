@@ -498,6 +498,8 @@ void Graphics::Initialize()
 	ms_samplerTex        = CreateUniformSampler("s_tex");
 	ms_samplerTexCube    = CreateUniformSampler("s_texCube");
 	ms_samplerTexCubeIrr = CreateUniformSampler("s_texCubeIrr");
+	ms_samplerTexNormal  = CreateUniformSampler("s_texNormal");
+	ms_samplerTexMetallicRoughness = CreateUniformSampler("s_texMetallicRoughness");
 
 	ms_uniformTime       = CreateUniformVec4("u_timev");
 	ms_uniformResolution = CreateUniformVec4("u_resolutionv");
@@ -990,6 +992,11 @@ void Graphics::SetTexture(const Texture* texture)
 	SetTexture(ms_samplerTex, texture != nullptr ? texture->GetHandle() : Graphics::InvalidHandle);
 }
 
+void Graphics::SetTexture(Graphics::TextureHandle texture)
+{
+	SetTexture(ms_samplerTex, texture);
+}
+
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, type::UInt16 size/* = 1U*/)
 {
 	bgfx::setUniform({ uniform }, value, size);
@@ -1067,6 +1074,8 @@ STL::HashMap<StringID, Graphics::UniformHandle> Graphics::ms_uniformHashMap;
 Graphics::UniformHandle Graphics::ms_samplerTex        = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCube    = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_samplerTexCubeIrr = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_samplerTexNormal  = Graphics::InvalidHandle;
+Graphics::UniformHandle Graphics::ms_samplerTexMetallicRoughness = Graphics::InvalidHandle;
 
 Graphics::UniformHandle Graphics::ms_uniformTime       = Graphics::InvalidHandle;
 Graphics::UniformHandle Graphics::ms_uniformResolution = Graphics::InvalidHandle;

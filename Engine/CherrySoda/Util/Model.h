@@ -2,6 +2,7 @@
 #define _CHERRYSODA_UTIL_MODEL_H_
 
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
@@ -20,6 +21,7 @@ public:
 
 private:
 	STL::Vector<Graphics::MeshInfo> m_meshes;
+	STL::Vector<Texture2D> m_textures;
 };
 
 } // namespace cherrysoda

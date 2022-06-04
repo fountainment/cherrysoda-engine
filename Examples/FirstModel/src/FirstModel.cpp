@@ -57,13 +57,11 @@ void FirstModel::Initialize()
 	scene->Add(renderer);
 
 	m_model = Model::FromGltf("assets/models/cake/scene.gltf");
-	m_texture = Texture2D::FromFile("assets/models/cake/textures/material_1_baseColor.png");
 
 	auto entity = new Entity();
 	for (auto& mesh : m_model.Meshes()) {
-		auto meshComp = new ModelMesh;
-		meshComp->SetTexture(m_texture);
-		meshComp->GetMesh()->SubmitBufferWithMeshInfo(mesh);
+		auto meshComp = new ModelMesh();
+		meshComp->InitWithMeshInfo(mesh);
 		meshComp->Scale(Math::Vec3(10.f));
 		meshComp->Origin(Math::Vec3(0.0f, -0.04f, 0.0f));
 		entity->Add(meshComp);
