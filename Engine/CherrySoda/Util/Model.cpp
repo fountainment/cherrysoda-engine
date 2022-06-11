@@ -38,20 +38,20 @@ Model Model::FromGltf(const String& gltfFile)
 				for (int n = 0; n < static_cast<int>(data->meshes[m].primitives_count); ++n) {
 					auto& primitive = data->meshes[m].primitives[n];
 					Graphics::MeshInfo mesh;
-                    if (primitive.material->has_pbr_metallic_roughness) {
-                        auto baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
-                        auto metallicRoughnessTexture = primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
-                        if (baseColorTexture) {
-                            mesh.baseColorTexture = textures[baseColorTexture - data->textures];
-                        }
-                        if (metallicRoughnessTexture) {
-                            mesh.metallicRoughnessTexture = textures[metallicRoughnessTexture - data->textures];
-                        }
-                    }
-                    auto normalTexture = primitive.material->normal_texture.texture;
-                    if (normalTexture) {
-                        mesh.normalTexture = textures[normalTexture - data->textures];
-                    }
+					if (primitive.material->has_pbr_metallic_roughness) {
+						auto baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
+						auto metallicRoughnessTexture = primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
+						if (baseColorTexture) {
+							mesh.baseColorTexture = textures[baseColorTexture - data->textures];
+						}
+						if (metallicRoughnessTexture) {
+							mesh.metallicRoughnessTexture = textures[metallicRoughnessTexture - data->textures];
+						}
+					}
+					auto normalTexture = primitive.material->normal_texture.texture;
+					if (normalTexture) {
+						mesh.normalTexture = textures[normalTexture - data->textures];
+					}
 					cgltf_accessor* positionAccessor = nullptr;
 					cgltf_accessor* normalAccessor = nullptr;
 					cgltf_accessor* texcoord0Accessor = nullptr;
