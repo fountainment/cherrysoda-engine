@@ -568,37 +568,6 @@ GL_IMPORT_OES__(true,  PFNGLBINDVERTEXARRAYPROC,                   glBindVertexA
 GL_IMPORT_OES__(true,  PFNGLDELETEVERTEXARRAYSPROC,                glDeleteVertexArrays);
 GL_IMPORT_OES__(true,  PFNGLGENVERTEXARRAYSPROC,                   glGenVertexArrays);
 
-#if BX_PLATFORM_EMSCRIPTEN
-GL_IMPORT______(true,  PFNGLCLIPCONTROLPROC,                       glClipControl);
-GL_IMPORT______(true,  PFNGLENABLEIPROC,                           glEnablei);
-GL_IMPORT______(true,  PFNGLDISABLEIPROC,                          glDisablei);
-GL_IMPORT______(true,  PFNGLBLENDEQUATIONIPROC,                    glBlendEquationi);
-GL_IMPORT______(true,  PFNGLBLENDEQUATIONSEPARATEIPROC,            glBlendEquationSeparatei);
-GL_IMPORT______(true,  PFNGLBLENDFUNCIPROC,                        glBlendFunci);
-GL_IMPORT______(true,  PFNGLBLENDFUNCSEPARATEIPROC,                glBlendFuncSeparatei);
-
-GL_IMPORT______(true,  PFNGLDRAWBUFFERPROC,                        glDrawBuffer);
-GL_IMPORT______(true,  PFNGLREADBUFFERPROC,                        glReadBuffer);
-GL_IMPORT______(true,  PFNGLGENSAMPLERSPROC,                       glGenSamplers);
-GL_IMPORT______(true,  PFNGLDELETESAMPLERSPROC,                    glDeleteSamplers);
-GL_IMPORT______(true,  PFNGLBINDSAMPLERPROC,                       glBindSampler);
-GL_IMPORT______(true,  PFNGLSAMPLERPARAMETERFPROC,                 glSamplerParameterf);
-GL_IMPORT______(true,  PFNGLSAMPLERPARAMETERIPROC,                 glSamplerParameteri);
-GL_IMPORT______(true,  PFNGLSAMPLERPARAMETERFVPROC,                glSamplerParameterfv);
-
-GL_IMPORT______(true,  PFNGLBINDBUFFERBASEPROC,                    glBindBufferBase);
-GL_IMPORT______(true,  PFNGLBINDBUFFERRANGEPROC,                   glBindBufferRange);
-GL_IMPORT______(true,  PFNGLBINDIMAGETEXTUREPROC,                  glBindImageTexture);
-GL_IMPORT______(true,  PFNGLGETPROGRAMINTERFACEIVPROC,             glGetProgramInterfaceiv);
-GL_IMPORT______(true,  PFNGLGETPROGRAMRESOURCEINDEXPROC,           glGetProgramResourceIndex);
-GL_IMPORT______(true,  PFNGLGETPROGRAMRESOURCEIVPROC,              glGetProgramResourceiv);
-GL_IMPORT______(true,  PFNGLGETPROGRAMRESOURCENAMEPROC,            glGetProgramResourceName);
-GL_IMPORT______(true,  PFNGLGETPROGRAMRESOURCELOCATIONPROC,        glGetProgramResourceLocation);
-GL_IMPORT______(true,  PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC,   glGetProgramResourceLocationIndex);
-GL_IMPORT______(true,  PFNGLMEMORYBARRIERPROC,                     glMemoryBarrier);
-GL_IMPORT______(true,  PFNGLDISPATCHCOMPUTEPROC,                   glDispatchCompute);
-GL_IMPORT______(true,  PFNGLDISPATCHCOMPUTEINDIRECTPROC,           glDispatchComputeIndirect);
-#else
 GL_IMPORT_____x(true,  PFNGLCLIPCONTROLPROC,                       glClipControl);
 GL_IMPORT_____x(true,  PFNGLENABLEIPROC,                           glEnablei);
 GL_IMPORT_____x(true,  PFNGLDISABLEIPROC,                          glDisablei);
@@ -607,8 +576,8 @@ GL_IMPORT_____x(true,  PFNGLBLENDEQUATIONSEPARATEIPROC,            glBlendEquati
 GL_IMPORT_____x(true,  PFNGLBLENDFUNCIPROC,                        glBlendFunci);
 GL_IMPORT_____x(true,  PFNGLBLENDFUNCSEPARATEIPROC,                glBlendFuncSeparatei);
 
-GL_IMPORT_____x(true,  PFNGLDRAWBUFFERPROC,                        glDrawBuffer);
-GL_IMPORT_____x(true,  PFNGLREADBUFFERPROC,                        glReadBuffer);
+GL_IMPORT______(true,  PFNGLDRAWBUFFERPROC,                        glDrawBuffer);
+GL_IMPORT______(true,  PFNGLREADBUFFERPROC,                        glReadBuffer);
 GL_IMPORT_____x(true,  PFNGLGENSAMPLERSPROC,                       glGenSamplers);
 GL_IMPORT_____x(true,  PFNGLDELETESAMPLERSPROC,                    glDeleteSamplers);
 GL_IMPORT_____x(true,  PFNGLBINDSAMPLERPROC,                       glBindSampler);
@@ -628,7 +597,6 @@ GL_IMPORT_____x(true,  PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC,   glGetProgramR
 GL_IMPORT_____x(true,  PFNGLMEMORYBARRIERPROC,                     glMemoryBarrier);
 GL_IMPORT_____x(true,  PFNGLDISPATCHCOMPUTEPROC,                   glDispatchCompute);
 GL_IMPORT_____x(true,  PFNGLDISPATCHCOMPUTEINDIRECTPROC,           glDispatchComputeIndirect);
-#endif
 
 #if BX_PLATFORM_EMSCRIPTEN
 GL_IMPORT_WEBGL(true,  PFNGLDRAWBUFFERSPROC,                       glDrawBuffers);
