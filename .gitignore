@@ -39,6 +39,7 @@ build_*/
 Projects/
 Tools/bin/shaderc.local*
 Tools/bin/crunch*
+.vs
 
 # Temp
 .*.swp
