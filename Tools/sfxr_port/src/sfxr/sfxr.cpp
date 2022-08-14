@@ -877,15 +877,7 @@ void DrawScreen()
 				static char unserialize_input[512];
 				if (ImGui::Button(serialize_str, ImVec2(170.f, 0.f))) {
 					serialize_result_str = SerializeSetting();
-#ifdef __EMSCRIPTEN__
-					{
-						const char* title = LANGS(u8"请复制(Ctrl+C)设置", "Please copy(Ctrl+C) the setting");
-						String cmd = CHERRYSODA_FORMAT("prompt('%s', '%s')", title, serialize_result_str.c_str());
-						emscripten_run_script(cmd.c_str());
-					}
-#else // __EMSCRIPTEN__
 					ImGui::OpenPopup(serialize_str);
-#endif // __EMSCRIPTEN__
 				}
 				ImGui::Spacing();
 				if (ImGui::Button(unserialize_str, ImVec2(170.f, 0.f))) {

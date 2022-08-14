@@ -130,6 +130,12 @@ void Engine::WindowResizable(bool resizable)
 	}
 }
 
+#ifdef __EMSCRIPTEN__
+EM_JS(void, EM_SetClipboardText, (const char* text), {
+	navigator.clipboard.writeText(UTF8ToString(text));
+});
+#endif // __EMSCRIPTEN__
+
 const char* Engine::GetClipboardText()
 {
 	// TODO: make it work on emscripten build
@@ -138,8 +144,11 @@ const char* Engine::GetClipboardText()
 
 void Engine::SetClipboardText(const char* text)
 {
-	// TODO: make it work on emscripten build
+#ifdef __EMSCRIPTEN__
+	EM_SetClipboardText(text);
+#else
 	SDL_SetClipboardText(text);
+#endif // __EMSCRIPTEN__
 }
 
 void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
