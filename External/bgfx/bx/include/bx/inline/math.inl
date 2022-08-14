@@ -101,12 +101,9 @@ namespace bx
 		if (_a < 0.0f)
 		{
 			const float fr = fract(-_a);
-			const float result = -_a - fr;
+			const float tr = trunc(-_a);
 
-			return -(0.0f != fr
-				? result + 1.0f
-				: result)
-				;
+			return -tr - float(0.0f != fr);
 		}
 
 		return _a - fract(_a);

@@ -411,6 +411,7 @@ set(SPIRV_TOOLS_SRC ${SPIRV_TOOLS_SRC} ${SPIRV_TOOLS}/source/assembly_grammar.cp
                                        ${SPIRV_TOOLS}/source/val/validate_mode_setting.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_non_uniform.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_primitives.cpp
+                                       ${SPIRV_TOOLS}/source/val/validate_ray_query.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_scopes.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_small_type_uses.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_type.cpp
