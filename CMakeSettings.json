@@ -39,7 +39,7 @@
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-CHERRYSODA_USE_SSE2=1 -DCHERRYSODA_BUILD_SHADERC=1 -DCHERRYSODA_LIGHT_BUILD=1 -DCHERRYSODA_BUILD_TOOLS=0",
+      "cmakeCommandArgs": "-DCHERRYSODA_USE_SSE2=1 -DCHERRYSODA_BUILD_SHADERC=1 -DCHERRYSODA_LIGHT_BUILD=1 -DCHERRYSODA_BUILD_TOOLS=0",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ]
