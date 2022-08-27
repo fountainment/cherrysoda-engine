@@ -244,20 +244,23 @@ typedef enum bgfx_texture_format
     BGFX_TEXTURE_FORMAT_RGBA32I,              /** (68)                                */
     BGFX_TEXTURE_FORMAT_RGBA32U,              /** (69)                                */
     BGFX_TEXTURE_FORMAT_RGBA32F,              /** (70)                                */
-    BGFX_TEXTURE_FORMAT_R5G6B5,               /** (71)                                */
-    BGFX_TEXTURE_FORMAT_RGBA4,                /** (72)                                */
-    BGFX_TEXTURE_FORMAT_RGB5A1,               /** (73)                                */
-    BGFX_TEXTURE_FORMAT_RGB10A2,              /** (74)                                */
-    BGFX_TEXTURE_FORMAT_RG11B10F,             /** (75)                                */
-    BGFX_TEXTURE_FORMAT_UNKNOWNDEPTH,         /** (76) Depth formats below.           */
-    BGFX_TEXTURE_FORMAT_D16,                  /** (77)                                */
-    BGFX_TEXTURE_FORMAT_D24,                  /** (78)                                */
-    BGFX_TEXTURE_FORMAT_D24S8,                /** (79)                                */
-    BGFX_TEXTURE_FORMAT_D32,                  /** (80)                                */
-    BGFX_TEXTURE_FORMAT_D16F,                 /** (81)                                */
-    BGFX_TEXTURE_FORMAT_D24F,                 /** (82)                                */
-    BGFX_TEXTURE_FORMAT_D32F,                 /** (83)                                */
-    BGFX_TEXTURE_FORMAT_D0S8,                 /** (84)                                */
+    BGFX_TEXTURE_FORMAT_B5G6R5,               /** (71)                                */
+    BGFX_TEXTURE_FORMAT_R5G6B5,               /** (72)                                */
+    BGFX_TEXTURE_FORMAT_BGRA4,                /** (73)                                */
+    BGFX_TEXTURE_FORMAT_RGBA4,                /** (74)                                */
+    BGFX_TEXTURE_FORMAT_BGR5A1,               /** (75)                                */
+    BGFX_TEXTURE_FORMAT_RGB5A1,               /** (76)                                */
+    BGFX_TEXTURE_FORMAT_RGB10A2,              /** (77)                                */
+    BGFX_TEXTURE_FORMAT_RG11B10F,             /** (78)                                */
+    BGFX_TEXTURE_FORMAT_UNKNOWNDEPTH,         /** (79) Depth formats below.           */
+    BGFX_TEXTURE_FORMAT_D16,                  /** (80)                                */
+    BGFX_TEXTURE_FORMAT_D24,                  /** (81)                                */
+    BGFX_TEXTURE_FORMAT_D24S8,                /** (82)                                */
+    BGFX_TEXTURE_FORMAT_D32,                  /** (83)                                */
+    BGFX_TEXTURE_FORMAT_D16F,                 /** (84)                                */
+    BGFX_TEXTURE_FORMAT_D24F,                 /** (85)                                */
+    BGFX_TEXTURE_FORMAT_D32F,                 /** (86)                                */
+    BGFX_TEXTURE_FORMAT_D0S8,                 /** (87)                                */
 
     BGFX_TEXTURE_FORMAT_COUNT
 
@@ -659,19 +662,21 @@ typedef struct bgfx_init_s
     bgfx_renderer_type_t type;
     
     /**
-     * Vendor PCI id. If set to `BGFX_PCI_ID_NONE` it will select the first
-     * device.
+     * Vendor PCI ID. If set to `BGFX_PCI_ID_NONE`, discrete and integrated
+     * GPUs will be prioritised.
      *   - `BGFX_PCI_ID_NONE` - Autoselect adapter.
      *   - `BGFX_PCI_ID_SOFTWARE_RASTERIZER` - Software rasterizer.
      *   - `BGFX_PCI_ID_AMD` - AMD adapter.
+     *   - `BGFX_PCI_ID_APPLE` - Apple adapter.
      *   - `BGFX_PCI_ID_INTEL` - Intel adapter.
-     *   - `BGFX_PCI_ID_NVIDIA` - nVidia adapter.
+     *   - `BGFX_PCI_ID_NVIDIA` - NVIDIA adapter.
+     *   - `BGFX_PCI_ID_MICROSOFT` - Microsoft adapter.
      */
     uint16_t             vendorId;
     
     /**
-     * Device id. If set to 0 it will select first device, or device with
-     * matching id.
+     * Device ID. If set to 0 it will select first device, or device with
+     * matching ID.
      */
     uint16_t             deviceId;
     uint64_t             capabilities;       /** Capabilities initialization mask (default: UINT64_MAX). */

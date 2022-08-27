@@ -14,11 +14,16 @@
 
 #include "platform.h"
 #include "config.h"
+#include "constants.h"
 #include "macros.h"
 #include "debug.h"
 
 ///
 #define BX_COUNTOF(_x) sizeof(bx::CountOfRequireArrayArgumentT(_x) )
+
+///
+#define BX_OFFSETOF(_type, _member) \
+	(reinterpret_cast<ptrdiff_t>(&(reinterpret_cast<_type*>(16)->_member) )-ptrdiff_t(16) )
 
 ///
 #if BX_COMPILER_MSVC
@@ -32,23 +37,25 @@
 
 namespace bx
 {
-	/// Used to return successful execution of a program code.
-	constexpr int32_t kExitSuccess = 0;
-
-	/// Used to return unsuccessful execution of a program code.
-	constexpr int32_t kExitFailure = 1;
-
 	/// Returns true if type `Ty` is trivially copyable / POD type.
-	template<class Ty>
+	template<typename Ty>
 	constexpr bool isTriviallyCopyable();
 
 	/// Find the address of an object of a class that has an overloaded unary ampersand (&) operator.
-	template <class Ty>
+	template<typename Ty>
 	Ty* addressOf(Ty& _a);
 
 	/// Find the address of an object of a class that has an overloaded unary ampersand (&) operator.
-	template <class Ty>
+	template<typename Ty>
 	const Ty* addressOf(const Ty& _a);
+
+	///
+	template<typename Ty>
+	Ty* addressOf(void* _ptr, ptrdiff_t _offset);
+
+	///
+	template<typename Ty>
+	const Ty* addressOf(const void* _ptr, ptrdiff_t _offset);
 
 	/// Swap two values.
 	template<typename Ty>
@@ -56,6 +63,14 @@ namespace bx
 
 	/// Swap memory.
 	void swap(void* _a, void* _b, size_t _numBytes);
+
+	/// Returns numeric minimum of type.
+	template<typename Ty>
+	constexpr Ty min();
+
+	/// Returns numeric maximum of type.
+	template<typename Ty>
+	constexpr Ty max();
 
 	/// Returns minimum of two values.
 	template<typename Ty>

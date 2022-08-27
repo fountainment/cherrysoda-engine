@@ -234,8 +234,11 @@ namespace bgfx { namespace d3d9
 		{ D3DFMT_UNKNOWN       }, // RGBA32I
 		{ D3DFMT_UNKNOWN       }, // RGBA32U
 		{ D3DFMT_A32B32G32R32F }, // RGBA32F
+		{ D3DFMT_R5G6B5        }, // B5G6R5
 		{ D3DFMT_R5G6B5        }, // R5G6B5
+		{ D3DFMT_A4R4G4B4      }, // BGRA4
 		{ D3DFMT_A4R4G4B4      }, // RGBA4
+		{ D3DFMT_A1R5G5B5      }, // BGR5A1
 		{ D3DFMT_A1R5G5B5      }, // RGB5A1
 		{ D3DFMT_A2B10G10R10   }, // RGB10A2
 		{ D3DFMT_UNKNOWN       }, // RG11B10F
@@ -3037,8 +3040,16 @@ namespace bgfx { namespace d3d9
 							uint32_t size = useMipSize ? mip.m_size : mipSize;
 							switch (m_textureFormat)
 							{
+							case TextureFormat::R5G6B5:
+								bimg::imageConvert(bits, 16, bx::packB5G6R5, mip.m_data, bx::unpackR5G6B5, size);
+								break;
+
 							case TextureFormat::RGBA4:
 								bimg::imageConvert(bits, 16, bx::packBgra4, mip.m_data, bx::unpackRgba4, size);
+								break;
+
+							case TextureFormat::RGB5A1:
+								bimg::imageConvert(bits, 16, bx::packBgr5a1, mip.m_data, bx::unpackRgb5a1, size);
 								break;
 
 							default:
@@ -3098,8 +3109,16 @@ namespace bgfx { namespace d3d9
 			{
 				switch (m_textureFormat)
 				{
+				case TextureFormat::R5G6B5:
+					bimg::imageConvert(dst, 16, bx::packB5G6R5, src, bx::unpackR5G6B5, rectpitch);
+					break;
+
 				case TextureFormat::RGBA4:
 					bimg::imageConvert(dst, 16, bx::packBgra4, src, bx::unpackRgba4, rectpitch);
+					break;
+
+				case TextureFormat::RGB5A1:
+					bimg::imageConvert(dst, 16, bx::packBgr5a1, src, bx::unpackRgb5a1, rectpitch);
 					break;
 
 				default:
