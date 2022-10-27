@@ -282,10 +282,10 @@ void GUI::Update()
 			}
 
 			MInput::KeyboardState keyboard = MInput::GetKeyboardState();
-			io.AddKeyEvent(ImGuiKey_ModCtrl, keyboard.IsKeyDown(Keys::LeftControl) || keyboard.IsKeyDown(Keys::RightControl));
-			io.AddKeyEvent(ImGuiKey_ModShift, keyboard.IsKeyDown(Keys::LeftShift) || keyboard.IsKeyDown(Keys::RightShift));
-			io.AddKeyEvent(ImGuiKey_ModAlt, keyboard.IsKeyDown(Keys::LeftAlt) || keyboard.IsKeyDown(Keys::RightAlt));
-			io.AddKeyEvent(ImGuiKey_ModSuper, keyboard.IsKeyDown(Keys::LeftSuper) || keyboard.IsKeyDown(Keys::RightSuper));
+			io.AddKeyEvent(ImGuiMod_Ctrl, keyboard.IsKeyDown(Keys::LeftControl) || keyboard.IsKeyDown(Keys::RightControl));
+			io.AddKeyEvent(ImGuiMod_Shift, keyboard.IsKeyDown(Keys::LeftShift) || keyboard.IsKeyDown(Keys::RightShift));
+			io.AddKeyEvent(ImGuiMod_Alt, keyboard.IsKeyDown(Keys::LeftAlt) || keyboard.IsKeyDown(Keys::RightAlt));
+			io.AddKeyEvent(ImGuiMod_Super, keyboard.IsKeyDown(Keys::LeftSuper) || keyboard.IsKeyDown(Keys::RightSuper));
 		}
 
 		s_previousKeyboardKeys = keyboardKeys;
