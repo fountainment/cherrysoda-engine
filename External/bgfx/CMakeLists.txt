@@ -33,11 +33,11 @@ endif()
 
 # bimg
 file(GLOB BIMG_SRC bimg/include/bimg/*.h bimg/src/image.cpp bimg/src/image_gnf.cpp bimg/src/*.h
-                   bimg/3rdparty/astc-codec/src/decoder/*.h bimg/3rdparty/astc-codec/src/decoder/*.cc
+                   bimg/3rdparty/astc-encoder/source/*.h bimg/3rdparty/astc-encoder/source/*.cpp
                    bimg/3rdparty/tinyexr/deps/miniz/miniz.*)
 
 add_library(bimg STATIC ${BIMG_SRC})
-target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-codec bimg/3rdparty/astc-codec/include bimg/3rdparty/tinyexr/deps/miniz)
+target_include_directories(bimg PRIVATE bx/include bimg/include bimg/3rdparty/astc-encoder bimg/3rdparty/astc-encoder/include bimg/3rdparty/tinyexr/deps/miniz)
 target_link_libraries(bimg PUBLIC bx)
 target_compile_features(bimg PRIVATE cxx_std_14)
 

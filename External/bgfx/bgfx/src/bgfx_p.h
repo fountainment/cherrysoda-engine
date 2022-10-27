@@ -301,37 +301,119 @@ namespace bgfx
 	typedef uint32_t RenderItemCount;
 #endif // BGFX_CONFIG_MAX_DRAW_CALLS < (64<<10)
 
+	///
 	struct Handle
 	{
+		///
+		struct TypeName
+		{
+			const char* abrvName;
+			const char* fullName;
+		};
+
+		///
 		enum Enum
 		{
+			DynamicIndexBuffer,
+			DynamicVertexBuffer,
+			FrameBuffer,
 			IndexBuffer,
+			IndirectBuffer,
+			OcclusionQuery,
+			Program,
 			Shader,
 			Texture,
+			Uniform,
 			VertexBuffer,
+			VertexLayout,
 
 			Count
 		};
 
-		uint16_t type;
+		template<typename Ty>
+		static constexpr Enum toEnum();
+
+		constexpr Handle()
+			: idx(kInvalidHandle)
+			, type(Count)
+		{
+		}
+
+		template<typename Ty>
+		constexpr Handle(Ty _handle)
+			: idx(_handle.idx)
+			, type(toEnum<Ty>() )
+		{
+		}
+
+		template<typename Ty>
+		constexpr Ty to() const
+		{
+			if (type == toEnum<Ty>() )
+			{
+				return Ty{ idx };
+			}
+
+			BX_ASSERT(type == toEnum<Ty>(), "Handle type %s, cannot be converted to %s."
+				, getTypeName().fullName
+				, getTypeName(toEnum<Ty>() ).fullName
+				);
+			return { kInvalidHandle };
+		}
+
+		Enum getType() const
+		{
+			return Enum(type);
+		}
+
+		static const TypeName& getTypeName(Handle::Enum _enum);
+
+		const TypeName& getTypeName() const
+		{
+			return getTypeName(getType() );
+		}
+
+		bool isBuffer() const
+		{
+			return false
+				|| type == DynamicIndexBuffer
+				|| type == DynamicVertexBuffer
+				|| type == IndexBuffer
+				|| type == IndirectBuffer
+				|| type == VertexBuffer
+				;
+		}
+
+		bool isTexture() const
+		{
+			return type == Texture;
+		}
+
 		uint16_t idx;
+		uint16_t type;
 	};
 
-#define CONVERT_HANDLE(_name)                           \
-	inline Handle convert(_name##Handle _handle)        \
-	{                                                   \
-		Handle handle = { Handle::_name, _handle.idx }; \
-		return handle;                                  \
-	}
+#define IMPLEMENT_HANDLE(_name)                                   \
+	template<>                                                    \
+	inline constexpr Handle::Enum Handle::toEnum<_name##Handle>() \
+	{                                                             \
+		return Handle::_name;                                     \
+	}                                                             \
 
-	CONVERT_HANDLE(IndexBuffer);
-	CONVERT_HANDLE(Shader);
-	CONVERT_HANDLE(Texture);
-	CONVERT_HANDLE(VertexBuffer);
+	IMPLEMENT_HANDLE(DynamicIndexBuffer);
+	IMPLEMENT_HANDLE(DynamicVertexBuffer);
+	IMPLEMENT_HANDLE(FrameBuffer);
+	IMPLEMENT_HANDLE(IndexBuffer);
+	IMPLEMENT_HANDLE(IndirectBuffer);
+	IMPLEMENT_HANDLE(OcclusionQuery);
+	IMPLEMENT_HANDLE(Program);
+	IMPLEMENT_HANDLE(Shader);
+	IMPLEMENT_HANDLE(Texture);
+	IMPLEMENT_HANDLE(Uniform);
+	IMPLEMENT_HANDLE(VertexBuffer);
+	IMPLEMENT_HANDLE(VertexLayout);
 
-#undef CONVERT_HANDLE
-
-	const char* getTypeName(Handle _handle);
+#undef IMPLEMENT_HANDLE
 
 	inline bool isValid(const VertexLayout& _layout)
 	{
@@ -788,7 +870,6 @@ namespace bgfx
 	{
 		BX_CLASS(CommandBuffer
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -1076,21 +1157,21 @@ namespace bgfx
 	// |        +-draw                                                  |
 	// |----------------------------------------------------------------| Draw Key 0 - Sort by program
 	// |        |kkttpppppppppdddddddddddddddddddddddddddddddd          |
-	// |        |   ^        ^                               ^          |
-	// |        |   |        |                               |          |
-	// |        |   +-blend  +-program                 depth-+          |
-	// |        |                                                       |
+	// |        | ^ ^        ^                               ^          |
+	// |        | | |        |                               |          |
+	// |        | | +-blend  +-program                 depth-+          |
+	// |        | +-key type                                            |
 	// |----------------------------------------------------------------| Draw Key 1 - Sort by depth
 	// |        |kkddddddddddddddddddddddddddddddddttppppppppp          |
-	// |        |                                ^^ ^        ^          |
-	// |        |                                || +-trans  |          |
-	// |        |                          depth-+   program-+          |
+	// |        | ^                               ^ ^        ^          |
+	// |        | |                               | +-blend  |          |
+	// |        | +-key type                depth-+  program-+          |
 	// |        |                                                       |
 	// |----------------------------------------------------------------| Draw Key 2 - Sequential
 	// |        |kkssssssssssssssssssssttppppppppp                      |
-	// |        |                     ^ ^        ^                      |
-	// |        |                     | |        |                      |
-	// |        |                 seq-+ +-trans  +-program              |
+	// |        | ^                   ^ ^        ^                      |
+	// |        | |                   | |        |                      |
+	// |        | +-key type      seq-+ +-blend  +-program              |
 	// |        |                                                       |
 	// |----------------------------------------------------------------| Compute Key
 	// |        |ssssssssssssssssssssppppppppp                          |
@@ -1676,8 +1757,10 @@ namespace bgfx
 			}
 
 			m_startIndirect = 0;
-			m_numIndirect   = UINT16_MAX;
+			m_numIndirect = UINT16_MAX;
+			m_numIndirectIndex = 0;
 			m_indirectBuffer.idx = kInvalidHandle;
+			m_numIndirectBuffer.idx = kInvalidHandle;
 			m_occlusionQuery.idx = kInvalidHandle;
 		}
 
@@ -1710,6 +1793,7 @@ namespace bgfx
 		uint16_t m_instanceDataStride;
 		uint16_t m_startIndirect;
 		uint16_t m_numIndirect;
+		uint32_t m_numIndirectIndex;
 		uint16_t m_numMatrices;
 		uint16_t m_scissor;
 		uint8_t  m_submitFlags;
@@ -1719,6 +1803,7 @@ namespace bgfx
 		IndexBufferHandle    m_indexBuffer;
 		VertexBufferHandle   m_instanceDataBuffer;
 		IndirectBufferHandle m_indirectBuffer;
+		IndexBufferHandle    m_numIndirectBuffer;
 		OcclusionQueryHandle m_occlusionQuery;
 	};
 
@@ -1782,8 +1867,8 @@ namespace bgfx
 		uint16_t m_depth;
 		uint8_t  m_srcMip;
 		uint8_t  m_dstMip;
-		TextureHandle m_src;
-		TextureHandle m_dst;
+		Handle m_src;
+		Handle m_dst;
 	};
 
 	struct IndexBuffer
@@ -2072,6 +2157,7 @@ namespace bgfx
 		Frame()
 			: m_waitSubmit(0)
 			, m_waitRender(0)
+			, m_frameNum(0)
 			, m_capture(false)
 		{
 			SortKey term;
@@ -2105,7 +2191,7 @@ namespace bgfx
 			}
 
 			reset();
-			start();
+			start(0);
 			m_textVideoMem = BX_NEW(g_allocator, TextVideoMem);
 		}
 
@@ -2122,12 +2208,12 @@ namespace bgfx
 
 		void reset()
 		{
-			start();
+			start(0);
 			finish();
 			resetFreeHandles();
 		}
 
-		void start()
+		void start(uint32_t frameNum)
 		{
 			m_perfStats.transientVbUsed = m_vboffset;
 			m_perfStats.transientIbUsed = m_iboffset;
@@ -2141,6 +2227,7 @@ namespace bgfx
 			m_cmdPost.start();
 			m_capture = false;
 			m_numScreenShots = 0;
+			m_frameNum = frameNum;
 		}
 
 		void finish()
@@ -2348,6 +2435,8 @@ namespace bgfx
 
 		int64_t m_waitSubmit;
 		int64_t m_waitRender;
+
+		uint32_t m_frameNum;
 
 		bool m_capture;
 	};
@@ -2696,6 +2785,13 @@ namespace bgfx
 			m_draw.m_indirectBuffer = _indirectHandle;
 			OcclusionQueryHandle handle = BGFX_INVALID_HANDLE;
 			submit(_id, _program, handle, _depth, _flags);
+		}
+
+		void submit(ViewId _id, ProgramHandle _program, IndirectBufferHandle _indirectHandle, uint16_t _start, IndexBufferHandle _numHandle, uint32_t _numIndex, uint16_t _numMax, uint32_t _depth, uint8_t _flags)
+		{
+			m_draw.m_numIndirectIndex = _numIndex;
+			m_draw.m_numIndirectBuffer = _numHandle;
+			submit(_id, _program, _indirectHandle, _start, _numMax, _depth, _flags);
 		}
 
 		void dispatch(ViewId _id, ProgramHandle _handle, uint32_t _ngx, uint32_t _ngy, uint32_t _ngz, uint8_t _flags);
@@ -3218,7 +3314,7 @@ namespace bgfx
 				cmdbuf.write(_mem);
 				cmdbuf.write(_flags);
 
-				setDebugName(convert(handle) );
+				setDebugNameForHandle(handle);
 			}
 			else
 			{
@@ -3237,7 +3333,7 @@ namespace bgfx
 			IndexBuffer& ref = m_indexBuffers[_handle.idx];
 			ref.m_name.set(_name);
 
-			setName(convert(_handle), _name);
+			setNameForHandle(_handle, _name);
 		}
 
 		BGFX_API_FUNC(void destroyIndexBuffer(IndexBufferHandle _handle) )
@@ -3335,7 +3431,7 @@ namespace bgfx
 				cmdbuf.write(layoutHandle);
 				cmdbuf.write(_flags);
 
-				setDebugName(convert(handle) );
+				setDebugNameForHandle(handle);
 
 				return handle;
 			}
@@ -3355,7 +3451,7 @@ namespace bgfx
 			VertexBuffer& ref = m_vertexBuffers[_handle.idx];
 			ref.m_name.set(_name);
 
-			setName(convert(_handle), _name);
+			setNameForHandle(_handle, _name);
 		}
 
 		BGFX_API_FUNC(void destroyVertexBuffer(VertexBufferHandle _handle) )
@@ -3432,7 +3528,7 @@ namespace bgfx
 			cmdbuf.write(_size);
 			cmdbuf.write(_flags);
 
-			setDebugName(convert(indexBufferHandle), "Dynamic Index Buffer");
+			setDebugNameForHandle(indexBufferHandle, "Dynamic Index Buffer");
 
 			return uint64_t(indexBufferHandle.idx) << 32;
 		}
@@ -3619,7 +3715,7 @@ namespace bgfx
 			cmdbuf.write(_size);
 			cmdbuf.write(_flags);
 
-			setDebugName(convert(vertexBufferHandle), "Dynamic Vertex Buffer");
+			setDebugNameForHandle(vertexBufferHandle, "Dynamic Vertex Buffer");
 
 			return uint64_t(vertexBufferHandle.idx)<<32;
 		}
@@ -3818,7 +3914,7 @@ namespace bgfx
 				tib->size   = _size;
 				tib->handle = handle;
 
-				setDebugName(convert(handle), "Transient Index Buffer");
+				setDebugNameForHandle(handle, "Transient Index Buffer");
 			}
 
 			return tib;
@@ -3888,7 +3984,7 @@ namespace bgfx
 				tvb->handle = handle;
 				tvb->layoutHandle = layoutHandle;
 
-				setDebugName(convert(handle), "Transient Vertex Buffer");
+				setDebugNameForHandle(handle, "Transient Vertex Buffer");
 			}
 
 			return tvb;
@@ -4119,7 +4215,7 @@ namespace bgfx
 			cmdbuf.write(handle);
 			cmdbuf.write(_mem);
 
-			setDebugName(convert(handle) );
+			setDebugNameForHandle(handle);
 
 			return handle;
 		}
@@ -4143,12 +4239,12 @@ namespace bgfx
 			return sr.m_num;
 		}
 
-		void setName(Handle _handle, const bx::StringView& _name)
+		void setNameForHandle(Handle _handle, const bx::StringView& _name)
 		{
 			char tmp[1024];
 			uint16_t len = 1+(uint16_t)bx::snprintf(tmp, BX_COUNTOF(tmp)
 				, "%sH %d: %S"
-				, getTypeName(_handle)
+				, _handle.getTypeName().abrvName
 				, _handle.idx
 				, &_name
 				);
@@ -4159,11 +4255,11 @@ namespace bgfx
 			cmdbuf.write(tmp, len);
 		}
 
-		void setDebugName(Handle _handle, const bx::StringView& _name = "")
+		void setDebugNameForHandle(Handle _handle, const bx::StringView& _name = "")
 		{
 			if (BX_ENABLED(BGFX_CONFIG_DEBUG) )
 			{
-				setName(_handle, _name);
+				setNameForHandle(_handle, _name);
 			}
 		}
 
@@ -4176,7 +4272,7 @@ namespace bgfx
 			ShaderRef& sr = m_shaderRef[_handle.idx];
 			sr.m_name.set(_name);
 
-			setName(convert(_handle), _name);
+			setNameForHandle(_handle, _name);
 		}
 
 		BGFX_API_FUNC(void destroyShader(ShaderHandle _handle) )
@@ -4451,7 +4547,7 @@ namespace bgfx
 			cmdbuf.write(_flags);
 			cmdbuf.write(_skip);
 
-			setDebugName(convert(handle) );
+			setDebugNameForHandle(handle);
 
 			return handle;
 		}
@@ -4464,7 +4560,7 @@ namespace bgfx
 			TextureRef& ref = m_textureRef[_handle.idx];
 			ref.m_name.set(_name);
 
-			setName(convert(_handle), _name);
+			setNameForHandle(_handle, _name);
 		}
 
 		void setDirectAccessPtr(TextureHandle _handle, void* _ptr)
@@ -4512,7 +4608,7 @@ namespace bgfx
 			cmdbuf.write(_handle);
 			cmdbuf.write(_data);
 			cmdbuf.write(_mip);
-			return m_frames + 2;
+			return m_submit->m_frameNum + 2;
 		}
 
 		void resizeTexture(TextureHandle _handle, uint16_t _width, uint16_t _height, uint8_t _numMips, uint16_t _numLayers)
@@ -4712,7 +4808,7 @@ namespace bgfx
 			FrameBufferRef& fbr = m_frameBufferRef[_handle.idx];
 			fbr.m_name.set(_name);
 
-//			setName(convert(_handle), _name);
+//			setNameForHandle(_handle, _name);
 		}
 
 		BGFX_API_FUNC(TextureHandle getTexture(FrameBufferHandle _handle, uint8_t _attachment) )

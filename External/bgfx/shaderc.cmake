@@ -35,8 +35,6 @@ file(GLOB GLSLANG_SRC ${GLSLANG}/glslang/*/*.cpp
                       ${GLSLANG}/SPIRV/*/*.h
                       ${GLSLANG}/OGLCompilersDLL/*.cpp
                       ${GLSLANG}/OGLCompilersDLL/*.h)
-list(REMOVE_ITEM GLSLANG_SRC ${GLSLANG}/glslang/OSDependent/Unix/main.cpp)
-list(REMOVE_ITEM GLSLANG_SRC ${GLSLANG}/glslang/OSDependent/Windows/main.cpp)
 if(WINDOWS)
   list(REMOVE_ITEM GLSLANG_SRC ${GLSLANG}/glslang/OSDependent/Unix/ossource.cpp)
 else()
@@ -407,11 +405,13 @@ set(SPIRV_TOOLS_SRC ${SPIRV_TOOLS_SRC} ${SPIRV_TOOLS}/source/assembly_grammar.cp
                                        ${SPIRV_TOOLS}/source/val/validate_logicals.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_memory.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_memory_semantics.cpp
+                                       ${SPIRV_TOOLS}/source/val/validate_mesh_shading.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_misc.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_mode_setting.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_non_uniform.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_primitives.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_ray_query.cpp
+                                       ${SPIRV_TOOLS}/source/val/validate_ray_tracing.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_scopes.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_small_type_uses.cpp
                                        ${SPIRV_TOOLS}/source/val/validate_type.cpp
