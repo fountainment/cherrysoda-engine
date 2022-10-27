@@ -1,11 +1,3 @@
-if(WINDOWS)
-  if(MSVC)
-    include_directories(bx/include/compat/msvc)
-  else()
-    include_directories(bx/include/compat/mingw)
-  endif()
-endif()
-
 # bx
 file(GLOB BX_SRC bx/include/bx/*.h bx/include/bx/inline/*.inl bx/src/*.cpp bx/scriptes/*.natvis)
 list(REMOVE_ITEM BX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/bx/src/amalgamated.cpp)
@@ -23,6 +15,9 @@ if(WINDOWS)
 endif()
 if(MACOSX)
   target_include_directories(bx PUBLIC bx/include/compat/osx)
+endif()
+if(LINUX)
+  target_include_directories(bx PUBLIC bx/include/compat/linux)
 endif()
 
 if(BGFX_CONFIG_DEBUG)
