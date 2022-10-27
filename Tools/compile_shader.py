@@ -134,11 +134,10 @@ def generate_embedded_shader_header(shader_dir):
     for shader in shader_names:
         header_file.write('#include "embedded_shaders/vs_%s.bin.h"\n' % (shader,))
         header_file.write('#include "embedded_shaders/fs_%s.bin.h"\n' % (shader,))
-    header_file.write('#ifdef _WIN32\n') 
+    header_file.write('\n') 
     for shader in shader_names:
         header_file.write('#include "embedded_shaders/vs_%s.dx.bin.h"\n' % (shader,))
         header_file.write('#include "embedded_shaders/fs_%s.dx.bin.h"\n' % (shader,))
-    header_file.write('#endif // _WIN32\n') 
     header_file.write('\n')
     header_file.write('static const bgfx::EmbeddedShader s_embeddedShaders[] =\n{\n')
     for shader in shader_names:
