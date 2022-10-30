@@ -72,6 +72,20 @@ def compile_embedded_shader_program(shader_dir, shader_name):
             'suffix': 'mtl'
         }
     ]
+    dx_compile_info = [
+        {
+            'platform': 'windows',
+            'profile': ['vs_3_0', 'ps_3_0'],
+            'opt_level': 3,
+            'suffix': 'dx9'
+        },
+        {
+            'platform': 'windows',
+            'profile': ['vs_4_0', 'ps_4_0'],
+            'opt_level': 3,
+            'suffix': 'dx11'
+        }
+    ]
     cherry.make_sure_folder_exist(vert_out)
     vs_file = open(vert_out, 'w')
     fs_file = open(frag_out, 'w')
@@ -91,23 +105,9 @@ def compile_embedded_shader_program(shader_dir, shader_name):
     vs_file.close()
     fs_file.close()
     if cherry.is_windows_system():
-        compile_info = [
-            {
-                'platform': 'windows',
-                'profile': ['vs_3_0', 'ps_3_0'],
-                'opt_level': 3,
-                'suffix': 'dx9'
-            },
-            {
-                'platform': 'windows',
-                'profile': ['vs_4_0', 'ps_4_0'],
-                'opt_level': 3,
-                'suffix': 'dx11'
-            }
-        ]
         vs_file = open(dx_vert_out, 'w')
         fs_file = open(dx_frag_out, 'w')
-        for info_dict in compile_info:
+        for info_dict in dx_compile_info:
             platform  = info_dict.get('platform')
             profile   = info_dict.get('profile', [None, None])
             opt_level = info_dict.get('opt_level')
@@ -118,6 +118,19 @@ def compile_embedded_shader_program(shader_dir, shader_name):
             fs_file.write(cherry.read_file(shader_tmp))
         vs_file.close()
         fs_file.close()
+    else:
+        if not cherry.exists(dx_vert_out):
+            vs_file = open(dx_vert_out, 'w')
+            for info_dict in dx_compile_info:
+                suffix = info_dict.get('suffix', '')
+                vs_file.write('static const uint8_t vs_' + shader_name + '_' + suffix + '[1] = { 0x00 };\n')
+            vs_file.close()
+        if not cherry.exists(dx_frag_out):
+            fs_file = open(dx_frag_out, 'w')
+            for info_dict in dx_compile_info:
+                suffix = info_dict.get('suffix', '')
+                fs_file.write('static const uint8_t fs_' + shader_name + '_' + suffix + '[1] = { 0x00 };\n')
+            fs_file.close()
 
 
 def generate_embedded_shader_header(shader_dir):
