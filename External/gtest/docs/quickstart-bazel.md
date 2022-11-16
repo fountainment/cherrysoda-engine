@@ -9,7 +9,7 @@ we recommend this tutorial as a starting point.
 To complete this tutorial, you'll need:
 
 *   A compatible operating system (e.g. Linux, macOS, Windows).
-*   A compatible C++ compiler that supports at least C++11.
+*   A compatible C++ compiler that supports at least C++14.
 *   [Bazel](https://bazel.build/), the preferred build system used by the
     GoogleTest team.
 
@@ -17,7 +17,7 @@ See [Supported Platforms](platforms.md) for more information about platforms
 compatible with GoogleTest.
 
 If you don't already have Bazel installed, see the
-[Bazel installation guide](https://docs.bazel.build/versions/main/install.html).
+[Bazel installation guide](https://bazel.build/install).
 
 {: .callout .note}
 Note: The terminal commands in this tutorial show a Unix shell prompt, but the

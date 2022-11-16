@@ -63,8 +63,8 @@ namespace internal {
 
 class GTEST_API_ FilePath {
  public:
-  FilePath() : pathname_("") { }
-  FilePath(const FilePath& rhs) : pathname_(rhs.pathname_) { }
+  FilePath() : pathname_("") {}
+  FilePath(const FilePath& rhs) : pathname_(rhs.pathname_) {}
 
   explicit FilePath(const std::string& pathname) : pathname_(pathname) {
     Normalize();
@@ -75,9 +75,7 @@ class GTEST_API_ FilePath {
     return *this;
   }
 
-  void Set(const FilePath& rhs) {
-    pathname_ = rhs.pathname_;
-  }
+  void Set(const FilePath& rhs) { pathname_ = rhs.pathname_; }
 
   const std::string& string() const { return pathname_; }
   const char* c_str() const { return pathname_.c_str(); }
@@ -90,8 +88,7 @@ class GTEST_API_ FilePath {
   // than zero (e.g., 12), returns "dir/test_12.xml".
   // On Windows platform, uses \ as the separator rather than /.
   static FilePath MakeFileName(const FilePath& directory,
-                               const FilePath& base_name,
-                               int number,
+                               const FilePath& base_name, int number,
                                const char* extension);
 
   // Given directory = "dir", relative_path = "test.xml",
@@ -201,6 +198,16 @@ class GTEST_API_ FilePath {
   // the FilePath. On Windows, for example, both '/' and '\' are valid path
   // separators. Returns NULL if no path separator was found.
   const char* FindLastPathSeparator() const;
+
+  // Returns the length of the path root, including the directory separator at
+  // the end of the prefix. Returns zero by definition if the path is relative.
+  // Examples:
+  // - [Windows] "..\Sibling" => 0
+  // - [Windows] "\Windows" => 1
+  // - [Windows] "C:/Windows\Notepad.exe" => 3
+  // - [Windows] "\\Host\Share\C$/Windows" => 13
+  // - [UNIX] "/bin" => 1
+  size_t CalculateRootLength() const;
 
   std::string pathname_;
 };  // class FilePath

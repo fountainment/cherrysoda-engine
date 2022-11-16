@@ -482,10 +482,12 @@ TEST_F(FooDeathTest, DoesThat) {
 
 ### Regular Expression Syntax
 
-On POSIX systems (e.g. Linux, Cygwin, and Mac), googletest uses the
+When built with Bazel and using Abseil, googletest uses the
+[RE2](https://github.com/google/re2/wiki/Syntax) syntax. Otherwise, for POSIX
+systems (Linux, Cygwin, Mac), googletest uses the
 [POSIX extended regular expression](http://www.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap09.html#tag_09_04)
-syntax. To learn about this syntax, you may want to read this
-[Wikipedia entry](http://en.wikipedia.org/wiki/Regular_expression#POSIX_Extended_Regular_Expressions).
+syntax. To learn about POSIX syntax, you may want to read this
+[Wikipedia entry](http://en.wikipedia.org/wiki/Regular_expression#POSIX_extended).
 
 On Windows, googletest uses its own simple regular expression implementation. It
 lacks many features. For example, we don't support union (`"x|y"`), grouping
@@ -839,7 +841,7 @@ will output XML like this:
 
 ```xml
   ...
-    <testcase name="MinAndMaxWidgets" status="run" time="0.006" classname="WidgetUsageTest" MaximumWidgets="12" MinimumWidgets="9" />
+    <testcase name="MinAndMaxWidgets" file="test.cpp" line="1" status="run" time="0.006" classname="WidgetUsageTest" MaximumWidgets="12" MinimumWidgets="9" />
   ...
 ```
 
@@ -1093,6 +1095,11 @@ instantiation of the test suite. The next argument is the name of the test
 pattern, and the last is the
 [parameter generator](reference/testing.md#param-generators).
 
+The parameter generator expression is not evaluated until GoogleTest is
+initialized (via `InitGoogleTest()`). Any prior initialization done in the
+`main` function will be accessible from the parameter generator, for example,
+the results of flag parsing.
+
 You can instantiate a test pattern more than once, so to distinguish different
 instances of the pattern, the instantiation name is added as a prefix to the
 actual test suite name. Remember to pick unique prefixes for different
@@ -1140,8 +1147,8 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FooTest);
 
 You can see [sample7_unittest.cc] and [sample8_unittest.cc] for more examples.
 
-[sample7_unittest.cc]: https://github.com/google/googletest/blob/master/googletest/samples/sample7_unittest.cc "Parameterized Test example"
-[sample8_unittest.cc]: https://github.com/google/googletest/blob/master/googletest/samples/sample8_unittest.cc "Parameterized Test example with multiple parameters"
+[sample7_unittest.cc]: https://github.com/google/googletest/blob/main/googletest/samples/sample7_unittest.cc "Parameterized Test example"
+[sample8_unittest.cc]: https://github.com/google/googletest/blob/main/googletest/samples/sample8_unittest.cc "Parameterized Test example with multiple parameters"
 
 ### Creating Value-Parameterized Abstract Tests
 
@@ -1292,7 +1299,7 @@ TYPED_TEST(FooTest, HasPropertyA) { ... }
 
 You can see [sample6_unittest.cc] for a complete example.
 
-[sample6_unittest.cc]: https://github.com/google/googletest/blob/master/googletest/samples/sample6_unittest.cc "Typed Test example"
+[sample6_unittest.cc]: https://github.com/google/googletest/blob/main/googletest/samples/sample6_unittest.cc "Typed Test example"
 
 ## Type-Parameterized Tests
 
@@ -1313,6 +1320,7 @@ First, define a fixture class template, as we did with typed tests:
 ```c++
 template <typename T>
 class FooTest : public testing::Test {
+  void DoSomethingInteresting();
   ...
 };
 ```
@@ -1330,6 +1338,9 @@ this as many times as you want:
 TYPED_TEST_P(FooTest, DoesBlah) {
   // Inside a test, refer to TypeParam to get the type parameter.
   TypeParam n = 0;
+
+  // You will need to use `this` explicitly to refer to fixture members.
+  this->DoSomethingInteresting()
   ...
 }
 
@@ -1727,7 +1738,7 @@ You can do so by adding one line:
 Now, sit back and enjoy a completely different output from your tests. For more
 details, see [sample9_unittest.cc].
 
-[sample9_unittest.cc]: https://github.com/google/googletest/blob/master/googletest/samples/sample9_unittest.cc "Event listener example"
+[sample9_unittest.cc]: https://github.com/google/googletest/blob/main/googletest/samples/sample9_unittest.cc "Event listener example"
 
 You may append more than one listener to the list. When an `On*Start()` or
 `OnTestPartResult()` event is fired, the listeners will receive it in the order
@@ -1754,7 +1765,7 @@ by the former.
 
 See [sample10_unittest.cc] for an example of a failure-raising listener.
 
-[sample10_unittest.cc]: https://github.com/google/googletest/blob/master/googletest/samples/sample10_unittest.cc "Failure-raising listener example"
+[sample10_unittest.cc]: https://github.com/google/googletest/blob/main/googletest/samples/sample10_unittest.cc "Failure-raising listener example"
 
 ## Running Test Programs: Advanced Options
 
@@ -1902,8 +1913,12 @@ Repeat the tests whose name matches the filter 1000 times.
 
 If your test program contains
 [global set-up/tear-down](#global-set-up-and-tear-down) code, it will be
-repeated in each iteration as well, as the flakiness may be in it. You can also
-specify the repeat count by setting the `GTEST_REPEAT` environment variable.
+repeated in each iteration as well, as the flakiness may be in it. To avoid
+repeating global set-up/tear-down, specify
+`--gtest_recreate_environments_when_repeating=false`{.nowrap}.
+
+You can also specify the repeat count by setting the `GTEST_REPEAT` environment
+variable.
 
 ### Shuffling the Tests
 
@@ -2082,15 +2097,15 @@ could generate this report:
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites tests="3" failures="1" errors="0" time="0.035" timestamp="2011-10-31T18:52:42" name="AllTests">
   <testsuite name="MathTest" tests="2" failures="1" errors="0" time="0.015">
-    <testcase name="Addition" status="run" time="0.007" classname="">
+    <testcase name="Addition" file="test.cpp" line="1" status="run" time="0.007" classname="">
       <failure message="Value of: add(1, 1)&#x0A;  Actual: 3&#x0A;Expected: 2" type="">...</failure>
       <failure message="Value of: add(1, -1)&#x0A;  Actual: 1&#x0A;Expected: 0" type="">...</failure>
     </testcase>
-    <testcase name="Subtraction" status="run" time="0.005" classname="">
+    <testcase name="Subtraction" file="test.cpp" line="2" status="run" time="0.005" classname="">
     </testcase>
   </testsuite>
   <testsuite name="LogicTest" tests="1" failures="0" errors="0" time="0.005">
-    <testcase name="NonContradiction" status="run" time="0.005" classname="">
+    <testcase name="NonContradiction" file="test.cpp" line="3" status="run" time="0.005" classname="">
     </testcase>
   </testsuite>
 </testsuites>
@@ -2107,6 +2122,9 @@ Things to note:
 
 *   The `timestamp` attribute records the local date and time of the test
     execution.
+
+*   The `file` and `line` attributes record the source file location, where the
+    test was defined.
 
 *   Each `<failure>` element corresponds to a single failed googletest
     assertion.
@@ -2147,6 +2165,8 @@ The report format conforms to the following JSON Schema:
       "type": "object",
       "properties": {
         "name": { "type": "string" },
+        "file": { "type": "string" },
+        "line": { "type": "integer" },
         "status": {
           "type": "string",
           "enum": ["RUN", "NOTRUN"]
@@ -2224,6 +2244,8 @@ message TestCase {
 
 message TestInfo {
   string name = 1;
+  string file = 6;
+  int32 line = 7;
   enum Status {
     RUN = 0;
     NOTRUN = 1;
@@ -2267,6 +2289,8 @@ could generate this report:
       "testsuite": [
         {
           "name": "Addition",
+          "file": "test.cpp",
+          "line": 1,
           "status": "RUN",
           "time": "0.007s",
           "classname": "",
@@ -2283,6 +2307,8 @@ could generate this report:
         },
         {
           "name": "Subtraction",
+          "file": "test.cpp",
+          "line": 2,
           "status": "RUN",
           "time": "0.005s",
           "classname": ""
@@ -2298,6 +2324,8 @@ could generate this report:
       "testsuite": [
         {
           "name": "NonContradiction",
+          "file": "test.cpp",
+          "line": 3,
           "status": "RUN",
           "time": "0.005s",
           "classname": ""
