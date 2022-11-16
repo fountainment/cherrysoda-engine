@@ -147,7 +147,7 @@ namespace bimg
 		"ATCE",       // ATCE
 		"ATCI",       // ATCI
 		"ASTC4x4",    // ASTC4x4
-		"ASTC5x4",	  // ASTC5x4
+		"ASTC5x4",    // ASTC5x4
 		"ASTC5x5",    // ASTC5x5
 		"ASTC6x5",    // ASTC6x5
 		"ASTC6x6",    // ASTC6x6
@@ -3851,7 +3851,7 @@ namespace bimg
 #define KTX_ATC_RGB_AMD                               0x8C92
 #define KTX_ATC_RGBA_EXPLICIT_ALPHA_AMD               0x8C93
 #define KTX_ATC_RGBA_INTERPOLATED_ALPHA_AMD           0x87EE
-#define KTX_COMPRESSED_RGBA_ASTC_4x4_KHR			  0x93B0
+#define KTX_COMPRESSED_RGBA_ASTC_4x4_KHR              0x93B0
 #define KTX_COMPRESSED_RGBA_ASTC_5x4_KHR              0x93B1
 #define KTX_COMPRESSED_RGBA_ASTC_5x5_KHR              0x93B2
 #define KTX_COMPRESSED_RGBA_ASTC_6x5_KHR              0x93B3
@@ -4918,25 +4918,32 @@ namespace bimg
 		case TextureFormat::ASTC12x12:
 			if (BX_ENABLED(BIMG_DECODE_ASTC) )
 			{
-					const unsigned int thread_count = 1;
 					const bimg::ImageBlockInfo& astcBlockInfo = bimg::getBlockInfo(_srcFormat);
-					const float quality = ASTCENC_PRE_MEDIUM;
-					const astcenc_profile profile = ASTCENC_PRF_LDR; //Linear LDR color profile
-					astcenc_error status;
 
-					//Create and init config and context
 					astcenc_config config{};
-					const unsigned int astcFlags = ASTCENC_FLG_DECOMPRESS_ONLY;
-					status = astcenc_config_init(profile, astcBlockInfo.blockWidth, astcBlockInfo.blockHeight, 1, quality, astcFlags, &config);
-					if (status != ASTCENC_SUCCESS) {
+
+					astcenc_error status = astcenc_config_init(
+						  ASTCENC_PRF_LDR
+						, astcBlockInfo.blockWidth
+						, astcBlockInfo.blockHeight
+						, 1
+						, ASTCENC_PRE_MEDIUM
+						, ASTCENC_FLG_DECOMPRESS_ONLY
+						, &config
+						);
+
+					if (status != ASTCENC_SUCCESS)
+					{
 						BX_TRACE("astc error in config init %s", astcenc_get_error_string(status));
 						imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
 						break;
 					}
 
 					astcenc_context* context;
-					status = astcenc_context_alloc(&config, thread_count, &context);
-					if (status != ASTCENC_SUCCESS) {
+					status = astcenc_context_alloc(&config, 1, &context);
+
+					if (status != ASTCENC_SUCCESS)
+					{
 						BX_TRACE("astc error in context alloc %s", astcenc_get_error_string(status));
 						imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
 						break;
@@ -4944,21 +4951,36 @@ namespace bimg
 
 					//Put image data into an astcenc_image
 					astcenc_image image{};
-					image.dim_x = _width;
-					image.dim_y = _height;
-					image.dim_z = 1;
+					image.dim_x     = _width;
+					image.dim_y     = _height;
+					image.dim_z     = 1;
 					image.data_type = ASTCENC_TYPE_U8;
-					image.data = &_dst;
+					image.data      = &_dst;
+
 					const uint32_t size = imageGetSize(NULL, uint16_t(_width), uint16_t(_height), 0, false, false, 1, _srcFormat);
 
-					static const astcenc_swizzle swizzle { //0123/rgba swizzle corresponds to ASTC_RGBA
-						ASTCENC_SWZ_R, ASTCENC_SWZ_G, ASTCENC_SWZ_B, ASTCENC_SWZ_A
+					static const astcenc_swizzle swizzle
+					{   //0123/rgba swizzle corresponds to ASTC_RGBA
+						ASTCENC_SWZ_R,
+						ASTCENC_SWZ_G,
+						ASTCENC_SWZ_B,
+						ASTCENC_SWZ_A,
 					};
-					status = astcenc_decompress_image(context, static_cast<const uint8_t*>(_src), size, &image, &swizzle, 0);
-					
-					if (status != ASTCENC_SUCCESS) {
+
+					status = astcenc_decompress_image(
+						  context
+						, (const uint8_t*)_src
+						, size
+						, &image
+						, &swizzle
+						, 0
+						);
+
+					if (status != ASTCENC_SUCCESS)
+					{
 						BX_TRACE("astc error in compress image %s", astcenc_get_error_string(status));
 						imageCheckerboard(_dst, _width, _height, 16, UINT32_C(0xff000000), UINT32_C(0xffffff00) );
+
 						astcenc_context_free(context);
 						break;
 					}
@@ -5618,7 +5640,7 @@ namespace bimg
 		return total;
 	}
 
-	static int32_t imageWriteDdsHeader(bx::WriterI* _writer, TextureFormat::Enum _format, bool _cubeMap, uint32_t _width, uint32_t _height, uint32_t _depth, uint8_t _numMips, bx::Error* _err)
+	static int32_t imageWriteDdsHeader(bx::WriterI* _writer, TextureFormat::Enum _format, bool _cubeMap, uint32_t _width, uint32_t _height, uint32_t _depth, uint8_t _numMips, uint32_t _numLayers, bx::Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
 
@@ -5695,7 +5717,6 @@ namespace bimg
 		total += bx::write(_writer, pitchOrLinearSize, _err);
 		total += bx::write(_writer, _depth, _err);
 		total += bx::write(_writer, uint32_t(_numMips), _err);
-
 		total += bx::writeRep(_writer, 0, 44, _err); // reserved1
 
 		if (UINT32_MAX != ddspf)
@@ -5749,7 +5770,7 @@ namespace bimg
 			total += bx::write(_writer, dxgiFormat, _err);
 			total += bx::write(_writer, uint32_t(1 < _depth ? DDS_DX10_DIMENSION_TEXTURE3D : DDS_DX10_DIMENSION_TEXTURE2D), _err); // dims
 			total += bx::write(_writer, uint32_t(_cubeMap   ? DDS_DX10_MISC_TEXTURECUBE    : 0), _err); // miscFlags
-			total += bx::write(_writer, uint32_t(1), _err); // arraySize
+			total += bx::write(_writer, uint32_t(_numLayers), _err); // arraySize
 			total += bx::write(_writer, uint32_t(0), _err); // miscFlags2
 
 			BX_WARN(total-headerStart == DDS_HEADER_SIZE+20
@@ -5775,6 +5796,7 @@ namespace bimg
 			, _imageContainer.m_height
 			, _imageContainer.m_depth
 			, _imageContainer.m_numMips
+			, _imageContainer.m_numLayers
 			, _err
 			);
 
@@ -5783,7 +5805,7 @@ namespace bimg
 			return total;
 		}
 
-		for (uint8_t side = 0, numSides = _imageContainer.m_cubeMap ? 6 : 1; side < numSides && _err->isOk(); ++side)
+		for (uint8_t side = 0, numSides = _imageContainer.m_numLayers * (_imageContainer.m_cubeMap ? 6 : 1); side < numSides && _err->isOk(); ++side)
 		{
 			for (uint8_t lod = 0, num = _imageContainer.m_numMips; lod < num && _err->isOk(); ++lod)
 			{
