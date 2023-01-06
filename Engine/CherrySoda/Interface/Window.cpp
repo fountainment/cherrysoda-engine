@@ -564,6 +564,8 @@ void Window::Show()
 
 void Window::ShowCursor(bool show)
 {
+	static bool s_showCache = true;
+	if (show == s_showCache) return;
 	SDL_ShowCursor(show ? SDL_ENABLE : SDL_DISABLE);
 #ifdef __EMSCRIPTEN__
 	if (show) {
@@ -573,6 +575,7 @@ void Window::ShowCursor(bool show)
 		CHERRYSODA_SWITCH_WEB_CURSOR('none');
 	}
 #endif // __EMSCRIPTEN__
+	s_showCache = show;
 }
 
 void Window::SetCursor(CursorTypes cursor)
