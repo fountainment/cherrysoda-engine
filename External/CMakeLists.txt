@@ -6,6 +6,7 @@ add_subdirectory(stb)
 add_subdirectory(cmixer)
 add_subdirectory(cgltf)
 add_subdirectory(tinyxml2)
+add_subdirectory(tracy)
 
 cherrysoda_set_targets_folder("bgfx;bimg;bimg_decode;bx" External/bgfx)
 cherrysoda_set_targets_folder("imgui;stb_vorbis;cmixer;tinyxml2" External)

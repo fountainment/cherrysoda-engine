@@ -190,7 +190,7 @@ else()
 endif()
 
 target_include_directories(CherrySoda PUBLIC . ${SDL2_INCLUDE_DIRS})
-set(CHERRYSODA_COMMON_LIBS cgltf imgui bgfx bimg_decode bimg bx glm rapidjson tinyxml2 cmixer stb ${SDL2_LIBRARIES})
+set(CHERRYSODA_COMMON_LIBS tracy cgltf imgui bgfx bimg_decode bimg bx glm rapidjson tinyxml2 cmixer stb ${SDL2_LIBRARIES})
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} psapi)
 elseif(ANDROID)
@@ -205,12 +205,6 @@ elseif(MACOSX)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} ${COCOA_LIBRARY} ${METAL_LIBRARY} ${IOKIT_LIBRARY} ${QUARTZCORE_LIBRARY})
 else()
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} X11 GL pthread dl)
-endif()
-
-
-# Tracy Profiler
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tracy)
-  target_compile_definitions(CherrySoda PUBLIC CHERRYSODA_USE_TRACY_PROFILER)
 endif()
 
 cherrysoda_set_target_folder(CherrySoda Engine)
