@@ -29,4 +29,4 @@ jobs:
     - name: Test
       shell: bash
       working-directory: ${{github.workspace}}/build/Tests
-      run: ./${{ matrix.build_type }}/AllTests.exe
+      run: TRACY_NO_INVARIANT_CHECK=1 ./${{ matrix.build_type }}/AllTests.exe
