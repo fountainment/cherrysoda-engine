@@ -312,7 +312,9 @@ endif()
 file(GLOB SPIRV_TOOLS_SRC ${SPIRV_TOOLS}/source/opt/*.cpp
                           ${SPIRV_TOOLS}/source/opt/*.h
                           ${SPIRV_TOOLS}/source/reduce/*.cpp
-                          ${SPIRV_TOOLS}/source/reduce/*.h)
+                          ${SPIRV_TOOLS}/source/reduce/*.h
+                          ${SPIRV_TOOLS}/source/val/*.cpp
+                          ${SPIRV_TOOLS}/source/val/*.h)
 set(SPIRV_TOOLS_SRC ${SPIRV_TOOLS_SRC} ${SPIRV_TOOLS}/source/assembly_grammar.cpp
                                        ${SPIRV_TOOLS}/source/assembly_grammar.h
                                        ${SPIRV_TOOLS}/source/binary.cpp
@@ -370,52 +372,7 @@ set(SPIRV_TOOLS_SRC ${SPIRV_TOOLS_SRC} ${SPIRV_TOOLS}/source/assembly_grammar.cp
                                        ${SPIRV_TOOLS}/source/util/parse_number.h
                                        ${SPIRV_TOOLS}/source/util/string_utils.cpp
                                        ${SPIRV_TOOLS}/source/util/string_utils.h
-                                       ${SPIRV_TOOLS}/source/util/timer.h
-                                       ${SPIRV_TOOLS}/source/val/basic_block.cpp
-                                       ${SPIRV_TOOLS}/source/val/construct.cpp
-                                       ${SPIRV_TOOLS}/source/val/decoration.h
-                                       ${SPIRV_TOOLS}/source/val/function.cpp
-                                       ${SPIRV_TOOLS}/source/val/instruction.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate.h
-                                       ${SPIRV_TOOLS}/source/val/validate_adjacency.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_annotation.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_arithmetics.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_atomics.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_barriers.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_bitwise.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_builtins.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_capability.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_cfg.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_composites.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_constants.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_conversion.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_debug.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_decorations.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_derivatives.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_execution_limitations.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_extensions.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_function.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_id.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_image.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_instruction.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_interfaces.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_layout.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_literals.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_logicals.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_memory.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_memory_semantics.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_mesh_shading.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_misc.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_mode_setting.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_non_uniform.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_primitives.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_ray_query.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_ray_tracing.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_scopes.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_small_type_uses.cpp
-                                       ${SPIRV_TOOLS}/source/val/validate_type.cpp
-                                       ${SPIRV_TOOLS}/source/val/validation_state.cpp)
+                                       ${SPIRV_TOOLS}/source/util/timer.h)
 add_library(spirv-opt STATIC ${SPIRV_TOOLS_SRC})
 target_compile_features(spirv-opt PRIVATE cxx_std_14)
 target_include_directories(spirv-opt PRIVATE ${SPIRV_TOOLS})
