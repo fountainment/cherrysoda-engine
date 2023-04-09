@@ -487,6 +487,15 @@ public:
 		// only when the bug is present.
 		bool check_discarded_frag_stores = false;
 
+		// If set, Lod operands to OpImageSample*DrefExplicitLod for 1D and 2D array images
+		// will be implemented using a gradient instead of passing the level operand directly.
+		// Some Metal devices have a bug where the level() argument to depth2d_array<T>::sample_compare()
+		// in a fragment shader is biased by some unknown amount, possibly dependent on the
+		// partial derivatives of the texture coordinates. This is a workaround that is only
+		// expected to be needed until the bug is fixed in Metal; it is provided as an option
+		// so it can be enabled only when the bug is present.
+		bool sample_dref_lod_array_as_grad = false;
+
 		bool is_ios() const
 		{
 			return platform == iOS;
@@ -864,7 +873,7 @@ protected:
 	bool is_non_native_row_major_matrix(uint32_t id) override;
 	bool member_is_non_native_row_major_matrix(const SPIRType &type, uint32_t index) override;
 	std::string convert_row_major_matrix(std::string exp_str, const SPIRType &exp_type, uint32_t physical_type_id,
-	                                     bool is_packed) override;
+	                                     bool is_packed, bool relaxed) override;
 
 	bool is_tesc_shader() const;
 	bool is_tese_shader() const;

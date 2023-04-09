@@ -675,6 +675,7 @@ struct CLIArguments
 	bool msl_force_sample_rate_shading = false;
 	bool msl_manual_helper_invocation_updates = true;
 	bool msl_check_discarded_frag_stores = false;
+	bool msl_sample_dref_lod_array_as_grad = false;
 	const char *msl_combined_sampler_suffix = nullptr;
 	bool glsl_emit_push_constant_as_ubo = false;
 	bool glsl_emit_ubo_as_plain_uniforms = false;
@@ -859,7 +860,7 @@ static void print_help_msl()
 	                "\t[--msl-domain-lower-left]:\n\t\tUse a lower-left tessellation domain.\n"
 	                "\t[--msl-argument-buffers]:\n\t\tEmit Metal argument buffers instead of discrete resource bindings.\n"
 	                "\t\tRequires MSL 2.0 to be enabled.\n"
-	                "\t[--msl-argument-buffers-tier]:\n\t\tWhen using Metal argument buffers, indicate the Metal argument buffer tier level supported by the Metal platform.\n"
+	                "\t[--msl-argument-buffer-tier]:\n\t\tWhen using Metal argument buffers, indicate the Metal argument buffer tier level supported by the Metal platform.\n"
 	                "\t\tUses same values as Metal MTLArgumentBuffersTier enumeration (0 = Tier1, 1 = Tier2).\n"
 	                "\t\tSetting this value also enables msl-argument-buffers.\n"
 	                "\t[--msl-texture-buffer-native]:\n\t\tEnable native support for texel buffers. Otherwise, it is emulated as a normal texture.\n"
@@ -947,6 +948,10 @@ static void print_help_msl()
 	                "\t\tSome Metal devices have a bug where stores to resources from a fragment shader\n"
 	                "\t\tcontinue to execute, even when the fragment is discarded. These checks\n"
 	                "\t\tprevent these stores from executing.\n"
+	                "\t[--msl-sample-dref-lod-array-as-grad]:\n\t\tUse a gradient instead of a level argument.\n"
+	                "\t\tSome Metal devices have a bug where the level() argument to\n"
+	                "\t\tdepth2d_array<T>::sample_compare() in a fragment shader is biased by some\n"
+	                "\t\tunknown amount. This prevents the bias from being added.\n"
 	                "\t[--msl-combined-sampler-suffix <suffix>]:\n\t\tUses a custom suffix for combined samplers.\n");
 	// clang-format on
 }
@@ -1221,6 +1226,7 @@ static string compile_iteration(const CLIArguments &args, std::vector<uint32_t> 
 		msl_opts.force_sample_rate_shading = args.msl_force_sample_rate_shading;
 		msl_opts.manual_helper_invocation_updates = args.msl_manual_helper_invocation_updates;
 		msl_opts.check_discarded_frag_stores = args.msl_check_discarded_frag_stores;
+		msl_opts.sample_dref_lod_array_as_grad = args.msl_sample_dref_lod_array_as_grad;
 		msl_opts.ios_support_base_vertex_instance = true;
 		msl_comp->set_msl_options(msl_opts);
 		for (auto &v : args.msl_discrete_descriptor_sets)
@@ -1774,6 +1780,8 @@ static int main_inner(int argc, char *argv[])
 	cbs.add("--msl-no-manual-helper-invocation-updates",
 	        [&args](CLIParser &) { args.msl_manual_helper_invocation_updates = false; });
 	cbs.add("--msl-check-discarded-frag-stores", [&args](CLIParser &) { args.msl_check_discarded_frag_stores = true; });
+	cbs.add("--msl-sample-dref-lod-array-as-grad",
+	        [&args](CLIParser &) { args.msl_sample_dref_lod_array_as_grad = true; });
 	cbs.add("--msl-combined-sampler-suffix", [&args](CLIParser &parser) {
 		args.msl_combined_sampler_suffix = parser.next_string();
 	});
