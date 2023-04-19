@@ -11,29 +11,88 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
       }
     },
     {
-      "name": "debug",
+      "name": "windows-base",
       "inherits": "base",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "unix-base",
+      "inherits": "base",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      },
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "debug",
+      "inherits": "windows-base",
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
     },
     {
-      "name": "release",
-      "inherits": "base",
+      "name": "windows-release",
+      "displayName": "release",
+      "inherits": "windows-base",
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
     },
     {
-      "name": "profile",
-      "inherits": "base",
+      "name": "windows-profile",
+      "displayName": "profile",
+      "inherits": "windows-base",
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Profile" }
     },
     {
-      "name": "shaderc",
-      "inherits": "base",
+      "name": "unix-debug",
+      "displayName": "debug",
+      "inherits": "unix-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "unix-release",
+      "displayName": "release",
+      "inherits": "unix-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "unix-profile",
+      "displayName": "profile",
+      "inherits": "unix-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Profile" }
+    },
+    {
+      "name": "windows-shaderc",
+      "displayName": "shaderc",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CHERRYSODA_BUILD_SHADERC": "1",
+        "CHERRYSODA_LIGHT_BUILD": "1",
+        "CHERRYSODA_BUILD_TOOLS": "0"
+      }
+    },
+    {
+      "name": "unix-shaderc",
+      "displayName": "shaderc",
+      "inherits": "unix-base",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CHERRYSODA_BUILD_SHADERC": "1",

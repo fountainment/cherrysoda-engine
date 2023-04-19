@@ -17,7 +17,7 @@ option(CHERRYSODA_BUILD_EXAMPLES   "Build examples"            ON)
 option(CHERRYSODA_BUILD_PLAYGROUND "Build playground projects" ON)
 option(CHERRYSODA_BUILD_BENCH      "Build benchmark projects"  ON)
 option(CHERRYSODA_BUILD_TESTS      "Build tests"               ON)
-option(CHERRYSODA_USE_SSE2         "Enable SSE2 SIMD"          ON)
+option(CHERRYSODA_USE_SSE2         "Enable SSE2 SIMD"          OFF)
 
 option(ENABLE_LTO "Enable link time optimization" ON)
 
