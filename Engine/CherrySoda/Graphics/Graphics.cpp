@@ -165,9 +165,9 @@ void init()
 
 void termiate()
 {
-	BX_DELETE(g_allocator, s_fileReader);
+	bx::deleteObject(g_allocator, s_fileReader);
 	s_fileReader = nullptr;
-	BX_DELETE(g_allocator, s_fileWriter);
+	bx::deleteObject(g_allocator, s_fileWriter);
 	s_fileWriter = nullptr;
 }
 
@@ -322,7 +322,7 @@ void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _fi
 {
 	if (bx::open(_reader, _filePath) ) {
 		uint32_t size = (uint32_t)bx::getSize(_reader);
-		void* data = BX_ALLOC(_allocator, size);
+		void* data = bx::alloc(_allocator, size);
 		bx::read(_reader, data, size, bx::ErrorAssert{});
 		bx::close(_reader);
 		if (NULL != _size) {
@@ -348,7 +348,7 @@ void* load(const char* _filePath, uint32_t* _size)
 
 void unload(void* _ptr)
 {
-	BX_FREE(entry::getAllocator(), _ptr);
+	bx::free(entry::getAllocator(), _ptr);
 }
 
 static void imageReleaseCb(void* _ptr, void* _userData)

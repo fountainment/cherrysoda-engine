@@ -1572,6 +1572,7 @@ bool ValidationState_t::IsValidStorageClass(
       case spv::StorageClass::ShaderRecordBufferKHR:
       case spv::StorageClass::TaskPayloadWorkgroupEXT:
       case spv::StorageClass::HitObjectAttributeNV:
+      case spv::StorageClass::TileImageEXT:
         return true;
       default:
         return false;
@@ -2179,6 +2180,10 @@ std::string ValidationState_t::VkErrorID(uint32_t id,
       return VUID_WRAP(VUID-StandaloneSpirv-Component-07703);
     case 7951:
       return VUID_WRAP(VUID-StandaloneSpirv-SubgroupVoteKHR-07951);
+    case 8721:
+      return VUID_WRAP(VUID-StandaloneSpirv-OpEntryPoint-08721);
+    case 8722:
+      return VUID_WRAP(VUID-StandaloneSpirv-OpEntryPoint-08722);
     default:
       return "";  // unknown id
   }
