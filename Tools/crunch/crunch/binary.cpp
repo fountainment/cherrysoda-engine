@@ -26,6 +26,7 @@
 
 #include "binary.hpp"
 #include <iostream>
+#include <cstdint>
 
 void WriteString(ofstream& bin, const string& value)
 {
@@ -34,8 +35,8 @@ void WriteString(ofstream& bin, const string& value)
 
 void WriteShort(ofstream& bin, int16_t value)
 {
-    bin.put(static_cast<uint8_t>(value & 0xff));
-    bin.put(static_cast<uint8_t>((value >> 8) & 0xff));
+    bin.put(static_cast<std::uint8_t>(value & 0xff));
+    bin.put(static_cast<std::uint8_t>((value >> 8) & 0xff));
 }
 
 void WriteByte(ofstream& bin, char value)
