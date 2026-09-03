@@ -314,7 +314,8 @@ void ParticleEditor::Initialize()
 	io.Fonts->AddFontDefault();
 	ImFontConfig config;
 	config.MergeMode = true;
-	io.Fonts->AddFontFromMemoryCompressedTTF(vowaon_compressed_data, vowaon_compressed_size, 13.f, &config, io.Fonts->GetGlyphRangesChineseFull());
+	// 0.0f = implicit font size, required by imgui 1.92+ when merging into the implicit-sized default font
+	io.Fonts->AddFontFromMemoryCompressedTTF(vowaon_compressed_data, vowaon_compressed_size, 0.f, &config, io.Fonts->GetGlyphRangesChineseFull());
 	GUI::BuildFontTexture();
 
 	auto scene = new Scene();

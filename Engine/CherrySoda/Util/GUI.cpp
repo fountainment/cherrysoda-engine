@@ -506,7 +506,7 @@ void GUI::Render()
 				clipRect.z = (cmd->ClipRect.z - clipOff.x) * clipScale.x;
 				clipRect.w = (cmd->ClipRect.w - clipOff.y) * clipScale.y;
 				Graphics::SetScissor((int)clipRect.x, (int)(clipRect.y), (int)(clipRect.z - clipRect.x), (int)(clipRect.w - clipRect.y));
-				Graphics::SetTexture((Texture*)cmd->TextureId);
+				Graphics::SetTexture((Texture*)cmd->GetTexID());
 				Graphics::SetTransientVertexBuffer(vb);
 				Graphics::SetTransientIndexBuffer(ib, cmd->IdxOffset, cmd->ElemCount);
 				Graphics::SetStateNoDepth(Graphics::BlendFunction::Alpha);
@@ -522,11 +522,10 @@ void GUI::BuildFontTexture()
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* data;
 	int width, height;
-	io.Fonts->ClearTexData();
 	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
 	ms_fontTexture.Dispose();
 	ms_fontTexture = Texture2D::FromRGBA(data, width, height);
-	io.Fonts->TexID = (ImTextureID)(&ms_fontTexture);
+	io.Fonts->SetTexID((ImTextureID)(&ms_fontTexture));
 }
 
 void GUI::TextInput(const char* text)
