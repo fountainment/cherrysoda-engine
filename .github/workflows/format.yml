@@ -1,0 +1,33 @@
+name: Format
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install clang-format 23
+      # Pinned to the LLVM version the one-shot reformat was produced with;
+      # bump together with .clang-format when re-validating locally.
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 23
+        sudo apt-get install -y clang-format-23
+        clang-format-23 --version
+
+    - name: Check formatting
+      run: |
+        files=$({ find Engine Examples Playground Bench Tests -name '*.h' -o -name '*.cpp'; find Tools -name '*.h' -o -name '*.cpp'; } \
+          | grep -vE 'embedded_shaders|Tools/bin/|Tools/crunch/|Tools/sfxr_port/src/sfxr/')
+        # Empty list means the find scope broke — fail loudly instead of passing vacuously.
+        [ -n "$files" ]
+        echo "$files" | wc -l
+        echo "$files" | xargs clang-format-23 --dry-run --Werror

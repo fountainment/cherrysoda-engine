@@ -1,4 +1,4 @@
-name: Linux
+name: Sanitizer
 
 on: [push, pull_request]
 
@@ -7,12 +7,11 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
-  build:
+  asan-ubsan:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        build_type: [Debug, Release, Profile]
+    env:
+      SAN_FLAGS: -fsanitize=address,undefined -fno-omit-frame-pointer
 
     steps:
     - uses: actions/checkout@v4
@@ -28,14 +27,23 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      # Debug keeps Tracy out of the build (LSan chokes on Tracy's process-level allocators).
+      run: >
+        cmake $GITHUB_WORKSPACE
+        -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        -DCMAKE_C_FLAGS="$SAN_FLAGS" -DCMAKE_CXX_FLAGS="$SAN_FLAGS"
+        -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
 
     - name: Build
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake --build . --config ${{ matrix.build_type }} --parallel 10
+      run: cmake --build . --parallel 10
 
     - name: Test
       shell: bash
       working-directory: ${{github.workspace}}/build/Tests
-      run: TRACY_NO_INVARIANT_CHECK=1 ./AllTests
+      run: >
+        TRACY_NO_INVARIANT_CHECK=1
+        UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+        ./AllTests

@@ -2,6 +2,10 @@ name: MacOS
 
 on: [push, pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 jobs:
   build:
     runs-on: macos-latest
@@ -11,7 +15,7 @@ jobs:
         build_type: [Debug, Release, Profile]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build

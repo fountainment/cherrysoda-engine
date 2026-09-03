@@ -2,6 +2,10 @@ name: Emscripten-Windows
 
 on: [push, pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 env:
   BUILD_TYPE: Release
 
@@ -10,7 +14,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
