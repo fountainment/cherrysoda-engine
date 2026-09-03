@@ -285,7 +285,7 @@ public:
 	public:
 		bool Check() const override { return MInput::Mouse()->CheckLeftButton(); }
 		bool Pressed() const override { return MInput::Mouse()->PressedLeftButton(); }
-		bool Released() const override { return MInput::Mouse()->RleasedLeftButton(); }
+		bool Released() const override { return MInput::Mouse()->ReleasedLeftButton(); }
 	};
 
 	class MouseRightButton : public Node
@@ -293,7 +293,7 @@ public:
 	public:
 		bool Check() const override { return MInput::Mouse()->CheckRightButton(); }
 		bool Pressed() const override { return MInput::Mouse()->PressedRightButton(); }
-		bool Released() const override { return MInput::Mouse()->RleasedRightButton(); }
+		bool Released() const override { return MInput::Mouse()->ReleasedRightButton(); }
 	};
 
 	class MouseMiddleButton : public Node
@@ -301,7 +301,7 @@ public:
 	public:
 		bool Check() const override { return MInput::Mouse()->CheckMiddleButton(); }
 		bool Pressed() const override { return MInput::Mouse()->PressedMiddleButton(); }
-		bool Released() const override { return MInput::Mouse()->RleasedMiddleButton(); }
+		bool Released() const override { return MInput::Mouse()->ReleasedMiddleButton(); }
 	};
 
 	// Threshold triggers over other virtual inputs; the pointed-to virtual

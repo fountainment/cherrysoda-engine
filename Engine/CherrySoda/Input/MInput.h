@@ -777,17 +777,17 @@ public:
 				   m_previousState.m_middleButton == ButtonState::Released;
 		}
 
-		bool RleasedLeftButton() const
+		bool ReleasedLeftButton() const
 		{
 			return m_currentState.m_leftButton == ButtonState::Released &&
 				   m_previousState.m_leftButton == ButtonState::Pressed;
 		}
-		bool RleasedRightButton() const
+		bool ReleasedRightButton() const
 		{
 			return m_currentState.m_rightButton == ButtonState::Released &&
 				   m_previousState.m_rightButton == ButtonState::Pressed;
 		}
-		bool RleasedMiddleButton() const
+		bool ReleasedMiddleButton() const
 		{
 			return m_currentState.m_middleButton == ButtonState::Released &&
 				   m_previousState.m_middleButton == ButtonState::Pressed;

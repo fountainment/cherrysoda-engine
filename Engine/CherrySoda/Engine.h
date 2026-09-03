@@ -58,7 +58,7 @@ public:
 	inline float DeltaTime() const { return static_cast<float>(m_deltaTime); }
 	inline double TimeRate() const { return m_timeRate; }
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
-	inline int FPS() { return m_FPS; }
+	inline int FPS() { return m_fps; }
 	inline bool ConsoleOpened() { return m_consoleOpened; }
 	inline void OpenConsole() { m_consoleOpened = true; }
 	inline void CloseConsole() { m_consoleOpened = false; }
@@ -148,7 +148,7 @@ private:
 	double m_lastFrameTime = 0.0;
 	double m_counterElapsed = 0.0;
 	int m_fpsCounter = 0;
-	int m_FPS = 0;
+	int m_fps = 0;
 
 	// graphics
 	Graphics* m_graphicsDevice = nullptr;

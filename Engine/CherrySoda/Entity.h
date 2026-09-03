@@ -130,7 +130,7 @@ public:
 		if (m_onRemoved == nullptr) m_onRemoved = Entity::CleanAndDeleteEntity;
 	}
 	void AutoDeleteAllInsideWhenRemoved();
-	void CancleAutoDelete() { m_onRemoved = nullptr; }
+	void CancelAutoDelete() { m_onRemoved = nullptr; }
 
 	void Depth(int depth);
 	inline int Depth() const { return m_depth; }

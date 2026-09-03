@@ -23,7 +23,7 @@ public:
 		inline void SetPan(double pan) { Audio::SetPan(*this, pan); }
 		inline void SetLoop(bool loop) { Audio::SetLoop(*this, loop); }
 		inline bool IsPlaying() { return Audio::IsPlaying(*this); }
-		inline bool IPaused() { return Audio::IsPaused(*this); }
+		inline bool IsPaused() { return Audio::IsPaused(*this); }
 		inline bool IsStopped() { return Audio::IsStopped(*this); }
 		inline void Play() { Audio::Resume(*this); }
 		inline void Pause() { Audio::Pause(*this); }

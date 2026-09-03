@@ -15,9 +15,7 @@ class CollidableComponent : public Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(CollidableComponent, Component);
 
-	CollidableComponent(bool active, bool visible, bool colllidable) : base(active, visible), m_collidable(colllidable)
-	{
-	}
+	CollidableComponent(bool active, bool visible, bool collidable) : base(active, visible), m_collidable(collidable) {}
 
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Collidable, m_collidable);
 

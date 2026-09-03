@@ -58,7 +58,7 @@ void Coroutine::Update()
 
 void Coroutine::Removed(Entity* entity)
 {
-	CancleAutoDelete();
+	CancelAutoDelete();
 	base::Removed(entity);
 	STL::Push(ms_cached, this);
 }

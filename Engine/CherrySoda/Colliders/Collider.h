@@ -92,7 +92,7 @@ public:
 	{
 		if (m_onRemoved == nullptr) m_onRemoved = Collider::DeleteCollider;
 	}
-	void CancleAutoDelete() { m_onRemoved = nullptr; }
+	void CancelAutoDelete() { m_onRemoved = nullptr; }
 
 private:
 	CHERRYSODA_FRIEND_CLASS_POOL;

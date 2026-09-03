@@ -65,7 +65,7 @@ public:
 		if (m_onRemoved == nullptr) m_onRemoved = Component::DeleteComponent;
 	}
 	inline bool AutoDeleteEnabled() const { return m_onRemoved != nullptr; }
-	void CancleAutoDelete() { m_onRemoved = nullptr; }
+	void CancelAutoDelete() { m_onRemoved = nullptr; }
 
 	template<class T> inline T* GetSceneAs() { return static_cast<T*>(GetScene()); }
 
@@ -85,8 +85,8 @@ private:
 	Entity* m_entity = nullptr;
 	STL::Action<Component*, Entity*> m_onRemoved = nullptr;
 
-	bool m_active;
-	bool m_visible;
+	bool m_active = true;
+	bool m_visible = true;
 };
 
 } // namespace cherrysoda
