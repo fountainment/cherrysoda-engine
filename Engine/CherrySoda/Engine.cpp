@@ -175,6 +175,14 @@ void Engine::Run(int argc /* = 0*/, char* argv[] /* = {}*/)
 		Update();
 		Draw();
 
+#ifdef SDL_PLATFORM_MACOS
+		// bgfx's Metal backend skips presenting to hidden (occluded) windows, so
+		// unlike on Windows the pre-rendered frame above never reaches the
+		// CAMetalLayer; tint it with the clear color so the window doesn't flash
+		// the default white NSWindow background before the first real present.
+		m_window->SetOpaqueNativeBackground(GetClearColor());
+#endif
+
 		m_window->Show();
 		Draw();
 	}

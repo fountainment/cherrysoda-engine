@@ -4,6 +4,11 @@ project(CherrySoda VERSION 0.2.3
                    DESCRIPTION "A C++ Game Engine Based on BGFX and SDL3"
                    LANGUAGES C CXX)
 
+# Objective-C++ for macOS-specific engine sources (e.g. WindowMacOS.mm)
+if(APPLE)
+  enable_language(OBJCXX)
+endif()
+
 option(CHERRYSODA_BUILD_TOOLS      "Build tools"               ON)
 option(CHERRYSODA_BUILD_SHADERC    "Build shaderc"             OFF)
 option(CHERRYSODA_LIGHT_BUILD      "Build only necessaries"    OFF)

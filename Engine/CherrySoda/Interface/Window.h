@@ -45,6 +45,9 @@ private:
 	void Hide();
 	void Show();
 
+	// Defined in WindowMacOS.mm (macOS builds only)
+	void SetOpaqueNativeBackground(const Color& color);
+
 	static void ShowCursor(bool show);
 	static void SetCursor(CursorTypes cursor);
 	static void InitializeCursor();

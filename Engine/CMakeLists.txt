@@ -161,6 +161,10 @@ set(ENGINE_SRC
   CherrySoda/Util/XML.h
 )
 
+if(MACOSX)
+  list(APPEND ENGINE_SRC CherrySoda/Interface/WindowMacOS.mm)
+endif()
+
 set(EMBEDDED_SHADER_SRC
   CherrySoda/Graphics/shaders/cherrysoda_uniforms.sh
   CherrySoda/Graphics/shaders/varying.def.sc
