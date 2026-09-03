@@ -63,9 +63,9 @@ namespace testing {
 // management as Cardinality objects can now be copied like plain values.
 
 // The implementation of a cardinality.
-class CardinalityInterface {
+class [[nodiscard]] CardinalityInterface {
  public:
-  virtual ~CardinalityInterface() {}
+  virtual ~CardinalityInterface() = default;
 
   // Conservative estimate on the lower/upper bound of the number of
   // calls allowed.
@@ -88,11 +88,11 @@ class CardinalityInterface {
 // object that specifies how many times a mock function is expected to
 // be called.  The implementation of Cardinality is just a std::shared_ptr
 // to const CardinalityInterface. Don't inherit from Cardinality!
-class GTEST_API_ Cardinality {
+class GTEST_API_ [[nodiscard]] Cardinality {
  public:
   // Constructs a null cardinality.  Needed for storing Cardinality
   // objects in STL containers.
-  Cardinality() {}
+  Cardinality() = default;
 
   // Constructs a Cardinality from its implementation.
   explicit Cardinality(const CardinalityInterface* impl) : impl_(impl) {}

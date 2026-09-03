@@ -32,19 +32,15 @@
 // This file verifies Google Test event listeners receive events at the
 // right times.
 
+#include <iterator>
+#include <string>
 #include <vector>
 
 #include "gtest/gtest.h"
 #include "gtest/internal/custom/gtest.h"
 
 using ::testing::AddGlobalTestEnvironment;
-using ::testing::Environment;
 using ::testing::InitGoogleTest;
-using ::testing::Test;
-using ::testing::TestEventListener;
-using ::testing::TestInfo;
-using ::testing::TestPartResult;
-using ::testing::TestSuite;
 using ::testing::UnitTest;
 
 // Used by tests to register their events.
@@ -278,7 +274,7 @@ int main(int argc, char** argv) {
 
   AddGlobalTestEnvironment(new EnvironmentInvocationCatcher);
 
-  GTEST_CHECK_(events.size() == 0)
+  GTEST_CHECK_(events.empty())
       << "AddGlobalTestEnvironment should not generate any events itself.";
 
   GTEST_FLAG_SET(repeat, 2);
@@ -503,8 +499,7 @@ int main(int argc, char** argv) {
                                          "1st.OnTestProgramEnd"};
 #endif  // GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 
-  VerifyResults(events, expected_events,
-                sizeof(expected_events) / sizeof(expected_events[0]));
+  VerifyResults(events, expected_events, std::size(expected_events));
 
   // We need to check manually for ad hoc test failures that happen after
   // RUN_ALL_TESTS finishes.

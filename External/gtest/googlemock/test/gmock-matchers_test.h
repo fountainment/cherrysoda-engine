@@ -123,8 +123,7 @@ struct GtestGreaterThanMatcher {
 };
 
 template <typename T>
-GtestGreaterThanMatcher<typename std::decay<T>::type> GtestGreaterThan(
-    T&& rhs) {
+GtestGreaterThanMatcher<std::decay_t<T>> GtestGreaterThan(T&& rhs) {
   return {rhs};
 }
 
@@ -148,9 +147,9 @@ class GreaterThanMatcher : public MatcherInterface<T> {
 };
 
 // Names and instantiates a new instance of GTestMatcherTestP.
-#define INSTANTIATE_GTEST_MATCHER_TEST_P(TestSuite)                         \
-  using TestSuite##P = GTestMatcherTestP;                                   \
-  INSTANTIATE_TEST_SUITE_P(MatcherInterface, TestSuite##P, Values(false));  \
+#define INSTANTIATE_GTEST_MATCHER_TEST_P(TestSuite)                        \
+  using TestSuite##P = GTestMatcherTestP;                                  \
+  INSTANTIATE_TEST_SUITE_P(MatcherInterface, TestSuite##P, Values(false)); \
   INSTANTIATE_TEST_SUITE_P(GtestMatcher, TestSuite##P, Values(true))
 
 class GTestMatcherTestP : public testing::TestWithParam<bool> {

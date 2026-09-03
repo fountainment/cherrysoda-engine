@@ -71,11 +71,11 @@
 
 namespace testing {
 template <class MockClass>
-class NiceMock;
+class [[nodiscard]] NiceMock;
 template <class MockClass>
-class NaggyMock;
+class [[nodiscard]] NaggyMock;
 template <class MockClass>
-class StrictMock;
+class [[nodiscard]] StrictMock;
 
 namespace internal {
 template <typename T>
@@ -98,7 +98,7 @@ constexpr bool HasStrictnessModifier() {
 // deregistration. This guarantees that MockClass's constructor and destructor
 // run with the same level of strictness as its instance methods.
 
-#if GTEST_OS_WINDOWS && !GTEST_OS_WINDOWS_MINGW && \
+#if defined(GTEST_OS_WINDOWS) && !defined(GTEST_OS_WINDOWS_MINGW) && \
     (defined(_MSC_VER) || defined(__clang__))
 // We need to mark these classes with this declspec to ensure that
 // the empty base class optimization is performed.
@@ -108,7 +108,7 @@ constexpr bool HasStrictnessModifier() {
 #endif
 
 template <typename Base>
-class NiceMockImpl {
+class [[nodiscard]] NiceMockImpl {
  public:
   NiceMockImpl() {
     ::testing::Mock::AllowUninterestingCalls(reinterpret_cast<uintptr_t>(this));
@@ -120,7 +120,7 @@ class NiceMockImpl {
 };
 
 template <typename Base>
-class NaggyMockImpl {
+class [[nodiscard]] NaggyMockImpl {
  public:
   NaggyMockImpl() {
     ::testing::Mock::WarnUninterestingCalls(reinterpret_cast<uintptr_t>(this));
@@ -132,7 +132,7 @@ class NaggyMockImpl {
 };
 
 template <typename Base>
-class StrictMockImpl {
+class [[nodiscard]] StrictMockImpl {
  public:
   StrictMockImpl() {
     ::testing::Mock::FailUninterestingCalls(reinterpret_cast<uintptr_t>(this));
@@ -146,7 +146,7 @@ class StrictMockImpl {
 }  // namespace internal
 
 template <class MockClass>
-class GTEST_INTERNAL_EMPTY_BASE_CLASS NiceMock
+class [[nodiscard]] GTEST_INTERNAL_EMPTY_BASE_CLASS NiceMock
     : private internal::NiceMockImpl<MockClass>,
       public MockClass {
  public:
@@ -187,7 +187,7 @@ class GTEST_INTERNAL_EMPTY_BASE_CLASS NiceMock
 };
 
 template <class MockClass>
-class GTEST_INTERNAL_EMPTY_BASE_CLASS NaggyMock
+class [[nodiscard]] GTEST_INTERNAL_EMPTY_BASE_CLASS NaggyMock
     : private internal::NaggyMockImpl<MockClass>,
       public MockClass {
   static_assert(!internal::HasStrictnessModifier<MockClass>(),
@@ -229,7 +229,7 @@ class GTEST_INTERNAL_EMPTY_BASE_CLASS NaggyMock
 };
 
 template <class MockClass>
-class GTEST_INTERNAL_EMPTY_BASE_CLASS StrictMock
+class [[nodiscard]] GTEST_INTERNAL_EMPTY_BASE_CLASS StrictMock
     : private internal::StrictMockImpl<MockClass>,
       public MockClass {
  public:

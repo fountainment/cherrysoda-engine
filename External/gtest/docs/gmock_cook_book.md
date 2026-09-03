@@ -177,7 +177,7 @@ class StackInterface {
 template <typename Elem>
 class MockStack : public StackInterface<Elem> {
   ...
-  MOCK_METHOD(int, GetSize, (), (override));
+  MOCK_METHOD(int, GetSize, (), (const, override));
   MOCK_METHOD(void, Push, (const Elem& x), (override));
 };
 ```
@@ -284,6 +284,10 @@ syntactic overhead will be much lower.
 If you are concerned about the performance overhead incurred by virtual
 functions, and profiling confirms your concern, you can combine this with the
 recipe for [mocking non-virtual methods](#MockingNonVirtualMethods).
+
+Alternatively, instead of introducing a new interface, you can rewrite your code
+to accept a std::function instead of the free function, and then use
+[MockFunction](#MockFunction) to mock the std::function.
 
 ### Old-Style `MOCK_METHODn` Macros
 
@@ -693,9 +697,9 @@ TEST(AbcTest, Xyz) {
   EXPECT_CALL(foo, DoThat(_, _));
 
   int n = 0;
-  EXPECT_EQ('+', foo.DoThis(5));  // FakeFoo::DoThis() is invoked.
+  EXPECT_EQ(foo.DoThis(5), '+');  // FakeFoo::DoThis() is invoked.
   foo.DoThat("Hi", &n);  // FakeFoo::DoThat() is invoked.
-  EXPECT_EQ(2, n);
+  EXPECT_EQ(n, 2);
 }
 ```
 
@@ -896,15 +900,16 @@ using ::testing::Not;
 
 Matchers are function objects, and parametrized matchers can be composed just
 like any other function. However because their types can be long and rarely
-provide meaningful information, it can be easier to express them with C++14
-generic lambdas to avoid specifying types. For example,
+provide meaningful information, it can be easier to express them with template
+parameters and `auto`. For example,
 
 ```cpp
 using ::testing::Contains;
 using ::testing::Property;
 
-inline constexpr auto HasFoo = [](const auto& f) {
-  return Property(&MyClass::foo, Contains(f));
+template <typename SubMatcher>
+inline constexpr auto HasFoo(const SubMatcher& sub_matcher) {
+  return Property("foo", &MyClass::foo, Contains(sub_matcher));
 };
 ...
   EXPECT_THAT(x, HasFoo("blah"));
@@ -932,8 +937,8 @@ casts a matcher `m` to type `Matcher<T>`. To ensure safety, gMock checks that
     floating-point numbers), the conversion from `T` to `U` is not lossy (in
     other words, any value representable by `T` can also be represented by `U`);
     and
-3.  When `U` is a reference, `T` must also be a reference (as the underlying
-    matcher may be interested in the address of the `U` value).
+3.  When `U` is a non-const reference, `T` must also be a reference (as the
+    underlying matcher may be interested in the address of the `U` value).
 
 The code won't compile if any of these conditions isn't met.
 
@@ -1125,11 +1130,11 @@ using STL's `<functional>` header is just painful). For example, here's a
 predicate that's satisfied by any number that is >= 0, <= 100, and != 50:
 
 ```cpp
-using testing::AllOf;
-using testing::Ge;
-using testing::Le;
-using testing::Matches;
-using testing::Ne;
+using ::testing::AllOf;
+using ::testing::Ge;
+using ::testing::Le;
+using ::testing::Matches;
+using ::testing::Ne;
 ...
 Matches(AllOf(Ge(0), Le(100), Ne(50)))
 ```
@@ -1158,7 +1163,7 @@ int IsEven(int n) { return (n % 2) == 0 ? 1 : 0; }
 ```
 
 Note that the predicate function / functor doesn't have to return `bool`. It
-works as long as the return value can be used as the condition in in statement
+works as long as the return value can be used as the condition in the statement
 `if (condition) ...`.
 
 ### Matching Arguments that Are Not Copyable
@@ -1345,7 +1350,7 @@ class BarPlusBazEqMatcher {
 
 ...
   Foo foo;
-  EXPECT_CALL(foo, BarPlusBazEq(5))...;
+  EXPECT_THAT(foo, BarPlusBazEq(5))...;
 ```
 
 ### Matching Containers
@@ -1857,7 +1862,7 @@ error. So, what shall you do?
 Though you may be tempted, DO NOT use `std::ref()`:
 
 ```cpp
-using testing::Return;
+using ::testing::Return;
 
 class MockFoo : public Foo {
  public:
@@ -1869,7 +1874,7 @@ class MockFoo : public Foo {
   EXPECT_CALL(foo, GetValue())
       .WillRepeatedly(Return(std::ref(x)));  // Wrong!
   x = 42;
-  EXPECT_EQ(42, foo.GetValue());
+  EXPECT_EQ(foo.GetValue(), 42);
 ```
 
 Unfortunately, it doesn't work here. The above code will fail with error:
@@ -1891,20 +1896,20 @@ the expectation is set, and `Return(std::ref(x))` will always return 0.
 returns the value pointed to by `pointer` at the time the action is *executed*:
 
 ```cpp
-using testing::ReturnPointee;
+using ::testing::ReturnPointee;
 ...
   int x = 0;
   MockFoo foo;
   EXPECT_CALL(foo, GetValue())
       .WillRepeatedly(ReturnPointee(&x));  // Note the & here.
   x = 42;
-  EXPECT_EQ(42, foo.GetValue());  // This will succeed now.
+  EXPECT_EQ(foo.GetValue(), 42);  // This will succeed now.
 ```
 
 ### Combining Actions
 
 Want to do more than one thing when a function is called? That's fine. `DoAll()`
-allow you to do sequence of actions every time. Only the return value of the
+allows you to do a sequence of actions every time. Only the return value of the
 last action in the sequence will be used.
 
 ```cpp
@@ -1922,6 +1927,12 @@ class MockFoo : public Foo {
                       ...
                       action_n));
 ```
+
+The return value of the last action **must** match the return type of the mocked
+method. In the example above, `action_n` could be `Return(true)`, or a lambda
+that returns a `bool`, but not `SaveArg`, which returns `void`. Otherwise the
+signature of `DoAll` would not match the signature expected by `WillOnce`, which
+is the signature of the mocked method, and it wouldn't compile.
 
 ### Verifying Complex Arguments {#SaveArgVerify}
 
@@ -2260,7 +2271,7 @@ TEST_F(FooTest, Test) {
 
   EXPECT_CALL(foo, DoThis(2))
       .WillOnce(Invoke(NewPermanentCallback(SignOfSum, 5)));
-  EXPECT_EQ('+', foo.DoThis(2));  // Invokes SignOfSum(5, 2).
+  EXPECT_EQ(foo.DoThis(2), '+');  // Invokes SignOfSum(5, 2).
 }
 ```
 
@@ -2636,8 +2647,8 @@ action will exhibit different behaviors. Example:
       .WillRepeatedly(IncrementCounter(0));
   foo.DoThis();  // Returns 1.
   foo.DoThis();  // Returns 2.
-  foo.DoThat();  // Returns 1 - Blah() uses a different
-                 // counter than Bar()'s.
+  foo.DoThat();  // Returns 1 - DoThat() uses a different
+                 // counter than DoThis()'s.
 ```
 
 versus
@@ -2767,36 +2778,33 @@ returns a null `unique_ptr`, that’s what you’ll get if you don’t specify a
 action:
 
 ```cpp
+using ::testing::IsNull;
+...
   // Use the default action.
   EXPECT_CALL(mock_buzzer_, MakeBuzz("hello"));
 
   // Triggers the previous EXPECT_CALL.
-  EXPECT_EQ(nullptr, mock_buzzer_.MakeBuzz("hello"));
+  EXPECT_THAT(mock_buzzer_.MakeBuzz("hello"), IsNull());
 ```
 
 If you are not happy with the default action, you can tweak it as usual; see
 [Setting Default Actions](#OnCall).
 
-If you just need to return a pre-defined move-only value, you can use the
-`Return(ByMove(...))` action:
+If you just need to return a move-only value, you can use it in combination with
+`WillOnce`. For example:
 
 ```cpp
-  // When this fires, the unique_ptr<> specified by ByMove(...) will
-  // be returned.
-  EXPECT_CALL(mock_buzzer_, MakeBuzz("world"))
-      .WillOnce(Return(ByMove(MakeUnique<Buzz>(AccessLevel::kInternal))));
-
-  EXPECT_NE(nullptr, mock_buzzer_.MakeBuzz("world"));
+  EXPECT_CALL(mock_buzzer_, MakeBuzz("hello"))
+      .WillOnce(Return(std::make_unique<Buzz>(AccessLevel::kInternal)));
+  EXPECT_NE(nullptr, mock_buzzer_.MakeBuzz("hello"));
 ```
 
-Note that `ByMove()` is essential here - if you drop it, the code won’t compile.
-
-Quiz time! What do you think will happen if a `Return(ByMove(...))` action is
-performed more than once (e.g. you write `...
-.WillRepeatedly(Return(ByMove(...)));`)? Come think of it, after the first time
-the action runs, the source value will be consumed (since it’s a move-only
-value), so the next time around, there’s no value to move from -- you’ll get a
-run-time error that `Return(ByMove(...))` can only be run once.
+Quiz time! What do you think will happen if a `Return` action is performed more
+than once (e.g. you write `... .WillRepeatedly(Return(std::move(...)));`)? Come
+think of it, after the first time the action runs, the source value will be
+consumed (since it’s a move-only value), so the next time around, there’s no
+value to move from -- you’ll get a run-time error that `Return(std::move(...))`
+can only be run once.
 
 If you need your mock method to do more than just moving a pre-defined value,
 remember that you can always use a lambda or a callable object, which can do
@@ -2805,7 +2813,7 @@ pretty much anything you want:
 ```cpp
   EXPECT_CALL(mock_buzzer_, MakeBuzz("x"))
       .WillRepeatedly([](StringPiece text) {
-        return MakeUnique<Buzz>(AccessLevel::kInternal);
+        return std::make_unique<Buzz>(AccessLevel::kInternal);
       });
 
   EXPECT_NE(nullptr, mock_buzzer_.MakeBuzz("x"));
@@ -2813,7 +2821,7 @@ pretty much anything you want:
 ```
 
 Every time this `EXPECT_CALL` fires, a new `unique_ptr<Buzz>` will be created
-and returned. You cannot do this with `Return(ByMove(...))`.
+and returned. You cannot do this with `Return(std::make_unique<...>(...))`.
 
 That covers returning move-only values; but how do we work with methods
 accepting move-only arguments? The answer is that they work normally, although
@@ -2824,7 +2832,7 @@ can always use `Return`, or a [lambda or functor](#FunctionsAsActions):
   using ::testing::Unused;
 
   EXPECT_CALL(mock_buzzer_, ShareBuzz(NotNull(), _)).WillOnce(Return(true));
-  EXPECT_TRUE(mock_buzzer_.ShareBuzz(MakeUnique<Buzz>(AccessLevel::kInternal)),
+  EXPECT_TRUE(mock_buzzer_.ShareBuzz(std::make_unique<Buzz>(AccessLevel::kInternal)),
               0);
 
   EXPECT_CALL(mock_buzzer_, ShareBuzz(_, _)).WillOnce(
@@ -2868,7 +2876,7 @@ method:
   // When one calls ShareBuzz() on the MockBuzzer like this, the call is
   // forwarded to DoShareBuzz(), which is mocked.  Therefore this statement
   // will trigger the above EXPECT_CALL.
-  mock_buzzer_.ShareBuzz(MakeUnique<Buzz>(AccessLevel::kInternal), 0);
+  mock_buzzer_.ShareBuzz(std::make_unique<Buzz>(AccessLevel::kInternal), 0);
 ```
 
 ### Making the Compilation Faster
@@ -3193,11 +3201,11 @@ You can unlock this power by running your test with the `--gmock_verbose=info`
 flag. For example, given the test program:
 
 ```cpp
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
-using testing::_;
-using testing::HasSubstr;
-using testing::Return;
+using ::testing::_;
+using ::testing::HasSubstr;
+using ::testing::Return;
 
 class MockFoo {
  public:
@@ -3305,7 +3313,7 @@ For convenience, we allow the description string to be empty (`""`), in which
 case gMock will use the sequence of words in the matcher name as the
 description.
 
-For example:
+#### Basic Example
 
 ```cpp
 MATCHER(IsDivisibleBy7, "") { return (arg % 7) == 0; }
@@ -3343,6 +3351,8 @@ If the above assertions fail, they will print something like:
 where the descriptions `"is divisible by 7"` and `"not (is divisible by 7)"` are
 automatically calculated from the matcher name `IsDivisibleBy7`.
 
+#### Adding Custom Failure Messages
+
 As you may have noticed, the auto-generated descriptions (especially those for
 the negation) may not be so great. You can always override them with a `string`
 expression of your own:
@@ -3376,21 +3386,84 @@ With this definition, the above assertion will give a better message:
     Actual: 27 (the remainder is 6)
 ```
 
+#### `MatchAndExplain`
+
 You should let `MatchAndExplain()` print *any additional information* that can
 help a user understand the match result. Note that it should explain why the
 match succeeds in case of a success (unless it's obvious) - this is useful when
 the matcher is used inside `Not()`. There is no need to print the argument value
 itself, as gMock already prints it for you.
 
-{: .callout .note}
-NOTE: The type of the value being matched (`arg_type`) is determined by the
-context in which you use the matcher and is supplied to you by the compiler, so
-you don't need to worry about declaring it (nor can you). This allows the
-matcher to be polymorphic. For example, `IsDivisibleBy7()` can be used to match
-any type where the value of `(arg % 7) == 0` can be implicitly converted to a
-`bool`. In the `Bar(IsDivisibleBy7())` example above, if method `Bar()` takes an
-`int`, `arg_type` will be `int`; if it takes an `unsigned long`, `arg_type` will
-be `unsigned long`; and so on.
+#### Argument Types
+
+The type of the value being matched (`arg_type`) is determined by the context in
+which you use the matcher and is supplied to you by the compiler, so you don't
+need to worry about declaring it (nor can you). This allows the matcher to be
+polymorphic. For example, `IsDivisibleBy7()` can be used to match any type where
+the value of `(arg % 7) == 0` can be implicitly converted to a `bool`. In the
+`Bar(IsDivisibleBy7())` example above, if method `Bar()` takes an `int`,
+`arg_type` will be `int`; if it takes an `unsigned long`, `arg_type` will be
+`unsigned long`; and so on.
+
+#### Anti-pattern: Using EXPECT_ Statements in Matchers
+
+Using `EXPECT_...` statements inside custom matcher definitions is an
+**anti-pattern** and should be avoided.
+
+While it might appear to write matchers more concisely and generate informative
+messages, this pattern has critical issues:
+
+1.  **Negation Breakage (`Not`):** If wrapped in `Not(IsDivisibleBy7())`,
+    evaluating it still triggers the internal `EXPECT_EQ`, registering a test
+    failure on the runner even when the overall assertion is expected to
+    succeed.
+2.  **Composition / Container Breakage (`AnyOf`, `AllOf`, `Contains`):** When
+    composed or used inside container matchers, elements that are expected
+    mismatches will trigger the internal `EXPECT_` and register spurious
+    failures.
+3.  **ASSERT_* compilation errors:** `ASSERT_*` macros use `return;` to abort
+    from a void function. Since matchers return `bool`, using `ASSERT_` inside
+    them triggers a compilation error.
+4.  **Purity Violations:** Matchers must be functionally pure (side-effect
+    free), whereas registering global failures is a major side effect.
+5.  **Line Number Confusion:** Failure reports point to the matcher's definition
+    line rather than the calling `EXPECT_THAT`
+    line.
+
+##### The Anti-Pattern
+
+```cpp
+// Anti-pattern: Do not do this!
+MATCHER(IsDivisibleBy7, "") {
+  const auto remainder = arg % 7;
+  EXPECT_EQ(remainder, 0);  // Spurious failures if negated/composed!
+  return true;
+}
+```
+
+##### The Correct Solution
+
+To write concise matchers that delegate to other matchers and safely propagate
+the mismatch explanation, use **`::testing::ExplainMatchResult`** instead,
+passing it the sub-matcher, the value to check, and the `result_listener`:
+
+```cpp
+MATCHER(IsDivisibleBy7, "") {
+  const auto remainder = arg % 7;
+  return ::testing::ExplainMatchResult(::testing::Eq(0), remainder,
+                                       result_listener);
+}
+```
+
+If you write a test that includes the line:
+
+```cpp
+EXPECT_THAT(28, Not(IsDivisibleBy7()));
+```
+
+it will correctly report the mismatch, properly point to the `EXPECT_THAT` line
+number, and support negation (`Not`) and composition (`AllOf`, `AnyOf`, etc.)
+without registering spurious failures.
 
 ### Writing New Parameterized Matchers Quickly
 
@@ -3529,12 +3602,17 @@ general leads to better compiler error messages that pay off in the long run.
 They also allow overloading matchers based on parameter types (as opposed to
 just based on the number of parameters).
 
-### Writing New Monomorphic Matchers
+### Writing New Monomorphic Matchers {#MonomorphicMatchers}
 
-A matcher of argument type `T` implements the matcher interface for `T` and does
-two things: it tests whether a value of type `T` matches the matcher, and can
-describe what kind of values it matches. The latter ability is used for
-generating readable error messages when expectations are violated.
+A matcher of type `testing::Matcher<T>` implements the matcher interface for `T`
+and does two things: it tests whether a value of type `T` matches the matcher,
+and can describe what kind of values it matches. The latter ability is used for
+generating readable error messages when expectations are violated. Some matchers
+can even explain why it matches or doesn't match a certain value, which can be
+helpful when the reason isn't obvious.
+
+Because a matcher of type `testing::Matcher<T>` for a particular type `T` can
+only be used to match a value of type `T`, we call it "monomorphic."
 
 A matcher of `T` must declare a typedef like:
 
@@ -3549,7 +3627,7 @@ and supports the following operations:
 bool matched = matcher.MatchAndExplain(value, maybe_os);
 // where `value` is of type `T` and
 // `maybe_os` is of type `std::ostream*`, where it can be null if the caller
-// is not interested in there textual explanation.
+// is not interested in the textual explanation.
 
 matcher.DescribeTo(os);
 matcher.DescribeNegationTo(os);
@@ -3624,10 +3702,18 @@ Expected: is divisible by 7
 Tip: for convenience, `MatchAndExplain()` can take a `MatchResultListener*`
 instead of `std::ostream*`.
 
-### Writing New Polymorphic Matchers
+### Writing New Polymorphic Matchers {#PolymorphicMatchers}
 
-Expanding what we learned above to *polymorphic* matchers is now just as simple
-as adding templates in the right place.
+Unlike a monomorphic matcher, which can only be used to match a value of a
+particular type, a *polymorphic* matcher is one that can be used to match values
+of multiple types. For example, `Eq(5)` is a polymorphic matcher as it can be
+used to match an `int`, a `double`, a `float`, and so on. You should think of a
+polymorphic matcher as a *matcher factory* as opposed to a
+`testing::Matcher<SomeType>` - itself is not an actual matcher, but can be
+implicitly converted to a `testing::Matcher<SomeType>` depending on the context.
+
+Expanding what we learned above to polymorphic matchers is now as simple as
+adding templates in the right place.
 
 ```cpp
 
@@ -3753,6 +3839,26 @@ virtual.
 Like in a monomorphic matcher, you may explain the match result by streaming
 additional information to the `listener` argument in `MatchAndExplain()`.
 
+### Implementing Composite Matchers {#CompositeMatchers}
+
+Sometimes we want to define a matcher that takes other matchers as parameters.
+For example, `DistanceFrom(target, m)` is a polymorphic matcher that takes a
+matcher `m` as a parameter. It tests that the distance from `target` to the
+value being matched satisfies sub-matcher `m`.
+
+If you are implementing such a composite matcher, you'll need to generate the
+description of the matcher based on the description(s) of its sub-matcher(s).
+You can see the implementation of `DistanceFrom()` in
+`googlemock/include/gmock/gmock-matchers.h` for an example. In particular, pay
+attention to `DistanceFromMatcherImpl`. Notice that it stores the sub-matcher as
+a `const Matcher<const Distance&> distance_matcher_` instead of a polymorphic
+matcher - this allows it to call `distance_matcher_.DescribeTo(os)` to describe
+the sub-matcher. If the sub-matcher is stored as a polymorphic matcher instead,
+it would not be possible to get its description as in general polymorphic
+matchers don't know how to describe themselves - they are matcher factories
+instead of actual matchers; only after being converted to `Matcher<SomeType>`
+can they be described.
+
 ### Writing New Cardinalities
 
 A cardinality is used in `Times()` to tell gMock how many times you expect a
@@ -3818,15 +3924,15 @@ If the built-in actions don't work for you, you can easily define your own one.
 All you need is a call operator with a signature compatible with the mocked
 function. So you can use a lambda:
 
-```
+```cpp
 MockFunction<int(int)> mock;
 EXPECT_CALL(mock, Call).WillOnce([](const int input) { return input * 7; });
-EXPECT_EQ(14, mock.AsStdFunction()(2));
+EXPECT_EQ(mock.AsStdFunction()(2), 14);
 ```
 
 Or a struct with a call operator (even a templated one):
 
-```
+```cpp
 struct MultiplyBy {
   template <typename T>
   T operator()(T arg) { return arg * multiplier; }
@@ -3841,16 +3947,16 @@ struct MultiplyBy {
 It's also fine for the callable to take no arguments, ignoring the arguments
 supplied to the mock function:
 
-```
+```cpp
 MockFunction<int(int)> mock;
 EXPECT_CALL(mock, Call).WillOnce([] { return 17; });
-EXPECT_EQ(17, mock.AsStdFunction()(0));
+EXPECT_EQ(mock.AsStdFunction()(0), 17);
 ```
 
 When used with `WillOnce`, the callable can assume it will be called at most
 once and is allowed to be a move-only type:
 
-```
+```cpp
 // An action that contains move-only types and has an &&-qualified operator,
 // demanding in the type system that it be called at most once. This can be
 // used with WillOnce, but the compiler will reject it if handed to
@@ -4294,7 +4400,7 @@ particular type than to dump the bytes.
 ### Mock std::function {#MockFunction}
 
 `std::function` is a general function type introduced in C++11. It is a
-preferred way of passing callbacks to new interfaces. Functions are copiable,
+preferred way of passing callbacks to new interfaces. Functions are copyable,
 and are not usually passed around by pointer, which makes them tricky to mock.
 But fear not - `MockFunction` can help you with that.
 

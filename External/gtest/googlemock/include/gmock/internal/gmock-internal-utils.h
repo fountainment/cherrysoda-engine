@@ -41,9 +41,11 @@
 
 #include <stdio.h>
 
+#include <iterator>
 #include <ostream>  // NOLINT
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "gmock/internal/gmock-port.h"
@@ -58,11 +60,7 @@ namespace internal {
 
 // Silence MSVC C4100 (unreferenced formal parameter) and
 // C4805('==': unsafe mix of type 'const int' and type 'const bool')
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4805)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4100 4805)
 
 // Joins a vector of strings as if they are fields of a tuple; returns
 // the joined string.
@@ -94,6 +92,24 @@ template <typename Element>
 inline Element* GetRawPointer(Element* p) {
   return p;
 }
+
+// Default definitions for all compilers.
+// NOTE: If you implement support for other compilers, make sure to avoid
+// unexpected overlaps.
+// (e.g., Clang also processes #pragma GCC, and clang-cl also handles _MSC_VER.)
+#define GMOCK_INTERNAL_WARNING_PUSH()
+#define GMOCK_INTERNAL_WARNING_CLANG(Level, Name)
+#define GMOCK_INTERNAL_WARNING_POP()
+
+#if defined(__clang__)
+#undef GMOCK_INTERNAL_WARNING_PUSH
+#define GMOCK_INTERNAL_WARNING_PUSH() _Pragma("clang diagnostic push")
+#undef GMOCK_INTERNAL_WARNING_CLANG
+#define GMOCK_INTERNAL_WARNING_CLANG(Level, Warning) \
+  _Pragma(GMOCK_PP_INTERNAL_STRINGIZE(clang diagnostic Level Warning))
+#undef GMOCK_INTERNAL_WARNING_POP
+#define GMOCK_INTERNAL_WARNING_POP() _Pragma("clang diagnostic pop")
+#endif
 
 // MSVC treats wchar_t as a native type usually, but treats it as the
 // same as unsigned short when the compiler option /Zc:wchar_t- is
@@ -178,11 +194,11 @@ using LosslessArithmeticConvertibleImpl = std::integral_constant<
        // Converting between integers of different widths is allowed so long
        // as the conversion does not go from signed to unsigned.
       (((sizeof(From) < sizeof(To)) &&
-        !(std::is_signed<From>::value && !std::is_signed<To>::value)) ||
+        !(std::is_signed_v<From> && !std::is_signed_v<To>)) ||
        // Converting between integers of the same width only requires the
        // two types to have the same signedness.
        ((sizeof(From) == sizeof(To)) &&
-        (std::is_signed<From>::value == std::is_signed<To>::value)))
+        (std::is_signed_v<From> == std::is_signed_v<To>)))
        ) ? true
       // Floating point conversions are lossless if and only if `To` is at least
       // as wide as `From`.
@@ -205,12 +221,12 @@ using LosslessArithmeticConvertible =
 
 // This interface knows how to report a Google Mock failure (either
 // non-fatal or fatal).
-class FailureReporterInterface {
+class [[nodiscard]] FailureReporterInterface {
  public:
   // The type of a failure (either non-fatal or fatal).
   enum FailureType { kNonfatal, kFatal };
 
-  virtual ~FailureReporterInterface() {}
+  virtual ~FailureReporterInterface() = default;
 
   // Reports a failure that occurred at the given source file location.
   virtual void ReportFailure(FailureType type, const char* file, int line,
@@ -281,14 +297,13 @@ GTEST_API_ void Log(LogSeverity severity, const std::string& message,
 //
 //    ON_CALL(mock, Method({}, nullptr))...
 //
-class WithoutMatchers {
+class [[nodiscard]] WithoutMatchers {
  private:
-  WithoutMatchers() {}
-  friend GTEST_API_ WithoutMatchers GetWithoutMatchers();
-};
+  WithoutMatchers() = default;
 
-// Internal use only: access the singleton instance of WithoutMatchers.
-GTEST_API_ WithoutMatchers GetWithoutMatchers();
+ public:
+  GTEST_API_ static WithoutMatchers Get();
+};
 
 // Invalid<T>() is usable as an expression of type T, but will terminate
 // the program with an assertion failure if actually run.  This is useful
@@ -297,7 +312,8 @@ GTEST_API_ WithoutMatchers GetWithoutMatchers();
 // crashes).
 template <typename T>
 inline T Invalid() {
-  Assert(false, "", -1, "Internal error: attempt to return invalid value");
+  Assert(/*condition=*/false, /*file=*/"", /*line=*/-1,
+         "Internal error: attempt to return invalid value");
 #if defined(__GNUC__) || defined(__clang__)
   __builtin_unreachable();
 #elif defined(_MSC_VER)
@@ -306,6 +322,24 @@ inline T Invalid() {
   return Invalid<T>();
 #endif
 }
+
+void GetValueType(const void*);
+
+template <class T>
+typename std::iterator_traits<
+    decltype(std::begin(std::declval<T&>()))>::value_type
+GetValueType(T*);
+
+template <class T, class = void>
+struct RangeTraits {
+  typedef decltype(internal::GetValueType(
+      static_cast<std::remove_reference_t<T>*>(nullptr))) value_type;
+};
+
+template <class T>
+struct RangeTraits<T, std::conditional_t<true, void, typename T::value_type>> {
+  typedef typename T::value_type value_type;
+};
 
 // Given a raw type (i.e. having no top-level reference or const
 // modifier) RawContainer that's either an STL-style container or a
@@ -324,13 +358,13 @@ inline T Invalid() {
 // This generic version is used when RawContainer itself is already an
 // STL-style container.
 template <class RawContainer>
-class StlContainerView {
+class [[nodiscard]] StlContainerView {
  public:
   typedef RawContainer type;
   typedef const type& const_reference;
 
   static const_reference ConstReference(const RawContainer& container) {
-    static_assert(!std::is_const<RawContainer>::value,
+    static_assert(!std::is_const_v<RawContainer>,
                   "RawContainer type must not be const");
     return container;
   }
@@ -339,7 +373,7 @@ class StlContainerView {
 
 // This specialization is used when RawContainer is a native array type.
 template <typename Element, size_t N>
-class StlContainerView<Element[N]> {
+class [[nodiscard]] StlContainerView<Element[N]> {
  public:
   typedef typename std::remove_const<Element>::type RawElement;
   typedef internal::NativeArray<RawElement> type;
@@ -351,7 +385,7 @@ class StlContainerView<Element[N]> {
   typedef const type const_reference;
 
   static const_reference ConstReference(const Element (&array)[N]) {
-    static_assert(std::is_same<Element, RawElement>::value,
+    static_assert(std::is_same_v<Element, RawElement>,
                   "Element type must not be const");
     return type(array, N, RelationToSourceReference());
   }
@@ -363,7 +397,7 @@ class StlContainerView<Element[N]> {
 // This specialization is used when RawContainer is a native array
 // represented as a (pointer, size) tuple.
 template <typename ElementPointer, typename Size>
-class StlContainerView< ::std::tuple<ElementPointer, Size> > {
+class [[nodiscard]] StlContainerView< ::std::tuple<ElementPointer, Size> > {
  public:
   typedef typename std::remove_const<
       typename std::pointer_traits<ElementPointer>::element_type>::type
@@ -405,7 +439,7 @@ struct RemoveConstFromKey<std::pair<const K, V> > {
 GTEST_API_ void IllegalDoDefault(const char* file, int line);
 
 template <typename F, typename Tuple, size_t... Idx>
-auto ApplyImpl(F&& f, Tuple&& args, IndexSequence<Idx...>)
+auto ApplyImpl(F&& f, Tuple&& args, std::index_sequence<Idx...>)
     -> decltype(std::forward<F>(f)(
         std::get<Idx>(std::forward<Tuple>(args))...)) {
   return std::forward<F>(f)(std::get<Idx>(std::forward<Tuple>(args))...);
@@ -415,11 +449,11 @@ auto ApplyImpl(F&& f, Tuple&& args, IndexSequence<Idx...>)
 template <typename F, typename Tuple>
 auto Apply(F&& f, Tuple&& args) -> decltype(ApplyImpl(
     std::forward<F>(f), std::forward<Tuple>(args),
-    MakeIndexSequence<std::tuple_size<
-        typename std::remove_reference<Tuple>::type>::value>())) {
+    std::make_index_sequence<
+        std::tuple_size_v<std::remove_reference_t<Tuple>>>())) {
   return ApplyImpl(std::forward<F>(f), std::forward<Tuple>(args),
-                   MakeIndexSequence<std::tuple_size<
-                       typename std::remove_reference<Tuple>::type>::value>());
+                   std::make_index_sequence<
+                       std::tuple_size_v<std::remove_reference_t<Tuple>>>());
 }
 
 // Template struct Function<F>, where F must be a function type, contains
@@ -450,21 +484,16 @@ struct Function<R(Args...)> {
   using MakeResultIgnoredValue = IgnoredValue(Args...);
 };
 
-template <typename R, typename... Args>
-constexpr size_t Function<R(Args...)>::ArgumentCount;
-
 // Workaround for MSVC error C2039: 'type': is not a member of 'std'
 // when std::tuple_element is used.
 // See: https://github.com/google/googletest/issues/3931
 // Can be replaced with std::tuple_element_t in C++14.
 template <size_t I, typename T>
-using TupleElement = typename std::tuple_element<I, T>::type;
+using TupleElement = std::tuple_element_t<I, T>;
 
 bool Base64Unescape(const std::string& encoded, std::string* decoded);
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4100 4805
 
 }  // namespace internal
 }  // namespace testing

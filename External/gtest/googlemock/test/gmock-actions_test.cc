@@ -31,33 +31,33 @@
 //
 // This file tests the built-in actions.
 
-// Silence C4100 (unreferenced formal parameter) and C4503 (decorated name
-// length exceeded) for MSVC.
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4503)
-#if _MSC_VER == 1900
-// and silence C4800 (C4800: 'int *const ': forcing value
-// to bool 'true' or 'false') for MSVC 15
-#pragma warning(disable : 4800)
-#endif
-#endif
-
 #include "gmock/gmock-actions.h"
 
 #include <algorithm>
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <sstream>
 #include <string>
+#include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "gmock/gmock.h"
 #include "gmock/internal/gmock-port.h"
 #include "gtest/gtest-spi.h"
 #include "gtest/gtest.h"
+#include "gtest/internal/gtest-port.h"
+
+// Silence C4100 (unreferenced formal parameter) and C4503 (decorated name
+// length exceeded) for MSVC.
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4100 4503)
+#if defined(_MSC_VER) && (_MSC_VER == 1900)
+// and silence C4800 (C4800: 'int *const ': forcing value
+// to bool 'true' or 'false') for MSVC 15
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4800)
+#endif
 
 namespace testing {
 namespace {
@@ -66,30 +66,30 @@ using ::testing::internal::BuiltInDefaultValue;
 
 TEST(TypeTraits, Negation) {
   // Direct use with std types.
-  static_assert(std::is_base_of<std::false_type,
-                                internal::negation<std::true_type>>::value,
-                "");
+  static_assert(
+      std::is_base_of_v<std::false_type, internal::negation<std::true_type>>,
+      "");
 
-  static_assert(std::is_base_of<std::true_type,
-                                internal::negation<std::false_type>>::value,
-                "");
+  static_assert(
+      std::is_base_of_v<std::true_type, internal::negation<std::false_type>>,
+      "");
 
   // With other types that fit the requirement of a value member that is
   // convertible to bool.
-  static_assert(std::is_base_of<
-                    std::true_type,
-                    internal::negation<std::integral_constant<int, 0>>>::value,
-                "");
+  static_assert(
+      std::is_base_of_v<std::true_type,
+                        internal::negation<std::integral_constant<int, 0>>>,
+      "");
 
-  static_assert(std::is_base_of<
-                    std::false_type,
-                    internal::negation<std::integral_constant<int, 1>>>::value,
-                "");
+  static_assert(
+      std::is_base_of_v<std::false_type,
+                        internal::negation<std::integral_constant<int, 1>>>,
+      "");
 
-  static_assert(std::is_base_of<
-                    std::false_type,
-                    internal::negation<std::integral_constant<int, -1>>>::value,
-                "");
+  static_assert(
+      std::is_base_of_v<std::false_type,
+                        internal::negation<std::integral_constant<int, -1>>>,
+      "");
 }
 
 // Weird false/true types that aren't actually bool constants (but should still
@@ -108,79 +108,76 @@ struct MyTrue : std::integral_constant<int, -1> {};
 
 TEST(TypeTraits, Conjunction) {
   // Base case: always true.
-  static_assert(std::is_base_of<std::true_type, internal::conjunction<>>::value,
-                "");
+  static_assert(std::is_base_of_v<std::true_type, internal::conjunction<>>, "");
 
   // One predicate: inherits from that predicate, regardless of value.
   static_assert(
-      std::is_base_of<MyFalse<0>, internal::conjunction<MyFalse<0>>>::value,
-      "");
+      std::is_base_of_v<MyFalse<0>, internal::conjunction<MyFalse<0>>>, "");
 
-  static_assert(
-      std::is_base_of<MyTrue<0>, internal::conjunction<MyTrue<0>>>::value, "");
+  static_assert(std::is_base_of_v<MyTrue<0>, internal::conjunction<MyTrue<0>>>,
+                "");
 
   // Multiple predicates, with at least one false: inherits from that one.
   static_assert(
-      std::is_base_of<MyFalse<1>, internal::conjunction<MyTrue<0>, MyFalse<1>,
-                                                        MyTrue<2>>>::value,
+      std::is_base_of_v<
+          MyFalse<1>, internal::conjunction<MyTrue<0>, MyFalse<1>, MyTrue<2>>>,
       "");
 
   static_assert(
-      std::is_base_of<MyFalse<1>, internal::conjunction<MyTrue<0>, MyFalse<1>,
-                                                        MyFalse<2>>>::value,
+      std::is_base_of_v<
+          MyFalse<1>, internal::conjunction<MyTrue<0>, MyFalse<1>, MyFalse<2>>>,
       "");
 
   // Short circuiting: in the case above, additional predicates need not even
   // define a value member.
   struct Empty {};
   static_assert(
-      std::is_base_of<MyFalse<1>, internal::conjunction<MyTrue<0>, MyFalse<1>,
-                                                        Empty>>::value,
+      std::is_base_of_v<MyFalse<1>,
+                        internal::conjunction<MyTrue<0>, MyFalse<1>, Empty>>,
       "");
 
   // All predicates true: inherits from the last.
   static_assert(
-      std::is_base_of<MyTrue<2>, internal::conjunction<MyTrue<0>, MyTrue<1>,
-                                                       MyTrue<2>>>::value,
+      std::is_base_of_v<MyTrue<2>,
+                        internal::conjunction<MyTrue<0>, MyTrue<1>, MyTrue<2>>>,
       "");
 }
 
 TEST(TypeTraits, Disjunction) {
   // Base case: always false.
-  static_assert(
-      std::is_base_of<std::false_type, internal::disjunction<>>::value, "");
+  static_assert(std::is_base_of_v<std::false_type, internal::disjunction<>>,
+                "");
 
   // One predicate: inherits from that predicate, regardless of value.
   static_assert(
-      std::is_base_of<MyFalse<0>, internal::disjunction<MyFalse<0>>>::value,
-      "");
+      std::is_base_of_v<MyFalse<0>, internal::disjunction<MyFalse<0>>>, "");
 
-  static_assert(
-      std::is_base_of<MyTrue<0>, internal::disjunction<MyTrue<0>>>::value, "");
+  static_assert(std::is_base_of_v<MyTrue<0>, internal::disjunction<MyTrue<0>>>,
+                "");
 
   // Multiple predicates, with at least one true: inherits from that one.
   static_assert(
-      std::is_base_of<MyTrue<1>, internal::disjunction<MyFalse<0>, MyTrue<1>,
-                                                       MyFalse<2>>>::value,
+      std::is_base_of_v<
+          MyTrue<1>, internal::disjunction<MyFalse<0>, MyTrue<1>, MyFalse<2>>>,
       "");
 
   static_assert(
-      std::is_base_of<MyTrue<1>, internal::disjunction<MyFalse<0>, MyTrue<1>,
-                                                       MyTrue<2>>>::value,
+      std::is_base_of_v<
+          MyTrue<1>, internal::disjunction<MyFalse<0>, MyTrue<1>, MyTrue<2>>>,
       "");
 
   // Short circuiting: in the case above, additional predicates need not even
   // define a value member.
   struct Empty {};
   static_assert(
-      std::is_base_of<MyTrue<1>, internal::disjunction<MyFalse<0>, MyTrue<1>,
-                                                       Empty>>::value,
+      std::is_base_of_v<MyTrue<1>,
+                        internal::disjunction<MyFalse<0>, MyTrue<1>, Empty>>,
       "");
 
   // All predicates false: inherits from the last.
   static_assert(
-      std::is_base_of<MyFalse<2>, internal::disjunction<MyFalse<0>, MyFalse<1>,
-                                                        MyFalse<2>>>::value,
+      std::is_base_of_v<MyFalse<2>, internal::disjunction<
+                                        MyFalse<0>, MyFalse<1>, MyFalse<2>>>,
       "");
 }
 
@@ -188,7 +185,7 @@ TEST(TypeTraits, IsInvocableRV) {
   struct C {
     int operator()() const { return 0; }
     void operator()(int) & {}
-    std::string operator()(int) && { return ""; };
+    std::string operator()(int) && { return ""; }
   };
 
   // The first overload is callable for const and non-const rvalues and lvalues.
@@ -222,7 +219,8 @@ TEST(TypeTraits, IsInvocableRV) {
   // In C++17 and above, where it's guaranteed that functions can return
   // non-moveable objects, everything should work fine for non-moveable rsult
   // types too.
-#if defined(__cplusplus) && __cplusplus >= 201703L
+  // TODO(b/396121064) - Fix this test under MSVC
+#ifndef _MSC_VER
   {
     struct NonMoveable {
       NonMoveable() = default;
@@ -243,7 +241,7 @@ TEST(TypeTraits, IsInvocableRV) {
     static_assert(!internal::is_callable_r<int, Callable>::value);
     static_assert(!internal::is_callable_r<NonMoveable, Callable, int>::value);
   }
-#endif  // C++17 and above
+#endif  // _MSC_VER
 
   // Nothing should choke when we try to call other arguments besides directly
   // callable objects, but they should not show up as callable.
@@ -440,15 +438,15 @@ TEST(DefaultValueDeathTest, GetReturnsBuiltInDefaultValueWhenUnset) {
 
   EXPECT_EQ(0, DefaultValue<int>::Get());
 
-  EXPECT_DEATH_IF_SUPPORTED({ DefaultValue<MyNonDefaultConstructible>::Get(); },
-                            "");
+  EXPECT_DEATH_IF_SUPPORTED(
+      { DefaultValue<MyNonDefaultConstructible>::Get(); }, "");
 }
 
 TEST(DefaultValueTest, GetWorksForMoveOnlyIfSet) {
   EXPECT_TRUE(DefaultValue<std::unique_ptr<int>>::Exists());
   EXPECT_TRUE(DefaultValue<std::unique_ptr<int>>::Get() == nullptr);
   DefaultValue<std::unique_ptr<int>>::SetFactory(
-      [] { return std::unique_ptr<int>(new int(42)); });
+      [] { return std::make_unique<int>(42); });
   EXPECT_TRUE(DefaultValue<std::unique_ptr<int>>::Exists());
   std::unique_ptr<int> i = DefaultValue<std::unique_ptr<int>>::Get();
   EXPECT_EQ(42, *i);
@@ -504,8 +502,8 @@ TEST(DefaultValueOfReferenceDeathTest, GetReturnsBuiltInDefaultValueWhenUnset) {
   EXPECT_FALSE(DefaultValue<MyNonDefaultConstructible&>::IsSet());
 
   EXPECT_DEATH_IF_SUPPORTED({ DefaultValue<int&>::Get(); }, "");
-  EXPECT_DEATH_IF_SUPPORTED({ DefaultValue<MyNonDefaultConstructible>::Get(); },
-                            "");
+  EXPECT_DEATH_IF_SUPPORTED(
+      { DefaultValue<MyNonDefaultConstructible>::Get(); }, "");
 }
 
 // Tests that ActionInterface can be implemented by defining the
@@ -684,7 +682,7 @@ TEST(ReturnTest, SupportsReferenceLikeReturnType) {
   // A reference wrapper for std::vector<int>, implicitly convertible from it.
   struct Result {
     const std::vector<int>* v;
-    Result(const std::vector<int>& v) : v(&v) {}  // NOLINT
+    Result(const std::vector<int>& vec) : v(&vec) {}  // NOLINT
   };
 
   // Set up an action for a mock function that returns the reference wrapper
@@ -717,7 +715,7 @@ TEST(ReturnTest, PrefersConversionOperator) {
   struct Out {
     int x;
 
-    explicit Out(const int x) : x(x) {}
+    explicit Out(const int val) : x(val) {}
     explicit Out(const In&) : x(0) {}
   };
 
@@ -746,8 +744,8 @@ TEST(ReturnTest, ConversionRequiresConstLvalueReference) {
   using R = int;
   using U = std::reference_wrapper<const int>;
 
-  static_assert(std::is_convertible<const R&, U>::value, "");
-  static_assert(!std::is_convertible<R, U>::value, "");
+  static_assert(std::is_convertible_v<const R&, U>, "");
+  static_assert(!std::is_convertible_v<R, U>, "");
 
   MockFunction<U()> mock;
   EXPECT_CALL(mock, Call).WillOnce(Return(17)).WillRepeatedly(Return(19));
@@ -770,11 +768,11 @@ TEST(ReturnTest, ConversionRequiresMutableLvalueReference) {
     S(std::string&) {}  // NOLINT
   };
 
-  static_assert(std::is_convertible<std::string&, S>::value, "");
+  static_assert(std::is_convertible_v<std::string&, S>, "");
 #ifndef _MSC_VER
-  static_assert(!std::is_convertible<std::string&&, S>::value, "");
+  static_assert(!std::is_convertible_v<std::string&&, S>, "");
 #endif
-  static_assert(!std::is_convertible<const std::string&, S>::value, "");
+  static_assert(!std::is_convertible_v<const std::string&, S>, "");
 
   // It shouldn't be possible to use the result of Return(std::string) in a
   // context where an S is needed.
@@ -783,9 +781,9 @@ TEST(ReturnTest, ConversionRequiresMutableLvalueReference) {
   // implementation of is_convertible causes our SFINAE to be wrong.
   using RA = decltype(Return(std::string()));
 
-  static_assert(!std::is_convertible<RA, Action<S()>>::value, "");
+  static_assert(!std::is_convertible_v<RA, Action<S()>>, "");
 #ifndef _MSC_VER
-  static_assert(!std::is_convertible<RA, OnceAction<S()>>::value, "");
+  static_assert(!std::is_convertible_v<RA, OnceAction<S()>>, "");
 #endif
 }
 
@@ -802,8 +800,8 @@ TEST(ReturnTest, MoveOnlyResultType) {
 
   // The result of Return should not be convertible to Action (so it can't be
   // used with WillRepeatedly).
-  static_assert(!std::is_convertible<decltype(Return(std::unique_ptr<int>())),
-                                     Action<std::unique_ptr<int>()>>::value,
+  static_assert(!std::is_convertible_v<decltype(Return(std::unique_ptr<int>())),
+                                       Action<std::unique_ptr<int>()>>,
                 "");
 }
 
@@ -986,7 +984,7 @@ TEST(ReturnRoundRobinTest, WorksForVector) {
 
 class MockClass {
  public:
-  MockClass() {}
+  MockClass() = default;
 
   MOCK_METHOD1(IntFunc, int(bool flag));  // NOLINT
   MOCK_METHOD0(Foo, MyNonDefaultConstructible());
@@ -1029,8 +1027,7 @@ void VoidFunc(bool /* flag */) {}
 
 TEST(DoDefaultDeathTest, DiesIfUsedInCompositeAction) {
   MockClass mock;
-  EXPECT_CALL(mock, IntFunc(_))
-      .WillRepeatedly(DoAll(Invoke(VoidFunc), DoDefault()));
+  EXPECT_CALL(mock, IntFunc(_)).WillRepeatedly(DoAll(VoidFunc, DoDefault()));
 
   // Ideally we should verify the error message as well.  Sadly,
   // EXPECT_DEATH() can only capture stderr, while Google Mock's
@@ -1225,37 +1222,41 @@ class Foo {
 
 // Tests InvokeWithoutArgs(function).
 TEST(InvokeWithoutArgsTest, Function) {
+  GTEST_DISABLE_DEPRECATED_PUSH_()
   // As an action that takes one argument.
-  Action<int(int)> a = InvokeWithoutArgs(Nullary);  // NOLINT
+  Action<int(int)> a = Nullary;  // NOLINT
   EXPECT_EQ(1, a.Perform(std::make_tuple(2)));
 
   // As an action that takes two arguments.
-  Action<int(int, double)> a2 = InvokeWithoutArgs(Nullary);  // NOLINT
+  Action<int(int, double)> a2 = Nullary;  // NOLINT
   EXPECT_EQ(1, a2.Perform(std::make_tuple(2, 3.5)));
 
   // As an action that returns void.
-  Action<void(int)> a3 = InvokeWithoutArgs(VoidNullary);  // NOLINT
+  Action<void(int)> a3 = VoidNullary;  // NOLINT
   g_done = false;
   a3.Perform(std::make_tuple(1));
   EXPECT_TRUE(g_done);
+  GTEST_DISABLE_DEPRECATED_POP_()
 }
 
 // Tests InvokeWithoutArgs(functor).
 TEST(InvokeWithoutArgsTest, Functor) {
+  GTEST_DISABLE_DEPRECATED_PUSH_()
   // As an action that takes no argument.
-  Action<int()> a = InvokeWithoutArgs(NullaryFunctor());  // NOLINT
+  Action<int()> a = NullaryFunctor();  // NOLINT
   EXPECT_EQ(2, a.Perform(std::make_tuple()));
 
   // As an action that takes three arguments.
   Action<int(int, double, char)> a2 =  // NOLINT
-      InvokeWithoutArgs(NullaryFunctor());
+      NullaryFunctor();
   EXPECT_EQ(2, a2.Perform(std::make_tuple(3, 3.5, 'a')));
 
   // As an action that returns void.
-  Action<void()> a3 = InvokeWithoutArgs(VoidNullaryFunctor());
+  Action<void()> a3 = VoidNullaryFunctor();
   g_done = false;
   a3.Perform(std::make_tuple());
   EXPECT_TRUE(g_done);
+  GTEST_DISABLE_DEPRECATED_POP_()
 }
 
 // Tests InvokeWithoutArgs(obj_ptr, method).
@@ -1281,7 +1282,7 @@ int ReturnOne() {
 
 TEST(IgnoreResultTest, MonomorphicAction) {
   g_done = false;
-  Action<void()> a = IgnoreResult(Invoke(ReturnOne));
+  Action<void()> a = IgnoreResult(&ReturnOne);
   a.Perform(std::make_tuple());
   EXPECT_TRUE(g_done);
 }
@@ -1296,7 +1297,7 @@ MyNonDefaultConstructible ReturnMyNonDefaultConstructible(double /* x */) {
 TEST(IgnoreResultTest, ActionReturningClass) {
   g_done = false;
   Action<void(int)> a =
-      IgnoreResult(Invoke(ReturnMyNonDefaultConstructible));  // NOLINT
+      IgnoreResult(&ReturnMyNonDefaultConstructible);  // NOLINT
   a.Perform(std::make_tuple(2));
   EXPECT_TRUE(g_done);
 }
@@ -1310,7 +1311,7 @@ TEST(AssignTest, Int) {
 
 TEST(AssignTest, String) {
   ::std::string x;
-  Action<void(void)> a = Assign(&x, "Hello, world");
+  Action<void()> a = Assign(&x, "Hello, world");
   a.Perform(std::make_tuple());
   EXPECT_EQ("Hello, world", x);
 }
@@ -1410,7 +1411,7 @@ TEST(DoAll, ProvidesLvalueReferencesToInitialActions) {
       void operator()(Obj&&) const { FAIL() << "Unexpected call"; }
     };
 
-    MockFunction<void(Obj &&)> mock;
+    MockFunction<void(Obj&&)> mock;
     EXPECT_CALL(mock, Call)
         .WillOnce(DoAll(InitialAction{}, InitialAction{}, [](Obj&&) {}))
         .WillRepeatedly(DoAll(InitialAction{}, InitialAction{}, [](Obj&&) {}));
@@ -1438,7 +1439,7 @@ TEST(DoAll, ProvidesLvalueReferencesToInitialActions) {
       void operator()(Obj&) && {}
     };
 
-    MockFunction<void(Obj &&)> mock;
+    MockFunction<void(Obj&&)> mock;
     EXPECT_CALL(mock, Call)
         .WillOnce(DoAll(InitialAction{}, InitialAction{}, [](Obj&&) {}));
 
@@ -1476,9 +1477,50 @@ TEST(DoAll, SupportsTypeErasedActions) {
   }
 }
 
+// A multi-action DoAll action should be convertible to a OnceAction, even when
+// its component sub-actions are user-provided types that define only an Action
+// conversion operator. If they supposed being called more than once then they
+// also support being called at most once.
+//
+// Single-arg DoAll just returns its argument, so will prefer the Action<F>
+// overload for WillOnce.
+TEST(DoAll, ConvertibleToOnceActionWithUserProvidedActionConversion) {
+  // Final action.
+  struct CustomFinal final {
+    operator Action<int()>() {  // NOLINT
+      return Return(17);
+    }
+
+    operator Action<int(int, char)>() {  // NOLINT
+      return Return(19);
+    }
+  };
+
+  // Sub-actions.
+  struct CustomInitial final {
+    operator Action<void()>() {  // NOLINT
+      return [] {};
+    }
+
+    operator Action<void(int, char)>() {  // NOLINT
+      return [] {};
+    }
+  };
+
+  {
+    OnceAction<int()> action = DoAll(CustomInitial{}, CustomFinal{});
+    EXPECT_EQ(17, std::move(action).Call());
+  }
+
+  {
+    OnceAction<int(int, char)> action = DoAll(CustomInitial{}, CustomFinal{});
+    EXPECT_EQ(19, std::move(action).Call(0, 0));
+  }
+}
+
 // Tests using WithArgs and with an action that takes 1 argument.
 TEST(WithArgsTest, OneArg) {
-  Action<bool(double x, int n)> a = WithArgs<1>(Invoke(Unary));  // NOLINT
+  Action<bool(double x, int n)> a = WithArgs<1>(Unary);
   EXPECT_TRUE(a.Perform(std::make_tuple(1.5, -1)));
   EXPECT_FALSE(a.Perform(std::make_tuple(1.5, 1)));
 }
@@ -1486,7 +1528,7 @@ TEST(WithArgsTest, OneArg) {
 // Tests using WithArgs with an action that takes 2 arguments.
 TEST(WithArgsTest, TwoArgs) {
   Action<const char*(const char* s, double x, short n)> a =  // NOLINT
-      WithArgs<0, 2>(Invoke(Binary));
+      WithArgs<0, 2>(Binary);
   const char s[] = "Hello";
   EXPECT_EQ(s + 2, a.Perform(std::make_tuple(CharPtr(s), 0.5, Short(2))));
 }
@@ -1502,7 +1544,7 @@ struct ConcatAll {
 // Tests using WithArgs with an action that takes 10 arguments.
 TEST(WithArgsTest, TenArgs) {
   Action<std::string(const char*, const char*, const char*, const char*)> a =
-      WithArgs<0, 1, 2, 3, 2, 1, 0, 1, 2, 3>(Invoke(ConcatAll{}));
+      WithArgs<0, 1, 2, 3, 2, 1, 0, 1, 2, 3>(ConcatAll{});
   EXPECT_EQ("0123210123",
             a.Perform(std::make_tuple(CharPtr("0"), CharPtr("1"), CharPtr("2"),
                                       CharPtr("3"))));
@@ -1527,21 +1569,21 @@ TEST(WithArgsTest, NonInvokeAction) {
 // Tests using WithArgs to pass all original arguments in the original order.
 TEST(WithArgsTest, Identity) {
   Action<int(int x, char y, short z)> a =  // NOLINT
-      WithArgs<0, 1, 2>(Invoke(Ternary));
+      WithArgs<0, 1, 2>(Ternary);
   EXPECT_EQ(123, a.Perform(std::make_tuple(100, Char(20), Short(3))));
 }
 
 // Tests using WithArgs with repeated arguments.
 TEST(WithArgsTest, RepeatedArguments) {
   Action<int(bool, int m, int n)> a =  // NOLINT
-      WithArgs<1, 1, 1, 1>(Invoke(SumOf4));
+      WithArgs<1, 1, 1, 1>(SumOf4);
   EXPECT_EQ(4, a.Perform(std::make_tuple(false, 1, 10)));
 }
 
 // Tests using WithArgs with reversed argument order.
 TEST(WithArgsTest, ReversedArgumentOrder) {
   Action<const char*(short n, const char* input)> a =  // NOLINT
-      WithArgs<1, 0>(Invoke(Binary));
+      WithArgs<1, 0>(Binary);
   const char s[] = "Hello";
   EXPECT_EQ(s + 2, a.Perform(std::make_tuple(Short(2), CharPtr(s))));
 }
@@ -1549,14 +1591,14 @@ TEST(WithArgsTest, ReversedArgumentOrder) {
 // Tests using WithArgs with compatible, but not identical, argument types.
 TEST(WithArgsTest, ArgsOfCompatibleTypes) {
   Action<long(short x, char y, double z, char c)> a =  // NOLINT
-      WithArgs<0, 1, 3>(Invoke(Ternary));
+      WithArgs<0, 1, 3>(Ternary);
   EXPECT_EQ(123,
             a.Perform(std::make_tuple(Short(100), Char(20), 5.6, Char(3))));
 }
 
 // Tests using WithArgs with an action that returns void.
 TEST(WithArgsTest, VoidAction) {
-  Action<void(double x, char c, int n)> a = WithArgs<2, 1>(Invoke(VoidBinary));
+  Action<void(double x, char c, int n)> a = WithArgs<2, 1>(VoidBinary);
   g_done = false;
   a.Perform(std::make_tuple(1.5, 'a', 3));
   EXPECT_TRUE(g_done);
@@ -1596,7 +1638,23 @@ TEST(WithArgsTest, RefQualifiedInnerAction) {
   EXPECT_EQ(19, mock.AsStdFunction()(0, 17));
 }
 
-#if !GTEST_OS_WINDOWS_MOBILE
+// It should be fine to provide an lvalue WithArgsAction to WillOnce, even when
+// the inner action only wants to convert to OnceAction.
+TEST(WithArgsTest, ProvideAsLvalueToWillOnce) {
+  struct SomeAction {
+    operator OnceAction<int(int)>() const {  // NOLINT
+      return [](const int arg) { return arg + 2; };
+    }
+  };
+
+  const auto wa = WithArg<1>(SomeAction{});
+
+  MockFunction<int(int, int)> mock;
+  EXPECT_CALL(mock, Call).WillOnce(wa);
+  EXPECT_EQ(19, mock.AsStdFunction()(0, 17));
+}
+
+#ifndef GTEST_OS_WINDOWS_MOBILE
 
 class SetErrnoAndReturnTest : public testing::Test {
  protected:
@@ -1605,14 +1663,14 @@ class SetErrnoAndReturnTest : public testing::Test {
 };
 
 TEST_F(SetErrnoAndReturnTest, Int) {
-  Action<int(void)> a = SetErrnoAndReturn(ENOTTY, -5);
+  Action<int()> a = SetErrnoAndReturn(ENOTTY, -5);
   EXPECT_EQ(-5, a.Perform(std::make_tuple()));
   EXPECT_EQ(ENOTTY, errno);
 }
 
 TEST_F(SetErrnoAndReturnTest, Ptr) {
   int x;
-  Action<int*(void)> a = SetErrnoAndReturn(ENOTTY, &x);
+  Action<int*()> a = SetErrnoAndReturn(ENOTTY, &x);
   EXPECT_EQ(&x, a.Perform(std::make_tuple()));
   EXPECT_EQ(ENOTTY, errno);
 }
@@ -1755,9 +1813,7 @@ TEST(ReturnNewTest, ConstructorThatTakes10Arguments) {
   delete c;
 }
 
-std::unique_ptr<int> UniquePtrSource() {
-  return std::unique_ptr<int>(new int(19));
-}
+std::unique_ptr<int> UniquePtrSource() { return std::make_unique<int>(19); }
 
 std::vector<std::unique_ptr<int>> VectorUniquePtrSource() {
   std::vector<std::unique_ptr<int>> out;
@@ -1767,7 +1823,7 @@ std::vector<std::unique_ptr<int>> VectorUniquePtrSource() {
 
 TEST(MockMethodTest, CanReturnMoveOnlyValue_Return) {
   MockClass mock;
-  std::unique_ptr<int> i(new int(19));
+  std::unique_ptr<int> i = std::make_unique<int>(19);
   EXPECT_CALL(mock, MakeUnique()).WillOnce(Return(ByMove(std::move(i))));
   EXPECT_CALL(mock, MakeVectorUnique())
       .WillOnce(Return(ByMove(VectorUniquePtrSource())));
@@ -1790,7 +1846,7 @@ TEST(MockMethodTest, CanReturnMoveOnlyValue_Return) {
 TEST(MockMethodTest, CanReturnMoveOnlyValue_DoAllReturn) {
   testing::MockFunction<void()> mock_function;
   MockClass mock;
-  std::unique_ptr<int> i(new int(19));
+  std::unique_ptr<int> i = std::make_unique<int>(19);
   EXPECT_CALL(mock_function, Call());
   EXPECT_CALL(mock, MakeUnique())
       .WillOnce(DoAll(InvokeWithoutArgs(&mock_function,
@@ -1806,12 +1862,11 @@ TEST(MockMethodTest, CanReturnMoveOnlyValue_Invoke) {
 
   // Check default value
   DefaultValue<std::unique_ptr<int>>::SetFactory(
-      [] { return std::unique_ptr<int>(new int(42)); });
+      [] { return std::make_unique<int>(42); });
   EXPECT_EQ(42, *mock.MakeUnique());
 
-  EXPECT_CALL(mock, MakeUnique()).WillRepeatedly(Invoke(UniquePtrSource));
-  EXPECT_CALL(mock, MakeVectorUnique())
-      .WillRepeatedly(Invoke(VectorUniquePtrSource));
+  EXPECT_CALL(mock, MakeUnique()).WillRepeatedly(UniquePtrSource);
+  EXPECT_CALL(mock, MakeVectorUnique()).WillRepeatedly(VectorUniquePtrSource);
   std::unique_ptr<int> result1 = mock.MakeUnique();
   EXPECT_EQ(19, *result1);
   std::unique_ptr<int> result2 = mock.MakeUnique();
@@ -1826,14 +1881,14 @@ TEST(MockMethodTest, CanReturnMoveOnlyValue_Invoke) {
 
 TEST(MockMethodTest, CanTakeMoveOnlyValue) {
   MockClass mock;
-  auto make = [](int i) { return std::unique_ptr<int>(new int(i)); };
+  auto make = [](int i) { return std::make_unique<int>(i); };
 
   EXPECT_CALL(mock, TakeUnique(_)).WillRepeatedly([](std::unique_ptr<int> i) {
     return *i;
   });
   // DoAll() does not compile, since it would move from its arguments twice.
   // EXPECT_CALL(mock, TakeUnique(_, _))
-  //     .WillRepeatedly(DoAll(Invoke([](std::unique_ptr<int> j) {}),
+  //     .WillRepeatedly(DoAll([](std::unique_ptr<int> j) {})),
   //     Return(1)));
   EXPECT_CALL(mock, TakeUnique(testing::Pointee(7)))
       .WillOnce(Return(-7))
@@ -2057,9 +2112,7 @@ struct Double {
   }
 };
 
-std::unique_ptr<int> UniqueInt(int i) {
-  return std::unique_ptr<int>(new int(i));
-}
+std::unique_ptr<int> UniqueInt(int i) { return std::make_unique<int>(i); }
 
 TEST(FunctorActionTest, ActionFromFunction) {
   Action<int(int, int&, int*)> a = &Add;
@@ -2118,7 +2171,7 @@ TEST(FunctorActionTest, TypeConversion) {
   EXPECT_EQ(7, d.Perform(std::make_tuple(1)));
 
   // Ensure creation of an empty action succeeds.
-  Action<void(int)>(nullptr);
+  (void)Action<void(int)>(nullptr);
 }
 
 TEST(FunctorActionTest, UnusedArguments) {
@@ -2144,7 +2197,7 @@ TEST(MoveOnlyArgumentsTest, ReturningActions) {
   EXPECT_EQ(x, 3);
 }
 
-ACTION(ReturnArity) { return std::tuple_size<args_type>::value; }
+ACTION(ReturnArity) { return std::tuple_size_v<args_type>; }
 
 TEST(ActionMacro, LargeArity) {
   EXPECT_EQ(
@@ -2165,3 +2218,8 @@ TEST(ActionMacro, LargeArity) {
 
 }  // namespace
 }  // namespace testing
+
+#if defined(_MSC_VER) && (_MSC_VER == 1900)
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4800
+#endif
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4100 4503
