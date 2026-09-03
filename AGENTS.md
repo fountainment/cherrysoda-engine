@@ -44,6 +44,8 @@ The env var is required (this is exactly what CI does in `.github/workflows/`). 
 - Logging/debug output only through `Util/Log.h` macros: `CHERRYSODA_LOG`, `CHERRYSODA_DEBUG`, `CHERRYSODA_ASSERT`. `CHERRYSODA_DEBUG`/`ASSERT` compile away unless built as `Debug`.
 - **New engine files must be added manually to `ENGINE_SRC` in `Engine/CMakeLists.txt`** (no globbing). Embedded shader files go in `EMBEDDED_SHADER_SRC` there.
 - Executables are games: subclass `cherrysoda::Engine`, use the `CHERRYSODA_DEFAULT_MAIN` macro from `Main.h` (see `Examples/Minimal`). Set `CHERRYSODA_EXECUTABLE_SRC` then call `add_cherrysoda_executable(Name)`; an `assets/` folder next to the app is copied into its binary dir automatically.
+- **Run `clang-format -i` on changed C/C++ files before committing** — style lives in the root `.clang-format` (tab indent, 120 cols, Allman types/functions, attached control-flow braces, `else` on its own line). CI gates this (`.github/workflows/format.yml`, clang-format 23). Never format anything under `External/`, `out/`, `Tools/bin`, `Tools/crunch`, `Tools/sfxr_port/src/sfxr`, or `embedded_shaders/`. `.clang-tidy` is report-only (see its header for the run recipe); every disabled check has its reason written there.
+- Known defects/unfinished work are tracked in `KNOWN-ISSUES.md` — when fixing an entry, delete it and name its ID in the commit message. Vendored libs each carry `External/<lib>/VERSION.txt` (upstream/version/license/date); update it when touching a vendored tree.
 
 ## Shaders
 
