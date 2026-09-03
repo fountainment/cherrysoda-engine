@@ -130,6 +130,13 @@ void Engine::WindowResizable(bool resizable)
 	}
 }
 
+void Engine::SetTextInputEnabled(bool enable)
+{
+	if (m_window) {
+		m_window->SetTextInputEnabled(enable);
+	}
+}
+
 #ifdef __EMSCRIPTEN__
 EM_JS(void, EM_SetClipboardText, (const char* text), {
 	navigator.clipboard.writeText(UTF8ToString(text));

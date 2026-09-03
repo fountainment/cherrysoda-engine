@@ -52,6 +52,8 @@ private:
 
 	void Resizable(bool resizable);
 
+	void SetTextInputEnabled(bool enable);
+
 	void PollEvents();
 
 	static bool Initialize();

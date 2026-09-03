@@ -620,6 +620,20 @@ void Window::Resizable(bool resizable)
 	SDL_SetWindowResizable(m_mainWindow, resizable);
 }
 
+void Window::SetTextInputEnabled(bool enable)
+{
+	if (m_mainWindow == nullptr) return;
+	// SDL3 only delivers SDL_EVENT_TEXT_INPUT while text input is enabled for the window
+	if (enable) {
+		if (!SDL_TextInputActive(m_mainWindow)) {
+			SDL_StartTextInput(m_mainWindow);
+		}
+	}
+	else if (SDL_TextInputActive(m_mainWindow)) {
+		SDL_StopTextInput(m_mainWindow);
+	}
+}
+
 void Window::PollEvents()
 {
 	SDL_Event event;

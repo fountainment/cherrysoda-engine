@@ -365,6 +365,10 @@ void GUI::Update()
 		}
 	}
 
+	// SDL3 requires text input to be started explicitly before it delivers
+	// SDL_EVENT_TEXT_INPUT events, so track ImGui's text input state every frame
+	Engine::Instance()->SetTextInputEnabled(io.WantTextInput);
+
 	// Delta time
 	io.DeltaTime = Engine::Instance()->RawDeltaTime();
 

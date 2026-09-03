@@ -48,6 +48,7 @@ public:
 	inline void ShowCursor() { ShowCursor(true); }
 	inline void HideCursor() { ShowCursor(false); }
 	void WindowResizable(bool resizable);
+	void SetTextInputEnabled(bool enable);
 	static const char* GetClipboardText();
 	static void SetClipboardText(const char* text);
 
