@@ -37,7 +37,7 @@ public:
 
 private:
 	STL::HashMap<T, float> m_counters;
-	float m_timer;
+	float m_timer = 0.f;
 };
 
 } // namespace cherrysoda

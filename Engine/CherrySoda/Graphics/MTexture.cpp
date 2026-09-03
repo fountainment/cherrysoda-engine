@@ -8,6 +8,8 @@
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/String.h>
 
+#include <cstring>
+
 namespace cherrysoda {
 
 MTexture MTexture::FromFile(const String& filename)
@@ -69,7 +71,7 @@ MTexture::MTexture(int width, int height, const Color& color)
 	unsigned char* data = new unsigned char[pixelCount << 2];
 	type::UInt32 colorValue = color.U32ABGR();
 	for (size_t i = 0; i < pixelCount; ++i) {
-		*((type::UInt32*)(data + (i << 2))) = colorValue;
+		std::memcpy(data + (i << 2), &colorValue, sizeof(colorValue));
 	}
 	m_texture = Texture2D::FromRGBA(data, width, height);
 	delete[] data;

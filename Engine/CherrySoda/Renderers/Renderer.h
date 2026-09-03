@@ -10,6 +10,8 @@ class Scene;
 class Renderer
 {
 public:
+	virtual ~Renderer() = default;
+
 	virtual void Update(Scene* scene) {}
 	virtual void BeforeRender(Scene* scene) {}
 	virtual void RenderPrepare(Scene* scene) {}

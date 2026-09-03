@@ -113,7 +113,7 @@ float ColliderList::Left() const
 float ColliderList::Right() const
 {
 	if (STL::IsEmpty(m_colliders)) return Math::NaNf();
-	float right = Math::FloatMin;
+	float right = -Math::FloatMax;
 	for (auto c : m_colliders) {
 		right = Math_Max(right, c->Right());
 	}
@@ -133,7 +133,7 @@ float ColliderList::Bottom() const
 float ColliderList::Top() const
 {
 	if (STL::IsEmpty(m_colliders)) return Math::NaNf();
-	float top = Math::FloatMin;
+	float top = -Math::FloatMax;
 	for (auto c : m_colliders) {
 		top = Math_Max(top, c->Top());
 	}

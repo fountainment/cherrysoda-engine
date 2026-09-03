@@ -219,6 +219,20 @@ TEST(ColliderTestColliderList, EmptyBoundsAreNaN)
 	EXPECT_TRUE(std::isnan(list.Top()));
 }
 
+TEST(ColliderTestColliderList, NegativeCoordinateBounds)
+{
+	Hitbox nearBox(2.f, 2.f, -10.f, -10.f);
+	Hitbox farBox(2.f, 2.f, -30.f, -30.f);
+	ColliderList::IterableColliders colliders = {&nearBox, &farBox};
+	ColliderList list(colliders);
+
+	// Right/Top pick the max child bound even when every bound is negative
+	EXPECT_FLOAT_EQ(-8.f, list.Right());
+	EXPECT_FLOAT_EQ(-8.f, list.Top());
+	EXPECT_FLOAT_EQ(-30.f, list.Left());
+	EXPECT_FLOAT_EQ(-30.f, list.Bottom());
+}
+
 TEST(ColliderTestColliderList, AddAndRemove)
 {
 	Circle circle(1.f);

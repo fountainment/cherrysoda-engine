@@ -44,11 +44,11 @@ private:
 		}
 	}
 
-	Math::Vec2 m_value;
+	Math::Vec2 m_value = Vec2_Zero;
 	float m_interval = .05f;
-	float m_timer;
-	bool m_removeOnFinish;
-	bool m_on;
+	float m_timer = 0.f;
+	bool m_removeOnFinish = false;
+	bool m_on = true;
 
 	STL::Action<Math::Vec2> m_onShake;
 };
