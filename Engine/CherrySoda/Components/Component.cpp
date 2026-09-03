@@ -17,7 +17,7 @@ void Component::Added(Entity* entity)
 	m_entity = entity;
 	Scene* scene = entity->GetScene();
 	if (scene != nullptr) {
-		// TODO: scene->Tracker()->ComponentAdded(this);
+		scene->GetTracker()->ComponentAdded(this);
 	}
 }
 
@@ -25,7 +25,7 @@ void Component::Removed(Entity* entity)
 {
 	Scene* scene = entity->GetScene();
 	if (scene != nullptr) {
-		// TODO: scene->Tracker()->ComponentRemoved(this);
+		scene->GetTracker()->ComponentRemoved(this);
 	}
 	if (m_onRemoved != nullptr) {
 		m_onRemoved(this, entity);
@@ -35,12 +35,12 @@ void Component::Removed(Entity* entity)
 
 void Component::EntityAdded(Scene* scene)
 {
-	// TODO: scene->Tracker()->ComponentAdded(this);
+	scene->GetTracker()->ComponentAdded(this);
 }
 
 void Component::EntityRemoved(Scene* scene)
 {
-	// TODO: scene->Tracker()->ComponentRemoved(this);
+	scene->GetTracker()->ComponentRemoved(this);
 }
 
 void Component::SceneEnd(Scene* scene)

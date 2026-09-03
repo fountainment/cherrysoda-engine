@@ -151,6 +151,8 @@ set(ENGINE_SRC
   CherrySoda/Util/String.h
   CherrySoda/Util/Time.cpp
   CherrySoda/Util/Time.h
+  CherrySoda/Util/Tracker.cpp
+  CherrySoda/Util/Tracker.h
   CherrySoda/Util/VirtualMap.h
   CherrySoda/Util/XML.cpp
   CherrySoda/Util/XML.h

@@ -24,9 +24,8 @@ void EntityList::UpdateLists()
 			}
 
 			if (m_scene != nullptr) {
-				// TODO: Add Tracker
 				m_scene->Tags()->EntityAdded(entity);
-				// m_scene->Tracker()->EntityAdded(entity);
+				m_scene->GetTracker()->EntityAdded(entity);
 				entity->Added(m_scene);
 			}
 		}
@@ -42,10 +41,8 @@ void EntityList::UpdateLists()
 
 				if (m_scene != nullptr) {
 					entity->Removed(m_scene);
-					// TODO: Add Tracker and Pooler
 					m_scene->Tags()->EntityRemoved(entity);
-					// m_scene->Tracker()->EntityRemoved(entity);
-					// Engine.Pooler.EntityRemoved(entity);
+					m_scene->GetTracker()->EntityRemoved(entity);
 				}
 			}
 		}

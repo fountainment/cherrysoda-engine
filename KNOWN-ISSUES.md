@@ -50,15 +50,6 @@ entry has a stable ID, the location(s), the impact, and a fix sketch.
 - Fix sketch: extend `Graphics::CreateTexture` paths with bgfx 3D create
   flags and a `Texture::Type3D` loader.
 
-### F4: Tracker / Pooler hooks not implemented
-
-- Location: `Engine/CherrySoda/InternalUtilities/EntityList.cpp:27,45`,
-  `Engine/CherrySoda/Components/Component.cpp:20,28,38,43`
-- Impact: no engine-level accounting of live entities/components per type;
-  the commented-out call sites document the intended seam.
-- Fix sketch: implement a per-scene tracker with counts per TypeID; wire
-  the existing call sites.
-
 ### F5: Command batch file loading
 
 - Location: `Engine/CherrySoda/Util/Commands.cpp:276`

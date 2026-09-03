@@ -148,6 +148,65 @@ Entity* Entity::CollideFirst(const BitTag& tag) const
 	return Collide::First(this, (*m_scene)[tag]);
 }
 
+bool Entity::CollideRect(const Math::Rectangle& rect) const
+{
+	return Collide::CheckRect(this, rect);
+}
+
+bool Entity::CollideRect(const Math::Rectangle& rect, const Math::Vec2& at)
+{
+	return Collide::CheckRect(this, rect, at);
+}
+
+bool Entity::CollideCheckOutside(const BitTag& tag) const
+{
+	return CollideFirstOutside(tag) != nullptr;
+}
+
+bool Entity::CollideCheckOutside(const BitTag& tag, const Math::Vec2& at)
+{
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+
+	Math::Vec2 position = Position2D();
+	Position2D(at);
+	Entity* firstOutside = CollideFirstOutside(tag);
+	Position2D(position);
+	return firstOutside != nullptr;
+}
+
+Entity* Entity::CollideFirstOutside(const BitTag& tag) const
+{
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+
+	for (auto entity : (*m_scene)[tag]) {
+		if (!CollideCheck(entity)) {
+			return entity;
+		}
+	}
+	return nullptr;
+}
+
+Entity* Entity::Closest(const BitTag& tag) const
+{
+	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't get the closest Entity of a tag when not a member of a Scene\n");
+
+	Entity* closest = nullptr;
+	float closestDistanceSq = 0.f;
+	for (auto entity : (*m_scene)[tag]) {
+		if (entity == this) {
+			continue;
+		}
+		float distanceSq = Math_LengthSq(entity->Position2D() - Position2D());
+		if (closest == nullptr || distanceSq < closestDistanceSq) {
+			closest = entity;
+			closestDistanceSq = distanceSq;
+		}
+	}
+	return closest;
+}
+
 float Entity::Left() const
 {
 	return GetCollider() ? PositionX() + GetCollider()->Left() : PositionX();

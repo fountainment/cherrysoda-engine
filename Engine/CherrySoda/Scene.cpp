@@ -19,6 +19,7 @@ Scene::Scene()
 	m_entities = new EntityList(this);
 	m_tagLists = new TagLists();
 	m_rendererList = new RendererList(this);
+	m_tracker = new Tracker();
 
 	m_helperEntity = new Entity();
 	m_entities->Add(m_helperEntity);
@@ -29,6 +30,7 @@ Scene::~Scene()
 	delete m_entities;
 	delete m_tagLists;
 	delete m_rendererList;
+	delete m_tracker;
 
 	delete m_helperEntity;
 }
@@ -245,6 +247,93 @@ Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, in
 	}
 
 	return to;
+}
+
+bool Scene::CollideCheck(const Math::Rectangle& rect, int tag) const
+{
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && Collide::CheckRect(item, rect)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+Entity* Scene::CollideFirst(const Math::Vec2& point, int tag) const
+{
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && item->CollidePoint(point)) {
+			return item;
+		}
+	}
+	return nullptr;
+}
+
+Entity* Scene::CollideFirst(const Math::Vec2& from, const Math::Vec2& to, int tag) const
+{
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && item->CollideLine(from, to)) {
+			return item;
+		}
+	}
+	return nullptr;
+}
+
+Entity* Scene::CollideFirst(const Math::Rectangle& rect, int tag) const
+{
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && Collide::CheckRect(item, rect)) {
+			return item;
+		}
+	}
+	return nullptr;
+}
+
+const STL::List<Entity*> Scene::CollideAll(const Math::Vec2& point, int tag) const
+{
+	STL::List<Entity*> hits;
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && item->CollidePoint(point)) {
+			STL::Add(hits, item);
+		}
+	}
+	return hits;
+}
+
+const STL::List<Entity*> Scene::CollideAll(const Math::Vec2& from, const Math::Vec2& to, int tag) const
+{
+	STL::List<Entity*> hits;
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && item->CollideLine(from, to)) {
+			STL::Add(hits, item);
+		}
+	}
+	return hits;
+}
+
+const STL::List<Entity*> Scene::CollideAll(const Math::Rectangle& rect, int tag) const
+{
+	STL::List<Entity*> hits;
+	auto& list = (*m_tagLists)[tag];
+	for (auto item : list) {
+		if (item->Collidable() && Collide::CheckRect(item, rect)) {
+			STL::Add(hits, item);
+		}
+	}
+	return hits;
+}
+
+bool Scene::ComponentCanCollide(const Component* component)
+{
+	auto collidable = static_cast<const CollidableComponent*>(component);
+	return collidable->Collidable() && collidable->GetEntity() != nullptr && collidable->GetEntity()->Collidable() &&
+		   collidable->GetCollider() != nullptr;
 }
 
 } // namespace cherrysoda

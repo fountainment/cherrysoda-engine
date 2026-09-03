@@ -37,5 +37,8 @@ add_cherrysoda_executable(CoroutineTest)
 set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h VirtualInputTest.cpp)
 add_cherrysoda_executable(VirtualInputTest)
 
+set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h TrackerTest.cpp)
+add_cherrysoda_executable(TrackerTest)
+
 set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h AllTests.cpp)
 add_cherrysoda_executable(AllTests)

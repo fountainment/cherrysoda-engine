@@ -37,6 +37,8 @@ public:
 
 	static bool CheckPoint(const Entity* a, const Math::Vec2& point);
 	static bool CheckLine(const Entity* a, const Math::Vec2& from, const Math::Vec2& to);
+	static bool CheckRect(const Entity* a, const Math::Rectangle& rect);
+	static bool CheckRect(Entity* a, const Math::Rectangle& rect, const Math::Vec2& at);
 
 	static int Count(const Entity* a, const STL::List<Entity*>& b);
 

@@ -80,6 +80,23 @@ bool Collide::CheckLine(const Entity* a, const Math::Vec2& from, const Math::Vec
 	return a->GetCollider()->Collide(from, to);
 }
 
+bool Collide::CheckRect(const Entity* a, const Math::Rectangle& rect)
+{
+	if (a->GetCollider() == nullptr) {
+		return false;
+	}
+	return a->GetCollider()->Collide(rect);
+}
+
+bool Collide::CheckRect(Entity* a, const Math::Rectangle& rect, const Math::Vec2& at)
+{
+	Math::Vec2 position = a->Position2D();
+	a->Position2D(at);
+	bool result = CheckRect(a, rect);
+	a->Position2D(position);
+	return result;
+}
+
 int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();

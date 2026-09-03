@@ -7,6 +7,22 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Pool.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
+
+#define CHERRYSODA_DECLARE_ENTITY(TYPE, BASE)                                   \
+	typedef BASE base;                                                          \
+	virtual cherrysoda::type::Int32 TypeID() const override                     \
+	{                                                                           \
+		return TYPE::EntityTypeID();                                            \
+	}                                                                           \
+	virtual const char* TypeCStr() const override                               \
+	{                                                                           \
+		return #TYPE;                                                           \
+	}                                                                           \
+	static CHERRYSODA_STRINGID_CONSTEXPR cherrysoda::type::Int32 EntityTypeID() \
+	{                                                                           \
+		return cherrysoda::StringID(#TYPE).GetID();                             \
+	}
 
 namespace cherrysoda {
 
@@ -23,6 +39,12 @@ public:
 	Entity(const Math::Vec2& position) : Entity(Math::Vec3(position, 0.f)) {}
 	Entity(const Math::Vec3& position);
 	virtual ~Entity();
+
+	// Default type identity; subclasses opt in with CHERRYSODA_DECLARE_ENTITY
+	// and can then be tracked via CHERRYSODA_TRACK_ENTITY
+	virtual type::Int32 TypeID() const { return Entity::EntityTypeID(); }
+	virtual const char* TypeCStr() const { return "Entity"; }
+	static CHERRYSODA_STRINGID_CONSTEXPR type::Int32 EntityTypeID() { return StringID("Entity").GetID(); }
 
 	CHERRYSODA_GETTER_SETTER_OF_VEC3(Position, m_position);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(Active, m_active);
@@ -60,8 +82,32 @@ public:
 	bool CollideCheck(const CollidableComponent* other, const Math::Vec2& at);
 	bool CollidePoint(const Math::Vec2& point) const;
 	bool CollideLine(const Math::Vec2& from, const Math::Vec2& to) const;
+	bool CollideRect(const Math::Rectangle& rect) const;
+	bool CollideRect(const Math::Rectangle& rect, const Math::Vec2& at);
 	int CollideCount(const BitTag& tag) const;
 	Entity* CollideFirst(const BitTag& tag) const;
+
+	// True when some entity of the tag is NOT overlapping this one
+	bool CollideCheckOutside(const BitTag& tag) const;
+	bool CollideCheckOutside(const BitTag& tag, const Math::Vec2& at);
+	Entity* CollideFirstOutside(const BitTag& tag) const;
+	Entity* Closest(const BitTag& tag) const;
+
+	// Typed queries over tracked entity types (CHERRYSODA_TRACK_ENTITY);
+	// defined in Scene.h, which sees both Entity and Scene complete
+	template<class T> bool CollideCheck() const;
+	template<class T> bool CollideCheck(const Math::Vec2& at);
+	template<class T> T* CollideFirst() const;
+	template<class T> const STL::List<T*> CollideAll() const;
+	template<class T> void CollideDo(const STL::Action<T*>& action) const;
+
+	// Typed queries over tracked CollidableComponent types
+	// (CHERRYSODA_TRACK_COMPONENT)
+	template<class T> bool CollideCheckByComponent() const;
+	template<class T> bool CollideCheckByComponent(const Math::Vec2& at);
+	template<class T> T* CollideFirstByComponent() const;
+	template<class T> const STL::List<T*> CollideAllByComponent() const;
+	template<class T> void CollideDoByComponent(const STL::Action<T*>& action) const;
 
 	float Left() const;
 	float Right() const;
