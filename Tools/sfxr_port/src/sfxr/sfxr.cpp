@@ -30,7 +30,7 @@
 #include <ctime>
 #include <cmath>
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -463,24 +463,39 @@ void SynthSample(int length, float* buffer, FILE* file)
 }
 
 //lets use SDL instead
-static void SDLAudioCallback(void *userdata, Uint8 *stream, int len)
+static SDL_AudioStream* s_sdlAudioStream;
+static Sint16 s_sdlAudioBuffer[2048];
+
+static void SDLCALL SDLAudioCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount)
 {
 	static float s_fbuf[2048];
-	if (playing_sample && !mute_stream)
-	{
-		unsigned int l = len/2;
-		float* fbuf = s_fbuf;
-		std::memset(fbuf, 0, sizeof(*fbuf));
-		SynthSample(l, fbuf, nullptr);
-		while (l--)
-		{
-			float f = fbuf[l];
-			if (f < -1.0) f = -1.0;
-			if (f > 1.0) f = 1.0;
-			((Sint16*)stream)[l] = (Sint16)(f * 32767);
+	(void)userdata;
+	(void)total_amount;
+	while (additional_amount > 0) {
+		int bytes = additional_amount;
+		if (bytes > (int)sizeof(s_sdlAudioBuffer)) {
+			bytes = (int)sizeof(s_sdlAudioBuffer);
 		}
+		if (playing_sample && !mute_stream)
+		{
+			unsigned int l = bytes/2;
+			float* fbuf = s_fbuf;
+			std::memset(fbuf, 0, sizeof(*fbuf));
+			SynthSample(l, fbuf, nullptr);
+			for (unsigned int i = 0; i < l; i++)
+			{
+				float f = fbuf[i];
+				if (f < -1.0) f = -1.0;
+				if (f > 1.0) f = 1.0;
+				s_sdlAudioBuffer[i] = (Sint16)(f * 32767);
+			}
+		}
+		else {
+			std::memset(s_sdlAudioBuffer, 0, bytes);
+		}
+		SDL_PutAudioStreamData(stream, s_sdlAudioBuffer, bytes);
+		additional_amount -= bytes;
 	}
-	else std::memset(stream, 0, len);
 }
 
 bool ExportWAV(const char* filename)
@@ -1049,13 +1064,10 @@ void SfxrInit()
 	ResetParams();
 
 	SDL_AudioSpec des;
-	des.freq = 44100;
-	des.format = AUDIO_S16SYS;
+	des.format = SDL_AUDIO_S16;
 	des.channels = 1;
-	des.samples = 512;
-	des.callback = SDLAudioCallback;
-	des.userdata = nullptr;
+	des.freq = 44100;
 
-	SDL_OpenAudio(&des, nullptr);
-	SDL_PauseAudio(0);
+	s_sdlAudioStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &des, SDLAudioCallback, nullptr);
+	SDL_ResumeAudioStreamDevice(s_sdlAudioStream);
 }

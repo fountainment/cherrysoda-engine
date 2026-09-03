@@ -19,7 +19,6 @@ addons:
     - libgl1-mesa-dev
     - x11proto-core-dev
     - libx11-dev
-    - libsdl2-dev
 
 script:
   - if [ "$TRAVIS_COMPILER" == "emcc" ]; then git clone https://github.com/emscripten-core/emsdk.git; fi

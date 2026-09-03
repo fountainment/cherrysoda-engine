@@ -9,35 +9,11 @@
 #include <CherrySoda/Util/STL.h>
 
 #include <bx/bx.h>
-
-#ifndef ENTRY_CONFIG_USE_WAYLAND
-#	define ENTRY_CONFIG_USE_WAYLAND 0
-#endif // ENTRY_CONFIG_USE_WAYLAND
-
-#if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-#	if ENTRY_CONFIG_USE_WAYLAND
-#		include <wayland-egl.h>
-#	endif
-#elif BX_PLATFORM_WINDOWS
-#	define SDL_MAIN_HANDLED
-#endif
-
 #include <bx/os.h>
 
-#include <SDL.h>
-
-BX_PRAGMA_DIAGNOSTIC_PUSH()
-BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG("-Wextern-c-compat")
-#include <SDL_syswm.h>
-BX_PRAGMA_DIAGNOSTIC_POP()
+#include <SDL3/SDL.h>
 
 #include <bgfx/bgfx.h>
-#if defined(None) // X11 defines this...
-#	undef None
-#endif // defined(None)
-#if defined(CreateWindow)
-#   undef CreateWindow
-#endif // defined(CreateWindow)
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -51,109 +27,133 @@ static SDL_Cursor* s_mouseCursors[(size_t)CursorTypes::Count] = {};
 #define ENUM_NAME_PAIR(ENUM) { (int)ENUM, #ENUM }
 static STL::HashMap<int,const char*> s_debugEventLookUp =
 {
-	ENUM_NAME_PAIR(SDL_FIRSTEVENT),
-	ENUM_NAME_PAIR(SDL_QUIT),
-	ENUM_NAME_PAIR(SDL_APP_TERMINATING),
-	ENUM_NAME_PAIR(SDL_APP_LOWMEMORY),
-	ENUM_NAME_PAIR(SDL_APP_WILLENTERBACKGROUND),
-	ENUM_NAME_PAIR(SDL_APP_DIDENTERBACKGROUND),
-	ENUM_NAME_PAIR(SDL_APP_WILLENTERFOREGROUND),
-	ENUM_NAME_PAIR(SDL_APP_DIDENTERFOREGROUND),
-	ENUM_NAME_PAIR(SDL_DISPLAYEVENT),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT),
-	ENUM_NAME_PAIR(SDL_SYSWMEVENT),
-	ENUM_NAME_PAIR(SDL_KEYDOWN),
-	ENUM_NAME_PAIR(SDL_KEYUP),
-	ENUM_NAME_PAIR(SDL_TEXTEDITING),
-	ENUM_NAME_PAIR(SDL_TEXTINPUT),
-	ENUM_NAME_PAIR(SDL_KEYMAPCHANGED),
-	ENUM_NAME_PAIR(SDL_MOUSEMOTION),
-	ENUM_NAME_PAIR(SDL_MOUSEBUTTONDOWN),
-	ENUM_NAME_PAIR(SDL_MOUSEBUTTONUP),
-	ENUM_NAME_PAIR(SDL_MOUSEWHEEL),
-	ENUM_NAME_PAIR(SDL_JOYAXISMOTION),
-	ENUM_NAME_PAIR(SDL_JOYBALLMOTION),
-	ENUM_NAME_PAIR(SDL_JOYHATMOTION),
-	ENUM_NAME_PAIR(SDL_JOYBUTTONDOWN),
-	ENUM_NAME_PAIR(SDL_JOYBUTTONUP),
-	ENUM_NAME_PAIR(SDL_JOYDEVICEADDED),
-	ENUM_NAME_PAIR(SDL_JOYDEVICEREMOVED),
-	ENUM_NAME_PAIR(SDL_CONTROLLERAXISMOTION),
-	ENUM_NAME_PAIR(SDL_CONTROLLERBUTTONDOWN),
-	ENUM_NAME_PAIR(SDL_CONTROLLERBUTTONUP),
-	ENUM_NAME_PAIR(SDL_CONTROLLERDEVICEADDED),
-	ENUM_NAME_PAIR(SDL_CONTROLLERDEVICEREMOVED),
-	ENUM_NAME_PAIR(SDL_CONTROLLERDEVICEREMAPPED),
-	ENUM_NAME_PAIR(SDL_FINGERDOWN),
-	ENUM_NAME_PAIR(SDL_FINGERUP),
-	ENUM_NAME_PAIR(SDL_FINGERMOTION),
-	ENUM_NAME_PAIR(SDL_DOLLARGESTURE),
-	ENUM_NAME_PAIR(SDL_DOLLARRECORD),
-	ENUM_NAME_PAIR(SDL_MULTIGESTURE),
-	ENUM_NAME_PAIR(SDL_CLIPBOARDUPDATE),
-	ENUM_NAME_PAIR(SDL_DROPFILE),
-	ENUM_NAME_PAIR(SDL_DROPTEXT),
-	ENUM_NAME_PAIR(SDL_DROPBEGIN),
-	ENUM_NAME_PAIR(SDL_DROPCOMPLETE),
-	ENUM_NAME_PAIR(SDL_AUDIODEVICEADDED),
-	ENUM_NAME_PAIR(SDL_AUDIODEVICEREMOVED),
-	ENUM_NAME_PAIR(SDL_SENSORUPDATE),
-	ENUM_NAME_PAIR(SDL_RENDER_TARGETS_RESET),
-	ENUM_NAME_PAIR(SDL_RENDER_DEVICE_RESET),
-	ENUM_NAME_PAIR(SDL_USEREVENT),
-	ENUM_NAME_PAIR(SDL_LASTEVENT)
-};
-static STL::HashMap<int,const char*> s_debugWindowEventLookUp =
-{
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_NONE),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_SHOWN),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_HIDDEN),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_EXPOSED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_MOVED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_RESIZED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_SIZE_CHANGED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_MINIMIZED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_MAXIMIZED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_RESTORED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_ENTER),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_LEAVE),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_FOCUS_GAINED),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_FOCUS_LOST),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_CLOSE),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_TAKE_FOCUS),
-	ENUM_NAME_PAIR(SDL_WINDOWEVENT_HIT_TEST)
+	ENUM_NAME_PAIR(SDL_EVENT_QUIT),
+	ENUM_NAME_PAIR(SDL_EVENT_TERMINATING),
+	ENUM_NAME_PAIR(SDL_EVENT_LOW_MEMORY),
+	ENUM_NAME_PAIR(SDL_EVENT_WILL_ENTER_BACKGROUND),
+	ENUM_NAME_PAIR(SDL_EVENT_DID_ENTER_BACKGROUND),
+	ENUM_NAME_PAIR(SDL_EVENT_WILL_ENTER_FOREGROUND),
+	ENUM_NAME_PAIR(SDL_EVENT_DID_ENTER_FOREGROUND),
+	ENUM_NAME_PAIR(SDL_EVENT_LOCALE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_SYSTEM_THEME_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_ORIENTATION),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_ADDED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_REMOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_MOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_SHOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_HIDDEN),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_EXPOSED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_MOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_RESIZED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_METAL_VIEW_RESIZED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_MINIMIZED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_MAXIMIZED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_RESTORED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_MOUSE_ENTER),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_MOUSE_LEAVE),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_FOCUS_GAINED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_FOCUS_LOST),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_CLOSE_REQUESTED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_HIT_TEST),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_ICCPROF_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_DISPLAY_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_SAFE_AREA_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_OCCLUDED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_ENTER_FULLSCREEN),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_LEAVE_FULLSCREEN),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_DESTROYED),
+	ENUM_NAME_PAIR(SDL_EVENT_WINDOW_HDR_STATE_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_KEY_DOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_KEY_UP),
+	ENUM_NAME_PAIR(SDL_EVENT_TEXT_EDITING),
+	ENUM_NAME_PAIR(SDL_EVENT_TEXT_INPUT),
+	ENUM_NAME_PAIR(SDL_EVENT_KEYMAP_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_KEYBOARD_ADDED),
+	ENUM_NAME_PAIR(SDL_EVENT_KEYBOARD_REMOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_TEXT_EDITING_CANDIDATES),
+	ENUM_NAME_PAIR(SDL_EVENT_SCREEN_KEYBOARD_SHOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_SCREEN_KEYBOARD_HIDDEN),
+	ENUM_NAME_PAIR(SDL_EVENT_MOUSE_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_MOUSE_BUTTON_DOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_MOUSE_BUTTON_UP),
+	ENUM_NAME_PAIR(SDL_EVENT_MOUSE_WHEEL),
+	ENUM_NAME_PAIR(SDL_EVENT_MOUSE_ADDED),
+	ENUM_NAME_PAIR(SDL_EVENT_MOUSE_REMOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_AXIS_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_BALL_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_HAT_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_BUTTON_DOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_BUTTON_UP),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_ADDED),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_REMOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_BATTERY_UPDATED),
+	ENUM_NAME_PAIR(SDL_EVENT_JOYSTICK_UPDATE_COMPLETE),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_AXIS_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_BUTTON_DOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_BUTTON_UP),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_ADDED),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_REMOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_REMAPPED),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_TOUCHPAD_UP),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_SENSOR_UPDATE),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_UPDATE_COMPLETE),
+	ENUM_NAME_PAIR(SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED),
+	ENUM_NAME_PAIR(SDL_EVENT_FINGER_DOWN),
+	ENUM_NAME_PAIR(SDL_EVENT_FINGER_UP),
+	ENUM_NAME_PAIR(SDL_EVENT_FINGER_MOTION),
+	ENUM_NAME_PAIR(SDL_EVENT_FINGER_CANCELED),
+	ENUM_NAME_PAIR(SDL_EVENT_CLIPBOARD_UPDATE),
+	ENUM_NAME_PAIR(SDL_EVENT_DROP_FILE),
+	ENUM_NAME_PAIR(SDL_EVENT_DROP_TEXT),
+	ENUM_NAME_PAIR(SDL_EVENT_DROP_BEGIN),
+	ENUM_NAME_PAIR(SDL_EVENT_DROP_COMPLETE),
+	ENUM_NAME_PAIR(SDL_EVENT_AUDIO_DEVICE_ADDED),
+	ENUM_NAME_PAIR(SDL_EVENT_AUDIO_DEVICE_REMOVED),
+	ENUM_NAME_PAIR(SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED),
+	ENUM_NAME_PAIR(SDL_EVENT_SENSOR_UPDATE),
+	ENUM_NAME_PAIR(SDL_EVENT_RENDER_TARGETS_RESET),
+	ENUM_NAME_PAIR(SDL_EVENT_RENDER_DEVICE_RESET),
+	ENUM_NAME_PAIR(SDL_EVENT_RENDER_DEVICE_LOST)
 };
 #undef ENUM_NAME_PAIR
 #endif // CHERRYSODA_ENABLE_DEBUG
 
 static STL::List<Keys> s_keyboardKeys;
 static STL::HashMap<int, Keys> s_keycodeToKeys = {
-	{ (int)SDLK_a, Keys::A },
-	{ (int)SDLK_b, Keys::B },
-	{ (int)SDLK_c, Keys::C },
-	{ (int)SDLK_d, Keys::D },
-	{ (int)SDLK_e, Keys::E },
-	{ (int)SDLK_f, Keys::F },
-	{ (int)SDLK_g, Keys::G },
-	{ (int)SDLK_h, Keys::H },
-	{ (int)SDLK_i, Keys::I },
-	{ (int)SDLK_j, Keys::J },
-	{ (int)SDLK_k, Keys::K },
-	{ (int)SDLK_l, Keys::L },
-	{ (int)SDLK_m, Keys::M },
-	{ (int)SDLK_n, Keys::N },
-	{ (int)SDLK_o, Keys::O },
-	{ (int)SDLK_p, Keys::P },
-	{ (int)SDLK_q, Keys::Q },
-	{ (int)SDLK_r, Keys::R },
-	{ (int)SDLK_s, Keys::S },
-	{ (int)SDLK_t, Keys::T },
-	{ (int)SDLK_u, Keys::U },
-	{ (int)SDLK_v, Keys::V },
-	{ (int)SDLK_w, Keys::W },
-	{ (int)SDLK_x, Keys::X },
-	{ (int)SDLK_y, Keys::Y },
-	{ (int)SDLK_z, Keys::Z },
+	{ (int)SDLK_A, Keys::A },
+	{ (int)SDLK_B, Keys::B },
+	{ (int)SDLK_C, Keys::C },
+	{ (int)SDLK_D, Keys::D },
+	{ (int)SDLK_E, Keys::E },
+	{ (int)SDLK_F, Keys::F },
+	{ (int)SDLK_G, Keys::G },
+	{ (int)SDLK_H, Keys::H },
+	{ (int)SDLK_I, Keys::I },
+	{ (int)SDLK_J, Keys::J },
+	{ (int)SDLK_K, Keys::K },
+	{ (int)SDLK_L, Keys::L },
+	{ (int)SDLK_M, Keys::M },
+	{ (int)SDLK_N, Keys::N },
+	{ (int)SDLK_O, Keys::O },
+	{ (int)SDLK_P, Keys::P },
+	{ (int)SDLK_Q, Keys::Q },
+	{ (int)SDLK_R, Keys::R },
+	{ (int)SDLK_S, Keys::S },
+	{ (int)SDLK_T, Keys::T },
+	{ (int)SDLK_U, Keys::U },
+	{ (int)SDLK_V, Keys::V },
+	{ (int)SDLK_W, Keys::W },
+	{ (int)SDLK_X, Keys::X },
+	{ (int)SDLK_Y, Keys::Y },
+	{ (int)SDLK_Z, Keys::Z },
 	{ (int)SDLK_0, Keys::D0 },
 	{ (int)SDLK_1, Keys::D1 },
 	{ (int)SDLK_2, Keys::D2 },
@@ -241,12 +241,12 @@ static STL::HashMap<int, Keys> s_keycodeToKeys = {
 	{ (int)SDLK_PERIOD, Keys::OemPeriod },
 	{ (int)SDLK_EQUALS, Keys::OemPlus },
 	{ (int)SDLK_PRINTSCREEN, Keys::PrintScreen },
-	{ (int)SDLK_QUOTE, Keys::OemQuotes },
+	{ (int)SDLK_APOSTROPHE, Keys::OemQuotes },
 	{ (int)SDLK_SCROLLLOCK, Keys::Scroll },
 	{ (int)SDLK_SEMICOLON, Keys::OemSemicolon },
 	{ (int)SDLK_SLEEP, Keys::Sleep },
 	{ (int)SDLK_TAB, Keys::Tab },
-	{ (int)SDLK_BACKQUOTE, Keys::OemTilde },
+	{ (int)SDLK_GRAVE, Keys::OemTilde },
 	{ (int)SDLK_VOLUMEUP, Keys::VolumeUp },
 	{ (int)SDLK_VOLUMEDOWN, Keys::VolumeDown },
 	{ (int)SDLK_UNKNOWN, Keys::None }
@@ -382,75 +382,49 @@ namespace entry {
 	static const char* canvas_id = "#canvas";
 #endif // __EMSCRIPTEN__
 
+#if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
+	static bool sdlUseWayland()
+	{
+		const char* driver = SDL_GetCurrentVideoDriver();
+		return driver != nullptr && SDL_strcmp(driver, "wayland") == 0;
+	}
+#endif // BX_PLATFORM_LINUX || BX_PLATFORM_BSD
+
 	static void* sdlNativeWindowHandle(SDL_Window* _window)
 	{
-		SDL_SysWMinfo wmi;
-		SDL_VERSION(&wmi.version);
-#ifndef __EMSCRIPTEN__
-		if (!SDL_GetWindowWMInfo(_window, &wmi)) {
-			return nullptr;
-		}
-#endif // __EMSCRIPTEN__
-
-#	if BX_PLATFORM_ANDROID
-		return (void*)wmi.info.android.window;
-#	elif BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-#		if ENTRY_CONFIG_USE_WAYLAND
-		wl_egl_window* win_impl = (wl_egl_window*)SDL_GetWindowData(_window, "wl_egl_window");
-		if (!win_impl) {
-			int width, height;
-			SDL_GetWindowSize(_window, &width, &height);
-			struct wl_surface* surface = wmi.info.wl.surface;
-			if (!surface)
-				return nullptr;
-			win_impl = wl_egl_window_create(surface, width, height);
-			SDL_SetWindowData(_window, "wl_egl_window", win_impl);
-		}
-		return (void*)(uintptr_t)win_impl;
-#		else
-		return (void*)wmi.info.x11.window;
-#		endif
-#	elif BX_PLATFORM_OSX
-		return wmi.info.cocoa.window;
-#	elif BX_PLATFORM_WINDOWS
-		return wmi.info.win.window;
-#	elif BX_PLATFORM_STEAMLINK
-		return wmi.info.vivante.window;
-#	endif // BX_PLATFORM_
 #ifdef __EMSCRIPTEN__
 		return (void*)canvas_id;
-#endif // __EMSCRIPTEN__
+#else
+		SDL_PropertiesID props = SDL_GetWindowProperties(_window);
+#	if BX_PLATFORM_WINDOWS
+		return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr);
+#	elif BX_PLATFORM_OSX
+		return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
+#	elif BX_PLATFORM_ANDROID
+		return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_ANDROID_WINDOW_POINTER, nullptr);
+#	elif BX_PLATFORM_LINUX || BX_PLATFORM_BSD
+		if (sdlUseWayland()) {
+			return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_EGL_WINDOW_POINTER, nullptr);
+		}
+		return (void*)(uintptr_t)SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
+#	else
 		return nullptr;
+#	endif // BX_PLATFORM_
+#endif // __EMSCRIPTEN__
 	}
 
 	inline bool sdlSetWindow(SDL_Window* _window)
 	{
-		SDL_SysWMinfo wmi;
-		SDL_VERSION(&wmi.version);
-#ifndef __EMSCRIPTEN__
-		if (!SDL_GetWindowWMInfo(_window, &wmi)) {
-			return false;
-		}
-#endif // __EMSCRIPTEN__
-
 		bgfx::PlatformData pd;
+		pd.ndt = NULL;
 #	if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-#		if ENTRY_CONFIG_USE_WAYLAND
-		pd.ndt = wmi.info.wl.display;
-#		else
-		pd.ndt = wmi.info.x11.display;
-#		endif
-#	elif BX_PLATFORM_OSX
-		pd.ndt = NULL;
-#	elif BX_PLATFORM_WINDOWS
-		pd.ndt = NULL;
-#	elif BX_PLATFORM_EMSCRIPTEN
-		pd.ndt = NULL;
-#	elif BX_PLATFORM_ANDROID
-		pd.ndt = NULL;
-#	elif BX_PLATFORM_STEAMLINK
-		pd.ndt = wmi.info.vivante.display;
-#	endif // BX_PLATFORM_
+		if (sdlUseWayland()) {
+			pd.ndt = SDL_GetPointerProperty(SDL_GetWindowProperties(_window), SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, nullptr);
+		}
+		else {
+			pd.ndt = SDL_GetPointerProperty(SDL_GetWindowProperties(_window), SDL_PROP_WINDOW_X11_DISPLAY_POINTER, nullptr);
+		}
+#	endif // BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 		pd.nwh = sdlNativeWindowHandle(_window);
 
 		pd.context = NULL;
@@ -465,15 +439,6 @@ namespace entry {
 	{
 		if (!_window)
 			return;
-#	if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-#		if ENTRY_CONFIG_USE_WAYLAND
-		wl_egl_window* win_impl = (wl_egl_window*)SDL_GetWindowData(_window, "wl_egl_window");
-		if (win_impl) {
-			SDL_SetWindowData(_window, "wl_egl_window", nullptr);
-			wl_egl_window_destroy(win_impl);
-		}
-#		endif
-#	endif
 		SDL_DestroyWindow(_window);
 	}
 
@@ -489,20 +454,20 @@ void Window::CreateWindow()
 	Engine::Instance()->m_windowResizable = false;
 	Engine::Instance()->m_fullscreen = true;
 
-	SDL_SetHint(SDL_HINT_VIDEO_EXTERNAL_CONTEXT, "1");
-	SDL_DisplayMode mode;
-	SDL_GetDesktopDisplayMode(0, &mode);
-	windowWidth  = mode.w;
-	windowHeight = mode.h;
-	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
+	const SDL_DisplayMode* mode = SDL_GetDesktopDisplayMode(SDL_GetPrimaryDisplay());
+	if (mode != nullptr) {
+		windowWidth  = mode->w;
+		windowHeight = mode->h;
+	}
+	m_mainWindow = SDL_CreateWindow(title.c_str(), windowWidth, windowHeight, SDL_WINDOW_FULLSCREEN);
 	Engine::Instance()->SetWindowSize(windowWidth, windowHeight);
 #else
 	bool resizable  = Engine::Instance()->m_windowResizable;
 	bool fullscreen = Engine::Instance()->m_fullscreen;
-	Uint32 windowFlag = SDL_WINDOW_HIDDEN;
+	SDL_WindowFlags windowFlag = SDL_WINDOW_HIDDEN;
 	if (resizable ) windowFlag |= SDL_WINDOW_RESIZABLE;
-	if (fullscreen) windowFlag |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	m_mainWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, windowFlag);
+	if (fullscreen) windowFlag |= SDL_WINDOW_FULLSCREEN;
+	m_mainWindow = SDL_CreateWindow(title.c_str(), windowWidth, windowHeight, windowFlag);
 #endif
 
 	InitializeCursor();
@@ -532,12 +497,12 @@ void Window::SetTitle(const String& title)
 
 void Window::SetFullscreen(bool fullscreen)
 {
-	SDL_SetWindowFullscreen(m_mainWindow, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+	SDL_SetWindowFullscreen(m_mainWindow, fullscreen);
 }
 
 bool Window::IsFullscreen()
 {
-	return SDL_GetWindowFlags(m_mainWindow) & SDL_WINDOW_FULLSCREEN;
+	return (SDL_GetWindowFlags(m_mainWindow) & SDL_WINDOW_FULLSCREEN) != 0;
 }
 
 void Window::GetPosition(int* x, int* y)
@@ -547,7 +512,7 @@ void Window::GetPosition(int* x, int* y)
 
 void Window::SetMousePosition(int x, int y)
 {
-	SDL_WarpMouseInWindow(m_mainWindow, x, y);
+	SDL_WarpMouseInWindow(m_mainWindow, (float)x, (float)y);
 }
 
 void Window::Hide()
@@ -566,7 +531,12 @@ void Window::ShowCursor(bool show)
 {
 	static bool s_showCache = true;
 	if (show == s_showCache) return;
-	SDL_ShowCursor(show ? SDL_ENABLE : SDL_DISABLE);
+	if (show) {
+		SDL_ShowCursor();
+	}
+	else {
+		SDL_HideCursor();
+	}
 #ifdef __EMSCRIPTEN__
 	if (show) {
 		CHERRYSODA_SWITCH_WEB_CURSOR('auto');
@@ -621,36 +591,33 @@ void Window::SetCursor(CursorTypes cursor)
 
 void Window::InitializeCursor()
 {
-	s_mouseCursors[(int)CursorTypes::Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-	s_mouseCursors[(int)CursorTypes::TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-	s_mouseCursors[(int)CursorTypes::ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-	s_mouseCursors[(int)CursorTypes::ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-	s_mouseCursors[(int)CursorTypes::ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-	s_mouseCursors[(int)CursorTypes::ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-	s_mouseCursors[(int)CursorTypes::ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-	s_mouseCursors[(int)CursorTypes::Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-	s_mouseCursors[(int)CursorTypes::NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+	s_mouseCursors[(int)CursorTypes::Arrow] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_DEFAULT);
+	s_mouseCursors[(int)CursorTypes::TextInput] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_TEXT);
+	s_mouseCursors[(int)CursorTypes::ResizeAll] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_MOVE);
+	s_mouseCursors[(int)CursorTypes::ResizeNS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NS_RESIZE);
+	s_mouseCursors[(int)CursorTypes::ResizeEW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_EW_RESIZE);
+	s_mouseCursors[(int)CursorTypes::ResizeNESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NESW_RESIZE);
+	s_mouseCursors[(int)CursorTypes::ResizeNWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NWSE_RESIZE);
+	s_mouseCursors[(int)CursorTypes::Hand] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
+	s_mouseCursors[(int)CursorTypes::NotAllowed] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NOT_ALLOWED);
 }
 
 void Window::TerminateCursor()
 {
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::Arrow]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::TextInput]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::ResizeAll]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::ResizeNS]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::ResizeEW]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::ResizeNESW]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::ResizeNWSE]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::Hand]);
-	SDL_FreeCursor(s_mouseCursors[(int)CursorTypes::NotAllowed]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::Arrow]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::TextInput]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::ResizeAll]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::ResizeNS]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::ResizeEW]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::ResizeNESW]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::ResizeNWSE]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::Hand]);
+	SDL_DestroyCursor(s_mouseCursors[(int)CursorTypes::NotAllowed]);
 }
 
 void Window::Resizable(bool resizable)
 {
-	CHERRYSODA_ASSERT(SDL_VERSION_ATLEAST(2,0,5), "SDL_SetWindowResizable unavailable for SDL version below 2.0.5\n");
-#if SDL_VERSION_ATLEAST(2,0,5)
-	SDL_SetWindowResizable(m_mainWindow, resizable ? SDL_TRUE : SDL_FALSE);
-#endif // SDL_VERSION_ATLEAST(2,0,5)
+	SDL_SetWindowResizable(m_mainWindow, resizable);
 }
 
 void Window::PollEvents()
@@ -672,65 +639,56 @@ void Window::PollEvents()
 		CHERRYSODA_DEBUG_FORMAT("0x%X__<%s>\n", event.type, s_debugEventLookUp[event.type]);
 #endif // CHERRYSODA_ENABLE_DEBUG
 		switch (event.type) {
-		case SDL_QUIT:
+		case SDL_EVENT_QUIT:
 			Engine::Instance()->Exit();
 			break;
 
-		case SDL_KEYDOWN:
+		case SDL_EVENT_KEY_DOWN:
 		{
-			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.keysym.scancode, key)) {
+			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.scancode, key)) {
 				if (!STL::Contains(s_keyboardKeys, key)) {
 					STL::Add(s_keyboardKeys, key);
 				}
 			}
 			break;
 		}
-		case SDL_KEYUP:
-			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.keysym.scancode, key)) {
+		case SDL_EVENT_KEY_UP:
+			if (STL::TryGetValue(s_scancodeToKeys, (int)event.key.scancode, key)) {
 				STL::Remove(s_keyboardKeys, key);
 			}
 			break;
 
-		case SDL_MOUSEWHEEL:
-			MInput::ms_internalMouseWheel += event.wheel.y * 120;
+		case SDL_EVENT_MOUSE_WHEEL:
+			MInput::ms_internalMouseWheel += (int)(event.wheel.y * 120);
 			break;
 
-		case SDL_FINGERDOWN:
+		case SDL_EVENT_FINGER_DOWN:
 			break;
-		case SDL_FINGERMOTION:
+		case SDL_EVENT_FINGER_MOTION:
 			break;
-		case SDL_FINGERUP:
-			break;
-
-		case SDL_CONTROLLERDEVICEADDED:
-			MInput::AddControllerInstance(event.cdevice.which);
-			break;
-		case SDL_CONTROLLERDEVICEREMOVED:
-			MInput::RemoveControllerInstance(event.cdevice.which);
+		case SDL_EVENT_FINGER_UP:
 			break;
 
-		case SDL_WINDOWEVENT:
-		{
-			const SDL_WindowEvent& wev = event.window;
-#ifdef CHERRYSODA_ENABLE_DEBUG
-			CHERRYSODA_DEBUG_FORMAT("                                 -> 0x%X__<%s>\n", wev.event, s_debugWindowEventLookUp[wev.event]);
-#endif // CHERRYSODA_ENABLE_DEBUG
-			switch (wev.event)
-			{
-			case SDL_WINDOWEVENT_FOCUS_GAINED:
-				Engine::Instance()->IsActive(true);
-				break;
-			case SDL_WINDOWEVENT_FOCUS_LOST:
-				Engine::Instance()->IsActive(false);
-				break;
-			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				Engine::Instance()->OnClientSizeChanged(wev.data1, wev.data2);
-				break;
-			}
-		}
-		break;
+		case SDL_EVENT_GAMEPAD_ADDED:
+			MInput::AddControllerInstance((int)event.gdevice.which);
+			break;
+		case SDL_EVENT_GAMEPAD_REMOVED:
+			MInput::RemoveControllerInstance((int)event.gdevice.which);
+			break;
 
-		case SDL_TEXTINPUT:
+		case SDL_EVENT_WINDOW_FOCUS_GAINED:
+			Engine::Instance()->IsActive(true);
+			break;
+
+		case SDL_EVENT_WINDOW_FOCUS_LOST:
+			Engine::Instance()->IsActive(false);
+			break;
+
+		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			Engine::Instance()->OnClientSizeChanged(event.window.data1, event.window.data2);
+			break;
+
+		case SDL_EVENT_TEXT_INPUT:
 		{
 			const SDL_TextInputEvent& tev = event.text;
 			Engine::Instance()->OnTextInput(tev.text);
@@ -743,14 +701,9 @@ void Window::PollEvents()
 
 bool Window::Initialize()
 {
-#ifdef _WIN32
-	SDL_SetMainReady();
-#endif // _WIN32
-
-	if (SDL_Init(0) != 0) {
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		return false;
 	}
-	SDL_InitSubSystem(SDL_INIT_TIMER);
 
 	SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight Portrait");
 
@@ -759,7 +712,6 @@ bool Window::Initialize()
 
 void Window::Terminate()
 {
-	SDL_QuitSubSystem(SDL_INIT_TIMER);
 	SDL_Quit();
 }
 

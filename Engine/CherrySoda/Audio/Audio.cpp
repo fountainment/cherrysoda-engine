@@ -5,16 +5,14 @@
 #include <CherrySoda/Util/NumType.h>
 
 #include <cmixer.h>
-#include <SDL.h>
-
-#include <cstring>
+#include <SDL3/SDL.h>
 
 namespace cherrysoda {
 
 double Audio::ms_masterVolume = 0.5;
 bool Audio::ms_initialized = false;
 
-static SDL_AudioDeviceID s_sdlAudioDev;
+static SDL_AudioStream* s_sdlAudioStream;
 
 static int s_sourceCount = 0;
 static STL::HashMap<StringID, Audio::EventDescription> s_descriptions;
@@ -32,7 +30,7 @@ Audio::EventInstance Audio::EventDescription::CreateInstance()
 	return { id };
 }
 
-static SDL_mutex* audio_mutex;
+static SDL_Mutex* audio_mutex;
 
 static void lock_handler(cm_Event* e)
 {
@@ -44,37 +42,46 @@ static void lock_handler(cm_Event* e)
 	}
 }
 
-static void audio_callback(void* udata, type::UInt8* stream, int size)
+static type::Int16 audio_buffer[4096];
+
+static void SDLCALL audio_callback(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount)
 {
-	cm_process((type::Int16*) stream, size / 2);
+	(void)userdata;
+	(void)total_amount;
+	while (additional_amount > 0) {
+		int bytes = additional_amount;
+		if (bytes > (int)sizeof(audio_buffer)) {
+			bytes = (int)sizeof(audio_buffer);
+		}
+		cm_process(audio_buffer, bytes / 2);
+		SDL_PutAudioStreamData(stream, audio_buffer, bytes);
+		additional_amount -= bytes;
+	}
 }
 
 void Audio::Initialize()
 {
-	SDL_AudioSpec fmt, got;
+	SDL_AudioSpec fmt;
 
 	/* Init SDL */
 	SDL_InitSubSystem(SDL_INIT_AUDIO);
 	audio_mutex = SDL_CreateMutex();
 
 	/* Init SDL audio */
-	std::memset(&fmt, 0, sizeof(fmt));
-	fmt.freq      = 44100;
-	fmt.format    = AUDIO_S16;
-	fmt.channels  = 2;
-	fmt.samples   = 1024;
-	fmt.callback  = audio_callback;
+	fmt.format   = SDL_AUDIO_S16;
+	fmt.channels = 2;
+	fmt.freq     = 44100;
 
-	s_sdlAudioDev = SDL_OpenAudioDevice(NULL, 0, &fmt, &got, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE);
-	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioDev, "Error: failed to open audio device '%s'\n", SDL_GetError());
+	s_sdlAudioStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &fmt, audio_callback, NULL);
+	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioStream, "Error: failed to open audio device '%s'\n", SDL_GetError());
 
 	/* Init library */
-	cm_init(got.freq);
+	cm_init(fmt.freq);
 	cm_set_lock(lock_handler);
 	cm_set_master_gain(ms_masterVolume);
 
 	/* Start audio */
-	SDL_PauseAudioDevice(s_sdlAudioDev, 0);
+	SDL_ResumeAudioStreamDevice(s_sdlAudioStream);
 
 	ms_initialized = true;
 }
@@ -88,8 +95,8 @@ void Audio::Terminate()
 	s_sourceCount = 0;
 
 	if (ms_initialized) {
-		SDL_CloseAudioDevice(s_sdlAudioDev);
-		s_sdlAudioDev = 0;
+		SDL_DestroyAudioStream(s_sdlAudioStream);
+		s_sdlAudioStream = nullptr;
 
 		SDL_DestroyMutex(audio_mutex);
 		audio_mutex = nullptr;

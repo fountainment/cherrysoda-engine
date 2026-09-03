@@ -18,7 +18,7 @@
 #include <emscripten.h>
 #endif // __EMSCRIPTEN__
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 namespace cherrysoda {
 

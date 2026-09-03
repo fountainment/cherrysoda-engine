@@ -16,9 +16,6 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
 
-    - name: Configure Dependencies
-      run: brew install sdl2
-
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build

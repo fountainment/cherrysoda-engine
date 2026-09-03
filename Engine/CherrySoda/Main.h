@@ -1,11 +1,11 @@
 #ifndef _CHERRYSODA_MAIN_H_
 #define _CHERRYSODA_MAIN_H_
 
-#ifdef _WIN32
-#	define SDL_MAIN_HANDLED
-#endif // _WIN32
+// The engine provides its own main() entry via CHERRYSODA_DEFAULT_MAIN,
+// so SDL's main handling is disabled on every platform.
+#define SDL_MAIN_HANDLED
 
-#include <SDL_main.h>
+#include <SDL3/SDL_main.h>
 
 #ifdef _MSC_VER
 	#pragma comment(linker, "/NODEFAULTLIB:LIBCMT.lib")

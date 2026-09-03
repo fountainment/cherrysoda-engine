@@ -1,6 +1,6 @@
 # CherrySoda Engine
 
-A lightweight cross-platform C++ game engine based on bgfx and SDL2
+A lightweight cross-platform C++ game engine based on bgfx and SDL3
 
 ## Introduction
 
@@ -21,8 +21,10 @@ Monocle engine UML:
 
 ## Requirements
 
-- CMake >=3.12
+- CMake >=3.16
 - Python >=3.6
+
+SDL3 is built from the vendored source in `External/SDL` and statically linked into the engine, so no system SDL installation is needed.
 
 ### Windows
 
@@ -31,11 +33,11 @@ Monocle engine UML:
 ### Linux
 
 - GCC >=5.2 or Clang >=3.4
-- libSDL2-dev
+- X11 development packages (libx11-dev, libxext-dev, libxcursor-dev, libxrandr-dev, libxfixes-dev, libxi-dev)
 
 ### MacOS
 
-- brew install sdl2
+- No extra dependencies
 
 ## Current Features
 
