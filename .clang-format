@@ -1,0 +1,59 @@
+# CherrySoda Engine code style.
+# Matches the existing hand-written style: tab indentation, 120 columns,
+# right-aligned pointers, Allman braces for types/functions but attached
+# braces for control-flow statements.
+#
+# The engine tree is kept conformant via `clang-format -i`; run a check with
+#   clang-format --dry-run --Werror <files>
+# (mirrored by the Format CI job). External/ is vendored and never formatted.
+
+Language: Cpp
+Standard: c++20
+
+UseTab: ForContinuationAndIndentation
+TabWidth: 4
+IndentWidth: 4
+ColumnLimit: 120
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+NamespaceIndentation: None
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+
+SpaceAfterTemplateKeyword: false
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: false
+  AfterExternBlock: true
+  AfterControlStatement: Never
+  BeforeElse: false
+  BeforeCatch: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: true
+
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+InsertBraces: false
+FixNamespaceComments: false
+AlignEscapedNewlines: Left
+KeepEmptyLines:
+  AtStartOfBlock: false
+MaxEmptyLinesToKeep: 1
+InsertNewlineAtEOF: false

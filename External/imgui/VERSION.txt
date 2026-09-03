@@ -1,0 +1,9 @@
+Dear ImGui — immediate-mode GUI (docking branch).
+
+Upstream:    https://github.com/ocornut/imgui (docking branch)
+Version:     1.92.9b, docking branch sync commit b48d1afb
+License:     MIT (LICENSE.txt)
+Vendored:    2026-09-03, updated 1.89.1 WIP -> 1.92.9b (commit fe586b53)
+Consumed by: Util/GUI (engine debug UI, dockspace, console), backended by
+             the engine's own bgfx render pass and MInput-driven IO
+Notes:       stays on the docking branch (GUI enables DockingEnable)

@@ -1,0 +1,10 @@
+cgltf — single-header C glTF loader.
+
+Upstream:    https://github.com/jkuhlmann/cgltf
+Version:     1.15 (cgltf.h header comment)
+License:     MIT (LICENSE)
+Vendored:    2026-09-03, updated 1.13 -> 1.15 (commit f4022e9f)
+Contents:    cgltf.h, cgltf_write.h, engine wrapper CMakeLists.txt
+Consumed by: model loading (Graphics/Mesh pipeline)
+Update:      drop in the new headers; API changes surface as compile errors
+             in the mesh loader only

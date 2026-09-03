@@ -1,0 +1,8 @@
+RapidJSON — fast JSON parser/generator.
+
+Upstream:    https://github.com/Tencent/rapidjson
+Version:     1.1.0 (RAPIDJSON_*_VERSION in include/rapidjson/rapidjson.h)
+License:     MIT (LICENSE.txt, with an alternative notice option)
+Vendored:    2022-03-23 (commit fb717a82)
+Consumed by: Util/Json (JsonUtil), Atlas / SpriteBank / PixelFont / SpriteData
+             loaders

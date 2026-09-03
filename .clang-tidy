@@ -1,0 +1,86 @@
+# CherrySoda Engine clang-tidy configuration.
+#
+# Philosophy (borrowed from the fountain2 engine): high signal, low noise,
+# non-blocking. Findings are report-only (WarningsAsErrors is empty) — they do
+# not gate CI. The intent is to keep real bug patterns (bugprone-*),
+# performance traps (performance-*) and modernization opportunities visible
+# while development iterates, not to force a big-bang cleanup.
+#
+# How to run (clang-tidy needs a compile_commands.json — every preset exports
+# one into out/build/<preset>/; use the Homebrew LLVM binary, /opt/homebrew/
+# opt/llvm/bin, and add the macOS SDK because Homebrew clang-tidy does not
+# resolve Apple-clang sysroots by itself):
+#
+#   cmake --preset unix-debug
+#   /opt/homebrew/opt/llvm/bin/run-clang-tidy -p out/build/unix-debug \
+#     --extra-arg="-isysroot$(xcrun --show-sdk-path)" \
+#     'Engine/CherrySoda/.*\.cpp'
+#
+# The engine builds without PCH or unity files, so no extra flags are needed
+# for tidy to see every TU.
+#
+# Disabled checks and why (re-enabling one is welcome after the corresponding
+# cleanup pass lands):
+#
+#   modernize-use-trailing-return-type      engine uses leading return types
+#                                           everywhere; converting every
+#                                           signature is pure churn
+#   modernize-avoid-c-style-cast            Monocle-heritage code uses C-style
+#                                           casts pervasively; needs a
+#                                           dedicated cleanup pass first
+#   readability-isolate-declaration         `float r, g, b;` is an intentional
+#                                           idiom in color/vector math
+#   bugprone-signed-bitwise                 integer-promotion noise on BitTag
+#                                           masks and SDL bitfields
+#   readability-magic-numbers               math/engine code legitimately uses
+#                                           raw numeric literals everywhere
+#   bugprone-easily-swappable-parameters    (float a, float b) is the norm in
+#                                           geometry code
+#   readability-identifier-naming           engine has its own convention
+#                                           (m_ members, PascalCase methods);
+#                                           full naming config deferred
+#   readability-function-cognitive-complexity dense Entity::Update bodies are
+#                                           inherited style
+#   readability-braces-around-statements   one-line unbraced `if (x) y;` is an
+#                                           accepted style here (matches the
+#                                           clang-format config)
+#   readability-identifier-length          short names (i, j, x, y) are
+#                                           idiomatic in math/loop code
+#   misc-non-private-member-variables-in-classes  Entity/Component expose
+#                                           protected state by design
+#   misc-include-cleaner                    include churn too large for now
+#   bugprone-narrowing-conversions,         fired from inside SDL3 macros;
+#   cert-err34-c, cert-err58-cpp            not actionable from engine code
+
+Checks:
+  '-*,
+   bugprone-*,
+   cert-*,
+   cppcoreguidelines-init-variables,
+   cppcoreguidelines-pro-type-member-init,
+   cppcoreguidelines-slicing,
+   misc-*,
+   modernize-*,
+   performance-*,
+   portability-*,
+   readability-*,
+   -modernize-use-trailing-return-type,
+   -modernize-avoid-c-style-cast,
+   -readability-isolate-declaration,
+   -bugprone-signed-bitwise,
+   -readability-magic-numbers,
+   -bugprone-easily-swappable-parameters,
+   -readability-identifier-naming,
+   -readability-function-cognitive-complexity,
+   -readability-braces-around-statements,
+   -readability-identifier-length,
+   -misc-non-private-member-variables-in-classes,
+   -misc-include-cleaner,
+   -bugprone-narrowing-conversions,
+   -cert-err34-c,
+   -cert-err58-cpp'
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '(Engine/CherrySoda|Examples|Playground|Bench|Tests|Tools)/.*\.h$'
+
+FormatStyle: file

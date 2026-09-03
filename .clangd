@@ -1,0 +1,8 @@
+# clangd config — compile_commands.json is exported by every CMake preset
+# into out/build/<preset>/. Point clangd at the one you develop against.
+CompileFlags:
+  CompilationDatabase: out/build/unix-debug
+
+Diagnostics:
+  UnusedIncludes: Strict
+  MissingIncludes: None

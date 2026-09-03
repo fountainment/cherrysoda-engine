@@ -1,0 +1,10 @@
+cmixer — lightweight portable ANSI C audio mixer.
+
+Upstream:    https://github.com/rxi/cmixer
+Version:     unreleased master snapshot (vendored 2021-05-19, commit 64afb081)
+License:     MIT (LICENSE)
+Local mods:  engine commit 1616e2e9 adds a one-line fix to cm_destroy_source
+             in src/cmixer.c — carry it forward (or verify upstream fixed it)
+             when updating
+Consumed by: Audio/Audio.{h,cpp} (SDL3 audio stream drives cm_process)
+Update:      no releases/tags upstream; diff manually and keep the local fix

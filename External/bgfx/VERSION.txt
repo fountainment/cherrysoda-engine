@@ -1,0 +1,16 @@
+bgfx / bimg / bx — rendering backend, vendored as three sibling trees.
+
+Upstream:    https://github.com/bkaradzic/bgfx  (+ bimg, bx as siblings)
+Version:     bgfx rev 9149 (2026-09-03, commit 7bb7a9f7; old GLSL 120 / ESSL
+             default / DX9 profiles were removed upstream at this rev)
+License:     BSD 2-clause (bgfx/LICENSE; bimg and bx carry the same license)
+Vendored:    updated via Tools/update_bgfx.py — clone the three repos as
+             siblings of this repo, run the script, then expect to fix build
+             breaks and regenerate embedded shaders
+Build:       External/bgfx/CMakeLists.txt + shaderc.cmake are engine-authored
+             build scripts modeled after bkaradzic/bgfx.cmake; shaderc links
+             Dawn's Tint for WGSL — do not strip the tint target
+Consumed by: Graphics/ (renderer, textures, effects, embedded shaders),
+             Tools/compile_shader.py via shaderc (prebuilt Tools/bin/shaderc
+             on Windows/Linux x64, or Tools/bin/shaderc.local built with the
+             unix-shaderc / windows-shaderc presets)

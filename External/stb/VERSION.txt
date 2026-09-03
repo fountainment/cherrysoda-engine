@@ -1,0 +1,10 @@
+stb — single-file public domain libraries (header subset).
+
+Upstream:    https://github.com/nothings/stb
+Version:     unversioned master snapshot, 2021-10-07 (commit 59114069);
+             per-header versions apply (e.g. stb_truetype.h v1.26)
+License:     MIT or Public Domain, dual (LICENSE)
+Contents:    20 headers picked for the engine's needs (image, truetype,
+             rect pack, ds, etc.) plus engine wrapper CMakeLists.txt
+Consumed by: image decode helpers, font/atlas tooling, misc utilities
+Update:      copy individual headers as needed; no coherent tree sync

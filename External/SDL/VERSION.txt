@@ -1,0 +1,13 @@
+SDL (Simple DirectMedia Layer 3) — vendored source snapshot.
+
+Upstream:    https://github.com/libsdl-org/SDL
+Version:     3.4.16 (include/SDL3/SDL_version.h)
+License:     zlib (LICENSE.txt)
+Vendored:    2026-09-03, alongside the SDL2 -> SDL3 engine port (commit 4988969a)
+Contents:    full upstream source tree minus .git; built from source
+Build:       options force-set in External/CMakeLists.txt; statically linked
+             via the SDL3::SDL3 target — no system SDL installation is needed
+             on any platform
+Consumed by: engine platform layer (windowing/events), MInput, Audio output
+Update:      replace the tree, then re-check the forced options in
+             External/CMakeLists.txt against upstream's renamed options

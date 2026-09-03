@@ -1,0 +1,8 @@
+GoogleTest — C++ testing framework.
+
+Upstream:    https://github.com/google/googletest
+Version:     1.18.0
+License:     BSD 3-clause (LICENSE)
+Vendored:    2026-09-03, updated 1.12.1 -> 1.18.0 (commit 5c66e6f9)
+Consumed by: Tests/ executables (AllTests + per-suite binaries), linked via
+             CHERRYSODA_EXTRA_LIBS gtest
