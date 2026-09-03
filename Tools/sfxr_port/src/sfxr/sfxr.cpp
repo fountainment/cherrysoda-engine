@@ -1068,6 +1068,11 @@ void SfxrInit()
 	des.channels = 1;
 	des.freq = 44100;
 
+	// SDL3 does not implicitly initialize the audio subsystem (SDL2's legacy
+	// SDL_OpenAudio used to), and the engine skips Audio::Initialize() here.
+	SDL_InitSubSystem(SDL_INIT_AUDIO);
+
 	s_sdlAudioStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &des, SDLAudioCallback, nullptr);
+	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioStream, "Error: failed to open audio device '%s'\n", SDL_GetError());
 	SDL_ResumeAudioStreamDevice(s_sdlAudioStream);
 }
