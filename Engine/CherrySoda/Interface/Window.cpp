@@ -516,6 +516,9 @@ void Window::Hide()
 void Window::Show()
 {
 	SDL_ShowWindow(m_mainWindow);
+	// SDL 3 no longer activates the app at launch on macOS 14+, and showing the
+	// window alone doesn't bring the process to the foreground.
+	SDL_RaiseWindow(m_mainWindow);
 }
 
 #define CHERRYSODA_SWITCH_WEB_CURSOR(CURSOR_X) EM_ASM(document.getElementById("canvas").style.cursor = CURSOR_X);
