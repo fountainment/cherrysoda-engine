@@ -44,6 +44,7 @@ source_group("SIMD Files" FILES ${SIMD_HEADER})
 
 add_library(glm INTERFACE)
 target_include_directories(glm INTERFACE ../)
+target_compile_definitions(glm INTERFACE GLM_ENABLE_EXPERIMENTAL)
 
 if(BUILD_STATIC_LIBS)
 add_library(glm_static STATIC ${ROOT_TEXT} ${ROOT_MD} ${ROOT_NAT}
