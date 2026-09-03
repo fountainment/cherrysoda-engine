@@ -1,0 +1,7 @@
+pugixml — light-weight C++ XML processing library.
+
+Upstream:    https://github.com/zeux/pugixml
+Version:     1.16 (PUGIXML_VERSION in src/pugixml.hpp)
+License:     MIT (LICENSE.md)
+Vendored:    2026-09-04, replaces tinyxml2 (Consumed by: Util/XML)
+Consumed by: Util/XML (XMLUtil)

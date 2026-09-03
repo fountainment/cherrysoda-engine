@@ -1,7 +1,0 @@
-tinyxml2 — small C++ XML parser.
-
-Upstream:    https://github.com/leethomason/tinyxml2
-Version:     11.0.0 (TINYXML2_*_VERSION in tinyxml2.h)
-License:     zlib (LICENSE.txt)
-Vendored:    2026-09-03, updated 9.0.0 -> 11.0.0 (commit 365bdd00)
-Consumed by: Util/XML (XMLUtil)

@@ -1,13 +1,17 @@
 #include <CherrySoda/Util/XML.h>
 
+#include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/String.h>
+
 namespace cherrysoda {
 
-bool XMLUtil::ReadXMLFile(xml::XMLDocument& doc, const String& filename)
+bool XMLUtil::ReadXMLFile(xml::xml_document& doc, const String& filename)
 {
-	xml::XMLError result = doc.LoadFile(filename.c_str());
-	if (result != xml::XMLError::XML_SUCCESS) {
-		// Clean up.
-		doc.Clear();
+	xml::xml_parse_result result = doc.load_file(filename.c_str());
+	if (!result) {
+		CHERRYSODA_LOG(CHERRYSODA_FORMAT("XMLUtil::ReadXMLFile: failed to parse \"%s\": %s\n", filename.c_str(),
+										  result.description()));
+		doc.reset();
 		return false;
 	}
 

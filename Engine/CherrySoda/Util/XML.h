@@ -3,20 +3,20 @@
 
 #include <CherrySoda/Util/String.h>
 
-#include <tinyxml2.h>
+#include <pugixml.hpp>
 
 namespace cherrysoda {
 
 namespace xml {
 
-using namespace ::tinyxml2;
+using namespace ::pugi;
 
 } // namespace xml
 
 class XMLUtil
 {
 public:
-	static bool ReadXMLFile(xml::XMLDocument& doc, const String& filename);
+	static bool ReadXMLFile(xml::xml_document& doc, const String& filename);
 };
 
 } // namespace cherrysoda

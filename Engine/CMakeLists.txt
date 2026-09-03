@@ -213,7 +213,7 @@ else()
   target_include_directories(CherrySoda PUBLIC .)
 endif()
 
-set(CHERRYSODA_COMMON_LIBS tracy cgltf imgui bgfx bimg_decode bimg bx glm rapidjson tinyxml2 cmixer stb ${CHERRYSODA_SDL_LIBS})
+set(CHERRYSODA_COMMON_LIBS tracy cgltf imgui bgfx bimg_decode bimg bx glm rapidjson pugixml cmixer stb ${CHERRYSODA_SDL_LIBS})
 if(WINDOWS)
   target_link_libraries(CherrySoda PUBLIC ${CHERRYSODA_COMMON_LIBS} psapi)
 elseif(ANDROID)
