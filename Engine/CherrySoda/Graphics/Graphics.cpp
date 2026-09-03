@@ -533,6 +533,10 @@ void Graphics::Terminate()
 	}
 	STL::Clear(s_embeddedEffects);
 
+	// Resource destroys are deferred to the next frame boundary, so advance one
+	// more frame before shutdown, otherwise bgfx's uniform cache leaks on exit
+	bgfx::frame();
+
 	bgfx::shutdown();
 
 	entry::termiate();
@@ -909,7 +913,7 @@ Graphics::FrameBufferHandle Graphics::CreateFrameBuffer(int num, const Graphics:
 Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, type::UInt16 num)
 {
 	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_uniformHashMap, uniform), "Uniform '%s' already exists.\n", uniform.c_str());
-	Graphics::UniformHandle handle = bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Vec4, num).idx;
+	Graphics::UniformHandle handle = bgfx::createUniform(uniform.c_str(), bgfx::UniformFreq::Frame, bgfx::UniformType::Vec4, num).idx;
 	ms_uniformHashMap[uniform] = handle;
 	return handle;
 }
@@ -917,7 +921,7 @@ Graphics::UniformHandle Graphics::CreateUniformVec4(const String& uniform, type:
 Graphics::UniformHandle Graphics::CreateUniformMat4(const String& uniform)
 {
 	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_uniformHashMap, uniform), "Uniform '%s' already exists.\n", uniform.c_str());
-	Graphics::UniformHandle handle = bgfx::createUniform(uniform.c_str(), bgfx::UniformType::Mat4).idx;
+	Graphics::UniformHandle handle = bgfx::createUniform(uniform.c_str(), bgfx::UniformFreq::Frame, bgfx::UniformType::Mat4).idx;
 	ms_uniformHashMap[uniform] = handle;
 	return handle;
 }
@@ -998,13 +1002,16 @@ void Graphics::SetTexture(Graphics::TextureHandle texture)
 
 void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, type::UInt16 size/* = 1U*/)
 {
-	bgfx::setUniform({ uniform }, value, size);
+	// Frame uniforms are used like scene-level state (set outside of draw submission),
+	// which requires UniformFreq::Frame since bgfx discards pending per-draw uniforms
+	// on discard()/submit()
+	bgfx::setFrameUniform({ uniform }, value, size);
 }
 
 void Graphics::SetUniform(StringID uniformName, const void* value, type::UInt16 size/* = 1U*/)
 {
 	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(ms_uniformHashMap, uniformName), "Uniform '%s' doesn't exist.\n", uniformName.GetStr().c_str());
-	bgfx::setUniform({ ms_uniformHashMap[uniformName] }, value, size);
+	bgfx::setFrameUniform({ ms_uniformHashMap[uniformName] }, value, size);
 }
 
 void Graphics::SetupEngineUniforms()
@@ -1015,20 +1022,20 @@ void Graphics::SetupEngineUniforms()
 	Math::Vec2 surfaceSize = Math::Vec2(resolution.x / resolution.y, 1.f);
 	Math::Vec4 timeVec4 = Math::Vec4(inst->GameTime(), inst->DeltaTime(), inst->RawGameTime(), inst->RawDeltaTime());
 	Math::Vec4 resolutionVec4 = Math::Vec4(resolution, surfaceSize);
-	bgfx::setUniform({ ms_uniformTime },       &timeVec4);
-	bgfx::setUniform({ ms_uniformResolution }, &resolutionVec4);
+	bgfx::setFrameUniform({ ms_uniformTime },       &timeVec4);
+	bgfx::setFrameUniform({ ms_uniformResolution }, &resolutionVec4);
 }
 
 void Graphics::SetUniformCamPos(const Math::Vec3& camPos)
 {
 	Math::Vec4 camPosVec4 = Math::Vec4(camPos, 1.0f);
-	bgfx::setUniform({ ms_uniformCamPos }, &camPosVec4);
+	bgfx::setFrameUniform({ ms_uniformCamPos }, &camPosVec4);
 }
 
 void Graphics::SetUniformMaterial(const Math::Vec3& albedo, float metallic, float roughness, float ao)
 {
 	Math::Vec4 materialVec4[] = { Math::Vec4(albedo, 0.0f), Math::Vec4(metallic, roughness, ao, 0.0f) };
-	bgfx::setUniform({ ms_uniformMaterial }, materialVec4, 2U);
+	bgfx::setFrameUniform({ ms_uniformMaterial }, materialVec4, 2U);
 }
 
 static Math::Vec4 s_lightVec4[8];
@@ -1038,13 +1045,13 @@ void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math
 	s_lightVec4[index * 2] = Math::Vec4(lightPos, 1.0f);
 	s_lightVec4[index * 2 + 1] = Math::Vec4(lightColor, 1.0f);
 	if (submit) {
-		bgfx::setUniform({ ms_uniformLights }, s_lightVec4, 8U);
+		bgfx::setFrameUniform({ ms_uniformLights }, s_lightVec4, 8U);
 	}
 }
 
 void Graphics::SubmitUniformLight()
 {
-	bgfx::setUniform({ ms_uniformLights }, s_lightVec4, 8U);
+	bgfx::setFrameUniform({ ms_uniformLights }, s_lightVec4, 8U);
 }
 
 void Graphics::SetTextureCube(const TextureCube* texture)

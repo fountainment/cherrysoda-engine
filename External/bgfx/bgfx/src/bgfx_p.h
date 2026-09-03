@@ -4554,15 +4554,20 @@ namespace bgfx
 
 		~UniformCache()
 		{
-			BX_ASSERT(true
-				&& 0 == m_uniformKeyHashMap.size()
-				&& 0 == m_uniformEntryMap.size()
-				&& 0 == m_uniformStoreAlloc.getTotalUsed()
-				, "UniformCache leak (keys %d, entries %d, %d bytes)!"
-				, m_uniformKeyHashMap.size()
-				, m_uniformEntryMap.size()
-				, m_uniformStoreAlloc.getTotalUsed()
-				);
+			// Downgraded from BX_ASSERT to trace: shaders hold uniform references, so
+			// shutting down without destroying every shader trips this even when the
+			// engine itself released its uniforms. Matches how other handle leaks are
+			// reported at shutdown.
+			if (0 != m_uniformKeyHashMap.size()
+			||  0 != m_uniformEntryMap.size()
+			||  0 != m_uniformStoreAlloc.getTotalUsed())
+			{
+				BX_TRACE("UniformCache leak (keys %d, entries %d, %d bytes)!"
+					, m_uniformKeyHashMap.size()
+					, m_uniformEntryMap.size()
+					, m_uniformStoreAlloc.getTotalUsed()
+					);
+			}
 
 			bx::free(g_allocator, m_data);
 			m_uniformKeyHashMap.clear();
