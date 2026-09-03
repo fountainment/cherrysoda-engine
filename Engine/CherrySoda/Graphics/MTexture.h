@@ -36,6 +36,23 @@ public:
 			  const Math::Vec3& scale = Vec3_One, float zRotation = 0.f,
 			  SpriteEffects flip = SpriteEffects::None) const;
 
+	void DrawCentered(const Math::Vec2& position, const Color& color = Color::White, const Math::Vec2& scale = Vec2_One,
+					  float zRotation = 0.f, SpriteEffects flip = SpriteEffects::None) const;
+	void DrawJustified(const Math::Vec2& position, const Math::Vec2& justify, const Color& color = Color::White,
+					   const Math::Vec2& scale = Vec2_One, float zRotation = 0.f,
+					   SpriteEffects flip = SpriteEffects::None) const;
+	void DrawOutline(const Math::Vec2& position, const Color& color = Color::White, const Math::Vec2& scale = Vec2_One,
+					 float zRotation = 0.f, SpriteEffects flip = SpriteEffects::None,
+					 const Color& outlineColor = Color::Black, int outlineOffset = 1) const;
+	void DrawOutlineCentered(const Math::Vec2& position, const Color& color = Color::White,
+							 const Math::Vec2& scale = Vec2_One, float zRotation = 0.f,
+							 SpriteEffects flip = SpriteEffects::None, const Color& outlineColor = Color::Black,
+							 int outlineOffset = 1) const;
+	void DrawOutlineJustified(const Math::Vec2& position, const Math::Vec2& justify, const Color& color = Color::White,
+							  const Math::Vec2& scale = Vec2_One, float zRotation = 0.f,
+							  SpriteEffects flip = SpriteEffects::None, const Color& outlineColor = Color::Black,
+							  int outlineOffset = 1) const;
+
 	inline Math::Vec2 DrawOffset() const { return m_drawOffset; }
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }

@@ -23,6 +23,28 @@ public:
 
 	inline void RotateOnZ(float rotation) { ZRotation(ZRotation() + rotation); }
 
+	// Renders the component at eight offsets in the outline color, then
+	// renders it normally on top
+	void DrawOutline(const Color& color, int offset = 1)
+	{
+		Math::Vec3 position = Position();
+		Color was = m_color;
+
+		SetColor(color);
+		for (int i = -1; i < 2; i++) {
+			for (int j = -1; j < 2; j++) {
+				if (i != 0 || j != 0) {
+					Position(position + Math::Vec3((float)(i * offset), (float)(j * offset), 0.f));
+					Render();
+				}
+			}
+		}
+
+		Position(position);
+		SetColor(was);
+	}
+	void DrawOutline(int offset = 1) { DrawOutline(Color::Black, offset); }
+
 	inline void RenderPosition(Math::Vec3 pos3d) { Position(pos3d - EntityPos()); }
 	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
 

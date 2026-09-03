@@ -62,11 +62,17 @@ void PixelText::Refresh()
 
 void PixelText::Render()
 {
+	RenderText(Vec2_Zero, m_color);
+}
+
+void PixelText::RenderText(const Math::Vec2& offset, const Color& color)
+{
 	if (m_dirty) {
 		Refresh();
 	}
 	for (auto& character : m_characters) {
-		character.m_charData->m_texture.Draw(Math::Vec3(m_position + character.m_offset, 0.f), Vec3_Zero, m_color);
+		character.m_charData->m_texture.Draw(Math::Vec3(m_position + offset + character.m_offset, 0.f), Vec3_Zero,
+											 color);
 	}
 }
 

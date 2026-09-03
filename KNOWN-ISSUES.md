@@ -36,13 +36,6 @@ entry has a stable ID, the location(s), the impact, and a fix sketch.
 
 ## F — unfinished / scoped-out functionality
 
-### F1: Camera class incomplete
-
-- Location: `Engine/CherrySoda/Util/Camera.cpp:9`
-- Impact: camera features from Monocle (zoom origin, rounding, look-at
-  lerp) are missing; games compensate by hand.
-- Fix sketch: port the remaining Monocle Camera behavior + unit tests.
-
 ### F2: No Texture3D
 
 - Location: `Engine/CherrySoda/Graphics/Texture.h:53`

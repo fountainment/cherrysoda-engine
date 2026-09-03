@@ -133,6 +133,54 @@ public:
 		return Position2D() + (screenPos - Origin2D()) / Scale2D();
 	}
 
+	inline Math::Vec2 WorldToScreen(const Math::Vec2& worldPos) const
+	{
+		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera::WorldToScreen is for ortho projection camera.\n");
+		return Origin2D() + (worldPos - Position2D()) * Scale2D();
+	}
+
+	inline float X() const { return Position2D().x; }
+	inline void X(float x)
+	{
+		Math::Vec2 pos = Position2D();
+		pos.x = x;
+		Position2D(pos);
+	}
+	inline float Y() const { return Position2D().y; }
+	inline void Y(float y)
+	{
+		Math::Vec2 pos = Position2D();
+		pos.y = y;
+		Position2D(pos);
+	}
+
+	// Move the camera so that its left/top edge lands at the given world
+	// coordinate (orthographic cameras only)
+	inline void Left(float left)
+	{
+		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera::Left(value) is for ortho projection camera.\n");
+		X(left + Origin2D().x / Scale2D().x);
+	}
+	inline void Top(float top)
+	{
+		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera::Top(value) is for ortho projection camera.\n");
+		Y(top + Origin2D().y / Scale2D().y);
+	}
+
+	void CopyFrom(const Camera& other)
+	{
+		Position(other.Position());
+		Scale(other.Scale());
+		Origin(other.Origin());
+		Direction(other.Direction());
+		ZRotation(other.ZRotation());
+		Width(other.Width());
+		Height(other.Height());
+		FOV(other.FOV());
+		Ratio(other.Ratio());
+		UseOrthoProjection(other.UseOrthoProjection());
+	}
+
 private:
 	friend class Graphics;
 

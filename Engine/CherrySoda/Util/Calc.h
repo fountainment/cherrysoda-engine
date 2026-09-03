@@ -65,7 +65,26 @@ public:
 		return Math::Vec2((float)Math_Cos(angleRadians) * length, (float)Math_Sin(angleRadians) * length);
 	}
 
+	static inline float Approach(float val, float target, float maxMove)
+	{
+		return val > target ? Math_Max(val - maxMove, target) : Math_Min(val + maxMove, target);
+	}
+
 	static Math::Vec2 Approach(const Math::Vec2& val, const Math::Vec2& target, float maxMove);
+	static Math::Vec3 Approach(const Math::Vec3& val, const Math::Vec3& target, float maxMove);
+
+	// Maps a value in [0, 1] onto a return trip 0 -> 1 -> 0
+	static inline float YoYo(float value) { return value <= .5f ? value * 2.f : 1.f - (value - .5f) * 2.f; }
+
+	static inline float Map(float val, float min, float max, float newMin = 0.f, float newMax = 1.f)
+	{
+		return (val - min) / (max - min) * (newMax - newMin) + newMin;
+	}
+
+	static inline float ClampedMap(float val, float min, float max, float newMin = 0.f, float newMax = 1.f)
+	{
+		return Math_Clamp((val - min) / (max - min), 0.f, 1.f) * (newMax - newMin) + newMin;
+	}
 
 	static Math::Vec2 FourWayNormal(Math::Vec2 vec);
 	static Math::Vec2 EightWayNormal(Math::Vec2 vec);
@@ -88,7 +107,88 @@ public:
 
 	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return Math::Vec2(vec.y, -vec.x); }
 
+	// Angles
+	static inline float ReflectAngle(float angle, float axis = 0.f) { return -(angle + axis) - axis; }
+	static inline float ReflectAngle(float angleRadians, const Math::Vec2& axis)
+	{
+		return ReflectAngle(angleRadians, Angle(axis));
+	}
+
+	static inline float WrapAngleDeg(float angleDegrees)
+	{
+		float sign = angleDegrees > 0.f ? 1.f : (angleDegrees < 0.f ? -1.f : 0.f);
+		return (std::fmod(angleDegrees * sign + 180.f, 360.f) - 180.f) * sign;
+	}
+
+	static inline float WrapAngle(float angleRadians)
+	{
+		float sign = angleRadians > 0.f ? 1.f : (angleRadians < 0.f ? -1.f : 0.f);
+		return (std::fmod(angleRadians * sign + Math::Pi, Math::Pi2) - Math::Pi) * sign;
+	}
+
+	static inline float AngleDiff(float radiansA, float radiansB)
+	{
+		float diff = radiansB - radiansA;
+		while (diff > Math::Pi) {
+			diff -= Math::Pi2;
+		}
+		while (diff <= -Math::Pi) {
+			diff += Math::Pi2;
+		}
+		return diff;
+	}
+
+	static inline float AbsAngleDiff(float radiansA, float radiansB) { return Math_Abs(AngleDiff(radiansA, radiansB)); }
+
+	static inline int SignAngleDiff(float radiansA, float radiansB)
+	{
+		float diff = AngleDiff(radiansA, radiansB);
+		return diff > 0.f ? 1 : (diff < 0.f ? -1 : 0);
+	}
+
+	static inline float AngleApproach(float val, float target, float maxMove)
+	{
+		float diff = AngleDiff(val, target);
+		if (Math_Abs(diff) < maxMove) {
+			return target;
+		}
+		return val + Math_Clamp(diff, -maxMove, maxMove);
+	}
+
+	static inline float AngleLerp(float startAngle, float endAngle, float percent)
+	{
+		return startAngle + AngleDiff(startAngle, endAngle) * percent;
+	}
+
+	static inline float ShorterAngleDifference(float currentAngle, float angleA, float angleB)
+	{
+		return Math_Abs(AngleDiff(currentAngle, angleA)) < Math_Abs(AngleDiff(currentAngle, angleB)) ? angleA : angleB;
+	}
+
+	static inline float ShorterAngleDifference(float currentAngle, float angleA, float angleB, float angleC)
+	{
+		return Math_Abs(AngleDiff(currentAngle, angleA)) < Math_Abs(AngleDiff(currentAngle, angleB))
+				   ? ShorterAngleDifference(currentAngle, angleA, angleC)
+				   : ShorterAngleDifference(currentAngle, angleB, angleC);
+	}
+
 	static inline bool BetweenInterval(float val, float interval) { return Math_Mod(val, interval * 2.f) >= interval; }
+
+	static inline bool OnInterval(float val, float prevVal, float interval)
+	{
+		return static_cast<int>(prevVal / interval) != static_cast<int>(val / interval);
+	}
+
+	static inline int Digits(int num)
+	{
+		int digits = 1;
+		int target = 10;
+		while (num >= target) {
+			++digits;
+			target *= 10;
+		}
+		return digits;
+	}
 
 	// Save and Load Data
 	static bool FileExists(const String& filename);

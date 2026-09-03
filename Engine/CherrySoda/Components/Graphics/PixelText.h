@@ -21,6 +21,12 @@ public:
 	void Refresh();
 	void Render() override;
 
+	inline int Width() const { return m_width; }
+	inline int Height() const { return m_height; }
+
+	inline const Color GetColor() const { return m_color; }
+	inline void SetColor(const Color& color) { m_color = color; }
+
 	void Font(PixelFont* font)
 	{
 		if (m_font != font) {
@@ -56,6 +62,12 @@ private:
 		Math::IRectangle m_bounds;
 	};
 
+protected:
+	// Draws the (refreshed) text at an extra offset; used by the text
+	// subclasses for outline passes and justification
+	void RenderText(const Math::Vec2& offset, const Color& color);
+
+private:
 	STL::Vector<Char> m_characters;
 	PixelFont* m_font = nullptr;
 	PixelFontSize m_size;

@@ -29,6 +29,8 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/GraphicsComponent.h
   CherrySoda/Components/Graphics/Image.h
   CherrySoda/Components/Graphics/MeshGraphicsComponent.h
+  CherrySoda/Components/Graphics/NumberText.h
+  CherrySoda/Components/Graphics/OutlineText.h
   CherrySoda/Components/Graphics/ParticleEmitter.cpp
   CherrySoda/Components/Graphics/ParticleEmitter.h
   CherrySoda/Components/Graphics/PixelText.cpp
@@ -38,6 +40,7 @@ set(ENGINE_SRC
   CherrySoda/Components/Graphics/SpriteSheet.h
   CherrySoda/Components/Graphics/TileGrid.cpp
   CherrySoda/Components/Graphics/TileGrid.h
+  CherrySoda/Components/Graphics/TimerText.h
   CherrySoda/Components/Logic/Alarm.cpp
   CherrySoda/Components/Logic/Alarm.h
   CherrySoda/Components/Logic/Coroutine.cpp

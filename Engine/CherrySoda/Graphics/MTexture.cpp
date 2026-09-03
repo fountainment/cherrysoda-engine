@@ -117,6 +117,64 @@ void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin /
 								 Math::Vec2(origin) - ActualDrawOffset(), Math::Vec2(scale), flip, 0.f);
 }
 
+void MTexture::DrawCentered(const Math::Vec2& position, const Color& color /* = Color::White*/,
+							const Math::Vec2& scale /* = Vec2_One*/, float zRotation /* = 0.f*/,
+							SpriteEffects flip /* = SpriteEffects::None*/) const
+{
+	DrawJustified(position, Math::Vec2(0.5f, 0.5f), color, scale, zRotation, flip);
+}
+
+void MTexture::DrawJustified(const Math::Vec2& position, const Math::Vec2& justify,
+							 const Color& color /* = Color::White*/, const Math::Vec2& scale /* = Vec2_One*/,
+							 float zRotation /* = 0.f*/, SpriteEffects flip /* = SpriteEffects::None*/) const
+{
+	Draw(Math::Vec3(position, 0.f), Math::Vec3(Math::Vec2(Width(), Height()) * justify, 0.f), color,
+		 Math::Vec3(scale, 1.f), zRotation, flip);
+}
+
+void MTexture::DrawOutline(const Math::Vec2& position, const Color& color /* = Color::White*/,
+						   const Math::Vec2& scale /* = Vec2_One*/, float zRotation /* = 0.f*/,
+						   SpriteEffects flip /* = SpriteEffects::None*/, const Color& outlineColor /* = Color::Black*/,
+						   int outlineOffset /* = 1*/) const
+{
+	Math::Vec2 offsetStep = Math::Vec2((float)outlineOffset, (float)outlineOffset);
+	for (int i = -1; i < 2; i++) {
+		for (int j = -1; j < 2; j++) {
+			if (i != 0 || j != 0) {
+				Draw(Math::Vec3(position + offsetStep * Math::Vec2((float)i, (float)j), 0.f), Vec3_Zero, outlineColor,
+					 Math::Vec3(scale, 1.f), zRotation, flip);
+			}
+		}
+	}
+	Draw(Math::Vec3(position, 0.f), Vec3_Zero, color, Math::Vec3(scale, 1.f), zRotation, flip);
+}
+
+void MTexture::DrawOutlineCentered(const Math::Vec2& position, const Color& color /* = Color::White*/,
+								   const Math::Vec2& scale /* = Vec2_One*/, float zRotation /* = 0.f*/,
+								   SpriteEffects flip /* = SpriteEffects::None*/,
+								   const Color& outlineColor /* = Color::Black*/, int outlineOffset /* = 1*/) const
+{
+	DrawOutlineJustified(position, Math::Vec2(0.5f, 0.5f), color, scale, zRotation, flip, outlineColor, outlineOffset);
+}
+
+void MTexture::DrawOutlineJustified(const Math::Vec2& position, const Math::Vec2& justify,
+									const Color& color /* = Color::White*/, const Math::Vec2& scale /* = Vec2_One*/,
+									float zRotation /* = 0.f*/, SpriteEffects flip /* = SpriteEffects::None*/,
+									const Color& outlineColor /* = Color::Black*/, int outlineOffset /* = 1*/) const
+{
+	Math::Vec3 origin = Math::Vec3(Math::Vec2(Width(), Height()) * justify, 0.f);
+	Math::Vec2 offsetStep = Math::Vec2((float)outlineOffset, (float)outlineOffset);
+	for (int i = -1; i < 2; i++) {
+		for (int j = -1; j < 2; j++) {
+			if (i != 0 || j != 0) {
+				Draw(Math::Vec3(position + offsetStep * Math::Vec2((float)i, (float)j), 0.f), origin, outlineColor,
+					 Math::Vec3(scale, 1.f), zRotation, flip);
+			}
+		}
+	}
+	Draw(Math::Vec3(position, 0.f), origin, color, Math::Vec3(scale, 1.f), zRotation, flip);
+}
+
 void MTexture::SetUtil()
 {
 	m_center = Math::Vec2(Width(), Height()) * 0.5f;

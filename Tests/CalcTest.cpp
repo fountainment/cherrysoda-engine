@@ -250,4 +250,98 @@ TEST(CalcTestVecUtils, SafeNormalizePerpendicularBetweenInterval)
 	EXPECT_FALSE(Calc::BetweenInterval(2.6f, 1.f)); // wraps back into the first half
 }
 
+TEST(CalcTestApproach, Float)
+{
+	EXPECT_FLOAT_EQ(2.f, Calc::Approach(0.f, 10.f, 2.f));
+	// A negative max move walks away from the target (as in Monocle)
+	EXPECT_FLOAT_EQ(-2.f, Calc::Approach(0.f, 10.f, -2.f));
+	EXPECT_FLOAT_EQ(10.f, Calc::Approach(0.f, 10.f, 12.f));
+	EXPECT_FLOAT_EQ(5.f, Calc::Approach(10.f, 0.f, 5.f));
+	EXPECT_FLOAT_EQ(0.f, Calc::Approach(10.f, 0.f, 50.f));
+}
+
+TEST(CalcTestApproach, Vec3)
+{
+	EXPECT_EQ(Math::Vec3(3.f, 0.f, 0.f), Calc::Approach(Math::Vec3(0.f), Math::Vec3(10.f, 0.f, 0.f), 3.f));
+	EXPECT_EQ(Math::Vec3(1.f, 1.f, 1.f), Calc::Approach(Math::Vec3(0.f), Math::Vec3(1.f, 1.f, 1.f), 5.f));
+}
+
+TEST(CalcTestYoYo, ReturnTrip)
+{
+	EXPECT_FLOAT_EQ(0.f, Calc::YoYo(0.f));
+	EXPECT_FLOAT_EQ(1.f, Calc::YoYo(0.5f));
+	EXPECT_FLOAT_EQ(0.f, Calc::YoYo(1.f));
+	EXPECT_FLOAT_EQ(0.6f, Calc::YoYo(0.3f));
+	EXPECT_FLOAT_EQ(0.6f, Calc::YoYo(0.7f));
+}
+
+TEST(CalcTestMap, LinearAndClamped)
+{
+	EXPECT_FLOAT_EQ(0.5f, Calc::Map(5.f, 0.f, 10.f));
+	EXPECT_FLOAT_EQ(5.f, Calc::Map(5.f, 0.f, 10.f, 0.f, 10.f));
+	// Map extrapolates
+	EXPECT_FLOAT_EQ(2.f, Calc::Map(20.f, 0.f, 10.f));
+	// ClampedMap saturates
+	EXPECT_FLOAT_EQ(1.f, Calc::ClampedMap(20.f, 0.f, 10.f));
+	EXPECT_FLOAT_EQ(0.f, Calc::ClampedMap(-20.f, 0.f, 10.f));
+	EXPECT_FLOAT_EQ(0.5f, Calc::ClampedMap(5.f, 0.f, 10.f));
+}
+
+TEST(CalcTestAngles, WrapAndDiff)
+{
+	EXPECT_NEAR(-Math::Pi, Calc::WrapAngle(Math::Pi), 1e-5f);
+	EXPECT_NEAR(-Math::Pi + 0.5f, Calc::WrapAngle(Math::Pi + 0.5f), 1e-5f);
+	EXPECT_NEAR(0.5f, Calc::WrapAngle(-Math::Pi2 + 0.5f), 1e-5f);
+
+	EXPECT_NEAR(Math::PiHalf, Calc::AngleDiff(0.f, Math::PiHalf), 1e-5f);
+	EXPECT_NEAR(-Math::PiHalf, Calc::AngleDiff(Math::PiHalf, 0.f), 1e-5f);
+	// Quarter to pi is three quarters forward, shorter than five back
+	EXPECT_NEAR(3.f * Math::PiQuarter, Calc::AngleDiff(Math::PiQuarter, Math::Pi), 1e-5f);
+
+	EXPECT_FLOAT_EQ(Math::PiQuarter, Calc::AbsAngleDiff(Math::PiQuarter, 0.f));
+	EXPECT_EQ(1, Calc::SignAngleDiff(0.f, Math::PiHalf));
+	EXPECT_EQ(-1, Calc::SignAngleDiff(Math::PiHalf, 0.f));
+}
+
+TEST(CalcTestAngles, ApproachAndLerp)
+{
+	EXPECT_NEAR(1.f, Calc::AngleApproach(0.f, Math::PiHalf, 1.f), 1e-5f);
+	EXPECT_NEAR(0.2f, Calc::AngleApproach(0.f, Math::PiHalf, 0.2f), 1e-5f);
+	// Approaching across the wrap boundary takes the short way and snaps
+	// once the remaining difference is under maxMove
+	EXPECT_NEAR(-Math::Pi, Calc::AngleApproach(Math::Pi - 0.1f, -Math::Pi, 1.f), 1e-5f);
+
+	EXPECT_NEAR(Math::PiQuarter, Calc::AngleLerp(0.f, Math::PiHalf, 0.5f), 1e-5f);
+	EXPECT_NEAR(Math::Pi, Calc::AngleLerp(Math::Pi, -Math::Pi, 1.f), 1e-5f);
+
+	// Equal distances prefer the second angle (strict less-than, as Monocle)
+	EXPECT_NEAR(-Math::PiHalf, Calc::ShorterAngleDifference(0.f, Math::PiHalf, -Math::PiHalf), 1e-5f);
+}
+
+TEST(CalcTestOnInterval, FrameBoundaries)
+{
+	// Crossing an interval multiple fires
+	EXPECT_TRUE(Calc::OnInterval(1.1f, 0.9f, 1.f));
+	EXPECT_FALSE(Calc::OnInterval(1.05f, 1.1f, 1.f));
+	EXPECT_TRUE(Calc::OnInterval(2.f, 1.99f, 1.f));
+	EXPECT_FALSE(Calc::OnInterval(1.5f, 1.4f, 1.f));
+}
+
+TEST(CalcTestDigits, Count)
+{
+	EXPECT_EQ(1, Calc::Digits(0));
+	EXPECT_EQ(1, Calc::Digits(9));
+	EXPECT_EQ(2, Calc::Digits(10));
+	EXPECT_EQ(2, Calc::Digits(99));
+	EXPECT_EQ(3, Calc::Digits(100));
+	EXPECT_EQ(7, Calc::Digits(1234567));
+}
+
+TEST(CalcTestReflectAngle, AroundAxis)
+{
+	EXPECT_FLOAT_EQ(-1.f, Calc::ReflectAngle(1.f));
+	EXPECT_FLOAT_EQ(1.f, Calc::ReflectAngle(-1.f));
+	EXPECT_FLOAT_EQ(Math::PiHalf, Calc::ReflectAngle(Math::PiHalf, -Math::PiHalf));
+}
+
 } // namespace

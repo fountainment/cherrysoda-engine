@@ -33,6 +33,22 @@ Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float
 	}
 }
 
+Math::Vec3 Calc::Approach(const Math::Vec3& val, const Math::Vec3& target, float maxMove)
+{
+	if (maxMove <= 0.f || val == target) {
+		return val;
+	}
+	Math::Vec3 diff = target - val;
+	float lengthSq = Math_LengthSq(diff);
+	if (lengthSq < maxMove * maxMove) {
+		return target;
+	}
+	else {
+		diff = Math_Normalize(diff);
+		return val + diff * maxMove;
+	}
+}
+
 Math::Vec2 Calc::FourWayNormal(Math::Vec2 vec)
 {
 	if (vec == Vec2_Zero) return Vec2_Zero;
