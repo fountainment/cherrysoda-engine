@@ -36,3 +36,11 @@ void PlatformerTrial::LoadContent()
 
 	// Load textures, sprites, shaders and other resources here
 }
+
+void PlatformerTrial::UnloadContent()
+{
+	base::UnloadContent();
+
+	// The app owns the scene, delete it before Graphics::Terminate shuts bgfx down
+	delete GetScene();
+}

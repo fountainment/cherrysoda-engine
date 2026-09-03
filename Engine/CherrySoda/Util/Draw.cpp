@@ -28,6 +28,9 @@ void Draw::Terminate()
 
 void Draw::UseDebugPixelTexture()
 {
+	if (ms_debugPixelTexture.IsValid()) {
+		Graphics::DestroyTexture(ms_debugPixelTexture.Texture().GetHandle());
+	}
 	ms_debugPixelTexture = MTexture(2, 2, Color::White);
 	PixelTexture(MTexture(ms_debugPixelTexture, 0, 0, 1, 1));
 	ParticleTexture(MTexture(ms_debugPixelTexture, 0, 0, 2, 2));

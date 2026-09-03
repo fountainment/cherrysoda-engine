@@ -301,6 +301,7 @@ public:
 	static void DestroyDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer);
 	static void DestroyShader(ShaderHandle shader);
 	static void DestroyTexture(TextureHandle texture);
+	static void DestroyFrameBuffer(FrameBufferHandle frameBuffer);
 
 	static void SetScissor(int x, int y, int w, int h);
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
@@ -349,6 +350,7 @@ private:
 	static type::UInt64 ms_primitiveTypes[(int)PrimitiveType::Count];
 	static type::UInt16 ms_maxRenderPassCount;
 	static bool ms_vsyncEnabled;
+	static bool ms_bgfxAvailable;
 
 	static bool ms_originBottomLeft;
 	static float ms_texelHalf;

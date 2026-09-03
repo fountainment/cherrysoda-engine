@@ -10,6 +10,12 @@ class RenderTarget2D
 {
 public:
 	RenderTarget2D(int width, int height);
+	~RenderTarget2D();
+
+	RenderTarget2D(const RenderTarget2D&) = delete;
+	RenderTarget2D& operator = (const RenderTarget2D&) = delete;
+
+	void Dispose();
 
 	inline int Width() const { return m_texture.Width(); }
 	inline int Height() const { return m_texture.Height(); }

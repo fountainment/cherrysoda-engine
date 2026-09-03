@@ -77,3 +77,11 @@ void FirstModel::LoadContent()
 
 	// Load textures, sprites, shaders and other resources here
 }
+
+void FirstModel::UnloadContent()
+{
+	base::UnloadContent();
+
+	// Unload graphics resources here, before Graphics::Terminate shuts bgfx down
+	m_model.Dispose();
+}

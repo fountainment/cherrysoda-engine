@@ -411,6 +411,11 @@ private:
 };
 
 
+MainScene::~MainScene()
+{
+	delete m_renderTarget;
+}
+
 void MainScene::Begin()
 {
 	Commands::ExecuteCommand("addslider actor_drop_acceleration 0 3000");
@@ -429,11 +434,11 @@ void MainScene::Begin()
 	renderer->RenderPass(kNormalRenderPass);
 	finalRenderer->RenderPass(kFinalRenderPass);
 
-	auto renderTarget = new RenderTarget2D(360, 252);
-	renderer->SetRenderTarget(renderTarget);
+	m_renderTarget = new RenderTarget2D(360, 252);
+	renderer->SetRenderTarget(m_renderTarget);
 	auto screenQuad = new Entity();
 	screenQuad->Tag(s_renderTargetTag);
-	auto screenImage = new Image(renderTarget->GetTexture2D());
+	auto screenImage = new Image(m_renderTarget->GetTexture2D());
 	screenImage->CenterOrigin();
 	if (Graphics::IsOriginBottomLeft()) {
 		screenImage->SetSpriteEffects(SpriteEffects::FlipVertically);

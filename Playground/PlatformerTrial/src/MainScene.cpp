@@ -272,6 +272,20 @@ private:
 	Texture2D m_texture;
 };
 
+MainScene::~MainScene()
+{
+	// File-loaded effects and textures own their bgfx resources, dispose them here.
+	// (m_mainRenderer uses an embedded effect, which Graphics::Terminate frees)
+	if (m_backgroundRenderer != nullptr) {
+		m_backgroundRenderer->GetEffect()->Dispose();
+	}
+	if (m_screenTexRenderer != nullptr) {
+		m_screenTexRenderer->GetEffect()->Dispose();
+	}
+	delete m_mainScreenTarget;
+	m_backgroundTexture.Dispose();
+}
+
 void MainScene::Begin()
 {
 	Graphics::SetPointTextureSampling();
@@ -315,7 +329,8 @@ void MainScene::Begin()
 	Add(m_screenTexRenderer);
 
 	auto backgroundEntity = new Entity();
-	backgroundEntity->Add(new ScreenSpaceQuadGraphicsComponent(Texture2D::ForColorBuffer(320.f, 180.f)));
+	m_backgroundTexture = Texture2D::ForColorBuffer(320.f, 180.f);
+	backgroundEntity->Add(new ScreenSpaceQuadGraphicsComponent(m_backgroundTexture));
 	backgroundEntity->Tag(s_backgroundTag);
 	Add(backgroundEntity);
 

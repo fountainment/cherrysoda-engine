@@ -15,6 +15,7 @@ public:
 	void Update() override;
 	void Initialize() override;
 	void LoadContent() override;
+	void UnloadContent() override;
 
 private:
 	cherrysoda::Model m_model;

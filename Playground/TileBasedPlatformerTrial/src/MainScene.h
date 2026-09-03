@@ -8,6 +8,7 @@ namespace cherrysoda {
 class Entity;
 class EverythingRenderer;
 class SingleTagRenderer;
+class RenderTarget2D;
 } // namespace cherrysoda
 
 namespace main {
@@ -19,6 +20,8 @@ public:
 
 	void Begin() override;
 
+	~MainScene();
+
 	void InitializeTileObject(int id, cherrysoda::Entity* entity, int tileWidth, int tileHeight);
 
 	static float GetControlAxisX();
@@ -26,6 +29,8 @@ public:
 	static bool GetControlDownPressed();
 	static bool JumpButtonPressed();
 	static bool JumpButtonCheck();
+
+	cherrysoda::RenderTarget2D* m_renderTarget = nullptr;
 };
 
 } // namespace main

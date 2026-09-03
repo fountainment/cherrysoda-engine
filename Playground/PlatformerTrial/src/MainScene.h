@@ -1,6 +1,7 @@
 #ifndef _MAINSCENE_H_
 #define _MAINSCENE_H_
 
+#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/BitTag.h>
 
@@ -21,7 +22,10 @@ public:
 	void Begin() override;
 	void Update() override;
 
+	~MainScene();
+
 	cherrysoda::RenderTarget2D* m_mainScreenTarget = nullptr;
+	cherrysoda::Texture2D m_backgroundTexture;
 	cherrysoda::SingleTagRenderer* m_backgroundRenderer = nullptr;
 	cherrysoda::TagExcludeRenderer* m_mainRenderer = nullptr;
 	cherrysoda::SingleTagRenderer* m_screenTexRenderer = nullptr;

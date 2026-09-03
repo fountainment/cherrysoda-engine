@@ -309,12 +309,38 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 		break;
 	}
 	String path_prefix = "assets/" + shaderPath;
-	return bgfx::createProgram(loadShader(path_prefix + vs + ".bin"), loadShader(path_prefix + fs + ".bin"), true);
+	bgfx::ShaderHandle vsh = loadShader(path_prefix + vs + ".bin");
+	bgfx::ShaderHandle fsh = loadShader(path_prefix + fs + ".bin");
+	if (!bgfx::isValid(vsh) || !bgfx::isValid(fsh)) {
+		// createProgram rejects an invalid shader without taking ownership of the other one
+		if (bgfx::isValid(vsh)) {
+			bgfx::destroy(vsh);
+		}
+		if (bgfx::isValid(fsh)) {
+			bgfx::destroy(fsh);
+		}
+		CHERRYSODA_ASSERT_FORMAT(false, "Shader program \"%s\"/\"%s\" loading failed!\n", vs.c_str(), fs.c_str());
+		return BGFX_INVALID_HANDLE;
+	}
+	return bgfx::createProgram(vsh, fsh, true);
 }
 
 bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
 {
-	return bgfx::createProgram(loadEmbeddedShader(vs), loadEmbeddedShader(fs), true);
+	bgfx::ShaderHandle vsh = loadEmbeddedShader(vs);
+	bgfx::ShaderHandle fsh = loadEmbeddedShader(fs);
+	if (!bgfx::isValid(vsh) || !bgfx::isValid(fsh)) {
+		// createProgram rejects an invalid shader without taking ownership of the other one
+		if (bgfx::isValid(vsh)) {
+			bgfx::destroy(vsh);
+		}
+		if (bgfx::isValid(fsh)) {
+			bgfx::destroy(fsh);
+		}
+		CHERRYSODA_ASSERT_FORMAT(false, "Embedded shader program \"%s\"/\"%s\" loading failed!\n", vs.c_str(), fs.c_str());
+		return BGFX_INVALID_HANDLE;
+	}
+	return bgfx::createProgram(vsh, fsh, true);
 }
 
 void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
@@ -455,6 +481,7 @@ void Graphics::Initialize()
 	init.platformData = entry::s_platformData;
 
 	bgfx::init(init);
+	ms_bgfxAvailable = true;
 	// bgfx::setDebug(BGFX_DEBUG_TEXT);
 	// bgfx::setDebug(BGFX_DEBUG_STATS);
 
@@ -537,7 +564,22 @@ void Graphics::Terminate()
 	// more frame before shutdown, otherwise bgfx's uniform cache leaks on exit
 	bgfx::frame();
 
+#ifdef CHERRYSODA_ENABLE_DEBUG
+	if (const bgfx::Stats* stats = bgfx::getStats()) {
+		// Counts include bgfx-internal resources; bgfx's own "BGFX LEAK:" traces
+		// printed during shutdown are the authoritative per-handle leak report
+		CHERRYSODA_DEBUG_FORMAT(
+			"bgfx live handles before shutdown (includes bgfx-internal resources): textures=%d programs=%d shaders=%d uniforms=%d frameBuffers=%d "
+			"vertexBuffers=%d indexBuffers=%d dynamicVertexBuffers=%d dynamicIndexBuffers=%d "
+			"textureMemoryUsed=%lld rtMemoryUsed=%lld\n",
+			stats->numTextures, stats->numPrograms, stats->numShaders, stats->numUniforms, stats->numFrameBuffers,
+			stats->numVertexBuffers, stats->numIndexBuffers, stats->numDynamicVertexBuffers, stats->numDynamicIndexBuffers,
+			(long long)stats->textureMemoryUsed, (long long)stats->rtMemoryUsed);
+	}
+#endif // CHERRYSODA_ENABLE_DEBUG
+
 	bgfx::shutdown();
+	ms_bgfxAvailable = false;
 
 	entry::termiate();
 }
@@ -936,37 +978,50 @@ Graphics::UniformHandle Graphics::CreateUniformSampler(const String& sampler)
 
 void Graphics::DestroyVertexBuffer(VertexBufferHandle handle)
 {
+	if (!ms_bgfxAvailable) return;
 	bgfx::VertexBufferHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 
 void Graphics::DestroyIndexBuffer(IndexBufferHandle handle)
 {
+	if (!ms_bgfxAvailable) return;
 	bgfx::IndexBufferHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 
 void Graphics::DestroyDynamicVertexBuffer(DynamicVertexBufferHandle handle)
 {
+	if (!ms_bgfxAvailable) return;
 	bgfx::DynamicVertexBufferHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 
 void Graphics::DestroyDynamicIndexBuffer(DynamicIndexBufferHandle handle)
 {
+	if (!ms_bgfxAvailable) return;
 	bgfx::DynamicIndexBufferHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 
 void Graphics::DestroyShader(ShaderHandle handle)
 {
+	if (!ms_bgfxAvailable) return;
 	bgfx::ProgramHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 
 void Graphics::DestroyTexture(TextureHandle handle)
 {
+	if (!ms_bgfxAvailable) return;
 	bgfx::TextureHandle hdl = { handle };
+	bgfx::destroy(hdl);
+}
+
+void Graphics::DestroyFrameBuffer(FrameBufferHandle handle)
+{
+	if (!ms_bgfxAvailable) return;
+	bgfx::FrameBufferHandle hdl = { handle };
 	bgfx::destroy(hdl);
 }
 
@@ -1098,6 +1153,8 @@ type::UInt64 Graphics::ms_blendFunctions[(int)BlendFunction::Count];
 type::UInt64 Graphics::ms_primitiveTypes[(int)PrimitiveType::Count];
 type::UInt16 Graphics::ms_maxRenderPassCount = BGFX_CONFIG_MAX_VIEWS;
 bool Graphics::ms_vsyncEnabled = true;
+// Destroy calls after bgfx::shutdown (e.g. object teardown following Engine::Run) are no-ops
+bool Graphics::ms_bgfxAvailable = false;
 
 bool Graphics::ms_originBottomLeft = false;
 float Graphics::ms_texelHalf = 0.f;

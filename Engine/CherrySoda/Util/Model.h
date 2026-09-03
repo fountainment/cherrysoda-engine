@@ -12,6 +12,16 @@ namespace cherrysoda {
 class Model
 {
 public:
+	Model() = default;
+	~Model();
+
+	Model(const Model&) = delete;
+	Model& operator = (const Model&) = delete;
+	Model(Model&&) = default;
+	Model& operator = (Model&&) = default;
+
+	void Dispose();
+
 	const STL::Vector<Graphics::MeshInfo>& Meshes() const { return m_meshes; }
 
 	inline void AddMesh(const Graphics::MeshInfo& mesh) { STL::Add(m_meshes, mesh); }

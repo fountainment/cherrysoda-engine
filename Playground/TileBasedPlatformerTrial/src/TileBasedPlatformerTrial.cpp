@@ -47,6 +47,9 @@ void TileBasedPlatformerTrial::LoadContent()
 
 void TileBasedPlatformerTrial::UnloadContent()
 {
+	// The app owns the scene, delete it before Graphics::Terminate shuts bgfx down
+	delete GetScene();
+
 	delete ms_atlas;
 	ms_atlas = nullptr;
 

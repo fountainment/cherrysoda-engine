@@ -12,6 +12,19 @@
 
 namespace cherrysoda {
 
+Model::~Model()
+{
+	Dispose();
+}
+
+void Model::Dispose()
+{
+	for (auto& texture : m_textures) {
+		texture.Dispose();
+	}
+	STL::Clear(m_textures);
+}
+
 Model Model::FromGltf(const String& gltfFile)
 {
 	Model ret;
@@ -27,11 +40,10 @@ Model Model::FromGltf(const String& gltfFile)
 		if (result == cgltf_result_success) {
 			CHERRYSODA_DEBUG_FORMAT("    Meshes: %u\n", (unsigned)data->meshes_count);
 			CHERRYSODA_DEBUG_FORMAT("    Textures: %u\n", (unsigned)data->textures_count);
-			STL::Vector<Graphics::TextureHandle> textures;
-			STL::Reserve(textures, data->textures_count);
+			STL::Reserve(ret.m_textures, data->textures_count);
 			for (int i = 0; i < static_cast<int>(data->textures_count); ++i) {
 				CHERRYSODA_DEBUG_FORMAT("        uri %d: %s\n", i, data->textures[i].image->uri);
-				STL::Add(textures, Graphics::CreateTexture(gltfDir + String(data->textures[i].image->uri)));
+				STL::Add(ret.m_textures, Texture2D::FromFile(gltfDir + String(data->textures[i].image->uri)));
 			}
 
 			for (int m = 0; m < static_cast<int>(data->meshes_count); ++m) {
@@ -42,15 +54,15 @@ Model Model::FromGltf(const String& gltfFile)
 						auto baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
 						auto metallicRoughnessTexture = primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
 						if (baseColorTexture) {
-							mesh.baseColorTexture = textures[baseColorTexture - data->textures];
+							mesh.baseColorTexture = ret.m_textures[baseColorTexture - data->textures].GetHandle();
 						}
 						if (metallicRoughnessTexture) {
-							mesh.metallicRoughnessTexture = textures[metallicRoughnessTexture - data->textures];
+							mesh.metallicRoughnessTexture = ret.m_textures[metallicRoughnessTexture - data->textures].GetHandle();
 						}
 					}
 					auto normalTexture = primitive.material->normal_texture.texture;
 					if (normalTexture) {
-						mesh.normalTexture = textures[normalTexture - data->textures];
+						mesh.normalTexture = ret.m_textures[normalTexture - data->textures].GetHandle();
 					}
 					cgltf_accessor* positionAccessor = nullptr;
 					cgltf_accessor* normalAccessor = nullptr;

@@ -13,4 +13,19 @@ RenderTarget2D::RenderTarget2D(int width, int height)
 	m_frameBuffer = Graphics::CreateFrameBuffer(2, handles);
 }
 
+RenderTarget2D::~RenderTarget2D()
+{
+	Dispose();
+}
+
+void RenderTarget2D::Dispose()
+{
+	if (m_frameBuffer != Graphics::InvalidHandle) {
+		Graphics::DestroyFrameBuffer(m_frameBuffer);
+		m_frameBuffer = Graphics::InvalidHandle;
+	}
+	m_texture.Dispose();
+	m_depthTexture.Dispose();
+}
+
 } // namespace cherrysoda
