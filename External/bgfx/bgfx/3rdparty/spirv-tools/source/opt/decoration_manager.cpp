@@ -461,7 +461,7 @@ std::vector<T> DecorationManager::InternalGetDecorationsFor(
 
 bool DecorationManager::WhileEachDecoration(
     uint32_t id, uint32_t decoration,
-    std::function<bool(const Instruction&)> f) {
+    std::function<bool(const Instruction&)> f) const {
   for (const Instruction* inst : GetDecorationsFor(id, true)) {
     switch (inst->opcode()) {
       case spv::Op::OpMemberDecorate:
@@ -485,14 +485,19 @@ bool DecorationManager::WhileEachDecoration(
 
 void DecorationManager::ForEachDecoration(
     uint32_t id, uint32_t decoration,
-    std::function<void(const Instruction&)> f) {
+    std::function<void(const Instruction&)> f) const {
   WhileEachDecoration(id, decoration, [&f](const Instruction& inst) {
     f(inst);
     return true;
   });
 }
 
-bool DecorationManager::HasDecoration(uint32_t id, uint32_t decoration) {
+bool DecorationManager::HasDecoration(uint32_t id,
+                                      spv::Decoration decoration) const {
+  return HasDecoration(id, static_cast<uint32_t>(decoration));
+}
+
+bool DecorationManager::HasDecoration(uint32_t id, uint32_t decoration) const {
   bool has_decoration = false;
   ForEachDecoration(id, decoration, [&has_decoration](const Instruction&) {
     has_decoration = true;
@@ -538,7 +543,8 @@ void DecorationManager::CloneDecorations(uint32_t from, uint32_t to) {
         const uint32_t num_operands = inst->NumOperands();
         for (uint32_t i = 1; i < num_operands; i += 2) {
           Operand op = inst->GetOperand(i);
-          if (op.words[0] == from) {  // add new pair of operands: (to, literal)
+          if (!op.words.empty() &&
+              op.words[0] == from) {  // add new pair of operands: (to, literal)
             inst->AddOperand(
                 Operand(spv_operand_type_t::SPV_OPERAND_TYPE_ID, {to}));
             op = inst->GetOperand(i + 1);

@@ -1,3 +1,8 @@
+--
+-- Copyright 2010-2026 Branimir Karadzic. All rights reserved.
+-- License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
+--
+
 project ("geometryv")
 	uuid (os.uuid("geometryv") )
 	kind "ConsoleApp"
@@ -30,13 +35,6 @@ project ("geometryv")
 		defines { "ENTRY_CONFIG_USE_SDL=1" }
 		links   { "SDL2" }
 
-		configuration { "linux or freebsd" }
-			if _OPTIONS["with-wayland"]  then
-				links {
-					"wayland-egl",
-				}
-			end
-
 		configuration { "x32", "windows" }
 			libdirs { "$(SDL2_DIR)/lib/x86" }
 
@@ -50,15 +48,6 @@ project ("geometryv")
 		defines { "ENTRY_CONFIG_USE_GLFW=1" }
 		links   { "glfw3" }
 
-		configuration { "linux or freebsd" }
-			links {
-				"Xrandr",
-				"Xinerama",
-				"Xi",
-				"Xxf86vm",
-				"Xcursor",
-			}
-
 		configuration { "osx*" }
 			linkoptions {
 				"-framework CoreVideo",
@@ -71,12 +60,12 @@ project ("geometryv")
 		linkoptions {
 			"/ignore:4199", -- LNK4199: /DELAYLOAD:*.dll ignored; no imports found from *.dll
 		}
-		links { -- this is needed only for testing with GLES2/3 on Windows with VS2008
+		links { -- this is needed only for testing with GLES on Windows with VS2008
 			"DelayImp",
 		}
 
 	configuration { "vs201*" }
-		linkoptions { -- this is needed only for testing with GLES2/3 on Windows with VS201x
+		linkoptions { -- this is needed only for testing with GLES on Windows with VS201x
 			"/DELAYLOAD:\"libEGL.dll\"",
 			"/DELAYLOAD:\"libGLESv2.dll\"",
 		}
@@ -151,6 +140,9 @@ project ("geometryv")
 			"-framework Metal",
 			"-framework OpenGL",
 			"-framework QuartzCore",
+			"-weak_framework VideoToolbox",
+			"-weak_framework CoreMedia",
+			"-weak_framework CoreVideo",
 		}
 
 	configuration { "ios*" }

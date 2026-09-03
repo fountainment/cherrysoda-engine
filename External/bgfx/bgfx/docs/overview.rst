@@ -17,41 +17,35 @@ licensed under permissive BSD-2 clause open source license.
 Supported rendering backends
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Direct3D 9
 -  Direct3D 11
 -  Direct3D 12
 -  GNM (only for licensed PS4 developers, search DevNet forums for source)
 -  Metal
--  OpenGL 2.1
--  OpenGL 3.1+
--  OpenGL ES 2
--  OpenGL ES 3.1
+-  OpenGL 4.3+
+-  OpenGL ES 3.0+
 -  Vulkan
--  WebGL 1.0
 -  WebGL 2.0
--  WebGPU/Dawn (experimental)
+-  WebGPU (Dawn Native only)
 
 Supported Platforms
 ~~~~~~~~~~~~~~~~~~~
 
--  Android (14+, ARM, x86, MIPS)
--  FreeBSD
--  iOS/iPadOS/tvOS (iPhone, iPad, AppleTV)
--  Linux
--  MIPS Creator CI20
--  macOS (11+)
+-  Android (4.0+) - API 14 or later
+-  iOS/iPadOS/tvOS (16.0+)
+-  Linux (both X11 and Wayland)
+-  macOS (13.0+)
 -  PlayStation 4
 -  RaspberryPi
 -  UWP (Universal Windows, Xbox One)
 -  Wasm/Emscripten
--  Windows (XP, Vista, 7, 8, 10)
+-  Windows (7+)
 
 Supported Compilers
 ~~~~~~~~~~~~~~~~~~~
 
 -  Clang 11 and above
--  GCC 8 and above
--  VS2019 and above
+-  GCC 11 and above
+-  VS2022 and above
 -  Apple clang 12 and above
 
 Supported Languages
@@ -59,8 +53,9 @@ Supported Languages
 
 -  `C/C++ API documentation <https://bkaradzic.github.io/bgfx/bgfx.html>`__
 -  `Beef API bindings <https://github.com/bkaradzic/bgfx/tree/master/bindings/bf>`__
--  `C# language API bindings #1 <https://github.com/bkaradzic/bgfx/tree/master/bindings/cs>`__
--  `D language API bindings <https://github.com/GoaLitiuM/bindbc-bgfx>`__
+-  `C# language API bindings <https://github.com/bkaradzic/bgfx/tree/master/bindings/cs>`__
+-  `C3 language API bindings <https://github.com/bkaradzic/bgfx/tree/master/bindings/c3>`__
+-  `D language API bindings <https://github.com/BindBC/bindbc-bgfx>`__
 -  `Go language API bindings <https://github.com/james4k/go-bgfx>`__
 -  `Haskell language API bindings <https://github.com/haskell-game/bgfx>`__
 -  `Lightweight Java Game Library 3 bindings <https://github.com/LWJGL/lwjgl3#lwjgl---lightweight-java-game-library-3>`__
@@ -85,7 +80,7 @@ Contact
  - `GitHub Discussions <https://github.com/bkaradzic/bgfx/discussions>`__
  - `Discord Chat <https://discord.gg/9eMbv7J>`__
  - GitHub `@bkaradzic <https://github.com/bkaradzic>`__
- - Twitter `@bkaradzic <https://twitter.com/bkaradzic>`__
+ - X `@bkaradzic <https://x.com/bkaradzic>`__
 
 Debugging and Profiling
 -----------------------
@@ -105,60 +100,6 @@ RenderDoc `How do I ...? <https://renderdoc.org/docs/how/index.html>`__ document
 
 `Shader debugging <https://software.intel.com/en-us/articles/shader-debugging-for-bgfx-rendering-engine>`__
 with RenderDoc and MSVC.
-
-IntelGPA
-~~~~~~~~
-
-Right click **Intel GPA Monitor** tray icon, choose preferences, check
-"Auto-detect launched applications" option. Find ``InjectionList.txt``
-in GPA directory and add ``examples-*`` to the list.
-
-Download:
-`IntelGPA <https://software.intel.com/en-us/vcsource/tools/intel-gpa>`__
-
-Other Debuggers and Profilers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. |x| unicode:: U+2713 .. CHECK MARK
-
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| Name        | OS              | DX9   | DX11   | DX12 | Metal | GL   | GLES | Vulkan| Source |
-+=============+=================+=======+========+======+=======+======+======+=======+========+
-| APITrace    | Linux/macOS/Win | |x|   | |x|    |      |       | |x|  | |x|  |       | |x|    |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| CodeXL      | Linux/Win       |       |        |      |       | |x|  |      |       |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| Dissector   | Win             | |x|   |        |      |       |      |      |       | |x|    |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| IntelGPA    | Linux/macOS/Win | |x|   | |x|    |      |       |      | |x|  |       |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| Nsight      | Win             | |x|   | |x|    |      |       | |x|  |      |       |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| PerfHUD     | Win             | |x|   | |x|    |      |       |      |      |       |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| PerfStudio  | Win             |       | |x|    | |x|  |       | |x|  | |x|  |       |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| PIX         | Win             |       |        | |x|  |       |      |      |       |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| RGP         | Win             |       |        | |x|  |       |      |      | |x|   |        |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| RenderDoc   | Win/Linux       |       | |x|    |      |       | |x|  |      | |x|   | |x|    |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-| vogl        | Linux           |       |        |      |       | |x|  |      |       | |x|    |
-+-------------+-----------------+-------+--------+------+-------+------+------+-------+--------+
-
-Download:
-
-- `APITrace <https://apitrace.github.io/>`__
-- `CodeXL <http://developer.amd.com/tools-and-sdks/opencl-zone/codexl/>`__
-- `Dissector <https://github.com/imccown/Dissector>`__
-- `GPU PerfStudio <http://developer.amd.com/tools-and-sdks/graphics-development/gpu-perfstudio/>`__
-- `Linux Graphics Debugger <https://developer.nvidia.com/linux-graphics-debugger>`__
-- `Nsight <https://developer.nvidia.com/nsight-graphics>`__
-- `PIX <https://blogs.msdn.microsoft.com/pix/>`__
-- `PerfHUD <https://developer.nvidia.com/nvidia-perfhud>`__
-- `RGP (Radeon GPU Profiler) <https://github.com/GPUOpen-Tools/Radeon-GPUProfiler/releases>`__
-- `vogl <https://github.com/ValveSoftware/vogl>`__
 
 SDL, GLFW, etc.
 ---------------
@@ -288,11 +229,18 @@ Chronological order:
  - Preetish Kakkar (`@blackhole <https://github.com/preetishkakkar>`__) - `49-hextile <examples.html#49-hextile>`__ example.
  - Biswapriyo Nath (`@Biswa96 <https://github.com/Biswa96>`__) - GitHub Actions CI.
  - Raziel Alphadios (`@RazielXYZ <https://github.com/RazielXYZ>`__) - Various fixes and improvements.
+ - IchorDev (`@IchorDev <https://github.com/ichordev>`__) - Improved D language bindings.
+ - Martijn Courteaux (`@Martijn Courteaux <https://github.com/mcourteaux>`__) - Various fixes and improvements.
+ - Jaziel Guerrero (`@JazielGuerrero <https://github.com/JazielGuerrero>`__) - C3 language bindings.
+ - gamecoder-nz (`@gamecoder-nz <Mhttps://github.com/gamecoder-nz>`__) - "Getting Started with BGFX"
+   tutorial series on Youtube.
 
 and `others <https://github.com/bkaradzic/bgfx/graphs/contributors>`__...
 
 Repository visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: https://api.star-history.com/svg?repos=bkaradzic/bgfx&type=Date
 
 .. raw:: html
 

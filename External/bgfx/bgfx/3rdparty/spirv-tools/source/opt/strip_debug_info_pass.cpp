@@ -43,7 +43,7 @@ Pass::Status StripDebugInfoPass::Process() {
           // see if this string is used anywhere by a non-semantic instruction
           bool no_nonsemantic_use =
               def_use->WhileEachUser(&inst, [def_use](Instruction* use) {
-                if (use->opcode() == spv::Op::OpExtInst) {
+                if (spvIsExtendedInstruction(use->opcode())) {
                   auto ext_inst_set =
                       def_use->GetDef(use->GetSingleWordInOperand(0u));
                   const std::string extension_name =
@@ -95,8 +95,14 @@ Pass::Status StripDebugInfoPass::Process() {
 
   // clear OpLine information
   context()->module()->ForEachInst([&modified](Instruction* inst) {
-    modified |= !inst->dbg_line_insts().empty();
-    inst->dbg_line_insts().clear();
+    if (!inst->dbg_line_insts().empty()) {
+      modified = true;
+      inst->dbg_line_insts().clear();
+    }
+    if (inst->GetDebugScope().GetLexicalScope() != kNoDebugScope) {
+      modified = true;
+      inst->SetDebugScope({kNoDebugScope, kNoInlinedAt});
+    }
   });
 
   if (!get_module()->trailing_dbg_line_info().empty()) {

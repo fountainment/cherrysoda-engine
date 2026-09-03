@@ -1,5 +1,5 @@
 --
--- Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+-- Copyright 2010-2026 Branimir Karadzic. All rights reserved.
 -- License: https://github.com/bkaradzic/bx#license-bsd-2-clause
 --
 
@@ -25,8 +25,8 @@ project "bimg_encode"
 		path.join(BIMG_DIR, "3rdparty/edtaa3/**.h"),
 		path.join(BIMG_DIR, "3rdparty/etc1/**.cpp"),
 		path.join(BIMG_DIR, "3rdparty/etc1/**.h"),
-		path.join(BIMG_DIR, "3rdparty/etc2/**.cpp"),
-		path.join(BIMG_DIR, "3rdparty/etc2/**.hpp"),
+		path.join(BIMG_DIR, "3rdparty/etcpak/**.cpp"),
+		path.join(BIMG_DIR, "3rdparty/etcpak/**.hpp"),
 		path.join(BIMG_DIR, "3rdparty/nvtt/**.cpp"),
 		path.join(BIMG_DIR, "3rdparty/nvtt/**.h"),
 		path.join(BIMG_DIR, "3rdparty/pvrtc/**.cpp"),
@@ -58,7 +58,6 @@ project "bimg_encode"
 		}
 
 		buildoptions_cpp {
-			"-Wno-class-memaccess",
 			"-Wno-deprecated-copy",
 		}
 

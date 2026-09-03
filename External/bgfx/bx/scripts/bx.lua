@@ -1,5 +1,5 @@
 --
--- Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+-- Copyright 2010-2026 Branimir Karadzic. All rights reserved.
 -- License: https://github.com/bkaradzic/bx/blob/master/LICENSE
 --
 
@@ -40,6 +40,10 @@ end
 project "bx"
 	kind "StaticLib"
 
+	flags {
+		"FatalWarnings",
+	}
+
 	includedirs {
 		path.join(BX_DIR, "include"),
 		path.join(BX_DIR, "3rdparty"),
@@ -78,6 +82,7 @@ project "bx"
 			path.join(BX_DIR, "src/mutex.cpp"),
 			path.join(BX_DIR, "src/os.cpp"),
 			path.join(BX_DIR, "src/process.cpp"),
+			path.join(BX_DIR, "src/scanner.cpp"),
 			path.join(BX_DIR, "src/semaphore.cpp"),
 			path.join(BX_DIR, "src/settings.cpp"),
 			path.join(BX_DIR, "src/sort.cpp"),

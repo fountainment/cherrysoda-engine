@@ -1,4 +1,6 @@
 // Copyright (c) 2017 Google Inc.
+// Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
+// reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +33,8 @@ constexpr int kEntryPointInterfaceInIdx = 3;
 constexpr int kEntryPointFunctionIdInIdx = 1;
 constexpr int kEntryPointExecutionModelInIdx = 0;
 
-// Constants for OpenCL.DebugInfo.100 / NonSemantic.Shader.DebugInfo.100
-// extension instructions.
+// Constants for OpenCL.DebugInfo.100 / NonSemantic.Shader.DebugInfo extension
+// instructions.
 constexpr uint32_t kDebugFunctionOperandFunctionIndex = 13;
 constexpr uint32_t kDebugGlobalVariableOperandVariableIndex = 11;
 }  // namespace
@@ -88,6 +90,12 @@ void IRContext::BuildInvalidAnalyses(IRContext::Analysis set) {
   if (set & kAnalysisDebugInfo) {
     BuildDebugInfoManager();
   }
+  if (set & kAnalysisLiveness) {
+    BuildLivenessManager();
+  }
+  if (set & kAnalysisIdToGraphMapping) {
+    BuildIdToGraphMapping();
+  }
 }
 
 void IRContext::InvalidateAnalysesExceptFor(
@@ -110,6 +118,12 @@ void IRContext::InvalidateAnalyses(IRContext::Analysis analyses_to_invalidate) {
   // dominator analysis should be invalidated as well.
   if (analyses_to_invalidate & kAnalysisCFG) {
     analyses_to_invalidate |= kAnalysisDominatorAnalysis;
+    analyses_to_invalidate |= kAnalysisStructuredCFG;
+  }
+
+  if (analyses_to_invalidate & kAnalysisLoopAnalysis) {
+    analyses_to_invalidate |= kAnalysisScalarEvolution;
+    analyses_to_invalidate |= kAnalysisLiveness;
   }
 
   if (analyses_to_invalidate & kAnalysisDefUse) {
@@ -134,6 +148,9 @@ void IRContext::InvalidateAnalyses(IRContext::Analysis analyses_to_invalidate) {
     dominator_trees_.clear();
     post_dominator_trees_.clear();
   }
+  if (analyses_to_invalidate & kAnalysisLoopAnalysis) {
+    loop_descriptors_.clear();
+  }
   if (analyses_to_invalidate & kAnalysisNameMap) {
     id_to_name_.reset(nullptr);
   }
@@ -152,12 +169,21 @@ void IRContext::InvalidateAnalyses(IRContext::Analysis analyses_to_invalidate) {
   if (analyses_to_invalidate & kAnalysisLiveness) {
     liveness_mgr_.reset(nullptr);
   }
+  if (analyses_to_invalidate & kAnalysisScalarEvolution) {
+    scalar_evolution_analysis_.reset(nullptr);
+  }
+  if (analyses_to_invalidate & kAnalysisRegisterPressure) {
+    reg_pressure_.reset(nullptr);
+  }
   if (analyses_to_invalidate & kAnalysisTypes) {
     type_mgr_.reset(nullptr);
   }
 
   if (analyses_to_invalidate & kAnalysisDebugInfo) {
     debug_info_mgr_.reset(nullptr);
+  }
+  if (analyses_to_invalidate & kAnalysisIdToGraphMapping) {
+    id_to_graph_.clear();
   }
 
   valid_analyses_ = Analysis(valid_analyses_ & ~analyses_to_invalidate);
@@ -171,6 +197,8 @@ Instruction* IRContext::KillInst(Instruction* inst) {
   KillNamesAndDecorates(inst);
 
   KillOperandFromDebugInstructions(inst);
+
+  KillRelatedDebugScopes(inst);
 
   if (AreAnalysesValid(kAnalysisDefUse)) {
     analysis::DefUseManager* def_use_mgr = get_def_use_mgr();
@@ -196,7 +224,10 @@ Instruction* IRContext::KillInst(Instruction* inst) {
     constant_mgr_->RemoveId(inst->result_id());
   }
   if (inst->opcode() == spv::Op::OpCapability ||
-      inst->opcode() == spv::Op::OpExtension) {
+      inst->opcode() == spv::Op::OpConditionalCapabilityINTEL ||
+      inst->opcode() == spv::Op::OpExtension ||
+      inst->opcode() == spv::Op::OpConditionalExtensionINTEL ||
+      inst->opcode() == spv::Op::OpExtInstImport) {
     // We reset the feature manager, instead of updating it, because it is just
     // as much work.  We would have to remove all capabilities implied by this
     // capability that are not also implied by the remaining OpCapability
@@ -220,6 +251,28 @@ Instruction* IRContext::KillInst(Instruction* inst) {
   return next_instruction;
 }
 
+bool IRContext::KillInstructionIf(Module::inst_iterator begin,
+                                  Module::inst_iterator end,
+                                  std::function<bool(Instruction*)> condition) {
+  bool removed = false;
+  for (auto it = begin; it != end;) {
+    if (!condition(&*it)) {
+      ++it;
+      continue;
+    }
+
+    removed = true;
+    // `it` is an iterator on an intrusive list. Next is invalidated on the
+    // current node when an instruction is killed. The iterator must be moved
+    // forward before deleting the node.
+    auto instruction = &*it;
+    ++it;
+    KillInst(instruction);
+  }
+
+  return removed;
+}
+
 void IRContext::CollectNonSemanticTree(
     Instruction* inst, std::unordered_set<Instruction*>* to_kill) {
   if (!inst->HasResultId()) return;
@@ -234,7 +287,8 @@ void IRContext::CollectNonSemanticTree(
     work_list.pop_back();
     get_def_use_mgr()->ForEachUser(
         i, [&work_list, to_kill, &seen](Instruction* user) {
-          if (user->IsNonSemanticInstruction() && seen.insert(user).second) {
+          if (user->IsNonSemanticInstruction() && !user->IsDebugLineInst() &&
+              seen.insert(user).second) {
             work_list.push_back(user);
             to_kill->insert(user);
           }
@@ -249,6 +303,36 @@ bool IRContext::KillDef(uint32_t id) {
     return true;
   }
   return false;
+}
+
+bool IRContext::RemoveCapability(spv::Capability capability) {
+  const bool removed = KillInstructionIf(
+      module()->capability_begin(), module()->capability_end(),
+      [capability](Instruction* inst) {
+        return static_cast<spv::Capability>(inst->GetSingleWordOperand(0)) ==
+               capability;
+      });
+
+  if (removed && feature_mgr_ != nullptr) {
+    feature_mgr_->RemoveCapability(capability);
+  }
+
+  return removed;
+}
+
+bool IRContext::RemoveExtension(Extension extension) {
+  const std::string_view extensionName = ExtensionToString(extension);
+  const bool removed = KillInstructionIf(
+      module()->extension_begin(), module()->extension_end(),
+      [&extensionName](Instruction* inst) {
+        return inst->GetOperand(0).AsString() == extensionName;
+      });
+
+  if (removed && feature_mgr_ != nullptr) {
+    feature_mgr_->RemoveExtension(extension);
+  }
+
+  return removed;
 }
 
 bool IRContext::ReplaceAllUsesWith(uint32_t before, uint32_t after) {
@@ -333,6 +417,14 @@ bool IRContext::IsConsistent() {
     }
   }
 
+  if (AreAnalysesValid(kAnalysisIdToGraphMapping)) {
+    for (auto& g : module_->graphs()) {
+      if (id_to_graph_[g->DefInst().result_id()] != g.get()) {
+        return false;
+      }
+    }
+  }
+
   if (AreAnalysesValid(kAnalysisInstrToBlockMapping)) {
     for (auto& func : *module()) {
       for (auto& block : func) {
@@ -341,8 +433,9 @@ bool IRContext::IsConsistent() {
                 return false;
               }
               return true;
-            }))
+            })) {
           return false;
+        }
       }
     }
   }
@@ -356,6 +449,37 @@ bool IRContext::IsConsistent() {
     analysis::DecorationManager current(module());
 
     if (*dec_mgr != current) {
+      return false;
+    }
+  }
+
+  if (AreAnalysesValid(kAnalysisDominatorAnalysis)) {
+    for (const auto& it : dominator_trees_) {
+      const Function* f = it.first;
+      const DominatorAnalysis& cached_dom = it.second;
+      DominatorAnalysis new_dom;
+      new_dom.InitializeTree(*cfg(), f);
+
+      if (!(cached_dom == new_dom)) {
+        return false;
+      }
+    }
+    for (const auto& it : post_dominator_trees_) {
+      const Function* f = it.first;
+      const PostDominatorAnalysis& cached_post_dom = it.second;
+      PostDominatorAnalysis new_post_dom;
+      new_post_dom.InitializeTree(*cfg(), f);
+
+      if (!(cached_post_dom == new_post_dom)) {
+        return false;
+      }
+    }
+  }
+
+  if (AreAnalysesValid(kAnalysisStructuredCFG)) {
+    StructuredCFGAnalysis new_struct_cfg(this);
+    StructuredCFGAnalysis* cached_struct_cfg = struct_cfg_analysis_.get();
+    if (!(*cached_struct_cfg == new_struct_cfg)) {
       return false;
     }
   }
@@ -457,6 +581,20 @@ void IRContext::KillOperandFromDebugInstructions(Instruction* inst) {
   }
 }
 
+void IRContext::KillRelatedDebugScopes(Instruction* inst) {
+  // Extension has been fully unloaded, remove debug scope from every
+  // instruction.
+  if (inst->opcode() == spv::Op::OpExtInstImport) {
+    const std::string extension_name = inst->GetInOperand(0).AsString();
+    if (extension_name.compare(0, 29, "NonSemantic.Shader.DebugInfo.") == 0 ||
+        extension_name == "OpenCL.DebugInfo.100") {
+      module()->ForEachInst([](Instruction* child) {
+        child->SetDebugScope(DebugScope(kNoDebugScope, kNoInlinedAt));
+      });
+    }
+  }
+}
+
 void IRContext::AddCombinatorsForCapability(uint32_t capability) {
   spv::Capability cap = spv::Capability(capability);
   if (cap == spv::Capability::Shader) {
@@ -482,11 +620,14 @@ void IRContext::AddCombinatorsForCapability(uint32_t capability) {
          (uint32_t)spv::Op::OpTypeAccelerationStructureKHR,
          (uint32_t)spv::Op::OpTypeRayQueryKHR,
          (uint32_t)spv::Op::OpTypeHitObjectNV,
+         (uint32_t)spv::Op::OpTypeHitObjectEXT,
          (uint32_t)spv::Op::OpTypeArray,
          (uint32_t)spv::Op::OpTypeRuntimeArray,
+         (uint32_t)spv::Op::OpTypeNodePayloadArrayAMDX,
          (uint32_t)spv::Op::OpTypeStruct,
          (uint32_t)spv::Op::OpTypeOpaque,
          (uint32_t)spv::Op::OpTypePointer,
+         (uint32_t)spv::Op::OpTypeUntypedPointerKHR,
          (uint32_t)spv::Op::OpTypeFunction,
          (uint32_t)spv::Op::OpTypeEvent,
          (uint32_t)spv::Op::OpTypeDeviceEvent,
@@ -495,10 +636,12 @@ void IRContext::AddCombinatorsForCapability(uint32_t capability) {
          (uint32_t)spv::Op::OpTypePipe,
          (uint32_t)spv::Op::OpTypeForwardPointer,
          (uint32_t)spv::Op::OpVariable,
+         (uint32_t)spv::Op::OpUntypedVariableKHR,
          (uint32_t)spv::Op::OpImageTexelPointer,
          (uint32_t)spv::Op::OpLoad,
          (uint32_t)spv::Op::OpAccessChain,
          (uint32_t)spv::Op::OpInBoundsAccessChain,
+         (uint32_t)spv::Op::OpUntypedAccessChainKHR,
          (uint32_t)spv::Op::OpArrayLength,
          (uint32_t)spv::Op::OpVectorExtractDynamic,
          (uint32_t)spv::Op::OpVectorInsertDynamic,
@@ -506,6 +649,7 @@ void IRContext::AddCombinatorsForCapability(uint32_t capability) {
          (uint32_t)spv::Op::OpCompositeConstruct,
          (uint32_t)spv::Op::OpCompositeExtract,
          (uint32_t)spv::Op::OpCompositeInsert,
+         (uint32_t)spv::Op::OpCopyLogical,
          (uint32_t)spv::Op::OpCopyObject,
          (uint32_t)spv::Op::OpTranspose,
          (uint32_t)spv::Op::OpSampledImage,
@@ -718,9 +862,9 @@ void IRContext::AddCombinatorsForExtension(Instruction* extension) {
 }
 
 void IRContext::InitializeCombinators() {
-  get_feature_mgr()->GetCapabilities()->ForEach([this](spv::Capability cap) {
-    AddCombinatorsForCapability(uint32_t(cap));
-  });
+  for (auto capability : get_feature_mgr()->GetCapabilities()) {
+    AddCombinatorsForCapability(uint32_t(capability));
+  }
 
   for (auto& extension : module()->ext_inst_imports()) {
     AddCombinatorsForExtension(&extension);
@@ -850,11 +994,13 @@ uint32_t IRContext::GetBuiltinInputVarId(uint32_t builtin) {
         return 0;
       }
     }
+    if (reg_type == nullptr) return 0;  // Error
+
     uint32_t type_id = type_mgr->GetTypeInstruction(reg_type);
     uint32_t varTyPtrId =
         type_mgr->FindPointerToType(type_id, spv::StorageClass::Input);
-    // TODO(1841): Handle id overflow.
     var_id = TakeNextId();
+    if (var_id == 0) return 0;  // Error
     std::unique_ptr<Instruction> newVarOp(
         new Instruction(this, spv::Op::OpVariable, varTyPtrId, var_id,
                         {{spv_operand_type_t::SPV_OPERAND_TYPE_LITERAL_INTEGER,
@@ -871,9 +1017,40 @@ uint32_t IRContext::GetBuiltinInputVarId(uint32_t builtin) {
 
 void IRContext::AddCalls(const Function* func, std::queue<uint32_t>* todo) {
   for (auto bi = func->begin(); bi != func->end(); ++bi)
-    for (auto ii = bi->begin(); ii != bi->end(); ++ii)
+    for (auto ii = bi->begin(); ii != bi->end(); ++ii) {
       if (ii->opcode() == spv::Op::OpFunctionCall)
         todo->push(ii->GetSingleWordInOperand(0));
+      if (ii->opcode() == spv::Op::OpCooperativeMatrixPerElementOpEXT)
+        todo->push(ii->GetSingleWordInOperand(1));
+      if (ii->opcode() == spv::Op::OpCooperativeMatrixReduceEXT)
+        todo->push(ii->GetSingleWordInOperand(2));
+      if (ii->opcode() == spv::Op::OpCooperativeMatrixLoadTensorNV) {
+        const auto memory_operands_index = 3;
+        auto mask = ii->GetSingleWordInOperand(memory_operands_index);
+
+        uint32_t count = 1;
+        if (mask & uint32_t(spv::MemoryAccessMask::Aligned)) ++count;
+        if (mask & uint32_t(spv::MemoryAccessMask::MakePointerAvailableKHR))
+          ++count;
+        if (mask & uint32_t(spv::MemoryAccessMask::MakePointerVisibleKHR))
+          ++count;
+
+        const auto tensor_operands_index = memory_operands_index + count;
+        mask = ii->GetSingleWordInOperand(tensor_operands_index);
+        count = 1;
+        if (mask & uint32_t(spv::TensorAddressingOperandsMask::TensorView))
+          ++count;
+
+        if (mask & uint32_t(spv::TensorAddressingOperandsMask::DecodeFunc)) {
+          todo->push(ii->GetSingleWordInOperand(tensor_operands_index + count));
+          ++count;
+        }
+        if (mask &
+            uint32_t(spv::TensorAddressingOperandsMask::DecodeVectorFunc)) {
+          todo->push(ii->GetSingleWordInOperand(tensor_operands_index + count));
+        }
+      }
+    }
 }
 
 bool IRContext::ProcessEntryPointCallTree(ProcessFunction& pfn) {

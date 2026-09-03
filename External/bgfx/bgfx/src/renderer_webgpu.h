@@ -1,361 +1,629 @@
 /*
- * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #ifndef BGFX_RENDERER_WEBGPU_H_HEADER_GUARD
 #define BGFX_RENDERER_WEBGPU_H_HEADER_GUARD
 
-#include "bgfx_p.h"
+#include "renderer.h"
 
-#if BGFX_CONFIG_RENDERER_WEBGPU
+#define USE_WEBGPU_DYNAMIC_LIB (0 \
+		|| BX_PLATFORM_LINUX      \
+		|| BX_PLATFORM_OSX        \
+		|| BX_PLATFORM_WINDOWS    \
+		)
+
+#include "debug_renderdoc.h"
+
+#define _WGPU_CHECK(_call) _call; BX_ASSERT(!wgpuErrorCheck(), "" #_call " failed!")
+
+#if BGFX_CONFIG_DEBUG
+#	define WGPU_CHECK(_call) _WGPU_CHECK(_call)
+#else
+#	define WGPU_CHECK(_call) _call
+#endif // BGFX_CONFIG_DEBUG
 
 #if !BX_PLATFORM_EMSCRIPTEN
-#	include <dawn/webgpu_cpp.h>
-#	include <dawn/dawn_wsi.h>
-#else
-#	include <webgpu/webgpu_cpp.h>
+#	define WGPU_SKIP_DECLARATIONS
 #endif // !BX_PLATFORM_EMSCRIPTEN
+#include <dawn/include/webgpu/webgpu.h>
 
-#define BGFX_WEBGPU_PROFILER_BEGIN(_view, _abgr)      \
+#if USE_WEBGPU_DYNAMIC_LIB
+#	define WGPU_IMPORT                                                              \
+		/* instance */                                                              \
+		WGPU_IMPORT_FUNC(false, CreateInstance);                                    \
+		WGPU_IGNORE_____(false, GetInstanceFeatures);                               \
+		WGPU_IGNORE_____(false, GetInstanceLimits);                                 \
+		WGPU_IGNORE_____(false, HasInstanceFeature);                                \
+		WGPU_IMPORT_FUNC(false, GetProcAddress);                                    \
+		/* adapter */                                                               \
+		WGPU_IGNORE_____(false, AdapterCreateDevice);                               \
+		WGPU_IMPORT_FUNC(false, AdapterGetFeatures);                                \
+		WGPU_IGNORE_____(false, AdapterGetFormatCapabilities);                      \
+		WGPU_IMPORT_FUNC(false, AdapterGetInfo);                                    \
+		WGPU_IGNORE_____(false, AdapterGetInstance);                                \
+		WGPU_IMPORT_FUNC(false, AdapterGetLimits);                                  \
+		WGPU_IMPORT_FUNC(false, AdapterHasFeature);                                 \
+		WGPU_IMPORT_FUNC(false, AdapterRequestDevice);                              \
+		WGPU_IGNORE_____(false, AdapterAddRef);                                     \
+		WGPU_IMPORT_FUNC(false, AdapterRelease);                                    \
+		WGPU_IMPORT_FUNC(false, AdapterInfoFreeMembers);                            \
+		WGPU_IGNORE_____(false, AdapterPropertiesMemoryHeapsFreeMembers);           \
+		WGPU_IGNORE_____(false, AdapterPropertiesSubgroupMatrixConfigsFreeMembers); \
+		/* bind group */                                                            \
+		WGPU_IMPORT_FUNC(false, BindGroupSetLabel);                                 \
+		WGPU_IGNORE_____(false, BindGroupAddRef);                                   \
+		WGPU_IMPORT_FUNC(false, BindGroupRelease);                                  \
+		WGPU_IMPORT_FUNC(false, BindGroupLayoutSetLabel);                           \
+		WGPU_IGNORE_____(false, BindGroupLayoutAddRef);                             \
+		WGPU_IMPORT_FUNC(false, BindGroupLayoutRelease);                            \
+		/* buffer */                                                                \
+		WGPU_IGNORE_____(false, BufferCreateTexelView);                             \
+		WGPU_IMPORT_FUNC(false, BufferDestroy);                                     \
+		WGPU_IMPORT_FUNC(false, BufferGetConstMappedRange);                         \
+		WGPU_IGNORE_____(false, BufferGetMappedRange);                              \
+		WGPU_IGNORE_____(false, BufferGetMapState);                                 \
+		WGPU_IGNORE_____(false, BufferGetSize);                                     \
+		WGPU_IGNORE_____(false, BufferGetUsage);                                    \
+		WGPU_IMPORT_FUNC(false, BufferMapAsync);                                    \
+		WGPU_IGNORE_____(false, BufferReadMappedRange);                             \
+		WGPU_IMPORT_FUNC(false, BufferSetLabel);                                    \
+		WGPU_IMPORT_FUNC(false, BufferUnmap);                                       \
+		WGPU_IGNORE_____(false, BufferWriteMappedRange);                            \
+		WGPU_IGNORE_____(false, BufferAddRef);                                      \
+		WGPU_IMPORT_FUNC(false, BufferRelease);                                     \
+		WGPU_IMPORT_FUNC(false, CommandBufferSetLabel);                             \
+		WGPU_IGNORE_____(false, CommandBufferAddRef);                               \
+		WGPU_IMPORT_FUNC(false, CommandBufferRelease);                              \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, CommandEncoderBeginComputePass);                    \
+		WGPU_IMPORT_FUNC(false, CommandEncoderBeginRenderPass);                     \
+		WGPU_IMPORT_FUNC(false, CommandEncoderClearBuffer);                         \
+		WGPU_IMPORT_FUNC(false, CommandEncoderCopyBufferToBuffer);                  \
+		WGPU_IMPORT_FUNC(false, CommandEncoderCopyBufferToTexture);                 \
+		WGPU_IMPORT_FUNC(false, CommandEncoderCopyTextureToBuffer);                 \
+		WGPU_IMPORT_FUNC(false, CommandEncoderCopyTextureToTexture);                \
+		WGPU_IMPORT_FUNC(false, CommandEncoderFinish);                              \
+		WGPU_IGNORE_____(false, CommandEncoderInjectValidationError);               \
+		WGPU_IMPORT_FUNC(false, CommandEncoderInsertDebugMarker);                   \
+		WGPU_IMPORT_FUNC(false, CommandEncoderPopDebugGroup);                       \
+		WGPU_IMPORT_FUNC(false, CommandEncoderPushDebugGroup);                      \
+		WGPU_IMPORT_FUNC(false, CommandEncoderResolveQuerySet);                     \
+		WGPU_IMPORT_FUNC(false, CommandEncoderSetLabel);                            \
+		WGPU_IGNORE_____(false, CommandEncoderWriteBuffer);                         \
+		WGPU_IGNORE_____(false, CommandEncoderWriteTimestamp);                      \
+		WGPU_IGNORE_____(false, CommandEncoderAddRef);                              \
+		WGPU_IMPORT_FUNC(false, CommandEncoderRelease);                             \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderDispatchWorkgroups);              \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderDispatchWorkgroupsIndirect);      \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderEnd);                             \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderInsertDebugMarker);               \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderPopDebugGroup);                   \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderPushDebugGroup);                  \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderSetBindGroup);                    \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderSetLabel);                        \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderSetPipeline);                     \
+		WGPU_IGNORE_____(false, ComputePassEncoderWriteTimestamp);                  \
+		WGPU_IGNORE_____(false, ComputePassEncoderAddRef);                          \
+		WGPU_IMPORT_FUNC(false, ComputePassEncoderRelease);                         \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, ComputePipelineGetBindGroupLayout);                 \
+		WGPU_IMPORT_FUNC(false, ComputePipelineSetLabel);                           \
+		WGPU_IGNORE_____(false, ComputePipelineAddRef);                             \
+		WGPU_IMPORT_FUNC(false, ComputePipelineRelease);                            \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, DawnDrmFormatCapabilitiesFreeMembers);              \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, DeviceCreateBindGroup);                             \
+		WGPU_IMPORT_FUNC(false, DeviceCreateBindGroupLayout);                       \
+		WGPU_IMPORT_FUNC(false, DeviceCreateBuffer);                                \
+		WGPU_IMPORT_FUNC(false, DeviceCreateCommandEncoder);                        \
+		WGPU_IMPORT_FUNC(false, DeviceCreateComputePipeline);                       \
+		WGPU_IMPORT_FUNC(false, DeviceCreateComputePipelineAsync);                  \
+		WGPU_IGNORE_____(false, DeviceCreateErrorBuffer);                           \
+		WGPU_IGNORE_____(false, DeviceCreateErrorExternalTexture);                  \
+		WGPU_IGNORE_____(false, DeviceCreateErrorShaderModule);                     \
+		WGPU_IGNORE_____(false, DeviceCreateErrorTexture);                          \
+		WGPU_IGNORE_____(false, DeviceCreateExternalTexture);                       \
+		WGPU_IMPORT_FUNC(false, DeviceCreatePipelineLayout);                        \
+		WGPU_IMPORT_FUNC(false, DeviceCreateQuerySet);                              \
+		WGPU_IMPORT_FUNC(false, DeviceCreateRenderBundleEncoder);                   \
+		WGPU_IMPORT_FUNC(false, DeviceCreateRenderPipeline);                        \
+		WGPU_IMPORT_FUNC(false, DeviceCreateRenderPipelineAsync);                   \
+		WGPU_IMPORT_FUNC(false, DeviceCreateSampler);                               \
+		WGPU_IMPORT_FUNC(false, DeviceCreateShaderModule);                          \
+		WGPU_IMPORT_FUNC(false, DeviceCreateTexture);                               \
+		WGPU_IMPORT_FUNC(false, DeviceDestroy);                                     \
+		WGPU_IGNORE_____(false, DeviceForceLoss);                                   \
+		WGPU_IGNORE_____(false, DeviceGetAdapter);                                  \
+		WGPU_IMPORT_FUNC(false, DeviceGetAdapterInfo);                              \
+		WGPU_IGNORE_____(false, DeviceGetAHardwareBufferProperties);                \
+		WGPU_IMPORT_FUNC(false, DeviceGetFeatures);                                 \
+		WGPU_IMPORT_FUNC(false, DeviceGetLimits);                                   \
+		WGPU_IMPORT_FUNC(false, DeviceGetLostFuture);                               \
+		WGPU_IMPORT_FUNC(false, DeviceGetQueue);                                    \
+		WGPU_IMPORT_FUNC(false, DeviceHasFeature);                                  \
+		WGPU_IGNORE_____(false, DeviceImportSharedBufferMemory);                    \
+		WGPU_IGNORE_____(false, DeviceImportSharedFence);                           \
+		WGPU_IGNORE_____(false, DeviceImportSharedTextureMemory);                   \
+		WGPU_IGNORE_____(false, DeviceInjectError);                                 \
+		WGPU_IMPORT_FUNC(false, DevicePopErrorScope);                               \
+		WGPU_IMPORT_FUNC(false, DevicePushErrorScope);                              \
+		WGPU_IMPORT_FUNC(false, DeviceSetLabel);                                    \
+		WGPU_IGNORE_____(false, DeviceSetLoggingCallback);                          \
+		WGPU_IGNORE_____(false, DeviceTick);                                        \
+		WGPU_IGNORE_____(false, DeviceValidateTextureDescriptor);                   \
+		WGPU_IGNORE_____(false, DeviceAddRef);                                      \
+		WGPU_IMPORT_FUNC(false, DeviceRelease);                                     \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, ExternalTextureDestroy);                            \
+		WGPU_IGNORE_____(false, ExternalTextureExpire);                             \
+		WGPU_IGNORE_____(false, ExternalTextureRefresh);                            \
+		WGPU_IGNORE_____(false, ExternalTextureSetLabel);                           \
+		WGPU_IGNORE_____(false, ExternalTextureAddRef);                             \
+		WGPU_IGNORE_____(false, ExternalTextureRelease);                            \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, InstanceCreateSurface);                             \
+		WGPU_IMPORT_FUNC(false, InstanceGetWGSLLanguageFeatures);                   \
+		WGPU_IMPORT_FUNC(false, InstanceHasWGSLLanguageFeature);                    \
+		WGPU_IMPORT_FUNC(false, InstanceProcessEvents);                             \
+		WGPU_IMPORT_FUNC(false, InstanceRequestAdapter);                            \
+		WGPU_IMPORT_FUNC(false, InstanceWaitAny);                                   \
+		WGPU_IGNORE_____(false, InstanceAddRef);                                    \
+		WGPU_IMPORT_FUNC(false, InstanceRelease);                                   \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, PipelineLayoutSetLabel);                            \
+		WGPU_IGNORE_____(false, PipelineLayoutAddRef);                              \
+		WGPU_IMPORT_FUNC(false, PipelineLayoutRelease);                             \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, QuerySetDestroy);                                   \
+		WGPU_IMPORT_FUNC(false, QuerySetGetCount);                                  \
+		WGPU_IMPORT_FUNC(false, QuerySetGetType);                                   \
+		WGPU_IMPORT_FUNC(false, QuerySetSetLabel);                                  \
+		WGPU_IGNORE_____(false, QuerySetAddRef);                                    \
+		WGPU_IMPORT_FUNC(false, QuerySetRelease);                                   \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, QueueCopyExternalTextureForBrowser);                \
+		WGPU_IGNORE_____(false, QueueCopyTextureForBrowser);                        \
+		WGPU_IMPORT_FUNC(false, QueueOnSubmittedWorkDone);                          \
+		WGPU_IMPORT_FUNC(false, QueueSetLabel);                                     \
+		WGPU_IMPORT_FUNC(false, QueueSubmit);                                       \
+		WGPU_IMPORT_FUNC(false, QueueWriteBuffer);                                  \
+		WGPU_IMPORT_FUNC(false, QueueWriteTexture);                                 \
+		WGPU_IGNORE_____(false, QueueAddRef);                                       \
+		WGPU_IMPORT_FUNC(false, QueueRelease);                                      \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, RenderBundleSetLabel);                              \
+		WGPU_IGNORE_____(false, RenderBundleAddRef);                                \
+		WGPU_IGNORE_____(false, RenderBundleRelease);                               \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, RenderBundleEncoderDraw);                           \
+		WGPU_IGNORE_____(false, RenderBundleEncoderDrawIndexed);                    \
+		WGPU_IGNORE_____(false, RenderBundleEncoderDrawIndexedIndirect);            \
+		WGPU_IGNORE_____(false, RenderBundleEncoderDrawIndirect);                   \
+		WGPU_IGNORE_____(false, RenderBundleEncoderFinish);                         \
+		WGPU_IGNORE_____(false, RenderBundleEncoderInsertDebugMarker);              \
+		WGPU_IGNORE_____(false, RenderBundleEncoderPopDebugGroup);                  \
+		WGPU_IGNORE_____(false, RenderBundleEncoderPushDebugGroup);                 \
+		WGPU_IGNORE_____(false, RenderBundleEncoderSetBindGroup);                   \
+		WGPU_IGNORE_____(false, RenderBundleEncoderSetIndexBuffer);                 \
+		WGPU_IGNORE_____(false, RenderBundleEncoderSetLabel);                       \
+		WGPU_IGNORE_____(false, RenderBundleEncoderSetPipeline);                    \
+		WGPU_IGNORE_____(false, RenderBundleEncoderSetVertexBuffer);                \
+		WGPU_IGNORE_____(false, RenderBundleEncoderAddRef);                         \
+		WGPU_IGNORE_____(false, RenderBundleEncoderRelease);                        \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderBeginOcclusionQuery);              \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderDraw);                             \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderDrawIndexed);                      \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderDrawIndexedIndirect);              \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderDrawIndirect);                     \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderEnd);                              \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderEndOcclusionQuery);                \
+		WGPU_IGNORE_____(false, RenderPassEncoderExecuteBundles);                   \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderInsertDebugMarker);                \
+		WGPU_IGNORE_____(false, RenderPassEncoderMultiDrawIndexedIndirect);         \
+		WGPU_IGNORE_____(false, RenderPassEncoderMultiDrawIndirect);                \
+		WGPU_IGNORE_____(false, RenderPassEncoderPixelLocalStorageBarrier);         \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderPopDebugGroup);                    \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderPushDebugGroup);                   \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetBindGroup);                     \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetBlendConstant);                 \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetIndexBuffer);                   \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetLabel);                         \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetPipeline);                      \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetScissorRect);                   \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetStencilReference);              \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetVertexBuffer);                  \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderSetViewport);                      \
+		WGPU_IGNORE_____(false, RenderPassEncoderWriteTimestamp);                   \
+		WGPU_IGNORE_____(false, RenderPassEncoderAddRef);                           \
+		WGPU_IMPORT_FUNC(false, RenderPassEncoderRelease);                          \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, RenderPipelineGetBindGroupLayout);                  \
+		WGPU_IMPORT_FUNC(false, RenderPipelineSetLabel);                            \
+		WGPU_IMPORT_FUNC(false, RenderPipelineAddRef);                              \
+		WGPU_IMPORT_FUNC(false, RenderPipelineRelease);                             \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, SamplerSetLabel);                                   \
+		WGPU_IGNORE_____(false, SamplerAddRef);                                     \
+		WGPU_IMPORT_FUNC(false, SamplerRelease);                                    \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, ShaderModuleGetCompilationInfo);                    \
+		WGPU_IMPORT_FUNC(false, ShaderModuleSetLabel);                              \
+		WGPU_IGNORE_____(false, ShaderModuleAddRef);                                \
+		WGPU_IMPORT_FUNC(false, ShaderModuleRelease);                               \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, SharedBufferMemoryBeginAccess);                     \
+		WGPU_IGNORE_____(false, SharedBufferMemoryCreateBuffer);                    \
+		WGPU_IGNORE_____(false, SharedBufferMemoryEndAccess);                       \
+		WGPU_IGNORE_____(false, SharedBufferMemoryGetProperties);                   \
+		WGPU_IGNORE_____(false, SharedBufferMemoryIsDeviceLost);                    \
+		WGPU_IGNORE_____(false, SharedBufferMemorySetLabel);                        \
+		WGPU_IGNORE_____(false, SharedBufferMemoryAddRef);                          \
+		WGPU_IGNORE_____(false, SharedBufferMemoryRelease);                         \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, SharedBufferMemoryEndAccessStateFreeMembers);       \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, SharedFenceExportInfo);                             \
+		WGPU_IGNORE_____(false, SharedFenceAddRef);                                 \
+		WGPU_IGNORE_____(false, SharedFenceRelease);                                \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, SharedTextureMemoryBeginAccess);                    \
+		WGPU_IGNORE_____(false, SharedTextureMemoryCreateTexture);                  \
+		WGPU_IGNORE_____(false, SharedTextureMemoryEndAccess);                      \
+		WGPU_IGNORE_____(false, SharedTextureMemoryGetProperties);                  \
+		WGPU_IGNORE_____(false, SharedTextureMemoryIsDeviceLost);                   \
+		WGPU_IGNORE_____(false, SharedTextureMemorySetLabel);                       \
+		WGPU_IGNORE_____(false, SharedTextureMemoryAddRef);                         \
+		WGPU_IGNORE_____(false, SharedTextureMemoryRelease);                        \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, SharedTextureMemoryEndAccessStateFreeMembers);      \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, SupportedFeaturesFreeMembers);                      \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, SupportedInstanceFeaturesFreeMembers);              \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, SupportedWGSLLanguageFeaturesFreeMembers);          \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, SurfaceConfigure);                                  \
+		WGPU_IMPORT_FUNC(false, SurfaceGetCapabilities);                            \
+		WGPU_IMPORT_FUNC(false, SurfaceGetCurrentTexture);                          \
+		WGPU_IMPORT_FUNC(false, SurfacePresent);                                    \
+		WGPU_IMPORT_FUNC(false, SurfaceSetLabel);                                   \
+		WGPU_IMPORT_FUNC(false, SurfaceUnconfigure);                                \
+		WGPU_IGNORE_____(false, SurfaceAddRef);                                     \
+		WGPU_IMPORT_FUNC(false, SurfaceRelease);                                    \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, SurfaceCapabilitiesFreeMembers);                    \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, TexelBufferViewSetLabel);                           \
+		WGPU_IGNORE_____(false, TexelBufferViewAddRef);                             \
+		WGPU_IGNORE_____(false, TexelBufferViewRelease);                            \
+		/* */                                                                       \
+		WGPU_IGNORE_____(false, TextureCreateErrorView);                            \
+		WGPU_IMPORT_FUNC(false, TextureCreateView);                                 \
+		WGPU_IMPORT_FUNC(false, TextureDestroy);                                    \
+		WGPU_IGNORE_____(false, TextureGetDepthOrArrayLayers);                      \
+		WGPU_IGNORE_____(false, TextureGetDimension);                               \
+		WGPU_IGNORE_____(false, TextureGetFormat);                                  \
+		WGPU_IMPORT_FUNC(false, TextureGetHeight);                                  \
+		WGPU_IGNORE_____(false, TextureGetMipLevelCount);                           \
+		WGPU_IGNORE_____(false, TextureGetSampleCount);                             \
+		WGPU_IGNORE_____(false, TextureGetUsage);                                   \
+		WGPU_IMPORT_FUNC(false, TextureGetWidth);                                   \
+		WGPU_IGNORE_____(false, TexturePin);                                        \
+		WGPU_IMPORT_FUNC(false, TextureSetLabel);                                   \
+		WGPU_IGNORE_____(false, TextureUnpin);                                      \
+		WGPU_IGNORE_____(false, TextureAddRef);                                     \
+		WGPU_IMPORT_FUNC(false, TextureRelease);                                    \
+		/* */                                                                       \
+		WGPU_IMPORT_FUNC(false, TextureViewSetLabel);                               \
+		WGPU_IGNORE_____(false, TextureViewAddRef);                                 \
+		WGPU_IMPORT_FUNC(false, TextureViewRelease);                                \
+		/* end */
+
+#endif // USE_WEBGPU_DYNAMIC_LIB
+
+#define WGPU_RELEASE                            \
+	WGPU_RELEASE_FUNC(Adapter);                 \
+	WGPU_RELEASE_FUNC(Device);                  \
+	WGPU_RELEASE_FUNC(Instance);                \
+	WGPU_RELEASE_FUNC(Surface);                 \
+	WGPU_RELEASE_FUNC(Queue);                   \
+	WGPU_RELEASE_FUNC(Texture);                 \
+	WGPU_RELEASE_FUNC(TextureView);             \
+	WGPU_RELEASE_FUNC(CommandEncoder);          \
+	WGPU_RELEASE_FUNC(ComputePassEncoder);      \
+	WGPU_RELEASE_FUNC(RenderPassEncoder);       \
+	WGPU_RELEASE_FUNC(CommandBuffer);           \
+	WGPU_RELEASE_FUNC(BindGroup);               \
+	WGPU_RELEASE_FUNC(BindGroupLayout);         \
+	WGPU_RELEASE_FUNC(Buffer);                  \
+	WGPU_RELEASE_FUNC(ComputePipeline);         \
+	/*WGPU_RELEASE_FUNC(ExternalTexture);*/     \
+	WGPU_RELEASE_FUNC(PipelineLayout);          \
+	WGPU_RELEASE_FUNC(QuerySet);                \
+	/*WGPU_RELEASE_FUNC(RenderBundle);*/        \
+	/*WGPU_RELEASE_FUNC(RenderBundleEncoder);*/ \
+	WGPU_RELEASE_FUNC(RenderPipeline);          \
+	/*WGPU_RELEASE_FUNC(ResourceTable);*/       \
+	WGPU_RELEASE_FUNC(Sampler);                 \
+	WGPU_RELEASE_FUNC(ShaderModule);            \
+	/*WGPU_RELEASE_FUNC(SharedBufferMemory);*/  \
+	/*WGPU_RELEASE_FUNC(SharedFence);*/         \
+	/*WGPU_RELEASE_FUNC(SharedTextureMemory);*/ \
+	/*WGPU_RELEASE_FUNC(TexelBufferView);*/     \
+	/* end */
+
+#define WGPU_DESTROY                      \
+	WGPU_DESTROY_FUNC(Buffer)             \
+	WGPU_DESTROY_FUNC(Device)             \
+	WGPU_DESTROY_FUNC(Texture)            \
+	WGPU_DESTROY_FUNC(QuerySet)           \
+	/*WGPU_DESTROY_FUNC(ResourceTable);*/ \
+	/* end */
+
+#define BGFX_WGPU_PROFILER_BEGIN(_view, _abgr)        \
 	BX_MACRO_BLOCK_BEGIN                              \
 		BGFX_PROFILER_BEGIN(s_viewName[view], _abgr); \
 	BX_MACRO_BLOCK_END
 
-#define BGFX_WEBGPU_PROFILER_BEGIN_LITERAL(_name, _abgr) \
-	BX_MACRO_BLOCK_BEGIN                                 \
-		BGFX_PROFILER_BEGIN_LITERAL("" # _name, _abgr);  \
+#define BGFX_WGPU_PROFILER_BEGIN_LITERAL(_name, _abgr) \
+	BX_MACRO_BLOCK_BEGIN                               \
+		BGFX_PROFILER_BEGIN_LITERAL("" _name, _abgr);  \
 	BX_MACRO_BLOCK_END
 
-#define BGFX_WEBGPU_PROFILER_END() \
-	BX_MACRO_BLOCK_BEGIN           \
-		BGFX_PROFILER_END();       \
+#define BGFX_WGPU_PROFILER_END() \
+	BX_MACRO_BLOCK_BEGIN         \
+		BGFX_PROFILER_END();     \
 	BX_MACRO_BLOCK_END
 
-#define WEBGPU_NUM_UNIFORM_BUFFERS  8
-
-namespace bgfx { namespace webgpu
+namespace bgfx { namespace wgpu
 {
-	template <typename Ty>
-	class StateCacheT
+#define WGPU_RELEASE_FUNC(_name) void wgpuRelease(WGPU##_name& _obj)
+
+	WGPU_RELEASE
+
+#undef WGPU_RELEASE_FUNC
+
+} // namespace wgpu
+
+	template<>
+	struct StateCacheFuncT<WGPUTextureView>
 	{
-	public:
-		void add(uint64_t _id, Ty _item)
+		static void evict(WGPUTextureView _value)
 		{
-			invalidate(_id);
-			m_hashMap.insert(stl::make_pair(_id, _item));
+			wgpu::wgpuRelease(_value);
 		}
 
-		Ty find(uint64_t _id)
+		static void validate(WGPUTextureView /*_value*/, uint64_t /*_key*/)
 		{
-			typename HashMap::iterator it = m_hashMap.find(_id);
-			if(it != m_hashMap.end())
-			{
-				return it->second;
-			}
-
-			return NULL;
 		}
-
-		void invalidate(uint64_t _id)
-		{
-			typename HashMap::iterator it = m_hashMap.find(_id);
-			if(it != m_hashMap.end())
-			{
-				release(it->second);
-				m_hashMap.erase(it);
-			}
-		}
-
-		void invalidate()
-		{
-			for(typename HashMap::iterator it = m_hashMap.begin(), itEnd = m_hashMap.end(); it != itEnd; ++it)
-			{
-				release(it->second);
-			}
-
-			m_hashMap.clear();
-		}
-
-		uint32_t getCount() const
-		{
-			return uint32_t(m_hashMap.size());
-		}
-
-	private:
-		typedef stl::unordered_map<uint64_t, Ty> HashMap;
-		HashMap m_hashMap;
 	};
 
-	struct BufferWgpu
+	template<>
+	struct StateCacheFuncT<WGPUSampler>
 	{
-		void create(uint32_t _size, void* _data, uint16_t _flags, uint16_t _stride = 0, bool _vertex = false);
-		void update(uint32_t _offset, uint32_t _size, void* _data, bool _discard = false);
-
-		void destroy()
+		static void evict(WGPUSampler _value)
 		{
-			m_ptr.Destroy();
-
-			if(NULL != m_dynamic)
-			{
-				bx::deleteObject(g_allocator, m_dynamic);
-				m_dynamic = NULL;
-			}
+			wgpu::wgpuRelease(_value);
 		}
 
+		static void validate(WGPUSampler /*_value*/, uint64_t /*_key*/)
+		{
+		}
+	};
+
+namespace wgpu {
+
+	inline constexpr WGPUStringView toWGPUStringView(const bx::StringView& _str)
+	{
+		return { .data = _str.getPtr(), .length = size_t(_str.getLength() ) };
+	}
+
+	struct ChunkedScratchBufferOffset
+	{
+		WGPUBuffer buffer;
+		uint32_t offsets[2];
+	};
+
+	struct ChunkWGPU
+	{
+		WGPUBuffer buffer;
+		uint8_t* data;
+	};
+
+	struct ChunkedScratchBufferWGPU : ChunkedScratchBufferT<ChunkedScratchBufferWGPU, WGPUBuffer, ChunkWGPU>
+	{
+		void createUniform(uint32_t _chunkSize, uint32_t _numChunks);
+
+		void createChunk(ChunkWGPU& _chunk);
+		void destroyChunk(ChunkWGPU& _chunk);
+		void flushChunk(ChunkWGPU& _chunk, uint32_t _size);
+		uint32_t currentFrameInFlight() const;
+
+		WGPUBufferUsage m_usage;
+	};
+
+	struct BufferWGPU
+	{
+		BufferWGPU()
+			: m_buffer(NULL)
+			, m_size(0)
+			, m_flags(BGFX_BUFFER_NONE)
+		{
+		}
+
+		void create(uint32_t _size, void* _data, uint16_t _flags, bool _vertex, uint32_t _stride = 0);
+		void update(uint32_t _offset, uint32_t _size, void* _data, bool _discard = false) const;
+		void destroy();
+
+		WGPUBuffer m_buffer;
 		uint32_t m_size;
-		uint16_t m_flags = BGFX_BUFFER_NONE;
-		bool     m_vertex;
-
-		String       m_label;
-		wgpu::Buffer m_ptr;
-		uint8_t*     m_dynamic = NULL;
+		uint16_t m_flags;
 	};
 
-	struct IndexBufferWgpu : public BufferWgpu
-	{
-		void create(uint32_t _size, void* _data, uint16_t _flags);
+	using IndexBufferWGPU = BufferWGPU;
 
-		wgpu::IndexFormat m_format;
-	};
-
-	struct VertexBufferWgpu : public BufferWgpu
+	struct VertexBufferWGPU : public BufferWGPU
 	{
-		void create(uint32_t _size, void* _data, VertexLayoutHandle _declHandle, uint16_t _flags);
+		void create(uint32_t _size, void* _data, VertexLayoutHandle _layoutHandle, uint16_t _flags);
 
 		VertexLayoutHandle m_layoutHandle;
 	};
 
-	struct BindInfo
+	struct ShaderBinding
 	{
-		uint32_t      m_index = UINT32_MAX;
-		uint32_t      m_binding = UINT32_MAX;
-		UniformHandle m_uniform = BGFX_INVALID_HANDLE;
+		struct Type
+		{
+			enum Enum
+			{
+				Buffer,
+				Image,
+				Sampler,
+
+				Count
+			};
+		};
+
+		UniformHandle uniformHandle = BGFX_INVALID_HANDLE;
+		Type::Enum type;
+		uint32_t binding;
+		uint32_t samplerBinding;
+		uint32_t index;
+		WGPUBufferBindingType bufferBindingType;
+		WGPUTextureSampleType sampleType;
+		WGPUTextureViewDimension viewDimension;
+		WGPUShaderStage shaderStage;
+
+		void clear()
+		{
+			uniformHandle     = BGFX_INVALID_HANDLE;
+			type              = ShaderBinding::Type::Count;
+			binding           = 0;
+			samplerBinding    = 0;
+			index             = UINT32_MAX;
+			bufferBindingType = WGPUBufferBindingType_Undefined;
+			sampleType        = WGPUTextureSampleType_Undefined;
+			viewDimension     = WGPUTextureViewDimension_Undefined;
+		}
 	};
 
-	struct ShaderWgpu
+	struct ShaderWGPU
 	{
-		void create(ShaderHandle _handle, const Memory* _mem);
-		void destroy()
+		ShaderWGPU()
+			: m_code(NULL)
+			, m_module(NULL)
+			, m_moduleBgra8(NULL)
+			, m_constantBuffer(NULL)
+			, m_hash(0)
+			, m_numUniforms(0)
+			, m_numPredefined(0)
 		{
-			if (NULL != m_constantBuffer)
-			{
-				UniformBuffer::destroy(m_constantBuffer);
-				m_constantBuffer = NULL;
-			}
-
-			m_module = NULL;
 		}
 
-		const char* name() const { return getName(m_handle); }
+		void create(const Memory* _mem);
+		void destroy();
 
-		ShaderHandle m_handle;
-		String m_label;
+		WGPUShaderModule getModule(bool _bgra8Storage) const;
 
-		wgpu::ShaderStage m_stage;
-		wgpu::ShaderModule m_module;
-
-		uint32_t* m_code = NULL;
-		size_t m_codeSize = 0;
-
-		UniformBuffer* m_constantBuffer = NULL;
+		const Memory* m_code;
+		WGPUShaderModule m_module;
+		mutable WGPUShaderModule m_moduleBgra8;
+		UniformBuffer* m_constantBuffer;
 
 		PredefinedUniform m_predefined[PredefinedUniform::Count];
 		uint16_t m_attrMask[Attrib::Count];
-		uint8_t  m_attrRemap[Attrib::Count];
+		uint8_t m_attrRemap[Attrib::Count];
 
-		uint32_t m_hash = 0;
-		uint16_t m_numUniforms = 0;
-		uint16_t m_size = 0;
-		uint16_t m_gpuSize = 0;
-		uint8_t  m_numPredefined = 0;
-		uint8_t  m_numAttrs = 0;
+		uint32_t m_hash;
+		uint16_t m_numUniforms;
+		uint16_t m_size;
+		uint16_t m_blockSize;
+		uint8_t  m_numPredefined;
+		uint8_t  m_numAttrs;
 
-		BindInfo                   m_bindInfo[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		wgpu::BindGroupLayoutEntry m_samplers[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		wgpu::BindGroupLayoutEntry m_textures[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		uint8_t                    m_numSamplers = 0;
-		wgpu::BindGroupLayoutEntry m_buffers[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		uint32_t                   m_numBuffers = 0;
+		ShaderBinding m_shaderBinding[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
+
+		uint8_t m_numTextures;
 	};
 
-	struct PipelineStateWgpu;
-
-	struct ProgramWgpu
+	struct BindGroup
 	{
-		void create(const ShaderWgpu* _vsh, const ShaderWgpu* _fsh);
+		void invalidate()
+		{
+			wgpuRelease(bindGroup);
+		}
+
+		WGPUBindGroup bindGroup;
+		uint32_t      numOffsets;
+	};
+
+	inline void release(BindGroup& _bindGroup)
+	{
+		_bindGroup.invalidate();
+	}
+
+	struct ComputePipeline
+	{
+		void invalidate()
+		{
+			wgpuRelease(bindGroupLayout);
+			wgpuRelease(pipeline);
+		}
+
+		WGPUBindGroupLayout bindGroupLayout;
+		WGPUComputePipeline pipeline;
+	};
+
+	inline void release(ComputePipeline& _computePipeline)
+	{
+		_computePipeline.invalidate();
+	}
+
+	struct RenderPipeline
+	{
+		void invalidate()
+		{
+			wgpuRelease(bindGroupLayout);
+			wgpuRelease(pipeline);
+		}
+
+		WGPUBindGroupLayout bindGroupLayout;
+		WGPURenderPipeline  pipeline;
+	};
+
+	inline void release(RenderPipeline& _renderPipeline)
+	{
+		_renderPipeline.invalidate();
+	}
+
+	struct ProgramWGPU
+	{
+		ProgramWGPU()
+			: m_vsh(NULL)
+			, m_fsh(NULL)
+		{
+		}
+
+		void create(const ShaderWGPU* _vsh, const ShaderWGPU* _fsh);
 		void destroy();
 
-		const ShaderWgpu* m_vsh = NULL;
-		const ShaderWgpu* m_fsh = NULL;
+		const ShaderWGPU* m_vsh;
+		const ShaderWGPU* m_fsh;
 
 		PredefinedUniform m_predefined[PredefinedUniform::Count * 2];
 		uint8_t m_numPredefined;
 
-		PipelineStateWgpu* m_computePS = NULL;
+		ShaderBinding m_shaderBinding[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
 
-		wgpu::BindGroupLayout m_bindGroupLayout;
-		uint16_t              m_gpuSize = 0;
-		uint32_t              m_numUniforms;
-		uint32_t              m_bindGroupLayoutHash;
-
-		BindInfo                   m_bindInfo[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		wgpu::BindGroupLayoutEntry m_samplers[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		wgpu::BindGroupLayoutEntry m_textures[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		uint32_t                   m_numSamplers = 0;
-		wgpu::BindGroupLayoutEntry m_buffers[BGFX_CONFIG_MAX_TEXTURE_SAMPLERS];
-		uint32_t                   m_numBuffers = 0;
+		uint32_t m_numBindings;
 	};
 
-	constexpr size_t kMaxVertexInputs = 16;
-	constexpr size_t kMaxVertexAttributes = 16;
-	constexpr size_t kMaxColorAttachments = BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS;
-
-	constexpr uint32_t kMinBufferOffsetAlignment = 256;
-
-	struct RenderPassDescriptor
-	{
-		RenderPassDescriptor();
-
-		wgpu::RenderPassDescriptor desc;
-
-		wgpu::RenderPassColorAttachment colorAttachments[kMaxColorAttachments];
-		wgpu::RenderPassDepthStencilAttachment depthStencilAttachment;
-	};
-
-	struct VertexStateDescriptor
-	{
-		VertexStateDescriptor();
-
-		wgpu::VertexState desc;
-
-		wgpu::VertexBufferLayoutDescriptor buffers[kMaxVertexInputs];
-		wgpu::VertexAttributeDescriptor attributes[kMaxVertexAttributes];
-	};
-
-	struct RenderPipelineDescriptor
-	{
-		RenderPipelineDescriptor();
-
-		wgpu::RenderPipelineDescriptor2 desc;
-
-		wgpu::FragmentState fragment;
-		wgpu::DepthStencilState depthStencil;
-
-		wgpu::ColorTargetState targets[kMaxColorAttachments];
-		wgpu::BlendState blends[kMaxColorAttachments];
-	};
-
-	struct BindingsWgpu
-	{
-		uint32_t numEntries = 0;
-		wgpu::BindGroupEntry m_entries[2 + BGFX_CONFIG_MAX_TEXTURE_SAMPLERS*3];
-	};
-
-	struct BindStateWgpu
-	{
-		void clear();
-
-		uint32_t numOffset;
-
-		wgpu::BindGroup m_bindGroup;
-	};
-
-	struct RenderPassStateWgpu
-	{
-		RenderPassDescriptor m_rpd;
-	};
-
-	struct PipelineStateWgpu
-	{
-		RenderPipelineDescriptor m_rpd;
-
-		wgpu::PipelineLayout m_layout;
-
-		wgpu::RenderPipeline m_rps;
-		wgpu::ComputePipeline m_cps;
-	};
-
-	void release(RenderPassStateWgpu* _ptr)
-	{
-		bx::deleteObject(g_allocator, _ptr);
-	}
-
-	void release(PipelineStateWgpu* _ptr)
-	{
-		bx::deleteObject(g_allocator, _ptr);
-	}
-
-	class StagingBufferWgpu
-	{
-	public:
-		void create(uint32_t _size, bool mapped);
-		void map();
-		void unmap();
-		void destroy();
-
-		void mapped(void* _data);
-
-		wgpu::Buffer m_buffer;
-		void* m_data = NULL;
-		uint64_t m_size = 0;
-	};
-
-	class ScratchBufferWgpu
-	{
-	public:
-		void create(uint32_t _size); // , uint32_t _maxBindGroups);
-		void destroy();
-		void begin();
-		uint32_t write(void* data, uint64_t _size, uint64_t _offset);
-		uint32_t write(void* data, uint64_t _size);
-		void submit();
-		void release();
-
-		StagingBufferWgpu* m_staging = NULL;
-		wgpu::Buffer m_buffer;
-		uint32_t m_offset;
-		uint32_t m_size;
-		uint8_t m_stagingIndex = 0;
-	};
-
-	class BindStateCacheWgpu
-	{
-	public:
-		void create(); // , uint32_t _maxBindGroups);
-		void destroy();
-		void reset();
-
-		BindStateWgpu m_bindStates[1024] = {};
-		uint32_t m_currentBindState;
-		//uint32_t m_maxBindStates;
-	};
-
-	struct ReadbackWgpu
-	{
-		void create(TextureHandle _texture) { m_texture = _texture; }
-
-		void destroy()
-		{
-			m_buffer.Destroy();
-		}
-
-		void readback(void const* data)
-		{
-			bx::memCopy(m_data, data, m_size);
-			m_buffer.Unmap();
-			m_mapped = false;
-		}
-
-		TextureHandle m_texture;
-		wgpu::Buffer m_buffer;
-		uint32_t m_mip = 0;
-		bool m_mapped = false;
-		void* m_data = NULL;
-		size_t m_size = 0;
-	};
-
-	struct TextureWgpu
+	struct TextureWGPU
 	{
 		enum Enum
 		{
@@ -364,146 +632,168 @@ namespace bgfx { namespace webgpu
 			TextureCube,
 		};
 
-		void create(TextureHandle _handle, const Memory* _mem, uint64_t _flags, uint8_t _skip);
-
-		void destroy()
+		TextureWGPU()
+			: m_texture(NULL)
+			, m_textureMsaa(NULL)
+			, m_msaaCount(1)
+			, m_type(Texture2D)
 		{
-			m_ptr.Destroy();
 		}
 
-		void update(
-			uint8_t _side
-			, uint8_t _mip
-			, const Rect& _rect
-			, uint16_t _z
-			, uint16_t _depth
-			, uint16_t _pitch
-			, const Memory* _mem
-		);
+		void create(const Memory* _mem, uint64_t _flags, uint8_t _skip);
+		void destroy();
+		void update(uint8_t _side, uint8_t _mip, const Rect& _rect, uint16_t _z, uint16_t _depth, uint16_t _pitch, const Memory* _mem);
+		void clear(uint8_t _mip, uint8_t _numMips, uint16_t _layer, uint16_t _numLayers);
 
-		TextureHandle m_handle;
-		String m_label;
+		WGPUSampler getSamplerState(uint32_t _samplerFlags) const;
+		WGPUTextureView getTextureView(uint8_t _baseMipLevel, uint8_t _mipLevelCount, bool _storage, uint16_t _baseArrayLayer = 0, uint16_t _arrayLayerCount = UINT16_MAX, WGPUTextureViewDimension _viewDimension = WGPUTextureViewDimension_Undefined, bool _stencil = false) const;
 
-		wgpu::TextureView m_view;
-		wgpu::TextureView getTextureMipLevel(int _mip);
+		WGPUTexture m_texture;
+		WGPUTexture m_textureMsaa;
+		WGPUTextureViewDimension m_viewDimension;
+		WGPUTextureFormat m_fmt;
 
-		wgpu::Texture m_ptr;
-		wgpu::Texture m_ptrMsaa;
-		wgpu::TextureView m_ptrMips[14] = {};
-		wgpu::Sampler m_sampler;
-		uint64_t m_flags = 0;
-		uint32_t m_width = 0;
-		uint32_t m_height = 0;
-		uint32_t m_depth = 0;
-		uint8_t m_type;
-		TextureFormat::Enum m_requestedFormat;
-		TextureFormat::Enum m_textureFormat;
-		uint8_t m_numMips = 0;
-		uint8_t m_numLayers;
-		uint32_t m_numSides;
-		uint8_t m_sampleCount;
-
-		ReadbackWgpu m_readback;
-	};
-
-	struct SamplerStateWgpu
-	{
-		wgpu::Sampler m_sampler;
-	};
-
-	void release(SamplerStateWgpu* _ptr)
-	{
-		bx::deleteObject(g_allocator, _ptr);
-	}
-
-	struct FrameBufferWgpu;
-
-	struct SwapChainWgpu
-	{
-		void init(wgpu::Device _device, void* _nwh, uint32_t _width, uint32_t _height);
-		void resize(FrameBufferWgpu& _frameBuffer, uint32_t _width, uint32_t _height, uint32_t _flags);
-
-		void flip();
-
-		wgpu::TextureView current();
-
-#if !BX_PLATFORM_EMSCRIPTEN
-		DawnSwapChainImplementation m_impl;
-#endif
-
-		wgpu::SwapChain m_swapChain;
-
-		wgpu::TextureView m_drawable;
-
-		wgpu::Texture m_backBufferColorMsaa;
-		wgpu::Texture m_backBufferDepth;
-
-		wgpu::TextureFormat m_colorFormat;
-		wgpu::TextureFormat m_depthFormat;
-
-		uint32_t m_maxAnisotropy = 0;
-		uint8_t m_sampleCount;
-	};
-
-	struct FrameBufferWgpu
-	{
-		void create(uint8_t _num, const Attachment* _attachment);
-		bool create(
-				uint16_t _denseIdx
-			, void* _nwh
-			, uint32_t _width
-			, uint32_t _height
-			, TextureFormat::Enum _format
-			, TextureFormat::Enum _depthFormat
-			);
-		void postReset();
-		uint16_t destroy();
-
-		SwapChainWgpu* m_swapChain = NULL;
-		void* m_nwh = NULL;
+		uint64_t m_flags;
 		uint32_t m_width;
 		uint32_t m_height;
-		uint16_t m_denseIdx = UINT16_MAX;
-
-		uint32_t m_pixelFormatHash = 0;
-
-		TextureHandle m_colorHandle[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS - 1];
-		TextureHandle m_depthHandle = { kInvalidHandle };
-		Attachment m_colorAttachment[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS - 1];
-		Attachment m_depthAttachment;
-		uint8_t m_num = 0; // number of color handles
+		uint32_t m_depth;
+		uint32_t m_numLayers;
+		uint32_t m_numSides;
+		uint32_t m_msaaCount;
+		uint8_t  m_type;
+		uint8_t  m_requestedFormat;
+		uint8_t  m_textureFormat;
+		uint8_t  m_numMips;
 	};
 
-	struct CommandQueueWgpu
+	struct SwapChainWGPU
 	{
-		void init(wgpu::Queue _queue);
+		SwapChainWGPU()
+			: m_nwh(NULL)
+			, m_surface(NULL)
+			, m_textureView(NULL)
+			, m_msaaTextureView(NULL)
+			, m_depthStencilView(NULL)
+		{
+		}
+
+		bool create(void* _nwh, const Resolution& _resolution);
+		void destroy();
+		void update(void* _nwh, const Resolution& _resolution);
+
+		bool createSurface(void* _nwh);
+
+		bool configure(const Resolution& _resolution);
+		void present();
+
+		void* m_nwh;
+		Resolution m_resolution;
+		WGPUSurfaceConfiguration m_surfaceConfig;
+
+		WGPUSurface m_surface;
+		WGPUTextureView m_textureView;
+		WGPUTextureView m_msaaTextureView;
+		WGPUTextureView m_depthStencilView;
+
+		uint8_t m_formatDepthStencil;
+	};
+
+	struct FrameBufferWGPU
+	{
+		FrameBufferWGPU()
+			: m_depth({ kInvalidHandle })
+			, m_depthStencilView(NULL)
+			, m_denseIdx(kInvalidHandle)
+			, m_numColorAttachments(0)
+			, m_numAttachments(0)
+			, m_msaaCount(1)
+			, m_needPresent(false)
+		{
+		}
+
+		void create(uint8_t _num, const Attachment* _attachment);
+		bool create(uint16_t _denseIdx, void* _nwh, uint32_t _width, uint32_t _height, TextureFormat::Enum _colorFormat, TextureFormat::Enum _depthFormat = TextureFormat::Count);
+		uint16_t destroy();
+
+		void preReset();
+		void postReset();
+
+		void update(const Resolution& _resolution);
+
+		void present();
+
+		void resolve(WGPUCommandEncoder _cmdEncoder);
+
+		bool isSwapChain() const
+		{
+			return m_swapChain.m_nwh;
+		}
+
+		TextureHandle m_texture[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
+		TextureHandle m_depth;
+
+		Attachment      m_attachment[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
+		WGPUTextureView m_textureView[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
+		WGPUTextureView m_resolveView[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
+		WGPUTextureView m_depthStencilView;
+		uint8_t m_formatDepthStencil;
+
+		uint16_t m_denseIdx;
+		uint8_t m_numColorAttachments;
+		uint8_t m_numAttachments;
+
+		uint32_t m_width;
+		uint32_t m_height;
+		uint32_t m_msaaCount;
+
+		SwapChainWGPU m_swapChain;
+		bool m_needPresent;
+		bool m_needResolve;
+	};
+
+	struct CommandQueueWGPU
+	{
+		CommandQueueWGPU()
+			: m_queue(NULL)
+			, m_commandEncoder(NULL)
+			, m_counter(0)
+		{
+		}
+
+		void init(WGPUDevice _device);
 		void shutdown();
-		void beginRender();
-		void beginStaging();
-		void kick(bool _endFrame, bool _waitForFinish = false);
-		void finish(bool _finishAll = false);
-		void release(wgpu::Buffer _buffer);
-		void consume();
 
-#if BGFX_CONFIG_MULTITHREADED
-		//bx::Semaphore 		 m_framesSemaphore;
-#endif
+		WGPUCommandEncoder alloc();
+		void kick();
+		void wait();
+		void frame();
 
-		wgpu::Queue		     m_queue;
-		wgpu::CommandEncoder m_stagingEncoder;
-		wgpu::CommandEncoder m_renderEncoder;
+		void writeBuffer(WGPUBuffer _buffer, uint64_t _bufferOffset, const void* _data, size_t _size) const;
+		void writeTexture(const WGPUTexelCopyTextureInfo& _destination, const void* _data, size_t _size, const WGPUTexelCopyBufferLayout& _source, const WGPUExtent3D& _writeSize) const;
 
-		int m_releaseWriteIndex = 0;
-		int m_releaseReadIndex = 0;
+		void copyBufferToBuffer(WGPUBuffer _source, uint64_t _sourceOffset, WGPUBuffer _destination, uint64_t _destinationOffset, uint64_t _size);
+		void copyBufferToTexture(const WGPUTexelCopyBufferInfo& _source, const WGPUTexelCopyTextureInfo& _destination, const WGPUExtent3D& _copySize);
+		void copyTextureToBuffer(const WGPUTexelCopyTextureInfo& source, const WGPUTexelCopyBufferInfo& destination, const WGPUExtent3D& copySize);
+		void copyTextureToTexture(const WGPUTexelCopyTextureInfo& _source, const WGPUTexelCopyTextureInfo& _destination, const WGPUExtent3D& _copySize);
 
-		typedef stl::vector<wgpu::Buffer> ResourceArray;
-		ResourceArray m_release[BGFX_CONFIG_MAX_FRAME_LATENCY];
+		WGPUQueue m_queue;
+		WGPUCommandEncoder m_commandEncoder;
+		uint32_t m_currentFrameInFlight;
+		uint32_t m_counter;
 	};
 
-	struct TimerQueryWgpu
+	struct TimerQueryWGPU
 	{
-		TimerQueryWgpu()
-			: m_control(4)
+		TimerQueryWGPU()
+			: m_frequency(UINT64_C(1000000000) )
+			, m_querySet(NULL)
+			, m_resolve(NULL)
+			, m_readback(NULL)
+			, m_control(BX_COUNTOF(m_result) )
+			, m_resolvedFrameNum(0)
+			, m_supported(false)
+			, m_resolved(false)
+			, m_mapPending(false)
 		{
 		}
 
@@ -511,60 +801,83 @@ namespace bgfx { namespace webgpu
 		void shutdown();
 		uint32_t begin(uint32_t _resultIdx, uint32_t _frameNum);
 		void end(uint32_t _idx);
-		void addHandlers(wgpu::CommandBuffer& _commandBuffer);
-		bool get();
+		void resolve(uint32_t _frameNum);
+		void readResultsAsync();
+		void consumeResults();
+
+		void writeTimestamp(uint32_t _index);
+
+		struct Query
+		{
+			uint32_t m_resultIdx;
+			uint32_t m_frameNum;
+			bool     m_ready;
+		};
 
 		struct Result
 		{
 			void reset()
 			{
-				m_begin = 0;
-				m_end = 0;
-				m_pending = 0;
+				m_begin    = 0;
+				m_end      = 0;
+				m_pending  = 0;
 				m_frameNum = 0;
 			}
 
 			uint64_t m_begin;
 			uint64_t m_end;
 			uint32_t m_pending;
-			uint32_t m_frameNum; // TODO: implement (currently stays 0)
+			uint32_t m_frameNum;
 		};
 
-		uint64_t m_begin;
-		uint64_t m_end;
-		uint64_t m_elapsed;
+		static constexpr uint32_t kNumTimestamps = (BGFX_CONFIG_MAX_VIEWS+1)*2;
+		static constexpr uint64_t kBufferSize    = kNumTimestamps * sizeof(uint64_t);
+
 		uint64_t m_frequency;
 
-		Result m_result[4 * 2];
+		Result m_result[BGFX_CONFIG_MAX_VIEWS+1];
+		Query m_query[BGFX_CONFIG_MAX_VIEWS+1];
+
+		WGPUQuerySet m_querySet;
+		WGPUBuffer m_resolve;
+		WGPUBuffer m_readback;
+
 		bx::RingBufferControl m_control;
+
+		uint32_t m_resolvedFrameNum;
+
+		bool m_supported;
+		bool m_resolved;
+		bool m_mapPending;
 	};
 
-	struct OcclusionQueryWgpu
+	struct OcclusionQueryWGPU
 	{
-		OcclusionQueryWgpu()
-			: m_control(BX_COUNTOF(m_query))
+		OcclusionQueryWGPU()
+			: m_querySet(NULL)
+			, m_resolve(NULL)
+			, m_readback(NULL)
+			, m_control(BX_COUNTOF(m_handle) )
 		{
 		}
 
-		void postReset();
-		void preReset();
-		void begin(wgpu::RenderPassEncoder& _rce, Frame* _render, OcclusionQueryHandle _handle);
-		void end(wgpu::RenderPassEncoder& _rce);
-		void resolve(Frame* _render, bool _wait = false);
+		void init();
+		void shutdown();
+		void begin(WGPURenderPassEncoder _renderPassEncoder, OcclusionQueryHandle _handle);
+		void end(WGPURenderPassEncoder _renderPassEncoder);
+		void resolve();
+		void readResultsAsync(Frame* _frame);
+		void consumeResults(Frame* _frame);
 		void invalidate(OcclusionQueryHandle _handle);
 
-		struct Query
-		{
-			OcclusionQueryHandle m_handle;
-		};
+		WGPUQuerySet m_querySet;
+		WGPUBuffer m_resolve;
+		WGPUBuffer m_readback;
 
-		wgpu::Buffer m_buffer;
-		Query m_query[BGFX_CONFIG_MAX_OCCLUSION_QUERIES];
+		OcclusionQueryHandle m_handle[BGFX_CONFIG_MAX_OCCLUSION_QUERIES];
 		bx::RingBufferControl m_control;
 	};
 
-} /* namespace webgpu */ } // namespace bgfx
-
-#endif // BGFX_CONFIG_RENDERER_WEBGPU
+} /* namespace bgfx */ } // namespace wgpu
 
 #endif // BGFX_RENDERER_WEBGPU_H_HEADER_GUARD

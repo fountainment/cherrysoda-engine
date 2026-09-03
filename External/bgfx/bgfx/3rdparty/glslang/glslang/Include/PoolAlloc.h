@@ -61,6 +61,8 @@
 // class as the allocator (second) template argument.
 //
 
+#include "visibility.h"
+
 #include <cstddef>
 #include <cstring>
 #include <vector>
@@ -82,9 +84,9 @@ public:
         // makes the compiler print warnings about 0 length memsets,
         // even with the if() protecting them.
 #       ifdef GUARD_BLOCKS
-            memset(preGuard(),  guardBlockBeginVal, guardBlockSize);
+            memset(preGuard(),  guardBlockBeginVal, guardBlockSize());
             memset(data(),      userDataFill,       size);
-            memset(postGuard(), guardBlockEndVal,   guardBlockSize);
+            memset(postGuard(), guardBlockEndVal,   guardBlockSize());
 #       endif
     }
 
@@ -98,12 +100,12 @@ public:
     // Return total size needed to accommodate user buffer of 'size',
     // plus our tracking data.
     inline static size_t allocationSize(size_t size) {
-        return size + 2 * guardBlockSize + headerSize();
+        return size + 2 * guardBlockSize() + headerSize();
     }
 
     // Offset from surrounding buffer to get to user data buffer.
     inline static unsigned char* offsetAllocation(unsigned char* m) {
-        return m + guardBlockSize + headerSize();
+        return m + guardBlockSize() + headerSize();
     }
 
 private:
@@ -111,22 +113,31 @@ private:
 
     // Find offsets to pre and post guard blocks, and user data buffer
     unsigned char* preGuard()  const { return mem + headerSize(); }
-    unsigned char* data()      const { return preGuard() + guardBlockSize; }
+    unsigned char* data()      const { return preGuard() + guardBlockSize(); }
     unsigned char* postGuard() const { return data() + size; }
 
     size_t size;                  // size of the user data area
     unsigned char* mem;           // beginning of our allocation (pts to header)
     TAllocation* prevAlloc;       // prior allocation in the chain
 
-    const static unsigned char guardBlockBeginVal;
-    const static unsigned char guardBlockEndVal;
-    const static unsigned char userDataFill;
+    static inline constexpr unsigned char guardBlockBeginVal = 0xfb;
+    static inline constexpr unsigned char guardBlockEndVal = 0xfe;
+    static inline constexpr unsigned char userDataFill = 0xcd;
 
-    const static size_t guardBlockSize;
 #   ifdef GUARD_BLOCKS
-    inline static size_t headerSize() { return sizeof(TAllocation); }
+    inline static constexpr size_t headerSize() { return sizeof(TAllocation); }
+    inline static constexpr size_t guardBlockSize() {
+        constexpr size_t minGuardSize = 16;
+        constexpr size_t alignmentSize = 16;
+        constexpr size_t guardLayoutSize =
+            (minGuardSize + sizeof(TAllocation) + alignmentSize - 1) & ~(alignmentSize - 1);
+        static_assert((guardLayoutSize % alignmentSize) == 0,
+                      "Guard block layout is not 16-byte aligned.");
+        return guardLayoutSize - sizeof(TAllocation);
+    }
 #   else
-    inline static size_t headerSize() { return 0; }
+    inline static constexpr size_t headerSize() { return 0; }
+    inline static constexpr size_t guardBlockSize() { return 0; }
 #   endif
 };
 
@@ -174,6 +185,7 @@ public:
     // Call allocate() to actually acquire memory.  Returns nullptr if no memory
     // available, otherwise a properly aligned pointer to 'numBytes' of memory.
     //
+    GLSLANG_EXPORT_FOR_TESTS
     void* allocate(size_t numBytes);
 
     //
@@ -250,6 +262,7 @@ private:
 // different times.  But a simple use is to have a global pop
 // with everyone using the same global allocator.
 //
+GLSLANG_EXPORT_FOR_TESTS
 extern TPoolAllocator& GetThreadPoolAllocator();
 void SetThreadPoolAllocator(TPoolAllocator* poolAllocator);
 
@@ -283,7 +296,7 @@ public:
 
     template<class Other>
         pool_allocator(const pool_allocator<Other>& p) : allocator(p.getAllocator()) { }
-
+    
     pointer allocate(size_type n) {
         return reinterpret_cast<pointer>(getAllocator().allocate(n * sizeof(T))); }
     pointer allocate(size_type n, const void*) {

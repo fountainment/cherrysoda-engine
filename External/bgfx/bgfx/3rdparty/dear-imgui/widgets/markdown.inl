@@ -147,7 +147,7 @@ namespace ImGui
         {
             const float scale = 1.0f;
             float widthLeft = GetContentRegionAvail().x;
-            const char* endPrevLine = pFont->CalcWordWrapPositionA( scale, text, text_end, widthLeft );
+            const char* endPrevLine = pFont->CalcWordWrapPosition( scale, text, text_end, widthLeft );
             ImGui::TextUnformatted( text, endPrevLine );
             if( bIndentToHere )
             {
@@ -163,7 +163,7 @@ namespace ImGui
             {
                 text = endPrevLine;
                 if( *text == ' ' ) { ++text; }    // skip a space at start of line
-                endPrevLine = pFont->CalcWordWrapPositionA( scale, text, text_end, widthLeft );
+                endPrevLine = pFont->CalcWordWrapPosition( scale, text, text_end, widthLeft );
                 if (text == endPrevLine)
                 {
                     endPrevLine++;
@@ -270,7 +270,7 @@ namespace ImGui
             bool popFontRequired = false;
             if( fmt.font && fmt.font != ImGui::GetFont() )
             {
-                ImGui::PushFont( fmt.font );
+                ImGui::PushFont( fmt.font, 0.0f );
                 popFontRequired = true;
             }
             const char* text = markdown_ + textStart + 1;

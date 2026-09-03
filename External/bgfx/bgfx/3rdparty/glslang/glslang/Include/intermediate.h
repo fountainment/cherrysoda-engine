@@ -1,7 +1,7 @@
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2012-2016 LunarG, Inc.
-// Copyright (C) 2017 ARM Limited.
+// Copyright (C) 2017, 2022-2024 Arm Limited.
 // Modifications Copyright (C) 2020 Advanced Micro Devices, Inc. All rights reserved.
 //
 // All rights reserved.
@@ -48,14 +48,9 @@
 #ifndef __INTERMEDIATE_H
 #define __INTERMEDIATE_H
 
-#if defined(_MSC_VER) && _MSC_VER >= 1900
-    #pragma warning(disable : 4464) // relative include path contains '..'
-    #pragma warning(disable : 5026) // 'glslang::TIntermUnary': move constructor was implicitly defined as deleted
-#endif
-
-#include "../Include/Common.h"
-#include "../Include/Types.h"
-#include "../Include/ConstantUnion.h"
+#include "Common.h"
+#include "Types.h"
+#include "ConstantUnion.h"
 
 namespace glslang {
 
@@ -72,9 +67,7 @@ enum TOperator {
     EOpFunctionCall,
     EOpFunction,        // For function definition
     EOpParameters,      // an aggregate listing the parameters to a function
-#ifndef GLSLANG_WEB
     EOpSpirvInst,
-#endif
 
     //
     // Unary operators
@@ -94,189 +87,9 @@ enum TOperator {
 
     EOpDeclare,        // Used by debugging to force declaration of variable in correct scope
 
-    // (u)int* -> bool
-    EOpConvInt8ToBool,
-    EOpConvUint8ToBool,
-    EOpConvInt16ToBool,
-    EOpConvUint16ToBool,
-    EOpConvIntToBool,
-    EOpConvUintToBool,
-    EOpConvInt64ToBool,
-    EOpConvUint64ToBool,
-
-    // float* -> bool
-    EOpConvFloat16ToBool,
-    EOpConvFloatToBool,
-    EOpConvDoubleToBool,
-
-    // bool -> (u)int*
-    EOpConvBoolToInt8,
-    EOpConvBoolToUint8,
-    EOpConvBoolToInt16,
-    EOpConvBoolToUint16,
-    EOpConvBoolToInt,
-    EOpConvBoolToUint,
-    EOpConvBoolToInt64,
-    EOpConvBoolToUint64,
-
-    // bool -> float*
-    EOpConvBoolToFloat16,
-    EOpConvBoolToFloat,
-    EOpConvBoolToDouble,
-
-    // int8_t -> (u)int*
-    EOpConvInt8ToInt16,
-    EOpConvInt8ToInt,
-    EOpConvInt8ToInt64,
-    EOpConvInt8ToUint8,
-    EOpConvInt8ToUint16,
-    EOpConvInt8ToUint,
-    EOpConvInt8ToUint64,
-
-    // uint8_t -> (u)int*
-    EOpConvUint8ToInt8,
-    EOpConvUint8ToInt16,
-    EOpConvUint8ToInt,
-    EOpConvUint8ToInt64,
-    EOpConvUint8ToUint16,
-    EOpConvUint8ToUint,
-    EOpConvUint8ToUint64,
-
-    // int8_t -> float*
-    EOpConvInt8ToFloat16,
-    EOpConvInt8ToFloat,
-    EOpConvInt8ToDouble,
-
-    // uint8_t -> float*
-    EOpConvUint8ToFloat16,
-    EOpConvUint8ToFloat,
-    EOpConvUint8ToDouble,
-
-    // int16_t -> (u)int*
-    EOpConvInt16ToInt8,
-    EOpConvInt16ToInt,
-    EOpConvInt16ToInt64,
-    EOpConvInt16ToUint8,
-    EOpConvInt16ToUint16,
-    EOpConvInt16ToUint,
-    EOpConvInt16ToUint64,
-
-    // uint16_t -> (u)int*
-    EOpConvUint16ToInt8,
-    EOpConvUint16ToInt16,
-    EOpConvUint16ToInt,
-    EOpConvUint16ToInt64,
-    EOpConvUint16ToUint8,
-    EOpConvUint16ToUint,
-    EOpConvUint16ToUint64,
-
-    // int16_t -> float*
-    EOpConvInt16ToFloat16,
-    EOpConvInt16ToFloat,
-    EOpConvInt16ToDouble,
-
-    // uint16_t -> float*
-    EOpConvUint16ToFloat16,
-    EOpConvUint16ToFloat,
-    EOpConvUint16ToDouble,
-
-    // int32_t -> (u)int*
-    EOpConvIntToInt8,
-    EOpConvIntToInt16,
-    EOpConvIntToInt64,
-    EOpConvIntToUint8,
-    EOpConvIntToUint16,
-    EOpConvIntToUint,
-    EOpConvIntToUint64,
-
-    // uint32_t -> (u)int*
-    EOpConvUintToInt8,
-    EOpConvUintToInt16,
-    EOpConvUintToInt,
-    EOpConvUintToInt64,
-    EOpConvUintToUint8,
-    EOpConvUintToUint16,
-    EOpConvUintToUint64,
-
-    // int32_t -> float*
-    EOpConvIntToFloat16,
-    EOpConvIntToFloat,
-    EOpConvIntToDouble,
-
-    // uint32_t -> float*
-    EOpConvUintToFloat16,
-    EOpConvUintToFloat,
-    EOpConvUintToDouble,
-
-    // int64_t -> (u)int*
-    EOpConvInt64ToInt8,
-    EOpConvInt64ToInt16,
-    EOpConvInt64ToInt,
-    EOpConvInt64ToUint8,
-    EOpConvInt64ToUint16,
-    EOpConvInt64ToUint,
-    EOpConvInt64ToUint64,
-
-    // uint64_t -> (u)int*
-    EOpConvUint64ToInt8,
-    EOpConvUint64ToInt16,
-    EOpConvUint64ToInt,
-    EOpConvUint64ToInt64,
-    EOpConvUint64ToUint8,
-    EOpConvUint64ToUint16,
-    EOpConvUint64ToUint,
-
-    // int64_t -> float*
-    EOpConvInt64ToFloat16,
-    EOpConvInt64ToFloat,
-    EOpConvInt64ToDouble,
-
-    // uint64_t -> float*
-    EOpConvUint64ToFloat16,
-    EOpConvUint64ToFloat,
-    EOpConvUint64ToDouble,
-
-    // float16_t -> (u)int*
-    EOpConvFloat16ToInt8,
-    EOpConvFloat16ToInt16,
-    EOpConvFloat16ToInt,
-    EOpConvFloat16ToInt64,
-    EOpConvFloat16ToUint8,
-    EOpConvFloat16ToUint16,
-    EOpConvFloat16ToUint,
-    EOpConvFloat16ToUint64,
-
-    // float16_t -> float*
-    EOpConvFloat16ToFloat,
-    EOpConvFloat16ToDouble,
-
-    // float -> (u)int*
-    EOpConvFloatToInt8,
-    EOpConvFloatToInt16,
-    EOpConvFloatToInt,
-    EOpConvFloatToInt64,
-    EOpConvFloatToUint8,
-    EOpConvFloatToUint16,
-    EOpConvFloatToUint,
-    EOpConvFloatToUint64,
-
-    // float -> float*
-    EOpConvFloatToFloat16,
-    EOpConvFloatToDouble,
-
-    // float64 _t-> (u)int*
-    EOpConvDoubleToInt8,
-    EOpConvDoubleToInt16,
-    EOpConvDoubleToInt,
-    EOpConvDoubleToInt64,
-    EOpConvDoubleToUint8,
-    EOpConvDoubleToUint16,
-    EOpConvDoubleToUint,
-    EOpConvDoubleToUint64,
-
-    // float64_t -> float*
-    EOpConvDoubleToFloat16,
-    EOpConvDoubleToFloat,
+    // Operator used to represent all conversions between int, float, and bool.
+    // The specific types are inferred from TBasicType.
+    EOpConvNumeric,
 
     // uint64_t <-> pointer
     EOpConvUint64ToPtr,
@@ -423,6 +236,29 @@ enum TOperator {
     EOpUnpackInt4x16,
     EOpPackUint4x16,
     EOpUnpackUint4x16,
+    EOpUnpackFloat2xE2M1,
+    EOpUnpackFloat4xE2M1,
+    EOpUnpackFloat8xE2M1,
+    EOpUnpackFloat16xE2M1,
+    EOpPackFloat2xE2M1,
+    EOpPackFloat4xE2M1,
+    EOpPackFloat8xE2M1,
+    EOpPackFloat16xE2M1,
+    EOpUnpackFloat4xE3M2,
+    EOpUnpackFloat8xE3M2,
+    EOpUnpackFloat16xE3M2,
+    EOpPackFloat4xE3M2,
+    EOpPackFloat8xE3M2,
+    EOpPackFloat16xE3M2,
+    EOpUnpackFloat4xE2M3,
+    EOpUnpackFloat8xE2M3,
+    EOpUnpackFloat16xE2M3,
+    EOpPackFloat4xE2M3,
+    EOpPackFloat8xE2M3,
+    EOpPackFloat16xE2M3,
+    EOpBitcastExtractE2M1,
+    EOpBitcastExtractE3M2,
+    EOpBitcastExtractE2M3,
     EOpPack16,
     EOpPack32,
     EOpPack64,
@@ -474,6 +310,8 @@ enum TOperator {
     EOpEndStreamPrimitive,   // geometry only
 
     EOpBarrier,
+    EOpControlBarrierArriveEXT,
+    EOpControlBarrierWaitEXT,
     EOpMemoryBarrier,
     EOpMemoryBarrierAtomicCounter,
     EOpMemoryBarrierBuffer,
@@ -513,6 +351,8 @@ enum TOperator {
     EOpSubgroupShuffleXor,
     EOpSubgroupShuffleUp,
     EOpSubgroupShuffleDown,
+    EOpSubgroupRotate,
+    EOpSubgroupClusteredRotate,
     EOpSubgroupAdd,
     EOpSubgroupMul,
     EOpSubgroupMin,
@@ -545,6 +385,8 @@ enum TOperator {
     EOpSubgroupQuadSwapHorizontal,
     EOpSubgroupQuadSwapVertical,
     EOpSubgroupQuadSwapDiagonal,
+    EOpSubgroupQuadAll,
+    EOpSubgroupQuadAny,
 
     EOpSubgroupPartition,
     EOpSubgroupPartitionedAdd,
@@ -570,6 +412,11 @@ enum TOperator {
     EOpSubgroupPartitionedExclusiveXor,
 
     EOpSubgroupGuardStop,
+    
+    // Integer dot product
+    EOpDotPackedEXT,
+    EOpDotAccSatEXT,
+    EOpDotPackedAccSatEXT,
 
     EOpMinInvocations,
     EOpMaxInvocations,
@@ -629,6 +476,38 @@ enum TOperator {
     EOpCooperativeMatrixLoad,
     EOpCooperativeMatrixStore,
     EOpCooperativeMatrixMulAdd,
+    EOpCooperativeMatrixLoadNV,
+    EOpCooperativeMatrixStoreNV,
+    EOpCooperativeMatrixLoadTensorNV,
+    EOpCooperativeMatrixStoreTensorNV,
+    EOpCooperativeMatrixMulAddNV,
+    EOpCooperativeMatrixReduceNV,
+    EOpCooperativeMatrixPerElementOpNV,
+    EOpCooperativeMatrixTransposeNV,
+    EOpCooperativeMatrixGetCoordinateEXT,
+
+    EOpCreateTensorLayoutNV,
+    EOpTensorLayoutSetBlockSizeNV,
+    EOpTensorLayoutSetDimensionNV,
+    EOpTensorLayoutSetStrideNV,
+    EOpTensorLayoutSliceNV,
+    EOpTensorLayoutSetClampValueNV,
+
+    EOpCreateTensorViewNV,
+    EOpTensorViewSetDimensionNV,
+    EOpTensorViewSetStrideNV,
+    EOpTensorViewSetClipNV,
+
+    EOpCooperativeVectorMatMulNV,
+    EOpCooperativeVectorMatMulAddNV,
+    EOpCooperativeVectorLoadNV,
+    EOpCooperativeVectorStoreNV,
+    EOpCooperativeVectorOuterProductAccumulateNV,
+    EOpCooperativeVectorReduceSumAccumulateNV,
+
+    EOpTensorReadARM,
+    EOpTensorWriteARM,
+    EOpTensorSizeARM,
 
     EOpBeginInvocationInterlock, // Fragment only
     EOpEndInvocationInterlock, // Fragment only
@@ -762,12 +641,47 @@ enum TOperator {
     EOpConstructF16Mat4x2,
     EOpConstructF16Mat4x3,
     EOpConstructF16Mat4x4,
+    EOpConstructBFloat16,
+    EOpConstructBF16Vec2,
+    EOpConstructBF16Vec3,
+    EOpConstructBF16Vec4,
+    EOpConstructFloatE5M2,
+    EOpConstructFloatE5M2Vec2,
+    EOpConstructFloatE5M2Vec3,
+    EOpConstructFloatE5M2Vec4,
+    EOpConstructFloatE4M3,
+    EOpConstructFloatE4M3Vec2,
+    EOpConstructFloatE4M3Vec3,
+    EOpConstructFloatE4M3Vec4,
+    EOpConstructFloatE2M1,
+    EOpConstructFloatE2M1Vec2,
+    EOpConstructFloatE2M1Vec3,
+    EOpConstructFloatE2M1Vec4,
+    EOpConstructFloatE3M2,
+    EOpConstructFloatE3M2Vec2,
+    EOpConstructFloatE3M2Vec3,
+    EOpConstructFloatE3M2Vec4,
+    EOpConstructFloatE2M3,
+    EOpConstructFloatE2M3Vec2,
+    EOpConstructFloatE2M3Vec3,
+    EOpConstructFloatE2M3Vec4,
+    EOpConstructFloatUE8M0,
+    EOpConstructFloatUE8M0Vec2,
+    EOpConstructFloatUE8M0Vec3,
+    EOpConstructFloatUE8M0Vec4,
+    EOpConstructFloatMXINT8,
+    EOpConstructFloatMXINT8Vec2,
+    EOpConstructFloatMXINT8Vec3,
+    EOpConstructFloatMXINT8Vec4,
     EOpConstructStruct,
     EOpConstructTextureSampler,
     EOpConstructNonuniform,     // expected to be transformed away, not present in final AST
     EOpConstructReference,
-    EOpConstructCooperativeMatrix,
+    EOpConstructCooperativeMatrixNV,
+    EOpConstructCooperativeMatrixKHR,
+    EOpConstructCooperativeVectorNV,
     EOpConstructAccStruct,
+    EOpConstructSaturated,
     EOpConstructGuardEnd,
 
     //
@@ -870,6 +784,18 @@ enum TOperator {
     EOpTextureGatherLodOffsets,
     EOpFragmentMaskFetch,
     EOpFragmentFetch,
+
+    // QCOM Image processing3
+    EOpTextureGatherExtendedGuardBegin,
+    EOpTextureGather4x1QCOM,
+    EOpTextureGatherV2QCOM,
+    EOpTextureGatherH2QCOM,
+    EOpTextureGatherDQCOM,
+    EOpTextureGather4x1OffsetQCOM,
+    EOpTextureGatherV2OffsetQCOM,
+    EOpTextureGatherH2OffsetQCOM,
+    EOpTextureGatherDOffsetQCOM,
+    EOpTextureGatherExtendedGuardEnd,
 
     EOpSparseTextureGuardBegin,
 
@@ -1004,7 +930,47 @@ enum TOperator {
     EOpHitObjectGetAttributesNV,
     EOpHitObjectGetCurrentTimeNV,
     EOpReorderThreadNV,
+    EOpFetchMicroTriangleVertexPositionNV,
+    EOpFetchMicroTriangleVertexBarycentricNV,
 
+    // 
+    // GL_EXT_shader_invocation_reorder
+    //
+
+    EOpHitObjectTraceRayEXT,
+    EOpHitObjectTraceRayMotionEXT,
+    EOpHitObjectRecordMissEXT,
+    EOpHitObjectRecordMissMotionEXT,
+    EOpHitObjectRecordEmptyEXT,
+    EOpHitObjectExecuteShaderEXT,
+    EOpHitObjectIsEmptyEXT,
+    EOpHitObjectIsMissEXT,
+    EOpHitObjectIsHitEXT,
+    EOpHitObjectGetRayTMinEXT,
+    EOpHitObjectGetRayTMaxEXT,
+    EOpHitObjectGetRayFlagsEXT,
+    EOpHitObjectGetObjectRayOriginEXT,
+    EOpHitObjectGetObjectRayDirectionEXT,
+    EOpHitObjectGetWorldRayOriginEXT,
+    EOpHitObjectGetWorldRayDirectionEXT,
+    EOpHitObjectGetWorldToObjectEXT,
+    EOpHitObjectGetObjectToWorldEXT,
+    EOpHitObjectGetInstanceCustomIndexEXT,
+    EOpHitObjectGetInstanceIdEXT,
+    EOpHitObjectGetGeometryIndexEXT,
+    EOpHitObjectGetPrimitiveIndexEXT,
+    EOpHitObjectGetHitKindEXT,
+    EOpHitObjectGetShaderBindingTableRecordIndexEXT,
+    EOpHitObjectSetShaderBindingTableRecordIndexEXT,
+    EOpHitObjectGetShaderRecordBufferHandleEXT,
+    EOpHitObjectGetAttributesEXT,
+    EOpHitObjectGetCurrentTimeEXT,
+    EOpReorderThreadEXT,
+    EOpHitObjectReorderExecuteEXT,
+    EOpHitObjectTraceReorderExecuteEXT,
+    EOpHitObjectTraceMotionReorderExecuteEXT,
+    EOpHitObjectRecordFromQueryEXT,
+    EOpHitObjectGetIntersectionTriangleVertexPositionsEXT,
     // HLSL operations
     //
 
@@ -1088,6 +1054,13 @@ enum TOperator {
     EOpWaveActiveCountBits,              // Will decompose to subgroupBallotBitCount(subgroupBallot()).
     EOpWavePrefixCountBits,              // Will decompose to subgroupBallotInclusiveBitCount(subgroupBallot()).
 
+    // GL_EXT_expect_assume
+    EOpAssumeEXT,
+    EOpExpectEXT,
+
+    // GL_EXT_abort
+    EOpAbortEXT,
+
     // Shader Clock Ops
     EOpReadClockSubgroupKHR,
     EOpReadClockDeviceKHR,
@@ -1098,9 +1071,62 @@ enum TOperator {
     // Shader tile image ops
     EOpStencilAttachmentReadEXT, // Fragment only
     EOpDepthAttachmentReadEXT, // Fragment only
+
+    // Image processing
+    EOpImageSampleWeightedQCOM,
+    EOpImageBoxFilterQCOM,
+    EOpImageBlockMatchSADQCOM,
+    EOpImageBlockMatchSSDQCOM,
+
+    // Image processing2
+    EOpImageBlockMatchWindowSSDQCOM,
+    EOpImageBlockMatchWindowSADQCOM,
+    EOpImageBlockMatchGatherSSDQCOM,
+    EOpImageBlockMatchGatherSADQCOM,
+
+    // Cooperative Matrix Conversion
+    EOpBitCastArrayQCOM,
+    EOpExtractSubArrayQCOM,
+    EOpCompositeConstructCoopMatQCOM,
+    EOpCompositeExtractCoopMatQCOM,
+
+    // GL_NV_cluster_acceleration_structure
+    EOpRayQueryGetIntersectionClusterIdNV,
+    EOpHitObjectGetClusterIdNV,
+
+    // GL_NV_linear_swept_spheres
+    EOpRayQueryGetIntersectionSpherePositionNV,
+    EOpRayQueryGetIntersectionSphereRadiusNV,
+    EOpRayQueryGetIntersectionLSSHitValueNV,
+    EOpRayQueryGetIntersectionLSSPositionsNV,
+    EOpRayQueryGetIntersectionLSSRadiiNV,
+    EOpRayQueryIsSphereHitNV,
+    EOpRayQueryIsLSSHitNV,
+    EOpHitObjectGetSpherePositionNV,
+    EOpHitObjectGetSphereRadiusNV,
+    EOpHitObjectGetLSSPositionsNV,
+    EOpHitObjectGetLSSRadiiNV,
+    EOpHitObjectIsSphereHitNV,
+    EOpHitObjectIsLSSHitNV,
+};
+
+inline bool IsOpNumericConv(const TOperator op) {
+    return op == EOpConvNumeric;
+}
+
+enum TLinkType {
+    ELinkNone,
+    ELinkExport,
+};
+
+enum TFunctionControl {
+    EfcNone       = 0,
+    EfcInline     = 0x1,
+    EfcDontInline = 0x2,
 };
 
 class TIntermTraverser;
+class TIntermVariableDecl;
 class TIntermOperator;
 class TIntermAggregate;
 class TIntermUnary;
@@ -1129,6 +1155,7 @@ public:
     virtual const glslang::TSourceLoc& getLoc() const { return loc; }
     virtual void setLoc(const glslang::TSourceLoc& l) { loc = l; }
     virtual void traverse(glslang::TIntermTraverser*) = 0;
+    virtual       glslang::TIntermVariableDecl*  getAsVariableDecl()        { return nullptr; }
     virtual       glslang::TIntermTyped*         getAsTyped()               { return nullptr; }
     virtual       glslang::TIntermOperator*      getAsOperator()            { return nullptr; }
     virtual       glslang::TIntermConstantUnion* getAsConstantUnion()       { return nullptr; }
@@ -1142,6 +1169,7 @@ public:
     virtual       glslang::TIntermBranch*        getAsBranchNode()          { return nullptr; }
     virtual       glslang::TIntermLoop*          getAsLoopNode()            { return nullptr; }
 
+    virtual const glslang::TIntermVariableDecl*  getAsVariableDecl()  const { return nullptr; }
     virtual const glslang::TIntermTyped*         getAsTyped()         const { return nullptr; }
     virtual const glslang::TIntermOperator*      getAsOperator()      const { return nullptr; }
     virtual const glslang::TIntermConstantUnion* getAsConstantUnion() const { return nullptr; }
@@ -1173,6 +1201,37 @@ struct TIntermNodePair {
 };
 
 //
+// Represent declaration of a variable.
+//
+class TIntermVariableDecl : public TIntermNode {
+public:
+    TIntermVariableDecl(TIntermSymbol* declSymbol, TIntermNode* initNode) : declSymbol(declSymbol), initNode(initNode)
+    {
+    }
+    TIntermVariableDecl(const TIntermVariableDecl&) = delete;
+    TIntermVariableDecl& operator=(const TIntermVariableDecl&) = delete;
+
+    void traverse(glslang::TIntermTraverser* traverser) override;
+
+    TIntermVariableDecl* getAsVariableDecl() override { return this; }
+    const TIntermVariableDecl* getAsVariableDecl() const override { return this; }
+
+    TIntermSymbol* getDeclSymbol() { return declSymbol; }
+    const TIntermSymbol* getDeclSymbol() const { return declSymbol; }
+
+    TIntermNode* getInitNode() { return initNode; }
+    const TIntermNode* getInitNode() const { return initNode; }
+
+private:
+    // This symbol represents the declared variable at its declaration point.
+    // It's not traversed by default. To traverse it, the visitor needs to have includeDeclSymbol enabled.
+    TIntermSymbol* declSymbol = nullptr;
+
+    // The initializer
+    TIntermNode* initNode = nullptr;
+};
+
+//
 // Intermediate class for nodes that have a type.
 //
 class TIntermTyped : public TIntermNode {
@@ -1194,6 +1253,7 @@ public:
     virtual int getVectorSize() const { return type.getVectorSize(); }
     virtual int getMatrixCols() const { return type.getMatrixCols(); }
     virtual int getMatrixRows() const { return type.getMatrixRows(); }
+    virtual int getTensorRankARM() const { return type.getTensorRankARM(); }
     virtual bool isMatrix() const { return type.isMatrix(); }
     virtual bool isArray()  const { return type.isArray(); }
     virtual bool isVector() const { return type.isVector(); }
@@ -1215,7 +1275,7 @@ protected:
 //
 class TIntermLoop : public TIntermNode {
 public:
-    TIntermLoop(TIntermNode* aBody, TIntermTyped* aTest, TIntermTyped* aTerminal, bool testFirst) :
+    TIntermLoop(TIntermNode* aBody, TIntermNode* aTest, TIntermTyped* aTerminal, bool testFirst) :
         body(aBody),
         test(aTest),
         terminal(aTerminal),
@@ -1227,16 +1287,27 @@ public:
         maxIterations(iterationsInfinite),
         iterationMultiple(1),
         peelCount(0),
-        partialCount(0)
+        partialCount(0),
+        multipleWaitQueuesQCOM(noMultipleQaitQueues)
     { }
 
     virtual       TIntermLoop* getAsLoopNode() { return this; }
     virtual const TIntermLoop* getAsLoopNode() const { return this; }
     virtual void traverse(TIntermTraverser*);
     TIntermNode*  getBody() const { return body; }
-    TIntermTyped* getTest() const { return test; }
+    TIntermNode*  getTest() const { return test; }
     TIntermTyped* getTerminal() const { return terminal; }
     bool testFirst() const { return first; }
+
+    // Because the test node can be a declaration in a while loop, this function unwraps it to get the actual expression.
+    TIntermTyped* getTestExpr() const {
+        if (auto decl = test->getAsVariableDecl()) {
+            return decl->getInitNode()->getAsTyped();
+        }
+        else {
+            return test->getAsTyped();
+        }
+    }
 
     void setUnroll()     { unroll = true; }
     void setDontUnroll() {
@@ -1269,9 +1340,15 @@ public:
     }
     unsigned int getPartialCount() const { return partialCount; }
 
+    static const unsigned int noMultipleQaitQueues = 0xFFFFFFFF;
+    void setMultipleWaitQueuesQCOM(unsigned int numQ) {
+        multipleWaitQueuesQCOM = numQ;
+    }
+    unsigned int getMultipleWaitQueuesQCOM() const { return multipleWaitQueuesQCOM; }
+
 protected:
     TIntermNode* body;       // code to loop over
-    TIntermTyped* test;      // exit condition associated with loop, could be 0 for 'for' loops
+    TIntermNode* test;       // exit condition associated with loop, could be 0 for 'for' loops
     TIntermTyped* terminal;  // exists for for-loops
     bool first;              // true for while and for, not for do-while
     bool unroll;             // true if unroll requested
@@ -1282,6 +1359,7 @@ protected:
     unsigned int iterationMultiple;  // as per the SPIR-V specification
     unsigned int peelCount;          // as per the SPIR-V specification
     unsigned int partialCount;       // as per the SPIR-V specification
+    unsigned int multipleWaitQueuesQCOM;
 };
 
 //
@@ -1317,9 +1395,11 @@ public:
     virtual const TString& getMethodName() const { return method; }
     virtual TIntermTyped* getObject() const { return object; }
     virtual void traverse(TIntermTraverser*);
+    void setExport() { linkType = ELinkExport; }
 protected:
     TIntermTyped* object;
     TString method;
+    TLinkType linkType;
 };
 
 //
@@ -1330,16 +1410,19 @@ public:
     // if symbol is initialized as symbol(sym), the memory comes from the pool allocator of sym. If sym comes from
     // per process threadPoolAllocator, then it causes increased memory usage per compile
     // it is essential to use "symbol = sym" to assign to symbol
-    TIntermSymbol(long long i, const TString& n, const TType& t)
-        : TIntermTyped(t), id(i),
-#ifndef GLSLANG_WEB
-        flattenSubset(-1),
-#endif
-        constSubtree(nullptr)
-          { name = n; }
+    TIntermSymbol(long long i, const TString& n, EShLanguage s, const TType& t, const TString* mn = nullptr)
+        : TIntermTyped(t), id(i), flattenSubset(-1), stage(s), constSubtree(nullptr) { 
+        name = n;
+        if (mn) {
+            mangledName = *mn;
+        } else {
+            mangledName = n;
+        }
+    }
     virtual long long getId() const { return id; }
     virtual void changeId(long long i) { id = i; }
     virtual const TString& getName() const { return name; }
+    virtual const TString& getMangledName() const { return mangledName; }
     virtual void traverse(TIntermTraverser*);
     virtual       TIntermSymbol* getAsSymbolNode()       { return this; }
     virtual const TIntermSymbol* getAsSymbolNode() const { return this; }
@@ -1347,23 +1430,22 @@ public:
     const TConstUnionArray& getConstArray() const { return constArray; }
     void setConstSubtree(TIntermTyped* subtree) { constSubtree = subtree; }
     TIntermTyped* getConstSubtree() const { return constSubtree; }
-#ifndef GLSLANG_WEB
     void setFlattenSubset(int subset) { flattenSubset = subset; }
     virtual const TString& getAccessName() const;
 
     int getFlattenSubset() const { return flattenSubset; } // -1 means full object
-#endif
 
     // This is meant for cases where a node has already been constructed, and
     // later on, it becomes necessary to switch to a different symbol.
     virtual void switchId(long long newId) { id = newId; }
+    EShLanguage getStage() const { return stage; }
 
 protected:
     long long id;                // the unique id of the symbol this node represents
-#ifndef GLSLANG_WEB
     int flattenSubset;           // how deeply the flattened object rooted at id has been dereferenced
-#endif
     TString name;                // the name of the symbol this node represents
+    EShLanguage stage;
+    TString mangledName;         // mangled function name, or a copy of name if not a function
     TConstUnionArray constArray; // if the symbol is a front-end compile-time constant, this is its value
     TIntermTyped* constSubtree;
 };
@@ -1417,20 +1499,15 @@ public:
     bool isConstructor() const;
     bool isTexture()  const { return op > EOpTextureGuardBegin  && op < EOpTextureGuardEnd; }
     bool isSampling() const { return op > EOpSamplingGuardBegin && op < EOpSamplingGuardEnd; }
-#ifdef GLSLANG_WEB
-    bool isImage()          const { return false; }
-    bool isSparseTexture()  const { return false; }
-    bool isImageFootprint() const { return false; }
-    bool isSparseImage()    const { return false; }
-    bool isSubgroup()       const { return false; }
-#else
     bool isImage()    const { return op > EOpImageGuardBegin    && op < EOpImageGuardEnd; }
     bool isSparseTexture() const { return op > EOpSparseTextureGuardBegin && op < EOpSparseTextureGuardEnd; }
     bool isImageFootprint() const { return op > EOpImageFootprintGuardBegin && op < EOpImageFootprintGuardEnd; }
     bool isSparseImage()   const { return op == EOpSparseImageLoad; }
     bool isSubgroup() const { return op > EOpSubgroupGuardStart && op < EOpSubgroupGuardStop; }
-#endif
-
+    bool isTextureGatherExtended() const
+    {
+      return op > EOpTextureGatherExtendedGuardBegin && op < EOpTextureGatherExtendedGuardEnd;
+    }
     void setOperationPrecision(TPrecisionQualifier p) { operationPrecision = p; }
     TPrecisionQualifier getOperationPrecision() const { return operationPrecision != EpqNone ?
                                                                                      operationPrecision :
@@ -1535,7 +1612,6 @@ public:
             cracked.offset = true;
             cracked.proj = true;
             break;
-#ifndef GLSLANG_WEB
         case EOpTextureClamp:
         case EOpSparseTextureClamp:
             cracked.lodClamp = true;
@@ -1558,6 +1634,17 @@ public:
             break;
         case EOpTextureGather:
         case EOpSparseTextureGather:
+        case EOpTextureGather4x1QCOM:
+        case EOpTextureGatherV2QCOM:
+        case EOpTextureGatherH2QCOM:
+        case EOpTextureGatherDQCOM:
+            cracked.gather = true;
+            break;
+        case EOpTextureGather4x1OffsetQCOM:
+        case EOpTextureGatherV2OffsetQCOM:
+        case EOpTextureGatherH2OffsetQCOM:
+        case EOpTextureGatherDOffsetQCOM:
+            cracked.offset = true;
             cracked.gather = true;
             break;
         case EOpTextureGatherOffset:
@@ -1622,7 +1709,6 @@ public:
         case EOpColorAttachmentReadEXT:
             cracked.attachmentEXT = true;
             break;
-#endif
         default:
             break;
         }
@@ -1673,15 +1759,11 @@ public:
     virtual       TIntermUnary* getAsUnaryNode()       { return this; }
     virtual const TIntermUnary* getAsUnaryNode() const { return this; }
     virtual void updatePrecision();
-#ifndef GLSLANG_WEB
     void setSpirvInstruction(const TSpirvInstruction& inst) { spirvInst = inst; }
     const TSpirvInstruction& getSpirvInstruction() const { return spirvInst; }
-#endif
 protected:
     TIntermTyped* operand;
-#ifndef GLSLANG_WEB
     TSpirvInstruction spirvInst;
-#endif
 };
 
 typedef TVector<TIntermNode*> TIntermSequence;
@@ -1691,8 +1773,12 @@ typedef TVector<TStorageQualifier> TQualifierList;
 //
 class TIntermAggregate : public TIntermOperator {
 public:
-    TIntermAggregate() : TIntermOperator(EOpNull), userDefined(false), pragmaTable(nullptr) { }
-    TIntermAggregate(TOperator o) : TIntermOperator(o), pragmaTable(nullptr) { }
+    TIntermAggregate() : TIntermOperator(EOpNull), userDefined(false), pragmaTable(nullptr) {
+        endLoc.init();
+    }
+    TIntermAggregate(TOperator o) : TIntermOperator(o), pragmaTable(nullptr) {
+        endLoc.init();
+    }
     ~TIntermAggregate() { delete pragmaTable; }
     virtual       TIntermAggregate* getAsAggregate()       { return this; }
     virtual const TIntermAggregate* getAsAggregate() const { return this; }
@@ -1713,10 +1799,16 @@ public:
     bool getDebug() const { return debug; }
     void setPragmaTable(const TPragmaTable& pTable);
     const TPragmaTable& getPragmaTable() const { return *pragmaTable; }
-#ifndef GLSLANG_WEB
     void setSpirvInstruction(const TSpirvInstruction& inst) { spirvInst = inst; }
     const TSpirvInstruction& getSpirvInstruction() const { return spirvInst; }
-#endif
+
+    void setEndLoc(TSourceLoc loc) { endLoc = loc; }
+    TSourceLoc getEndLoc() const { return endLoc; }
+
+    void setLinkType(TLinkType l) { linkType = l; }
+    TLinkType getLinkType() const { return linkType; }
+    void setFunctionControl(unsigned int fc) { functionControl = fc; }
+    unsigned int getFunctionControl() const { return functionControl; }
 protected:
     TIntermAggregate(const TIntermAggregate&); // disallow copy constructor
     TIntermAggregate& operator=(const TIntermAggregate&); // disallow assignment operator
@@ -1727,9 +1819,13 @@ protected:
     bool optimize;
     bool debug;
     TPragmaTable* pragmaTable;
-#ifndef GLSLANG_WEB
     TSpirvInstruction spirvInst;
-#endif
+    TLinkType linkType = ELinkNone;
+    unsigned int functionControl = EfcNone;
+
+    // Marking the end source location of the aggregate.
+    // This is currently only set for a compound statement or a function body, pointing to '}'.
+    TSourceLoc endLoc;
 };
 
 //
@@ -1831,24 +1927,26 @@ enum TVisit
 class TIntermTraverser {
 public:
     POOL_ALLOCATOR_NEW_DELETE(glslang::GetThreadPoolAllocator())
-    TIntermTraverser(bool preVisit = true, bool inVisit = false, bool postVisit = false, bool rightToLeft = false) :
+    TIntermTraverser(bool preVisit = true, bool inVisit = false, bool postVisit = false, bool rightToLeft = false, bool includeDeclSymbol = false) :
             preVisit(preVisit),
             inVisit(inVisit),
             postVisit(postVisit),
             rightToLeft(rightToLeft),
+            includeDeclSymbol(includeDeclSymbol),
             depth(0),
             maxDepth(0) { }
     virtual ~TIntermTraverser() { }
 
-    virtual void visitSymbol(TIntermSymbol*)               { }
-    virtual void visitConstantUnion(TIntermConstantUnion*) { }
-    virtual bool visitBinary(TVisit, TIntermBinary*)       { return true; }
-    virtual bool visitUnary(TVisit, TIntermUnary*)         { return true; }
-    virtual bool visitSelection(TVisit, TIntermSelection*) { return true; }
-    virtual bool visitAggregate(TVisit, TIntermAggregate*) { return true; }
-    virtual bool visitLoop(TVisit, TIntermLoop*)           { return true; }
-    virtual bool visitBranch(TVisit, TIntermBranch*)       { return true; }
-    virtual bool visitSwitch(TVisit, TIntermSwitch*)       { return true; }
+    virtual void visitSymbol(TIntermSymbol*)                     { }
+    virtual void visitConstantUnion(TIntermConstantUnion*)       { }
+    virtual bool visitBinary(TVisit, TIntermBinary*)             { return true; }
+    virtual bool visitUnary(TVisit, TIntermUnary*)               { return true; }
+    virtual bool visitSelection(TVisit, TIntermSelection*)       { return true; }
+    virtual bool visitAggregate(TVisit, TIntermAggregate*)       { return true; }
+    virtual bool visitLoop(TVisit, TIntermLoop*)                 { return true; }
+    virtual bool visitBranch(TVisit, TIntermBranch*)             { return true; }
+    virtual bool visitSwitch(TVisit, TIntermSwitch*)             { return true; }
+    virtual bool visitVariableDecl(TVisit, TIntermVariableDecl*) { return true; }
 
     int getMaxDepth() const { return maxDepth; }
 
@@ -1874,6 +1972,11 @@ public:
     const bool inVisit;
     const bool postVisit;
     const bool rightToLeft;
+
+    // Whether to traverse declaration symbols in the traversal.
+    // By default, declaration symbols are not visited in the traversal to avoid 
+    // visiting them in SPIR-V generation where they are not needed.
+    const bool includeDeclSymbol;
 
 protected:
     TIntermTraverser& operator=(TIntermTraverser&);

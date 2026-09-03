@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -15,8 +15,10 @@ namespace bgfx
 	const uint8_t* BX_CONCATENATE(_name, _pssl) = &BX_CONCATENATE(_name, _int_pssl)[0]; \
 	const uint32_t BX_CONCATENATE(_name, _pssl_size) = 1
 
+#if BGFX_CONFIG_DEBUG_TEXT
 BGFX_DECLARE_EMBEDDED_SHADER(vs_debugfont);
 BGFX_DECLARE_EMBEDDED_SHADER(fs_debugfont);
+#endif // BGFX_CONFIG_DEBUG_TEXT
 BGFX_DECLARE_EMBEDDED_SHADER(vs_clear);
 BGFX_DECLARE_EMBEDDED_SHADER(fs_clear0);
 BGFX_DECLARE_EMBEDDED_SHADER(fs_clear1);
@@ -26,6 +28,10 @@ BGFX_DECLARE_EMBEDDED_SHADER(fs_clear4);
 BGFX_DECLARE_EMBEDDED_SHADER(fs_clear5);
 BGFX_DECLARE_EMBEDDED_SHADER(fs_clear6);
 BGFX_DECLARE_EMBEDDED_SHADER(fs_clear7);
+BGFX_DECLARE_EMBEDDED_SHADER(cs_mipgen_pow2);
+BGFX_DECLARE_EMBEDDED_SHADER(cs_mipgen_oddx);
+BGFX_DECLARE_EMBEDDED_SHADER(cs_mipgen_oddy);
+BGFX_DECLARE_EMBEDDED_SHADER(cs_mipgen_oddxy);
 
 #undef BGFX_DECLARE_EMBEDDED_SHADER
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -116,7 +116,7 @@ vec4 toOutput(vec4 _color, float _outputFormat, float _sdrWhiteNits)
 	else if (_outputFormat < 2.5)
 	{
 		// output == 2 -> PQ
-		
+
 		// change primaries from sRGB/rec709 to rec2020
 		vec3 _xyz = toXyzFromSrgb(_color.xyz);
 		outColor = toRec2020FromXyz(_xyz);

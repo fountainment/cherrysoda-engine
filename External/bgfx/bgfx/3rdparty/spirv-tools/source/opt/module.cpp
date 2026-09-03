@@ -17,10 +17,12 @@
 #include <algorithm>
 #include <cstring>
 #include <ostream>
+#include <unordered_set>
 
 #include "source/operand.h"
 #include "source/opt/ir_context.h"
 #include "source/opt/reflect.h"
+#include "source/util/hash_combine.h"
 
 namespace spvtools {
 namespace opt {
@@ -93,6 +95,7 @@ void Module::ForEachInst(const std::function<void(Instruction*)>& f,
   if (sampled_image_address_mode_)
     sampled_image_address_mode_->ForEachInst(f, run_on_debug_line_insts);
   DELEGATE(entry_points_);
+  DELEGATE(graph_entry_points_);
   DELEGATE(execution_modes_);
   DELEGATE(debugs1_);
   DELEGATE(debugs2_);
@@ -102,6 +105,10 @@ void Module::ForEachInst(const std::function<void(Instruction*)>& f,
   DELEGATE(types_values_);
   for (auto& i : functions_) {
     i->ForEachInst(f, run_on_debug_line_insts,
+                   /* run_on_non_semantic_insts = */ true);
+  }
+  for (auto& g : graphs_) {
+    g->ForEachInst(f, run_on_debug_line_insts,
                    /* run_on_non_semantic_insts = */ true);
   }
 #undef DELEGATE
@@ -132,13 +139,20 @@ void Module::ForEachInst(const std::function<void(const Instruction*)>& f,
         f, run_on_debug_line_insts,
         /* run_on_non_semantic_insts = */ true);
   }
+  for (auto& i : graph_entry_points_) DELEGATE(i);
+  for (auto& i : graphs_) {
+    static_cast<const Graph*>(i.get())->ForEachInst(
+        f, run_on_debug_line_insts,
+        /* run_on_non_semantic_insts = */ true);
+  }
   if (run_on_debug_line_insts) {
     for (auto& i : trailing_dbg_line_info_) DELEGATE(i);
   }
 #undef DELEGATE
 }
 
-void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop) const {
+void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop,
+                      bool filter_duplicate_decorations) const {
   binary->push_back(header_.magic_number);
   binary->push_back(header_.version);
   // TODO(antiagainst): should we change the generator number?
@@ -151,9 +165,21 @@ void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop) const {
   const Instruction* last_line_inst = nullptr;
   bool between_merge_and_branch = false;
   bool between_label_and_phi_var = false;
-  auto write_inst = [binary, skip_nop, &last_scope, &last_line_inst,
-                     &between_merge_and_branch, &between_label_and_phi_var,
+  std::unordered_set<std::vector<uint32_t>,
+                     spvtools::utils::VectorHash<uint32_t>>
+      seen_decorations;
+  auto write_inst = [binary, skip_nop, filter_duplicate_decorations,
+                     &last_scope, &last_line_inst, &between_merge_and_branch,
+                     &between_label_and_phi_var, &seen_decorations,
                      this](const Instruction* i) {
+    if (filter_duplicate_decorations && i->IsDecoration()) {
+      std::vector<uint32_t> inst_binary;
+      i->ToBinaryWithoutAttachedDebugInsts(&inst_binary);
+      if (seen_decorations.count(inst_binary)) {
+        return;
+      }
+      seen_decorations.insert(inst_binary);
+    }
     // Skip emitting line instructions between merge and branch instructions.
     auto opcode = i->opcode();
     if (between_merge_and_branch && i->IsLineInst()) {
@@ -176,16 +202,15 @@ void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop) const {
         // If the current instruction does not have the line information,
         // the last line information is not effective any more. Emit OpNoLine
         // or DebugNoLine to specify it.
-        uint32_t shader_set_id = context()
-                                     ->get_feature_mgr()
-                                     ->GetExtInstImportId_Shader100DebugInfo();
+        uint32_t shader_set_id =
+            context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo();
         if (shader_set_id != 0) {
           binary->push_back((5 << 16) |
                             static_cast<uint16_t>(spv::Op::OpExtInst));
           binary->push_back(context()->get_type_mgr()->GetVoidTypeId());
           binary->push_back(context()->TakeNextId());
           binary->push_back(shader_set_id);
-          binary->push_back(NonSemanticShaderDebugInfo100DebugNoLine);
+          binary->push_back(NonSemanticShaderDebugInfoDebugNoLine);
         } else {
           binary->push_back((1 << 16) |
                             static_cast<uint16_t>(spv::Op::OpNoLine));
@@ -206,7 +231,7 @@ void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop) const {
       if (scope != last_scope && !between_merge_and_branch) {
         // Can only emit nonsemantic instructions after all phi instructions
         // in a block so don't emit scope instructions before phi instructions
-        // for NonSemantic.Shader.DebugInfo.100.
+        // for NonSemantic.Shader.DebugInfo.
         if (!between_label_and_phi_var ||
             context()
                 ->get_feature_mgr()

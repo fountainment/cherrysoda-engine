@@ -35,34 +35,35 @@
 #include "../Include/Common.h"
 #include "../Include/PoolAlloc.h"
 
-#include "../Include/InitializeGlobals.h"
-#include "../OSDependent/osinclude.h"
+// Mostly here for target that do not support threads such as WASI.
+#ifdef DISABLE_THREAD_SUPPORT
+#define THREAD_LOCAL 
+#else
+#define THREAD_LOCAL thread_local
+#endif
 
 namespace glslang {
 
-// Process-wide TLS index
-OS_TLSIndex PoolIndex;
+namespace {
+THREAD_LOCAL TPoolAllocator* threadPoolAllocator = nullptr;
+
+TPoolAllocator* GetDefaultThreadPoolAllocator()
+{
+    THREAD_LOCAL TPoolAllocator defaultAllocator;
+    return &defaultAllocator;
+}
+} // anonymous namespace
 
 // Return the thread-specific current pool.
 TPoolAllocator& GetThreadPoolAllocator()
 {
-    return *static_cast<TPoolAllocator*>(OS_GetTLSValue(PoolIndex));
+    return *(threadPoolAllocator ? threadPoolAllocator : GetDefaultThreadPoolAllocator());
 }
 
 // Set the thread-specific current pool.
 void SetThreadPoolAllocator(TPoolAllocator* poolAllocator)
 {
-    OS_SetTLSValue(PoolIndex, poolAllocator);
-}
-
-// Process-wide set up of the TLS pool storage.
-bool InitializePoolIndex()
-{
-    // Allocate a TLS index.
-    if ((PoolIndex = OS_AllocTLSIndex()) == OS_INVALID_TLS_INDEX)
-        return false;
-
-    return true;
+    threadPoolAllocator = poolAllocator;
 }
 
 //
@@ -137,16 +138,6 @@ TPoolAllocator::~TPoolAllocator()
     }
 }
 
-const unsigned char TAllocation::guardBlockBeginVal = 0xfb;
-const unsigned char TAllocation::guardBlockEndVal   = 0xfe;
-const unsigned char TAllocation::userDataFill       = 0xcd;
-
-#   ifdef GUARD_BLOCKS
-    const size_t TAllocation::guardBlockSize = 16;
-#   else
-    const size_t TAllocation::guardBlockSize = 0;
-#   endif
-
 //
 // Check a single guard block for damage
 //
@@ -157,7 +148,7 @@ void TAllocation::checkGuardBlock(unsigned char*, unsigned char, const char*) co
 #endif
 {
 #ifdef GUARD_BLOCKS
-    for (size_t x = 0; x < guardBlockSize; x++) {
+    for (size_t x = 0; x < guardBlockSize(); x++) {
         if (blockMem[x] != val) {
             const int maxSize = 80;
             char assertMsg[maxSize];
@@ -169,7 +160,7 @@ void TAllocation::checkGuardBlock(unsigned char*, unsigned char, const char*) co
         }
     }
 #else
-    assert(guardBlockSize == 0);
+    assert(guardBlockSize() == 0);
 #endif
 }
 

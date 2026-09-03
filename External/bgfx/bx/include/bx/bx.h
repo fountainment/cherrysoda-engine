@@ -1,16 +1,15 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
 #ifndef BX_H_HEADER_GUARD
 #define BX_H_HEADER_GUARD
 
-#include <alloca.h> // alloca
 #include <stdarg.h> // va_list
+#include <stddef.h> // ptrdiff_t
 #include <stdint.h> // uint32_t
 #include <stdlib.h> // size_t
-#include <stddef.h> // ptrdiff_t
 
 #include "platform.h"
 #include "config.h"
@@ -113,6 +112,36 @@ namespace bx
 	/// Unknown source code location.
 	static constexpr LocationFull kUnknownLocationFull("Unknown?", "Unknown?", 0);
 
+	/// Assert handler function.
+	///
+	/// @param[in] _location Source code location where function is called.
+	/// @param[in] _skip Skip top N stack frames.
+	/// @param[in] _format Printf style format.
+	/// @param[in] _argList Arguments for `_format` specification.
+	///
+	/// @returns True if assert should stop code execution, otherwise returns false.
+	///
+	typedef bool (*AssertHandlerFn)(const Location& _location, uint32_t _skip, const char* _format, va_list _argList);
+
+	/// Set assert handler function.
+	///
+	/// @param[in] _assertHandlerFn Pointer to AssertHandlerFn function.
+	///
+	/// @remarks It can be set only once. This is usually done on application startup.
+	///
+	void setAssertHandler(AssertHandlerFn _assertHandlerFn);
+
+	/// Assert function calls AssertHandlerFn.
+	///
+	/// @param[in] _location Source code location where function is called.
+	/// @param[in] _skip Skip top N stack frames.
+	/// @param[in] _format Printf style format.
+	/// @param[in] ... Arguments for `_format` specification.
+	///
+	/// @returns True if assert should stop code execution, otherwise returns false.
+	///
+	bool assertFunction(const Location& _location, uint32_t _skip, const char* _format, ...);
+
 	/// Arithmetic type `Ty` limits.
 	template<typename Ty, bool SignT = isSigned<Ty>()>
 	struct LimitsT;
@@ -144,6 +173,38 @@ namespace bx
 	///
 	template<typename Ty>
 	const Ty* addressOf(const void* _ptr, ptrdiff_t _offsetInBytes = 0);
+
+	/// Loads a value of type Ty from an naturally aligned memory location.
+	///
+	/// @param[in] _ptr Pointer to the memory location.
+	/// @returns The loaded value of type Ty.
+	///
+	template<typename Ty>
+	inline Ty loadAligned(const void* _ptr);
+
+	/// Loads a value of type Ty from a potentially unaligned memory location.
+	///
+	/// @param[in] _ptr Pointer to the memory location.
+	/// @returns The loaded value of type Ty.
+	///
+	template<typename Ty>
+	inline Ty loadUnaligned(const void* _ptr);
+
+	/// Stores a value of type Ty to an naturally aligned memory location.
+	///
+	/// @param[out] _ptr Pointer to the destination memory.
+	/// @param[in] _value The value to store.
+	///
+	template<typename Ty>
+	inline void storeAligned(void* _outPtr, const Ty& _value);
+
+	/// Stores a value of type Ty to a potentially unaligned memory location.
+	///
+	/// @param[out] _ptr Pointer to the destination memory.
+	/// @param[in] _value The value to store.
+	///
+	template<typename Ty>
+	inline void storeUnaligned(void* _outPtr, const Ty& _value);
 
 	/// Swap two values.
 	template<typename Ty>
@@ -187,6 +248,28 @@ namespace bx
 	/// Returns true if value `_a` is power of 2.
 	template<typename Ty>
 	constexpr bool isPowerOf2(Ty _a);
+
+	/// Returns true if it's evaluated as constexpr.
+	constexpr bool isConstantEvaluated();
+
+	/// Returns a value of type `Ty` by reinterpreting the object representation of `FromT`.
+	template <typename Ty, typename FromT>
+	constexpr Ty bitCast(const FromT& _from);
+
+	/// Performs `static_cast` of value `_from`, and if value doesn't fit result type `Ty` it clamps
+	/// the value to `Ty` min/max.
+	template<typename Ty, typename FromT>
+	constexpr Ty saturateCast(FromT _from);
+
+	/// Performs `static_cast` of value `_from`, and returns true if the value `_from` is
+	/// representable as `Ty`.
+	template<typename Ty, typename FromT>
+	constexpr bool narrowCastTest(Ty* _out, const FromT& _from);
+
+	/// Performs `static_cast` of value `_from`, and in debug build runtime verifies/asserts
+	/// that the value didn't change.
+	template<typename Ty, typename FromT>
+	Ty narrowCast(const FromT& _from, Location _location = Location::current() );
 
 	/// Copy memory block.
 	///
@@ -315,6 +398,53 @@ namespace bx
 		, uint32_t _stride
 		, uint32_t _numStrides
 		);
+
+	/// Greatest common divisor.
+	///
+	BX_CONSTEXPR_FUNC uint32_t gcd(uint32_t _a, uint32_t _b);
+
+	/// Least common multiple.
+	///
+	BX_CONSTEXPR_FUNC uint32_t lcm(uint32_t _a, uint32_t _b);
+
+	/// Align to arbitrary stride.
+	///
+	BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride);
+
+	/// Align to arbitrary stride and Min bytes.
+	///
+	template<uint32_t Min>
+	BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride);
+
+	/// Returns true if value is aligned to _align boundary.
+	///
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC bool isAligned(Ty _a, size_t _align);
+
+	template<>
+	BX_CONSTEXPR_FUNC bool isAligned(const void* _ptr, size_t _align);
+
+	/// Aligns _a down to nearest multiple of _align.
+	///
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty alignDown(Ty _a, size_t _align);
+
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty* alignDown(Ty* _ptr, size_t _align);
+
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC const Ty* alignDown(const Ty* _ptr, size_t _align);
+
+	/// Aligns _a up to nearest multiple of _align.
+	///
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, size_t _align);
+
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, size_t _align);
+
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC const Ty* alignUp(const Ty* _ptr, size_t _align);
 
 } // namespace bx
 

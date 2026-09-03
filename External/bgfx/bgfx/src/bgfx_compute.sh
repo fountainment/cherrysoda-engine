@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -10,17 +10,15 @@
 
 #ifndef __cplusplus
 
-#if BGFX_SHADER_LANGUAGE_HLSL > 0 && BGFX_SHADER_LANGUAGE_HLSL < 400
-#	error "Compute is not supported!"
-#endif // BGFX_SHADER_LANGUAGE_HLSL
-
-#if BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
-#	define FORMAT(_format) [[spv::format_ ## _format]]
+#if BGFX_SHADER_LANGUAGE_METAL \
+ || BGFX_SHADER_LANGUAGE_SPIRV \
+ || BGFX_SHADER_LANGUAGE_WGSL
+#	define FORMAT(_format) [[__CONCAT(spv::format_, _format)]]
 #	define WRITEONLY [[spv::nonreadable]]
 #else
 #	define FORMAT(_format)
 #	define WRITEONLY
-#endif // BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
+#endif // BGFX_SHADER_LANGUAGE_*
 
 #if BGFX_SHADER_LANGUAGE_GLSL
 
@@ -32,22 +30,22 @@
 #define readwrite
 #define IMAGE2D_RO( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2D,  readonly)
 #define UIMAGE2D_RO(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2D, readonly)
-#define IMAGE2D_WR( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2D,  writeonly)
-#define UIMAGE2D_WR(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2D, writeonly)
+#define IMAGE2D_WO( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2D,  writeonly)
+#define UIMAGE2D_WO(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2D, writeonly)
 #define IMAGE2D_RW( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2D,  readwrite)
 #define UIMAGE2D_RW(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2D, readwrite)
 
 #define IMAGE2D_ARRAY_RO( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2DArray,  readonly)
 #define UIMAGE2D_ARRAY_RO(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2DArray, readonly)
-#define IMAGE2D_ARRAY_WR( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2DArray,  writeonly)
-#define UIMAGE2D_ARRAY_WR(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2DArray, writeonly)
+#define IMAGE2D_ARRAY_WO( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2DArray,  writeonly)
+#define UIMAGE2D_ARRAY_WO(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2DArray, writeonly)
 #define IMAGE2D_ARRAY_RW( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image2DArray,  readwrite)
 #define UIMAGE2D_ARRAY_RW(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage2DArray, readwrite)
 
 #define IMAGE3D_RO( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image3D,  readonly)
 #define UIMAGE3D_RO(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage3D, readonly)
-#define IMAGE3D_WR( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image3D,  writeonly)
-#define UIMAGE3D_WR(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage3D, writeonly)
+#define IMAGE3D_WO( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image3D,  writeonly)
+#define UIMAGE3D_WO(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage3D, writeonly)
 #define IMAGE3D_RW( _name, _format, _reg) __IMAGE_XX(_name, _format, _reg, image3D,  readwrite)
 #define UIMAGE3D_RW(_name, _format, _reg) __IMAGE_XX(_name, _format, _reg, uimage3D, readwrite)
 
@@ -59,7 +57,16 @@
 
 #define BUFFER_RO(_name, _type, _reg) __BUFFER_XX(_name, _type, _reg, readonly)
 #define BUFFER_RW(_name, _type, _reg) __BUFFER_XX(_name, _type, _reg, readwrite)
-#define BUFFER_WR(_name, _type, _reg) __BUFFER_XX(_name, _type, _reg, writeonly)
+#define BUFFER_WO(_name, _type, _reg) __BUFFER_XX(_name, _type, _reg, writeonly)
+
+#define BUFFER_RAW_RO(_name, _reg) __BUFFER_XX(_name, uint, _reg, readonly)
+#define BUFFER_RAW_RW(_name, _reg) __BUFFER_XX(_name, uint, _reg, readwrite)
+#define BUFFER_RAW_WO(_name, _reg) __BUFFER_XX(_name, uint, _reg, writeonly)
+
+#define rawLoadUint(_buffer, _index)           _buffer[_index]
+#define rawLoadFloat(_buffer, _index)          uintBitsToFloat(_buffer[_index])
+#define rawStoreUint(_buffer, _index, _value)  _buffer[_index] = _value
+#define rawStoreFloat(_buffer, _index, _value) _buffer[_index] = floatBitsToUint(_value)
 
 #define NUM_THREADS(_x, _y, _z) layout (local_size_x = _x, local_size_y = _y, local_size_z = _z) in;
 
@@ -79,75 +86,104 @@
 #define COMP_r32ui    uint
 #define COMP_rg32ui   uint2
 #define COMP_rgba32ui uint4
+#define COMP_r16ui    uint
+#define COMP_rg16ui   uint2
+#define COMP_rgba16ui uint4
 #define COMP_r32f     float
 #define COMP_r16f     float
 #define COMP_rg16f    float2
 #define COMP_rgba16f  float4
 #if BGFX_SHADER_LANGUAGE_HLSL
-#	define COMP_rgba8 unorm float4
-#	define COMP_rg8   unorm float2
-#	define COMP_r8    unorm float
+#	define COMP_rgba8  unorm float4
+#	define COMP_rg8    unorm float2
+#	define COMP_r8     unorm float
+#	define COMP_rgba16 unorm float4
+#	define COMP_rg16   unorm float2
+#	define COMP_r16    unorm float
 #else
-#	define COMP_rgba8       float4
-#	define COMP_rg8         float2
-#	define COMP_r8          float
+#	define COMP_rgba8        float4
+#	define COMP_rg8          float2
+#	define COMP_r8           float
+#	define COMP_rgba16       float4
+#	define COMP_rg16         float2
+#	define COMP_r16          float
 #endif // BGFX_SHADER_LANGUAGE_HLSL
 #define COMP_rgba32f  float4
 
-#define IMAGE2D_RO( _name, _format, _reg)                                       \
-	FORMAT(_format) Texture2D<COMP_ ## _format> _name : REGISTER(t, _reg);      \
+#define IMAGE2D_RO( _name, _format, _reg) \
+	FORMAT(_format) Texture2D<__CONCAT(COMP_, _format)> _name : REGISTER(t, _reg);
 
 #define UIMAGE2D_RO(_name, _format, _reg) IMAGE2D_RO(_name, _format, _reg)
 
-#define IMAGE2D_WR( _name, _format, _reg)                                                 \
-	WRITEONLY FORMAT(_format) RWTexture2D<COMP_ ## _format> _name : REGISTER(u, _reg);  \
-	
-#define UIMAGE2D_WR(_name, _format, _reg) IMAGE2D_WR(_name, _format, _reg)
+#define IMAGE2D_WO( _name, _format, _reg) \
+	WRITEONLY FORMAT(_format) RWTexture2D<__CONCAT(COMP_, _format)> _name : REGISTER(u, _reg);
 
-#define IMAGE2D_RW( _name, _format, _reg)                            \
-	FORMAT(_format) RWTexture2D<COMP_ ## _format> _name : REGISTER(u, _reg);  \
+#define UIMAGE2D_WO(_name, _format, _reg) IMAGE2D_WO(_name, _format, _reg)
+
+#define IMAGE2D_RW( _name, _format, _reg) \
+	FORMAT(_format) RWTexture2D<__CONCAT(COMP_, _format)> _name : REGISTER(u, _reg);
 
 #define UIMAGE2D_RW(_name, _format, _reg) IMAGE2D_RW(_name, _format, _reg)
 
-#define IMAGE2D_ARRAY_RO(_name, _format, _reg)                                     \
-	FORMAT(_format) Texture2DArray<COMP_ ## _format> _name : REGISTER(t, _reg);    \
+#define IMAGE2D_ARRAY_RO(_name, _format, _reg) \
+	FORMAT(_format) Texture2DArray<__CONCAT(COMP_, _format)> _name : REGISTER(t, _reg);
 
 #define UIMAGE2D_ARRAY_RO(_name, _format, _reg) IMAGE2D_ARRAY_RO(_name, _format, _reg)
 
-#define IMAGE2D_ARRAY_WR( _name, _format, _reg)                                       \
-	WRITEONLY FORMAT(_format) RWTexture2DArray<COMP_ ## _format> _name : REGISTER(u, _reg);    \
+#define IMAGE2D_ARRAY_WO( _name, _format, _reg) \
+	WRITEONLY FORMAT(_format) RWTexture2DArray<__CONCAT(COMP_, _format)> _name : REGISTER(u, _reg);
 
-#define UIMAGE2D_ARRAY_WR(_name, _format, _reg) IMAGE2D_ARRAY_WR(_name, _format, _reg)
+#define UIMAGE2D_ARRAY_WO(_name, _format, _reg) IMAGE2D_ARRAY_WO(_name, _format, _reg)
 
-#define IMAGE2D_ARRAY_RW(_name, _format, _reg)                              \
-	FORMAT(_format) RWTexture2DArray<COMP_ ## _format> _name : REGISTER(u, _reg);    \
+#define IMAGE2D_ARRAY_RW(_name, _format, _reg) \
+	FORMAT(_format) RWTexture2DArray<__CONCAT(COMP_, _format)> _name : REGISTER(u, _reg);
 
 #define UIMAGE2D_ARRAY_RW(_name, _format, _reg) IMAGE2D_ARRAY_RW(_name, _format, _reg)
 
-#define IMAGE3D_RO( _name, _format, _reg)                                     \
-	FORMAT(_format) Texture3D<COMP_ ## _format> _name : REGISTER(t, _reg);
+#define IMAGE3D_RO( _name, _format, _reg) \
+	FORMAT(_format) Texture3D<__CONCAT(COMP_, _format)> _name : REGISTER(t, _reg);
 
 #define UIMAGE3D_RO(_name, _format, _reg) IMAGE3D_RO(_name, _format, _reg)
 
-#define IMAGE3D_WR( _name, _format, _reg)                                      \
-	WRITEONLY FORMAT(_format) RWTexture3D<COMP_ ## _format> _name : REGISTER(u, _reg);
+#define IMAGE3D_WO( _name, _format, _reg) \
+	WRITEONLY FORMAT(_format) RWTexture3D<__CONCAT(COMP_, _format)> _name : REGISTER(u, _reg);
 
-#define UIMAGE3D_WR(_name, _format, _reg) IMAGE3D_RW(_name, _format, _reg)
+#define UIMAGE3D_WO(_name, _format, _reg) IMAGE3D_WO(_name, _format, _reg)
 
-#define IMAGE3D_RW( _name, _format, _reg)                            \
-	FORMAT(_format) RWTexture3D<COMP_ ## _format> _name : REGISTER(u, _reg);  \
+#define IMAGE3D_RW( _name, _format, _reg) \
+	FORMAT(_format) RWTexture3D<__CONCAT(COMP_, _format)> _name : REGISTER(u, _reg);
 
 #define UIMAGE3D_RW(_name, _format, _reg) IMAGE3D_RW(_name, _format, _reg)
 
-#if BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
-#define BUFFER_RO(_name, _struct, _reg) StructuredBuffer<_struct>   _name : REGISTER(t, _reg)
+#if BGFX_SHADER_LANGUAGE_METAL \
+ || BGFX_SHADER_LANGUAGE_SPIRV \
+ || BGFX_SHADER_LANGUAGE_WGSL
+#define BUFFER_RO(_name, _struct, _reg) StructuredBuffer<_struct>    _name : REGISTER(t, _reg)
 #define BUFFER_RW(_name, _struct, _reg) RWStructuredBuffer <_struct> _name : REGISTER(u, _reg)
-#define BUFFER_WR(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
+#define BUFFER_WO(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
+
+#define BUFFER_RAW_RO(_name, _reg) BUFFER_RO(_name, uint, _reg)
+#define BUFFER_RAW_RW(_name, _reg) BUFFER_RW(_name, uint, _reg)
+#define BUFFER_RAW_WO(_name, _reg) BUFFER_WO(_name, uint, _reg)
+
+#define rawLoadUint(_buffer, _index)           _buffer[_index]
+#define rawLoadFloat(_buffer, _index)          uintBitsToFloat(_buffer[_index])
+#define rawStoreUint(_buffer, _index, _value)  _buffer[_index] = _value
+#define rawStoreFloat(_buffer, _index, _value) _buffer[_index] = floatBitsToUint(_value)
 #else
 #define BUFFER_RO(_name, _struct, _reg) Buffer<_struct>   _name : REGISTER(t, _reg)
 #define BUFFER_RW(_name, _struct, _reg) RWBuffer<_struct> _name : REGISTER(u, _reg)
-#define BUFFER_WR(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
-#endif
+#define BUFFER_WO(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
+
+#define BUFFER_RAW_RO(_name, _reg) ByteAddressBuffer   _name : REGISTER(t, _reg)
+#define BUFFER_RAW_RW(_name, _reg) RWByteAddressBuffer _name : REGISTER(u, _reg)
+#define BUFFER_RAW_WO(_name, _reg) BUFFER_RAW_RW(_name, _reg)
+
+#define rawLoadUint(_buffer, _index)           _buffer.Load( (_index)*4)
+#define rawLoadFloat(_buffer, _index)          uintBitsToFloat(_buffer.Load( (_index)*4) )
+#define rawStoreUint(_buffer, _index, _value)  _buffer.Store( (_index)*4, _value)
+#define rawStoreFloat(_buffer, _index, _value) _buffer.Store( (_index)*4, floatBitsToUint(_value) )
+#endif // BGFX_SHADER_LANGUAGE_*
 
 #define NUM_THREADS(_x, _y, _z) [numthreads(_x, _y, _z)]
 
@@ -156,82 +192,82 @@
 	{                                                                           \
 		return _image[_uv]._loadComponents;                                     \
 	}                                                                           \
-	\
+	                                                                            \
 	ivec2 imageSize(Texture2D<_format> _image)                                  \
 	{                                                                           \
 		uvec2 result;                                                           \
 		_image.GetDimensions(result.x, result.y);                               \
 		return ivec2(result);                                                   \
 	}                                                                           \
-	\
+	                                                                            \
 	_type imageLoad(RWTexture2D<_format> _image, ivec2 _uv)                     \
 	{                                                                           \
 		return _image[_uv]._loadComponents;                                     \
 	}                                                                           \
-	\
+	                                                                            \
 	void imageStore(RWTexture2D<_format> _image, ivec2 _uv,  _type _value)      \
 	{                                                                           \
 		_image[_uv] = _value._storeComponents;                                  \
 	}                                                                           \
-	\
+	                                                                            \
 	ivec2 imageSize(RWTexture2D<_format> _image)                                \
 	{                                                                           \
 		uvec2 result;                                                           \
 		_image.GetDimensions(result.x, result.y);                               \
 		return ivec2(result);                                                   \
 	}                                                                           \
-	\
+	                                                                            \
 	_type imageLoad(Texture2DArray<_format> _image, ivec3 _uvw)                 \
 	{                                                                           \
 		return _image[_uvw]._loadComponents;                                    \
 	}                                                                           \
-	\
+	                                                                            \
 	ivec3 imageSize(Texture2DArray<_format> _image)                             \
 	{                                                                           \
 		uvec3 result;                                                           \
 		_image.GetDimensions(result.x, result.y, result.z);                     \
 		return ivec3(result);                                                   \
 	}                                                                           \
-	\
+	                                                                            \
 	_type imageLoad(RWTexture2DArray<_format> _image, ivec3 _uvw)               \
 	{                                                                           \
 		return _image[_uvw]._loadComponents;                                    \
 	}                                                                           \
-	\
+	                                                                            \
 	void imageStore(RWTexture2DArray<_format> _image, ivec3 _uvw, _type _value) \
 	{                                                                           \
 		_image[_uvw] = _value._storeComponents;                                 \
 	}                                                                           \
-	\
+	                                                                            \
 	ivec3 imageSize(RWTexture2DArray<_format> _image)                           \
 	{                                                                           \
 		uvec3 result;                                                           \
 		_image.GetDimensions(result.x, result.y, result.z);                     \
 		return ivec3(result);                                                   \
 	}                                                                           \
-	\
-	_type imageLoad(Texture3D<_format> _image, ivec3 _uvw)                    \
+	                                                                            \
+	_type imageLoad(Texture3D<_format> _image, ivec3 _uvw)                      \
 	{                                                                           \
 		return _image[_uvw]._loadComponents;                                    \
 	}                                                                           \
-	\
-	ivec3 imageSize(Texture3D<_format> _image)                                \
+	                                                                            \
+	ivec3 imageSize(Texture3D<_format> _image)                                  \
 	{                                                                           \
 		uvec3 result;                                                           \
 		_image.GetDimensions(result.x, result.y, result.z);                     \
 		return ivec3(result);                                                   \
 	}                                                                           \
-	\
+	                                                                            \
 	_type imageLoad(RWTexture3D<_format> _image, ivec3 _uvw)                    \
 	{                                                                           \
 		return _image[_uvw]._loadComponents;                                    \
 	}                                                                           \
-	\
+	                                                                            \
 	void imageStore(RWTexture3D<_format> _image, ivec3 _uvw, _type _value)      \
 	{                                                                           \
 		_image[_uvw] = _value._storeComponents;                                 \
 	}                                                                           \
-	\
+	                                                                            \
 	ivec3 imageSize(RWTexture3D<_format> _image)                                \
 	{                                                                           \
 		uvec3 result;                                                           \
@@ -239,30 +275,27 @@
 		return ivec3(result);                                                   \
 	}
 
-#define __IMAGE_IMPL_ATOMIC(_format, _storeComponents, _type, _loadComponents)            \
-	\
-	void imageAtomicAdd(RWTexture2D<_format> _image, ivec2 _uv,  _type _value)       \
-	{				                                                                 \
-		InterlockedAdd(_image[_uv], _value._storeComponents);	                     \
-	}                                                                                \
+#define __IMAGE_IMPL_ATOMIC(_format, _storeComponents, _type, _loadComponents)  \
+	void imageAtomicAdd(RWTexture2D<_format> _image, ivec2 _uv,  _type _value)  \
+	{                                                                           \
+		InterlockedAdd(_image[_uv], _value._storeComponents);                   \
+	}                                                                           \
 
+__IMAGE_IMPL_A(float,  x,    vec4,  xxxx)
+__IMAGE_IMPL_A(float2, xy,   vec4,  xyyy)
+__IMAGE_IMPL_A(float4, xyzw, vec4,  xyzw)
 
-__IMAGE_IMPL_A(float,       x,    vec4,  xxxx)
-__IMAGE_IMPL_A(float2,      xy,   vec4,  xyyy)
-__IMAGE_IMPL_A(float4,      xyzw, vec4,  xyzw)
+__IMAGE_IMPL_A(uint,   x,    uvec4, xxxx)
+__IMAGE_IMPL_A(uint2,  xy,   uvec4, xyyy)
+__IMAGE_IMPL_A(uint4,  xyzw, uvec4, xyzw)
 
-__IMAGE_IMPL_A(uint,        x,    uvec4, xxxx)
-__IMAGE_IMPL_A(uint2,       xy,   uvec4, xyyy)
-__IMAGE_IMPL_A(uint4,       xyzw, uvec4, xyzw)
-
-#if BGFX_SHADER_LANGUAGE_HLSL
+#if BGFX_SHADER_LANGUAGE_HLSL && !BGFX_SHADER_LANGUAGE_DXIL
 __IMAGE_IMPL_A(unorm float,       x,    vec4,  xxxx)
 __IMAGE_IMPL_A(unorm float2,      xy,   vec4,  xyyy)
 __IMAGE_IMPL_A(unorm float4,      xyzw, vec4,  xyzw)
-#endif
+#endif // BGFX_SHADER_LANGUAGE_HLSL && !BGFX_SHADER_LANGUAGE_DXIL
 
-__IMAGE_IMPL_ATOMIC(uint,       x,    uvec4, xxxx)
-
+__IMAGE_IMPL_ATOMIC(uint, x, uvec4, xxxx)
 
 #define atomicAdd(_mem, _data)                                       InterlockedAdd(_mem, _data)
 #define atomicAnd(_mem, _data)                                       InterlockedAnd(_mem, _data)
@@ -310,6 +343,8 @@ __IMAGE_IMPL_ATOMIC(uint,       x,    uvec4, xxxx)
 	)                 \
 	_buffer[(_offset)*2+0] = uvec4(_numVertices, _numInstances, _startVertex, _startInstance)
 
+uniform vec4 bgfx_indirectArgBase;
+
 #define drawIndexedIndirect( \
 	  _buffer                \
 	, _offset                \
@@ -319,7 +354,7 @@ __IMAGE_IMPL_ATOMIC(uint,       x,    uvec4, xxxx)
 	, _startVertex           \
 	, _startInstance         \
 	)                        \
-	_buffer[(_offset)*2+0] = uvec4(_numIndices, _numInstances, _startIndex, _startVertex); \
+	_buffer[(_offset)*2+0] = uvec4(_numIndices, _numInstances, floatBitsToUint(bgfx_indirectArgBase.x) + uint(_startIndex), _startVertex); \
 	_buffer[(_offset)*2+1] = uvec4(_startInstance, 0u, 0u, 0u)
 
 #endif // __cplusplus

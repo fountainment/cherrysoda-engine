@@ -30,6 +30,8 @@ namespace {
 constexpr int kSpvFunctionCallFunctionId = 2;
 constexpr int kSpvFunctionCallArgumentId = 3;
 constexpr int kSpvReturnValueId = 0;
+constexpr int kSpvDebugDeclareVarInIdx = 3;
+constexpr int kSpvAccessChainBaseInIdx = 0;
 }  // namespace
 
 uint32_t InlinePass::AddPointerToType(uint32_t type_id,
@@ -213,6 +215,19 @@ uint32_t InlinePass::CreateReturnVar(
         {(uint32_t)spv::StorageClass::Function}}}));
   new_vars->push_back(std::move(var_inst));
   get_decoration_mgr()->CloneDecorations(calleeFn->result_id(), returnVarId);
+
+  // Decorate the return var with AliasedPointer if the storage class of the
+  // pointee type is PhysicalStorageBuffer.
+  auto const pointee_type =
+      type_mgr->GetType(returnVarTypeId)->AsPointer()->pointee_type();
+  if (pointee_type->AsPointer() != nullptr) {
+    if (pointee_type->AsPointer()->storage_class() ==
+        spv::StorageClass::PhysicalStorageBuffer) {
+      get_decoration_mgr()->AddDecoration(
+          returnVarId, uint32_t(spv::Decoration::AliasedPointer));
+    }
+  }
+
   return returnVarId;
 }
 
@@ -409,8 +424,8 @@ bool InlinePass::InlineEntryBlock(
   while (callee_inst_itr != callee_first_block->end()) {
     // Don't inline function definition links, the calling function is not a
     // definition.
-    if (callee_inst_itr->GetShader100DebugOpcode() ==
-        NonSemanticShaderDebugInfo100DebugFunctionDefinition) {
+    if (callee_inst_itr->GetShaderDebugOpcode() ==
+        NonSemanticShaderDebugInfoDebugFunctionDefinition) {
       ++callee_inst_itr;
       continue;
     }
@@ -447,8 +462,8 @@ std::unique_ptr<BasicBlock> InlinePass::InlineBasicBlocks(
          ++inst_itr) {
       // Don't inline function definition links, the calling function is not a
       // definition
-      if (inst_itr->GetShader100DebugOpcode() ==
-          NonSemanticShaderDebugInfo100DebugFunctionDefinition)
+      if (inst_itr->GetShaderDebugOpcode() ==
+          NonSemanticShaderDebugInfoDebugFunctionDefinition)
         continue;
       if (!InlineSingleInstruction(
               callee2caller, new_blk_ptr.get(), &*inst_itr,
@@ -844,6 +859,93 @@ void InlinePass::InitializeInline() {
 }
 
 InlinePass::InlinePass() {}
+
+void InlinePass::FixDebugDeclares(Function* func) {
+  std::map<uint32_t, Instruction*> access_chains;
+  std::vector<Instruction*> debug_declare_insts;
+
+  func->ForEachInst([&access_chains, &debug_declare_insts](Instruction* inst) {
+    if (inst->opcode() == spv::Op::OpAccessChain) {
+      access_chains[inst->result_id()] = inst;
+    }
+    if (inst->GetCommonDebugOpcode() == CommonDebugInfoDebugDeclare) {
+      debug_declare_insts.push_back(inst);
+    }
+  });
+
+  for (auto& inst : debug_declare_insts) {
+    FixDebugDeclare(inst, access_chains);
+  }
+}
+
+void InlinePass::FixDebugDeclare(
+    Instruction* dbg_declare_inst,
+    const std::map<uint32_t, Instruction*>& access_chains) {
+  do {
+    uint32_t var_id =
+        dbg_declare_inst->GetSingleWordInOperand(kSpvDebugDeclareVarInIdx);
+
+    // The def-use chains are not kept up to date while inlining, so we need to
+    // get the variable by traversing the functions.
+    auto it = access_chains.find(var_id);
+    if (it == access_chains.end()) {
+      return;
+    }
+    Instruction* access_chain = it->second;
+
+    // If the variable id in the debug declare is an access chain, it is
+    // invalid. it needs to be fixed up. The debug declare will be updated so
+    // that its Var operand becomes the base of the access chain. The indexes of
+    // the access chain are prepended before the indexes of the debug declare.
+
+    // DebugDeclare Indexes must be constant integers. If any access chain
+    // index is non-constant (e.g. the result of an OpLoad), we cannot
+    // produce a valid DebugDeclare. Kill it rather than emit invalid SPIR-V.
+    bool has_non_constant_index = false;
+    for (uint32_t i = kSpvAccessChainBaseInIdx + 1;
+         i < access_chain->NumInOperands(); ++i) {
+      uint32_t idx_id = access_chain->GetSingleWordInOperand(i);
+      bool found_constant = false;
+      for (auto& inst : context()->module()->types_values()) {
+        if (inst.result_id() == idx_id) {
+          found_constant = spvOpcodeIsConstant(inst.opcode());
+          break;
+        }
+      }
+      if (!found_constant) {
+        has_non_constant_index = true;
+        break;
+      }
+    }
+    if (has_non_constant_index) {
+      context()->KillInst(dbg_declare_inst);
+      return;
+    }
+
+    std::vector<Operand> operands;
+    for (int i = 0; i < kSpvDebugDeclareVarInIdx; i++) {
+      operands.push_back(dbg_declare_inst->GetInOperand(i));
+    }
+
+    uint32_t access_chain_base =
+        access_chain->GetSingleWordInOperand(kSpvAccessChainBaseInIdx);
+    operands.push_back(Operand(SPV_OPERAND_TYPE_ID, {access_chain_base}));
+    operands.push_back(
+        dbg_declare_inst->GetInOperand(kSpvDebugDeclareVarInIdx + 1));
+
+    for (uint32_t i = kSpvAccessChainBaseInIdx + 1;
+         i < access_chain->NumInOperands(); ++i) {
+      operands.push_back(access_chain->GetInOperand(i));
+    }
+
+    for (uint32_t i = kSpvDebugDeclareVarInIdx + 2;
+         i < dbg_declare_inst->NumInOperands(); ++i) {
+      operands.push_back(dbg_declare_inst->GetInOperand(i));
+    }
+
+    dbg_declare_inst->SetInOperands(std::move(operands));
+  } while (true);
+}
 
 }  // namespace opt
 }  // namespace spvtools

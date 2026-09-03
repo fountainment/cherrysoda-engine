@@ -659,10 +659,10 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Generator", ImVec2(182.f, 0), true);
 			{
-				ImGui::TextUnformatted(LANGS(u8"生成器", "Generator"));
+				ImGui::TextUnformatted(LANGS("生成器", "Generator"));
 				// PickUp/Coin
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"拾取/金币", "PickUp/Coin"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("拾取/金币", "PickUp/Coin"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					p_base_freq = 0.4f + frnd(0.5f);
 					p_env_attack = 0.0f;
@@ -678,7 +678,7 @@ void DrawScreen()
 				}
 				// Laser/Shoot
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"激光/射击", "Laser/Shoot"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("激光/射击", "Laser/Shoot"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2 && rnd(1))
@@ -719,7 +719,7 @@ void DrawScreen()
 				}
 				// Explosion
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"爆炸", "Explosion"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("爆炸", "Explosion"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = 3;
 					if (rnd(1))
@@ -760,7 +760,7 @@ void DrawScreen()
 				}
 				// PowerUp
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"升级", "PowerUp"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("升级", "PowerUp"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					if (rnd(1))
 						wave_type = 1;
@@ -789,7 +789,7 @@ void DrawScreen()
 				}
 				// Hit/Hurt
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"击中/受伤", "Hit/Hurt"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("击中/受伤", "Hit/Hurt"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(2);
 					if (wave_type == 2)
@@ -807,7 +807,7 @@ void DrawScreen()
 				}
 				// Jump
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"跳跃", "Jump"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("跳跃", "Jump"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = 0;
 					p_duty = frnd(0.6f);
@@ -824,7 +824,7 @@ void DrawScreen()
 				}
 				// Blip/Select
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"哔哔声/选择", "Blip/Select"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("哔哔声/选择", "Blip/Select"), ImVec2(170.f, 0.f))) {
 					ResetParams();
 					wave_type = rnd(1);
 					if (wave_type == 0)
@@ -840,13 +840,13 @@ void DrawScreen()
 				ImGui::Spacing(); ImGui::NewLine();
 
 				// Mutate
-				if (ImGui::Button(LANGS(u8"变异", "Mutate"), ImVec2(140.f, 0.f))) {
+				if (ImGui::Button(LANGS("变异", "Mutate"), ImVec2(140.f, 0.f))) {
 					Mutate();
 					do_play = true;
 				}
 				// Randomize
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"随机", "Randomize"), ImVec2(140.f, 0.f))) {
+				if (ImGui::Button(LANGS("随机", "Randomize"), ImVec2(140.f, 0.f))) {
 					Randomize();
 					do_play = true;
 				}
@@ -854,25 +854,25 @@ void DrawScreen()
 				ImGui::Spacing(); ImGui::NewLine();
 
 				// Volume
-				ImGui::Text(LANGS(u8"音量", "Volume"));
+				ImGui::Text(LANGS("音量", "Volume"));
 				if (ImGui::SliderFloat("##volume", &sound_vol, 0.f, 1.f)) {
 					PlaySample();
 				}
 				// Play Sound
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"播放声音", "Play Sound"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("播放声音", "Play Sound"), ImVec2(170.f, 0.f))) {
 					PlaySample();
 				}
 				// Export WAV
 				ImGui::Spacing();
-				if (ImGui::Button(LANGS(u8"导出WAV", "Export WAV"), ImVec2(170.f, 0.f))) {
+				if (ImGui::Button(LANGS("导出WAV", "Export WAV"), ImVec2(170.f, 0.f))) {
 					ExportWAV("export.wav");
 				}
 
 				ImGui::Spacing(); ImGui::NewLine();
 
-				const char* serialize_str = LANGS(u8"保存设置", "Serialize");
-				const char* unserialize_str = LANGS(u8"读取设置", "Unserialize");
+				const char* serialize_str = LANGS("保存设置", "Serialize");
+				const char* unserialize_str = LANGS("读取设置", "Unserialize");
 				static String serialize_result_str = "";
 				static char unserialize_input[512];
 				if (ImGui::Button(serialize_str, ImVec2(170.f, 0.f))) {
@@ -883,7 +883,7 @@ void DrawScreen()
 				if (ImGui::Button(unserialize_str, ImVec2(170.f, 0.f))) {
 #ifdef __EMSCRIPTEN__
 					{
-						const char* title = LANGS(u8"请输入或粘贴(Ctrl+V)设置", "Please enter or paste(Ctrl+V) the setting");
+						const char* title = LANGS("请输入或粘贴(Ctrl+V)设置", "Please enter or paste(Ctrl+V) the setting");
 						String cmd = CHERRYSODA_FORMAT("unserializeInputBox('%s', '')", title);
 						emscripten_run_script(cmd.c_str());
 					}
@@ -900,9 +900,9 @@ void DrawScreen()
 #endif // __EMSCRIPTEN__
 				}
 
-				const char* ok_str = LANGS(u8"确定", "OK");
-				const char* cancel_str = LANGS(u8"取消", "Cancel");
-				const char* copy_to_clipboard_str = LANGS(u8"复制到剪贴板", "Copy to Clipboard");
+				const char* ok_str = LANGS("确定", "OK");
+				const char* cancel_str = LANGS("取消", "Cancel");
+				const char* copy_to_clipboard_str = LANGS("复制到剪贴板", "Copy to Clipboard");
 				if (ImGui::BeginPopupModal(serialize_str, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 					ImGui::PushTextWrapPos(400.f);
 					ImGui::TextUnformatted(serialize_result_str.c_str());
@@ -936,8 +936,8 @@ void DrawScreen()
 		{
 			ImGui::BeginChild("Manual Settings", ImVec2(0, 0), true);
 			{
-				ImGui::TextUnformatted(LANGS(u8"手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 38.f);
-				const char* lang[] = { "En", u8"中" };
+				ImGui::TextUnformatted(LANGS("手动设置", "Manual Settings")); ImGui::SameLine(ImGui::GetWindowWidth() - 38.f);
+				const char* lang[] = { "En", "中" };
 				if (ImGui::Button(lang[lang_i])) {
 					if (lang_i == 0) {
 						lang_i = 1;
@@ -948,48 +948,48 @@ void DrawScreen()
 				}
 				ImGui::Spacing();
 				float rbWidth = 180.f;
-				if (ImGui::RadioButton(LANGS(u8"方波", "Squarewave"), &wave_type, 0)) { do_play = true; } ImGui::SameLine(rbWidth);
-				if (ImGui::RadioButton(LANGS(u8"锯齿波", "Sawtooth"), &wave_type, 1)) { do_play = true; } ImGui::SameLine(rbWidth * 2.f);
-				if (ImGui::RadioButton(LANGS(u8"正弦波", "Sinewave"), &wave_type, 2)) { do_play = true; } ImGui::SameLine(rbWidth * 3.f);
-				if (ImGui::RadioButton(LANGS(u8"噪声", "Noise"), &wave_type, 3)) { do_play = true; }
+				if (ImGui::RadioButton(LANGS("方波", "Squarewave"), &wave_type, 0)) { do_play = true; } ImGui::SameLine(rbWidth);
+				if (ImGui::RadioButton(LANGS("锯齿波", "Sawtooth"), &wave_type, 1)) { do_play = true; } ImGui::SameLine(rbWidth * 2.f);
+				if (ImGui::RadioButton(LANGS("正弦波", "Sinewave"), &wave_type, 2)) { do_play = true; } ImGui::SameLine(rbWidth * 3.f);
+				if (ImGui::RadioButton(LANGS("噪声", "Noise"), &wave_type, 3)) { do_play = true; }
 
 				ImGui::Spacing();
 				ImGui::BeginChild("Parameters", ImVec2(0, 0), true);
 				{
-					ImGui::SliderFloat(LANGS(u8"起音时长", "Attack Time"), &p_env_attack, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"延音时长", "Sustain Time"), &p_env_sustain, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"延音打击", "Sustain Punch"), &p_env_punch, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"衰减时长", "Decay Time"), &p_env_decay, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("起音时长", "Attack Time"), &p_env_attack, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("延音时长", "Sustain Time"), &p_env_sustain, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("延音打击", "Sustain Punch"), &p_env_punch, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("衰减时长", "Decay Time"), &p_env_decay, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat(LANGS(u8"初始频率", "Start Frequency"), &p_base_freq, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"最低频率", "Min Frequency"), &p_freq_limit, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"滑音速度", "Slide"), &p_freq_ramp, -1.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"滑音加速度", "Delta Slide"), &p_freq_dramp, -1.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"颤音深度", "Vibrato Depth"), &p_vib_strength, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"颤音速率", "Vibrato Speed"), &p_vib_speed, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("初始频率", "Start Frequency"), &p_base_freq, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("最低频率", "Min Frequency"), &p_freq_limit, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("滑音速度", "Slide"), &p_freq_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("滑音加速度", "Delta Slide"), &p_freq_dramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("颤音深度", "Vibrato Depth"), &p_vib_strength, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("颤音速率", "Vibrato Speed"), &p_vib_speed, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat(LANGS(u8"瞬时音高变化", "Change Amount"), &p_arp_mod, -1.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"变化速度", "Change Speed"), &p_arp_speed, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("瞬时音高变化", "Change Amount"), &p_arp_mod, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("变化速度", "Change Speed"), &p_arp_speed, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat(LANGS(u8"方波占空比", "Square Duty"), &p_duty, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"占空比扫描", "Duty Sweep"), &p_duty_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("方波占空比", "Square Duty"), &p_duty, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("占空比扫描", "Duty Sweep"), &p_duty_ramp, -1.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat(LANGS(u8"重复速率", "Repeat Speed"), &p_repeat_speed, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("重复速率", "Repeat Speed"), &p_repeat_speed, 0.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat(LANGS(u8"移相", "Phaser Offset"), &p_pha_offset, -1.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"移相扫描", "Phaser Sweep"), &p_pha_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("移相", "Phaser Offset"), &p_pha_offset, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("移相扫描", "Phaser Sweep"), &p_pha_ramp, -1.f, 1.f);
 
 					ImGui::Separator();
-					ImGui::SliderFloat(LANGS(u8"低通滤波截止频率", "LP Filer Cutoff"), &p_lpf_freq, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"低通滤波截止频率扫描", "LP Filer Cutoff Sweep"), &p_lpf_ramp, -1.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"低通滤波共鸣", "LP Filer Resonance"), &p_lpf_resonance, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"高通滤波截止频率", "HP Filer Cutoff"), &p_hpf_freq, 0.f, 1.f);
-					ImGui::SliderFloat(LANGS(u8"高通滤波截止频率扫描", "HP Filer Cutoff Sweep"), &p_hpf_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("低通滤波截止频率", "LP Filer Cutoff"), &p_lpf_freq, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("低通滤波截止频率扫描", "LP Filer Cutoff Sweep"), &p_lpf_ramp, -1.f, 1.f);
+					ImGui::SliderFloat(LANGS("低通滤波共鸣", "LP Filer Resonance"), &p_lpf_resonance, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("高通滤波截止频率", "HP Filer Cutoff"), &p_hpf_freq, 0.f, 1.f);
+					ImGui::SliderFloat(LANGS("高通滤波截止频率扫描", "HP Filer Cutoff Sweep"), &p_hpf_ramp, -1.f, 1.f);
 				}
 				ImGui::EndChild();
 			}
@@ -1039,7 +1039,7 @@ void SfxrInit()
 
 	// ImVector<ImWchar> gRanges;
 	// ImFontGlyphRangesBuilder gBuilder;
-	// gBuilder.AddText(u8"");
+	// gBuilder.AddText("");
 	// gBuilder.BuildRanges(&gRanges);
 
 	io.Fonts->Clear();

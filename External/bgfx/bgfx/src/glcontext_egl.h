@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -8,12 +8,27 @@
 
 #if BGFX_USE_EGL
 
+#if BGFX_USE_GL_DYNAMIC_LIB
+#	define EGL_EGL_PROTOTYPES 0
+#endif // BGFX_USE_GL_DYNAMIC_LIB
+
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
+
+struct wl_egl_window;
+
+// EGL pulls X11 crap...
+#if defined(None)
+#	undef None
+#endif // defined(None)
+
 #if defined(Success)
-// X11 defines Success
 #	undef Success
 #endif // defined(Success)
+
+#if defined(Status)
+#	undef Status
+#endif // defined(Status)
 
 namespace bgfx { namespace gl
 {
@@ -22,20 +37,31 @@ namespace bgfx { namespace gl
 	struct GlContext
 	{
 		GlContext()
-			: m_current(NULL)
+			: m_eglDll(NULL)
+			, m_current(NULL)
+			, m_config(NULL)
 			, m_context(NULL)
 			, m_display(NULL)
 			, m_surface(NULL)
+			, m_readSurface(NULL)
+#if BX_PLATFORM_WINDOWS
+			, m_hdc(NULL)
+#elif BX_PLATFORM_LINUX
+			, m_waylandEglDll(NULL)
+			, m_eglWindow(NULL)
+#endif // BX_PLATFORM_*
+			, m_ownsContext(false)
 			, m_msaaContext(false)
+			, m_swapInterval(0)
 		{
 		}
 
-		void create(uint32_t _width, uint32_t _height, uint32_t _flags);
+		void create(const Resolution& _resolution);
 		void destroy();
-		void resize(uint32_t _width, uint32_t _height, uint32_t _flags);
+		void resize(const Resolution& _resolution);
 
 		uint64_t getCaps() const;
-		SwapChainGL* createSwapChain(void* _nwh);
+		SwapChainGL* createSwapChain(void* _nwh, int32_t _width, int32_t _height);
 		void destroySwapChain(SwapChainGL*  _swapChain);
 		void swap(SwapChainGL* _swapChain = NULL);
 		void makeCurrent(SwapChainGL* _swapChain = NULL);
@@ -47,14 +73,24 @@ namespace bgfx { namespace gl
 			return NULL != m_context;
 		}
 
-		void* m_eglLibrary;
+		void* m_eglDll;
 		SwapChainGL* m_current;
 		EGLConfig  m_config;
 		EGLContext m_context;
 		EGLDisplay m_display;
 		EGLSurface m_surface;
-		// true when MSAA is handled by the context instead of using MSAA FBO
+		EGLSurface m_readSurface;
+
+#if BX_PLATFORM_WINDOWS
+		HDC m_hdc;
+#elif BX_PLATFORM_LINUX
+		void*  m_waylandEglDll;
+		struct wl_egl_window *m_eglWindow;
+#endif // BX_PLATFORM_*
+
+		bool m_ownsContext;
 		bool m_msaaContext;
+		int  m_swapInterval;
 	};
 } /* namespace gl */ } // namespace bgfx
 

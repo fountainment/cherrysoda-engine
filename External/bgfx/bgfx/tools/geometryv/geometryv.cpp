@@ -48,26 +48,34 @@ static const bgfx::EmbeddedShader s_embeddedShaders[] =
 
 static const char* s_attribShortNames[] =
 {
-	"P",   // Position
-	"N",   // Normal
-	"T",   // Tangent
-	"B",   // Bitangent
-	"C0",  // Color0
-	"C1",  // Color1
-	"C2",  // Color2
-	"C3",  // Color3
-	"I",   // Indices
-	"W",   // Weight
-	"TC0", // TexCoord0
-	"TC1", // TexCoord1
-	"TC2", // TexCoord2
-	"TC3", // TexCoord3
-	"TC4", // TexCoord4
-	"TC5", // TexCoord5
-	"TC6", // TexCoord6
-	"TC7", // TexCoord7
+	"P",    // Position
+	"N",    // Normal
+	"T",    // Tangent
+	"B",    // Bitangent
+	"C0",   // Color0
+	"C1",   // Color1
+	"C2",   // Color2
+	"C3",   // Color3
+	"I",    // Indices
+	"W",    // Weight
+	"TC0",  // TexCoord0
+	"TC1",  // TexCoord1
+	"TC2",  // TexCoord2
+	"TC3",  // TexCoord3
+	"TC4",  // TexCoord4
+	"TC5",  // TexCoord5
+	"TC6",  // TexCoord6
+	"TC7",  // TexCoord7
+	"TC8",  // TexCoord8
+	"TC9",  // TexCoord9
+	"TC10", // TexCoord10
+	"TC11", // TexCoord11
+	"TC12", // TexCoord12
+	"TC13", // TexCoord13
+	"TC14", // TexCoord14
+	"TC15", // TexCoord15
 };
-BX_STATIC_ASSERT(BX_COUNTOF(s_attribShortNames) == bgfx::Attrib::Count);
+static_assert(BX_COUNTOF(s_attribShortNames) == bgfx::Attrib::Count);
 
 
 static const char* s_supportedExt[] =
@@ -150,7 +158,7 @@ static const char* s_bindingName[] =
 	"Help",
 	"About",
 };
-BX_STATIC_ASSERT(Binding::Count == BX_COUNTOF(s_bindingName) );
+static_assert(Binding::Count == BX_COUNTOF(s_bindingName) );
 
 static const InputBinding* s_binding[] =
 {
@@ -159,7 +167,7 @@ static const InputBinding* s_binding[] =
 	s_bindingHelp,
 	s_bindingAbout,
 };
-BX_STATIC_ASSERT(Binding::Count == BX_COUNTOF(s_binding) );
+static_assert(Binding::Count == BX_COUNTOF(s_binding) );
 
 static const char* s_filter = ""
 	"Bgfx geometry (bin) | *.bin\n"
@@ -339,13 +347,13 @@ struct View
 		{
 			if (0 == bx::strCmp(_argv[1], "file-up") )
 			{
-				m_fileIndex = bx::uint32_satsub(m_fileIndex, 1);
+				m_fileIndex = bx::satSub<uint32_t>(m_fileIndex, 1u);
 			}
 			else if (0 == bx::strCmp(_argv[1], "file-down") )
 			{
-				uint32_t numFiles = bx::uint32_satsub(uint32_t(m_fileList.size() ), 1);
+				uint32_t numFiles = bx::satSub<uint32_t>(uint32_t(m_fileList.size()), 1u);
 				++m_fileIndex;
-				m_fileIndex = bx::uint32_min(m_fileIndex, numFiles);
+				m_fileIndex = bx::min(m_fileIndex, numFiles);
 			}
 			else if (0 == bx::strCmp(_argv[1], "help") )
 			{
@@ -621,7 +629,7 @@ struct InterpolatorT
 		if (isActive() )
 		{
 			const double freq = double(bx::getHPFrequency() );
-			int64_t now = bx::getHPCounter();
+			const int64_t now = bx::getHPCounter();
 			float time = (float)(double(now - offset) / freq);
 			float lerp = bx::clamp(time, 0.0f, duration) / duration;
 			return lerpT(from, to, easeT(lerp) );
@@ -633,7 +641,7 @@ struct InterpolatorT
 	bool isActive() const
 	{
 		const double freq = double(bx::getHPFrequency() );
-		int64_t now = bx::getHPCounter();
+		const int64_t now = bx::getHPCounter();
 		float time = (float)(double(now - offset) / freq);
 		float lerp = bx::clamp(time, 0.0f, duration) / duration;
 		return lerp < 1.0f;
@@ -648,6 +656,12 @@ void keyBindingHelp(const char* _bindings, const char* _description)
 	ImGui::SameLine(140);
 	ImGui::Text("%s", _description);
 }
+
+static const bx::CommandLineOption s_options[] =
+{
+	{ 'h', "help",    0, NULL, "Help."                     },
+	{ 'v', "version", 0, NULL, "Version information only." },
+};
 
 void help(const char* _error = NULL)
 {
@@ -679,8 +693,12 @@ void help(const char* _error = NULL)
 	bx::printf(
 		  "\n"
 		  "Options:\n"
-		  "  -h, --help               Help.\n"
-		  "  -v, --version            Version information only.\n"
+		);
+
+	bx::Error err;
+	bx::write(bx::getStdOut(), s_options, BX_COUNTOF(s_options), &err);
+
+	bx::printf(
 		  "\n"
 		  "For additional information, see https://github.com/bkaradzic/bgfx\n"
 		);
@@ -688,7 +706,7 @@ void help(const char* _error = NULL)
 
 int _main_(int _argc, char** _argv)
 {
-	bx::CommandLine cmdLine(_argc, _argv);
+	bx::CommandLine cmdLine(_argc, _argv, s_options, BX_COUNTOF(s_options) );
 
 	if (cmdLine.hasArg('v', "version") )
 	{
@@ -767,7 +785,8 @@ int _main_(int _argc, char** _argv)
 			;
 	};
 
-	const char* filePath = _argc < 2 ? "" : _argv[1];
+	const char* filePath = cmdLine.getPositional(1);
+	filePath = NULL == filePath ? "" : filePath;
 
 	std::string path = filePath;
 	{
@@ -1124,8 +1143,6 @@ int _main_(int _argc, char** _argv)
 
 			if (ImGui::BeginPopupModal("About", &view.m_about, ImGuiWindowFlags_AlwaysAutoResize) )
 			{
-				ImGui::SetWindowFontScale(1.0f);
-
 				ImGui::Text(
 					"geometryv, bgfx geometry viewer tool " ICON_KI_WRENCH ", version %d.%d.%d.\n"
 					"Copyright 2019-2019 Attila Kocsis. All rights reserved.\n"
@@ -1149,8 +1166,6 @@ int _main_(int _argc, char** _argv)
 
 			if (ImGui::BeginPopupModal("Help", &view.m_help, ImGuiWindowFlags_AlwaysAutoResize) )
 			{
-				ImGui::SetWindowFontScale(1.0f);
-
 				ImGui::Text("Key bindings:\n\n");
 
 				ImGui::PushFont(ImGui::Font::Mono);
@@ -1253,7 +1268,7 @@ int _main_(int _argc, char** _argv)
 				entry::setWindowTitle(entry::kDefaultWindowHandle, title.c_str() );
 			}
 
-			int64_t now = bx::getHPCounter();
+			const int64_t now = bx::getHPCounter();
 			static int64_t last = now;
 			const int64_t frameTime = now - last;
 			last = now;

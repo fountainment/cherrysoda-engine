@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "spirv-tools/libspirv.h"
+#include "libspirv.h"
 
 namespace spvtools {
 
@@ -37,7 +37,7 @@ using InstructionParser =
     std::function<spv_result_t(const spv_parsed_instruction_t& instruction)>;
 
 // C++ RAII wrapper around the C context object spv_context.
-class Context {
+class SPIRV_TOOLS_EXPORT Context {
  public:
   // Constructs a context targeting the given environment |env|.
   //
@@ -73,7 +73,7 @@ class Context {
 };
 
 // A RAII wrapper around a validator options object.
-class ValidatorOptions {
+class SPIRV_TOOLS_EXPORT ValidatorOptions {
  public:
   ValidatorOptions() : options_(spvValidatorOptionsCreate()) {}
   ~ValidatorOptions() { spvValidatorOptionsDestroy(options_); }
@@ -126,6 +126,40 @@ class ValidatorOptions {
     spvValidatorOptionsSetAllowLocalSizeId(options_, val);
   }
 
+  // Allow Offset (in addition to ConstOffset) for texture
+  // operations. Was added for VK_KHR_maintenance8
+  void SetAllowOffsetTextureOperand(bool val) {
+    spvValidatorOptionsSetAllowOffsetTextureOperand(options_, val);
+  }
+
+  // Allow base operands of some bit operations to be non-32-bit wide.
+  // Was added for VK_KHR_maintenance9
+  void SetAllowVulkan32BitBitwise(bool val) {
+    spvValidatorOptionsSetAllowVulkan32BitBitwise(options_, val);
+  }
+
+  // Sets custom size and alignment for buffer and acceleration structure
+  // descriptor heap resources.
+  void SetBufferDescriptorLayout(uint32_t size, uint32_t alignment) {
+    spvValidatorOptionsSetBufferDescriptorLayout(options_, size, alignment);
+  }
+
+  // Sets custom size and alignment for image and sampled image descriptor heap
+  // resources.
+  void SetImageDescriptorLayout(uint32_t size, uint32_t alignment) {
+    spvValidatorOptionsSetImageDescriptorLayout(options_, size, alignment);
+  }
+
+  // Sets custom size and alignment for sampler descriptor heap resources.
+  void SetSamplerDescriptorLayout(uint32_t size, uint32_t alignment) {
+    spvValidatorOptionsSetSamplerDescriptorLayout(options_, size, alignment);
+  }
+
+  // Sets custom size and alignment for tensor descriptor heap resources.
+  void SetTensorDescriptorLayout(uint32_t size, uint32_t alignment) {
+    spvValidatorOptionsSetTensorDescriptorLayout(options_, size, alignment);
+  }
+
   // Records whether or not the validator should relax the rules on pointer
   // usage in logical addressing mode.
   //
@@ -163,7 +197,7 @@ class ValidatorOptions {
 };
 
 // A C++ wrapper around an optimization options object.
-class OptimizerOptions {
+class SPIRV_TOOLS_EXPORT OptimizerOptions {
  public:
   OptimizerOptions() : options_(spvOptimizerOptionsCreate()) {}
   ~OptimizerOptions() { spvOptimizerOptionsDestroy(options_); }
@@ -205,7 +239,7 @@ class OptimizerOptions {
 };
 
 // A C++ wrapper around a reducer options object.
-class ReducerOptions {
+class SPIRV_TOOLS_EXPORT ReducerOptions {
  public:
   ReducerOptions() : options_(spvReducerOptionsCreate()) {}
   ~ReducerOptions() { spvReducerOptionsDestroy(options_); }
@@ -236,7 +270,7 @@ class ReducerOptions {
 };
 
 // A C++ wrapper around a fuzzer options object.
-class FuzzerOptions {
+class SPIRV_TOOLS_EXPORT FuzzerOptions {
  public:
   FuzzerOptions() : options_(spvFuzzerOptionsCreate()) {}
   ~FuzzerOptions() { spvFuzzerOptionsDestroy(options_); }
@@ -283,7 +317,7 @@ class FuzzerOptions {
 // provides methods for assembling, disassembling, and validating.
 //
 // Instances of this class provide basic thread-safety guarantee.
-class SpirvTools {
+class SPIRV_TOOLS_EXPORT SpirvTools {
  public:
   enum {
     // Default assembling option used by assemble():
@@ -388,7 +422,8 @@ class SpirvTools {
   bool IsValid() const;
 
  private:
-  struct Impl;  // Opaque struct for holding the data fields used by this class.
+  struct SPIRV_TOOLS_LOCAL
+      Impl;  // Opaque struct for holding the data fields used by this class.
   std::unique_ptr<Impl> impl_;  // Unique pointer to implementation data.
 };
 

@@ -2,7 +2,7 @@ local codegen = require "codegen"
 local idl = codegen.idl "bgfx.idl"
 
 local zig_template = [[
-// Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+// Copyright 2011-2026 Branimir Karadzic. All rights reserved.
 // License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
 
 
@@ -65,6 +65,8 @@ local function convert_type_0(arg)
 		return arg.ctype:gsub("int32_t", "i32")
 	elseif hasPrefix(arg.ctype, "uint16_t") then
 		return arg.ctype:gsub("uint16_t", "u16")
+	elseif hasPrefix(arg.ctype, "int16_t") then
+		return arg.ctype:gsub("int16_t", "i16")
 	elseif hasPrefix(arg.ctype, "uint8_t") then
 		return arg.ctype:gsub("uint8_t", "u8")
 	elseif hasPrefix(arg.ctype, "uintptr_t") then
@@ -72,6 +74,8 @@ local function convert_type_0(arg)
 	elseif hasPrefix(arg.ctype, "float") then
 		return arg.ctype:gsub("float", "f32")
 	elseif arg.ctype == "const char*" then
+		return "[*c]const u8"
+	elseif arg.ctype == "const uint8_t*" then
 		return "[*c]const u8"
 	elseif hasPrefix(arg.ctype, "char") then
 		return arg.ctype:gsub("char", "u8")
@@ -284,6 +288,9 @@ function converter.types(params)
 
 		yield("pub const " .. typ.name .. " = extern struct {")
 		yield("    idx: c_ushort,")
+		if typ.tagged then
+		yield("    type: c_ushort,")
+		end
 		yield("};")
 	elseif hasSuffix(typ.name, "::Enum") then
 		lastCombinedFlagBlock()
@@ -404,6 +411,8 @@ end
 function converter.funcs(params)
 	local func = params.obj
 	if func.cpponly then
+		return
+	elseif func.cppinline and not func.conly then
 		return
 	end
 

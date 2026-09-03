@@ -94,11 +94,13 @@ spv_result_t ValidateExecutionScope(ValidationState_t& _,
 
   // Vulkan specific rules
   if (spvIsVulkanEnv(_.context()->target_env)) {
-    // Vulkan 1.1 specific rules
+    // Subgroups were not added until 1.1
     if (_.context()->target_env != SPV_ENV_VULKAN_1_0) {
       // Scope for Non Uniform Group Operations must be limited to Subgroup
-      if (spvOpcodeIsNonUniformGroupOperation(opcode) &&
-          value != spv::Scope::Subgroup) {
+      if ((spvOpcodeIsNonUniformGroupOperation(opcode) &&
+           (opcode != spv::Op::OpGroupNonUniformQuadAllKHR) &&
+           (opcode != spv::Op::OpGroupNonUniformQuadAnyKHR)) &&
+          (value != spv::Scope::Subgroup)) {
         return _.diag(SPV_ERROR_INVALID_DATA, inst)
                << _.VkErrorID(4642) << spvOpcodeString(opcode)
                << ": in Vulkan environment Execution scope is limited to "
@@ -137,6 +139,15 @@ spv_result_t ValidateExecutionScope(ValidationState_t& _,
           });
     }
 
+    if (opcode == spv::Op::OpControlBarrierArriveEXT ||
+        opcode == spv::Op::OpControlBarrierWaitEXT) {
+      if (value != spv::Scope::Workgroup && value != spv::Scope::Subgroup) {
+        return _.diag(SPV_ERROR_INVALID_DATA, inst)
+               << _.VkErrorID(13553)
+               << "The execution Scope for OpControlBarrierArriveEXT and "
+                  "OpControlBarrierWaitEXT must be Workgroup or Subgroup";
+      }
+    }
     // Only subset of execution models support Workgroup.
     if (value == spv::Scope::Workgroup) {
       std::string errorVUID = _.VkErrorID(4637);
@@ -175,9 +186,19 @@ spv_result_t ValidateExecutionScope(ValidationState_t& _,
   // TODO(atgoo@github.com) Add checks for OpenCL and OpenGL environments.
 
   // General SPIRV rules
-  // Scope for execution must be limited to Workgroup or Subgroup for
-  // non-uniform operations
+  // OpGroupNonUniformRotateKHR is the only non-uniform group operation that
+  // allows Workgroup scope; all others are limited to Subgroup.
   if (spvOpcodeIsNonUniformGroupOperation(opcode) &&
+      opcode != spv::Op::OpGroupNonUniformQuadAllKHR &&
+      opcode != spv::Op::OpGroupNonUniformQuadAnyKHR &&
+      opcode != spv::Op::OpGroupNonUniformRotateKHR &&
+      value != spv::Scope::Subgroup) {
+    return _.diag(SPV_ERROR_INVALID_DATA, inst)
+           << spvOpcodeString(opcode) << ": Execution scope is limited to "
+           << "Subgroup";
+  }
+
+  if (opcode == spv::Op::OpGroupNonUniformRotateKHR &&
       value != spv::Scope::Subgroup && value != spv::Scope::Workgroup) {
     return _.diag(SPV_ERROR_INVALID_DATA, inst)
            << spvOpcodeString(opcode)

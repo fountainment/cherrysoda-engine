@@ -135,7 +135,7 @@ public:
 	{
 		bxString filePath(s_currentDir);
 		filePath.append(_filePath);
-		return super::open(filePath.getPtr(), _err);
+		return super::open(filePath.getCPtr(), _err);
 	}
 };
 
@@ -148,7 +148,7 @@ public:
 	{
 		bxString filePath(s_currentDir);
 		filePath.append(_filePath);
-		return super::open(filePath.getPtr(), _append, _err);
+		return super::open(filePath.getCPtr(), _append, _err);
 	}
 };
 
@@ -289,7 +289,6 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 	switch (bgfx::getRendererType())
 	{
 	case bgfx::RendererType::Noop:
-	case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
 	case bgfx::RendererType::Direct3D11:
 	case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
 	case bgfx::RendererType::Agc:
@@ -303,7 +302,7 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 	case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
 #endif
 	case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
-	case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
+	case bgfx::RendererType::WebGPU:     shaderPath = "shaders/wgsl/";  break;
 
 	case bgfx::RendererType::Count:
 		CHERRYSODA_ASSERT(false, "You should not be here!");
@@ -472,7 +471,7 @@ void Graphics::Initialize()
 
 	const bgfx::Caps* caps = bgfx::getCaps();
 	ms_originBottomLeft = caps->originBottomLeft;
-	ms_texelHalf = bgfx::RendererType::Direct3D9 == caps->rendererType ? 0.5f : 0.0f;
+	ms_texelHalf = 0.0f;
 
 	PosColorVertex::Init();
 	PosColorNormalVertex::Init();

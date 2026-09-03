@@ -15,6 +15,7 @@
 #include <limits.h>
 #include <sal.h>
 
+#if !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 // Note: using fixed-width here to match Windows widths
 // Specifically this is different for 'long' vs 'LONG'
 typedef uint8_t UINT8;
@@ -60,6 +61,7 @@ typedef char CHAR, *PSTR, *LPSTR, TCHAR, *PTSTR;
 typedef const char *LPCSTR, *PCSTR, *LPCTSTR, *PCTSTR;
 typedef wchar_t WCHAR, *PWSTR, *LPWSTR, *PWCHAR;
 typedef const wchar_t *LPCWSTR, *PCWSTR;
+#endif // !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 
 #undef LONG_MAX
 #define LONG_MAX INT_MAX
@@ -102,6 +104,7 @@ typedef struct tagPOINT
     int y;
 } POINT;
 
+#if !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 typedef struct _GUID {
     uint32_t Data1;
     uint16_t Data2;
@@ -152,6 +155,8 @@ inline bool operator!=(REFGUID guidOne, REFGUID guidOther)
 #define REFCLSID const IID *
 #endif
 
+#endif // !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
+
 // Calling conventions
 #define __cdecl
 #define __stdcall
@@ -201,6 +206,7 @@ extern "C++"
 #define END_INTERFACE
 #endif
 
+#if !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 // Error codes
 typedef LONG HRESULT;
 #define SUCCEEDED(hr)  (((HRESULT)(hr)) >= 0)
@@ -217,6 +223,7 @@ typedef LONG HRESULT;
 #define E_FAIL         ((HRESULT)0x80004005L)
 #define E_ACCESSDENIED ((HRESULT)0x80070005L)
 #define E_UNEXPECTED   ((HRESULT)0x8000FFFFL)
+#define DXGI_ERROR_ACCESS_DENIED ((HRESULT)0x887A002BL)
 #define DXGI_ERROR_INVALID_CALL ((HRESULT)0x887A0001L)
 #define DXGI_ERROR_NOT_FOUND ((HRESULT)0x887A0002L)
 #define DXGI_ERROR_MORE_DATA ((HRESULT)0x887A0003L)
@@ -225,6 +232,7 @@ typedef LONG HRESULT;
 #define DXGI_ERROR_DEVICE_HUNG ((HRESULT)0x887A0006L)
 #define DXGI_ERROR_DEVICE_RESET ((HRESULT)0x887A0007L)
 #define DXGI_ERROR_DRIVER_INTERNAL_ERROR ((HRESULT)0x887A0020L)
+#endif // !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 
 typedef struct _LUID
 {
@@ -240,6 +248,7 @@ typedef struct _RECT
     int bottom;
 } RECT;
 
+#if !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 typedef union _LARGE_INTEGER {
   struct {
     uint32_t LowPart;
@@ -271,6 +280,7 @@ typedef struct _SECURITY_ATTRIBUTES {
 } SECURITY_ATTRIBUTES;
 
 struct STATSTG;
+#endif // !defined(LLVM_SUPPORT_WIN_ADAPTER_H)
 
 #ifdef __cplusplus
 // ENUM_FLAG_OPERATORS

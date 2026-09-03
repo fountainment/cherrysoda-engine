@@ -45,9 +45,15 @@ spv_result_t DerivativesPass(ValidationState_t& _, const Instruction* inst) {
                << spvOpcodeString(opcode);
       }
       if (!_.ContainsSizedIntOrFloatType(result_type, spv::Op::OpTypeFloat,
-                                         32)) {
+                                         32) &&
+          (!_.HasExtension(kSPV_AMD_gpu_shader_half_float) ||
+           !_.ContainsSizedIntOrFloatType(result_type, spv::Op::OpTypeFloat,
+                                          16))) {
         return _.diag(SPV_ERROR_INVALID_DATA, inst)
-               << "Result type component width must be 32 bits";
+               << "Result type component width must be "
+               << (_.HasExtension(kSPV_AMD_gpu_shader_half_float)
+                       ? "16 bits or 32 bits"
+                       : "32 bits");
       }
 
       const uint32_t p_type = _.GetOperandTypeId(inst, 2);
@@ -60,12 +66,14 @@ spv_result_t DerivativesPass(ValidationState_t& _, const Instruction* inst) {
           ->RegisterExecutionModelLimitation([opcode](spv::ExecutionModel model,
                                                       std::string* message) {
             if (model != spv::ExecutionModel::Fragment &&
-                model != spv::ExecutionModel::GLCompute) {
+                model != spv::ExecutionModel::GLCompute &&
+                model != spv::ExecutionModel::MeshEXT &&
+                model != spv::ExecutionModel::TaskEXT) {
               if (message) {
                 *message =
                     std::string(
-                        "Derivative instructions require Fragment or GLCompute "
-                        "execution model: ") +
+                        "Derivative instructions require Fragment, GLCompute, "
+                        "MeshEXT or TaskEXT execution model: ") +
                     spvOpcodeString(opcode);
               }
               return false;
@@ -79,19 +87,24 @@ spv_result_t DerivativesPass(ValidationState_t& _, const Instruction* inst) {
             const auto* models = state.GetExecutionModels(entry_point->id());
             const auto* modes = state.GetExecutionModes(entry_point->id());
             if (models &&
-                models->find(spv::ExecutionModel::GLCompute) != models->end() &&
+                (models->find(spv::ExecutionModel::GLCompute) !=
+                     models->end() ||
+                 models->find(spv::ExecutionModel::MeshEXT) != models->end() ||
+                 models->find(spv::ExecutionModel::TaskEXT) != models->end()) &&
+                (state.HasExtension(kSPV_KHR_compute_shader_derivatives)) &&
                 (!modes ||
-                 (modes->find(spv::ExecutionMode::DerivativeGroupLinearNV) ==
+                 (modes->find(spv::ExecutionMode::DerivativeGroupLinearKHR) ==
                       modes->end() &&
-                  modes->find(spv::ExecutionMode::DerivativeGroupQuadsNV) ==
+                  modes->find(spv::ExecutionMode::DerivativeGroupQuadsKHR) ==
                       modes->end()))) {
               if (message) {
-                *message = std::string(
-                               "Derivative instructions require "
-                               "DerivativeGroupQuadsNV "
-                               "or DerivativeGroupLinearNV execution mode for "
-                               "GLCompute execution model: ") +
-                           spvOpcodeString(opcode);
+                *message =
+                    std::string(
+                        "Derivative instructions require "
+                        "DerivativeGroupQuadsKHR "
+                        "or DerivativeGroupLinearKHR execution mode for "
+                        "GLCompute, MeshEXT or TaskEXT execution model: ") +
+                    spvOpcodeString(opcode);
               }
               return false;
             }

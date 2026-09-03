@@ -88,10 +88,11 @@ TPpContext::TPpContext(TParseContextBase& pc, const std::string& rootFileName, T
     preamble(nullptr), strings(nullptr), previous_token('\n'), parseContext(pc), includer(inclr), inComment(false),
     rootFileName(rootFileName),
     currentSourceFile(rootFileName),
-    disableEscapeSequences(false)
+    disableEscapeSequences(false),
+    inElseSkip(false)
 {
     ifdepth = 0;
-    for (elsetracker = 0; elsetracker < maxIfNesting; elsetracker++)
+    for (elsetracker = 0; elsetracker <= maxIfNesting; elsetracker++)
         elseSeen[elsetracker] = false;
     elsetracker = 0;
 

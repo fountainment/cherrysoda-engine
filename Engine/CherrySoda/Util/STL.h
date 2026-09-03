@@ -390,13 +390,14 @@ public:
 	template <typename T>
 	static inline void Shuffle(T& container)
 	{
-		std::random_shuffle(container.begin(), container.end());
+		std::random_device rd;
+		std::shuffle(container.begin(), container.end(), rd);
 	}
 
 	template <typename T, typename U>
 	static inline void Shuffle(T& container, U& random)
 	{
-		std::random_shuffle(container.begin(), container.end(), random);
+		std::shuffle(container.begin(), container.end(), random);
 	}
 };
 

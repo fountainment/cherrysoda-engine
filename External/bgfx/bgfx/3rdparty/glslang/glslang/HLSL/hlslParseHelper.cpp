@@ -43,8 +43,6 @@
 #include "../MachineIndependent/Scan.h"
 #include "../MachineIndependent/preprocessor/PpContext.h"
 
-#include "../OSDependent/osinclude.h"
-
 #include <algorithm>
 #include <functional>
 #include <cctype>
@@ -52,6 +50,16 @@
 #include <set>
 
 namespace glslang {
+
+static bool isLayoutSetOutOfRange(int value, bool relaxSetBindingLimits)
+{
+    return value < 0 || (!relaxSetBindingLimits && value >= static_cast<int>(TQualifier::layoutSetEnd));
+}
+
+static bool isLayoutBindingOutOfRange(int value, bool relaxSetBindingLimits)
+{
+    return value < 0 || (!relaxSetBindingLimits && value >= static_cast<int>(TQualifier::layoutBindingEnd));
+}
 
 HlslParseContext::HlslParseContext(TSymbolTable& symbolTable, TIntermediate& interm, bool parsingBuiltins,
                                    int version, EProfile profile, const SpvVersion& spvVersion, EShLanguage language,
@@ -402,7 +410,7 @@ TIntermTyped* HlslParseContext::handleLvalue(const TSourceLoc& loc, const char* 
         case EOpLeftShiftAssign:
         case EOpRightShiftAssign:
             isModifyOp = true;
-            // fall through...
+            [[fallthrough]];
         case EOpAssign:
             {
                 // Since this is an lvalue, we'll convert an image load to a sequence like this
@@ -583,8 +591,8 @@ bool HlslParseContext::parseMatrixSwizzleSelector(const TSourceLoc& loc, const T
                 error(loc, "matrix component swizzle has too many components", compString.c_str(), "");
                 return false;
             }
-            if (c > compString.size() - 3 ||
-                    ((compString[c+1] == 'm' || compString[c+1] == 'M') && c > compString.size() - 4)) {
+            if (c + 3 > compString.size() ||
+                    ((compString[c+1] == 'm' || compString[c+1] == 'M') && c + 4 > compString.size())) {
                 error(loc, "matrix component swizzle missing", compString.c_str(), "");
                 return false;
             }
@@ -803,9 +811,16 @@ TIntermTyped* HlslParseContext::handleBracketDereference(const TSourceLoc& loc, 
         return result;  // it was handled as an operator[]
 
     bool flattened = false;
-    int indexValue = 0;
-    if (index->getQualifier().isFrontEndConstant())
-        indexValue = index->getAsConstantUnion()->getConstArray()[0].getIConst();
+    int64_t indexValue = 0;
+    if (index->getQualifier().isFrontEndConstant()) {
+        if (index->getType().contains64BitInt()) {
+            indexValue = index->getAsConstantUnion()->getConstArray()[0].getI64Const();
+        } else if (index->getType().getBasicType() == EbtUint) {
+            indexValue = index->getAsConstantUnion()->getConstArray()[0].getUConst();
+        } else {
+            indexValue = index->getAsConstantUnion()->getConstArray()[0].getIConst();
+        }
+    }
 
     variableCheck(base);
     if (! base->isArray() && ! base->isMatrix() && ! base->isVector()) {
@@ -962,14 +977,11 @@ TIntermTyped* HlslParseContext::handleDotDereference(const TSourceLoc& loc, TInt
                 return addConstructor(loc, base, type);
             }
         }
-        if (base->getVectorSize() == 1) {
+        // Use EOpIndexDirect (below) with vec1.x so that it remains l-value (Test/hlsl.swizzle.vec1.comp)
+        if (base->getVectorSize() == 1 && selectors.size() > 1) {
             TType scalarType(base->getBasicType(), EvqTemporary, 1);
-            if (selectors.size() == 1)
-                return addConstructor(loc, base, scalarType);
-            else {
-                TType vectorType(base->getBasicType(), EvqTemporary, selectors.size());
-                return addConstructor(loc, addConstructor(loc, base, scalarType), vectorType);
-            }
+            TType vectorType(base->getBasicType(), EvqTemporary, selectors.size());
+            return addConstructor(loc, addConstructor(loc, base, scalarType), vectorType);
         }
 
         if (base->getType().getQualifier().isFrontEndConstant())
@@ -1251,7 +1263,7 @@ int HlslParseContext::addFlattenedMember(const TVariable& variable, const TType&
         TVariable* memberVariable = makeInternalVariable(memberName, type);
         mergeQualifiers(memberVariable->getWritableType().getQualifier(), variable.getType().getQualifier());
 
-        if (flattenData.nextBinding != TQualifier::layoutBindingEnd)
+        if (flattenData.nextBinding != TQualifier::layoutNotSet)
             memberVariable->getWritableType().getQualifier().layoutBinding = flattenData.nextBinding++;
 
         if (memberVariable->getType().isBuiltIn()) {
@@ -1401,7 +1413,7 @@ TIntermTyped* HlslParseContext::flattenAccess(long long uniqueId, int member, TS
 
         // If this is not the final flattening, accumulate the position and return
         // an object of the partially dereferenced type.
-        subsetSymbol = new TIntermSymbol(uniqueId, "flattenShadow", dereferencedType);
+        subsetSymbol = new TIntermSymbol(uniqueId, "flattenShadow", getLanguage(), dereferencedType);
         subsetSymbol->setFlattenSubset(newSubset);
     }
 
@@ -1444,7 +1456,7 @@ int HlslParseContext::findSubtreeOffset(const TType& type, int subset, const TVe
         return offsets[subset];
     TType derefType(type, 0);
     return findSubtreeOffset(derefType, offsets[subset], offsets);
-};
+}
 
 // Find and return the split IO TVariable for id, or nullptr if none.
 TVariable* HlslParseContext::getSplitNonIoVar(long long id) const
@@ -1753,6 +1765,12 @@ void HlslParseContext::handleEntryPointAttributes(const TSourceLoc& loc, const T
         case EatNumThreads:
         {
             const TIntermSequence& sequence = it->args->getSequence();
+            // numthreads has three dimensions (x, y, z); localSize is sized to match,
+            // so reject extra arguments rather than indexing past it.
+            if (sequence.size() > 3) {
+                error(loc, "expected at most three arguments", "numthreads", "");
+                break;
+            }
             for (int lid = 0; lid < int(sequence.size()); ++lid)
                 intermediate.setLocalSize(lid, sequence[lid]->getAsConstantUnion()->getConstArray()[0].getIConst());
             break;
@@ -1975,7 +1993,7 @@ void HlslParseContext::transferTypeAttributes(const TSourceLoc& loc, const TAttr
             if (it->getInt(value)) {
                 TSourceLoc loc;
                 loc.init();
-                setSpecConstantId(loc, type.getQualifier(), value);
+                setSpecConstantId(loc, type.getQualifier(), (unsigned)value);
             }
             break;
 
@@ -3516,10 +3534,53 @@ void HlslParseContext::decomposeStructBufferMethods(const TSourceLoc& loc, TInte
     if (argArray == nullptr)
         return;  // It might not be a struct buffer method.
 
+    // These builtins resolve by name against a zero-parameter prototype, so normal
+    // overload resolution never checks the argument count. Validate it here before
+    // indexing the argument sequence, otherwise a call with too few arguments reads
+    // past the end of the aggregate (or dereferences a null aggregate for a bare
+    // buffer object with no arguments).
+    const int argCount = argAggregate ? (int)argAggregate->getSequence().size() : 1;
+    int minArgCount = 1; // the buffer object at index 0
+    switch (op) {
+    case EOpMethodLoad:
+    case EOpMethodLoad2:
+    case EOpMethodLoad3:
+    case EOpMethodLoad4:
+    case EOpMethodGetDimensions:
+    case EOpMethodAppend:
+    case EOpInterlockedAdd:
+    case EOpInterlockedAnd:
+    case EOpInterlockedExchange:
+    case EOpInterlockedMax:
+    case EOpInterlockedMin:
+    case EOpInterlockedOr:
+    case EOpInterlockedXor:
+    case EOpInterlockedCompareExchange:
+    case EOpInterlockedCompareStore:
+        minArgCount = 2;
+        break;
+    case EOpMethodStore:
+    case EOpMethodStore2:
+    case EOpMethodStore3:
+    case EOpMethodStore4:
+        minArgCount = 3;
+        break;
+    default:
+        break;
+    }
+    if (argCount < minArgCount) {
+        error(loc, "too few arguments to buffer method", "", "");
+        return;
+    }
+
     switch (op) {
     case EOpMethodLoad:
         {
             TIntermTyped* argIndex = makeIntegerIndex(argAggregate->getSequence()[1]->getAsTyped());  // index
+            if (argIndex == nullptr) {
+                error(loc, "invalid index for Load", "", "");
+                return;
+            }
 
             const TType& bufferType = bufferObj->getType();
 
@@ -3552,6 +3613,10 @@ void HlslParseContext::decomposeStructBufferMethods(const TSourceLoc& loc, TInte
     case EOpMethodLoad4:
         {
             TIntermTyped* argIndex = makeIntegerIndex(argAggregate->getSequence()[1]->getAsTyped());  // index
+            if (argIndex == nullptr) {
+                error(loc, "invalid index for vector Load", "", "");
+                return;
+            }
 
             TOperator constructOp = EOpNull;
             int size = 0;
@@ -3619,6 +3684,10 @@ void HlslParseContext::decomposeStructBufferMethods(const TSourceLoc& loc, TInte
     case EOpMethodStore4:
         {
             TIntermTyped* argIndex = makeIntegerIndex(argAggregate->getSequence()[1]->getAsTyped());  // index
+            if (argIndex == nullptr) {
+                error(loc, "invalid index for Store", "", "");
+                return;
+            }
             TIntermTyped* argValue = argAggregate->getSequence()[2]->getAsTyped();  // value
 
             // Index into the array to find the item being loaded.
@@ -3738,6 +3807,10 @@ void HlslParseContext::decomposeStructBufferMethods(const TSourceLoc& loc, TInte
             TIntermSequence& sequence = argAggregate->getSequence();
 
             TIntermTyped* argIndex     = makeIntegerIndex(sequence[1]->getAsTyped());  // index
+            if (argIndex == nullptr) {
+                error(loc, "invalid destination address for interlocked operation", "", "");
+                return;
+            }
             argIndex = intermediate.addBinaryNode(EOpRightShift, argIndex, intermediate.addConstantUnion(2, loc, true),
                                                   loc, TType(EbtInt));
 
@@ -4507,13 +4580,13 @@ void HlslParseContext::decomposeSampleMethods(const TSourceLoc& loc, TIntermType
             int cmpValues = 0;  // 1 if there is a compare value (handier than a bool below)
 
             switch (op) {
-            case EOpMethodGatherCmpRed:   cmpValues = 1;  // fall through
+            case EOpMethodGatherCmpRed:   cmpValues = 1;  [[fallthrough]];
             case EOpMethodGatherRed:      channel = 0; break;
-            case EOpMethodGatherCmpGreen: cmpValues = 1;  // fall through
+            case EOpMethodGatherCmpGreen: cmpValues = 1;  [[fallthrough]];
             case EOpMethodGatherGreen:    channel = 1; break;
-            case EOpMethodGatherCmpBlue:  cmpValues = 1;  // fall through
+            case EOpMethodGatherCmpBlue:  cmpValues = 1;  [[fallthrough]];
             case EOpMethodGatherBlue:     channel = 2; break;
-            case EOpMethodGatherCmpAlpha: cmpValues = 1;  // fall through
+            case EOpMethodGatherCmpAlpha: cmpValues = 1;  [[fallthrough]];
             case EOpMethodGatherAlpha:    channel = 3; break;
             default:                      assert(0);   break;
             }
@@ -5564,6 +5637,7 @@ TIntermTyped* HlslParseContext::handleFunctionCall(const TSourceLoc& loc, TFunct
                 callerName = fnCandidate->getMangledName();
             else {
                 // get the explicit (full) name of the function
+                assert(currentTypePrefix.size() >= size_t(thisDepth));
                 callerName = currentTypePrefix[currentTypePrefix.size() - thisDepth];
                 callerName += fnCandidate->getMangledName();
                 // insert the implicit calling argument
@@ -5811,6 +5885,7 @@ void HlslParseContext::addInputArgumentConversions(const TFunction& function, TI
                     internalAggregate->getWritableType().getQualifier().makeTemporary();
                     TIntermSymbol* internalSymbolNode = new TIntermSymbol(internalAggregate->getUniqueId(),
                                                                           internalAggregate->getName(),
+                                                                          getLanguage(),
                                                                           internalAggregate->getType());
                     internalSymbolNode->setLoc(arg->getLoc());
                     // This makes the deepest level, the member-wise copy
@@ -6062,7 +6137,7 @@ void HlslParseContext::builtInOpCheck(const TSourceLoc& loc, const TFunction& fn
         unaryArg = callNode.getAsUnaryNode()->getOperand();
         arg0 = unaryArg;
     }
-    const TIntermSequence& aggArgs = *argp;  // only valid when unaryArg is nullptr
+    const TIntermSequence& aggArgs = argp ? *argp : TIntermSequence();  // only valid when unaryArg is nullptr
 
     switch (callNode.getOp()) {
     case EOpTextureGather:
@@ -7297,14 +7372,14 @@ void HlslParseContext::setLayoutQualifier(const TSourceLoc& loc, TQualifier& qua
             qualifier.layoutLocation = value;
         return;
     } else if (id == "set") {
-        if ((unsigned int)value >= TQualifier::layoutSetEnd)
-            error(loc, "set is too large", id.c_str(), "");
+        if (isLayoutSetOutOfRange(value, relaxSetBindingLimits()))
+            error(loc, "set is out of range", id.c_str(), "");
         else
             qualifier.layoutSet = value;
         return;
     } else if (id == "binding") {
-        if ((unsigned int)value >= TQualifier::layoutBindingEnd)
-            error(loc, "binding is too large", id.c_str(), "");
+        if (isLayoutBindingOutOfRange(value, relaxSetBindingLimits()))
+            error(loc, "binding is out of range", id.c_str(), "");
         else
             qualifier.layoutBinding = value;
         return;
@@ -7360,7 +7435,7 @@ void HlslParseContext::setLayoutQualifier(const TSourceLoc& loc, TQualifier& qua
         return;
     }
     if (id == "constant_id") {
-        setSpecConstantId(loc, qualifier, value);
+        setSpecConstantId(loc, qualifier, (unsigned)value);
         return;
     }
 
@@ -7455,9 +7530,9 @@ void HlslParseContext::setLayoutQualifier(const TSourceLoc& loc, TQualifier& qua
     error(loc, "there is no such layout identifier for this stage taking an assigned value", id.c_str(), "");
 }
 
-void HlslParseContext::setSpecConstantId(const TSourceLoc& loc, TQualifier& qualifier, int value)
+void HlslParseContext::setSpecConstantId(const TSourceLoc& loc, TQualifier& qualifier, unsigned value)
 {
-    if (value >= (int)TQualifier::layoutSpecConstantIdEnd) {
+    if (value >= TQualifier::layoutSpecConstantIdEnd) {
         error(loc, "specialization-constant id is too large", "constant_id", "");
     } else {
         qualifier.layoutSpecConstantId = value;
@@ -7515,7 +7590,7 @@ void HlslParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQuali
 
         if (src.hasSet())
             dst.layoutSet = src.layoutSet;
-        if (src.layoutBinding != TQualifier::layoutBindingEnd)
+        if (src.hasBinding())
             dst.layoutBinding = src.layoutBinding;
 
         if (src.hasXfbStride())
@@ -9551,6 +9626,8 @@ bool HlslParseContext::isInputBuiltIn(const TQualifier& qualifier) const
         return language == EShLangTessEvaluation;
     case EbvTessCoord:
         return language == EShLangTessEvaluation;
+    case EbvViewIndex:
+        return language != EShLangCompute;
     default:
         return false;
     }
@@ -9655,6 +9732,10 @@ void HlslParseContext::correctOutput(TQualifier& qualifier)
         qualifier.clearXfbLayout();
     if (language != EShLangTessControl)
         qualifier.patch = false;
+
+    // Fixes Test/hlsl.entry-inout.vert (SV_Position will not become a varying).
+    if (qualifier.builtIn == EbvNone)
+        qualifier.builtIn = qualifier.declaredBuiltIn;
 
     switch (qualifier.builtIn) {
     case EbvFragDepth:

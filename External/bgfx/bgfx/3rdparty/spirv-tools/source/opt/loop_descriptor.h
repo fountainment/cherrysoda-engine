@@ -28,6 +28,7 @@
 #include "source/opt/dominator_analysis.h"
 #include "source/opt/module.h"
 #include "source/opt/tree_iterator.h"
+#include "source/util/status.h"
 
 namespace spvtools {
 namespace opt {
@@ -241,12 +242,12 @@ class Loop {
   Instruction* FindConditionVariable(const BasicBlock* condition) const;
 
   // Returns the number of iterations within a loop when given the |induction|
-  // variable and the loop |condition| check. It stores the found number of
+  // variable and the loop |branch| instruction. It stores the found number of
   // iterations in the output parameter |iterations| and optionally, the step
-  // value in |step_value| and the initial value of the induction variable in
+  // value in |step_amount| and the initial value of the induction variable in
   // |init_value|.
   bool FindNumberOfIterations(const Instruction* induction,
-                              const Instruction* condition, size_t* iterations,
+                              const Instruction* branch, size_t* iterations,
                               int64_t* step_amount = nullptr,
                               int64_t* init_value = nullptr) const;
 
@@ -425,6 +426,9 @@ class LoopDescriptor {
   using pre_iterator = TreeDFIterator<Loop>;
   using const_pre_iterator = TreeDFIterator<const Loop>;
 
+  // The status of processing a module.
+  using Status = utils::Status;
+
   // Creates a loop object for all loops found in |f|.
   LoopDescriptor(IRContext* context, const Function* f);
 
@@ -506,9 +510,11 @@ class LoopDescriptor {
     loops_to_add_.emplace_back(std::make_pair(parent, std::move(loop_to_add)));
   }
 
-  // Checks all loops in |this| and will create pre-headers for all loops
-  // that don't have one. Returns |true| if any blocks were created.
-  bool CreatePreHeaderBlocksIfMissing();
+  // Creates pre-header blocks for all loops in the function that do not have
+  // one. Returns `LoopDescriptor::Status::kSuccessWithChange` if any change is
+  // made, `LoopDescriptor::Status::kSuccessWithoutChange` if no change is made,
+  // and `LoopDescriptor::Status::kFailure` if it fails to create a pre-header.
+  Status CreatePreHeaderBlocksIfMissing();
 
   // Should be called to preserve the LoopAnalysis after loops have been marked
   // for addition with AddLoop or MarkLoopForRemoval.

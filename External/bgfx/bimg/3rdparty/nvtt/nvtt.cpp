@@ -1,12 +1,12 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bimg/blob/master/LICENSE
  */
 
 #include "nvtt.h"
 
 #include <string.h>
-#include <bx/uint32_t.h>
+#include <bx/math.h>
 
 BX_PRAGMA_DIAGNOSTIC_PUSH();
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4458) // warning C4458: declaration of 'x' hides class member

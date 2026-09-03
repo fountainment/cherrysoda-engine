@@ -359,8 +359,8 @@ function codegen.nameconversion(all_types, all_funcs)
 	end
 
 	local funcs = {}
-	local funcs_conly = {}
 	local funcs_alter = {}
+	local pending_conly = {}
 
 	for _,v in ipairs(all_funcs) do
 		if v.cname == nil then
@@ -382,7 +382,20 @@ function codegen.nameconversion(all_types, all_funcs)
 		end
 
 		if v.conly then
-			table.insert(funcs_conly, v)
+			local key = (v.class or "") .. "." .. v.name
+			if not pending_conly[key] then
+				pending_conly[key] = {}
+			end
+			table.insert(pending_conly[key], v)
+		elseif not v.cpponly then
+			local key = (v.class or "") .. "." .. v.name
+			local pending = pending_conly[key]
+			if pending then
+				local conly_sibling = table.remove(pending)
+				if conly_sibling then
+					v.multicfunc = { v.cname, conly_sibling.cname }
+				end
+			end
 		end
 
 		for _, arg in ipairs(v.args) do
@@ -407,14 +420,6 @@ function codegen.nameconversion(all_types, all_funcs)
 			v.this_type = classtype
 			v.this_conversion = string.format( "%s This = (%s)_this;", classtype.cpptype, classtype.cpptype)
 			v.this_to_c = string.format("(%s)this", classtype.ctype)
-		end
-	end
-
-	for _, v in ipairs(funcs_conly) do
-		local func = funcs[v.name]
-		if func then
-			func.multicfunc = func.multicfunc or { func.cname }
-			table.insert(func.multicfunc, v.cname)
 		end
 	end
 
@@ -466,7 +471,8 @@ local function codetemp(func)
 		if arg.array then
 			cname = cname .. (arg.carray or arg.array)
 		end
-		local name = arg.fulltype .. " " .. arg.name
+		local argtype = arg.fulltype:gsub("%s+&", "&")
+		local name = argtype .. " " .. arg.name
 		if arg.array then
 			name = name .. arg.array
 		end
@@ -527,7 +533,7 @@ local function codetemp(func)
 	end
 
 	return {
-		RET = func.ret.fulltype,
+		RET = func.ret.fulltype:gsub("%s+&", "&"),
 		CRET = func.ret.ctype,
 		CFUNCNAME = func.cname,
 		CFUNCNAMEUPPER = func.cname:upper(),
@@ -572,19 +578,65 @@ function codegen.gen_cfuncptr(funcptr)
 	return apply_template(funcptr, "typedef $CRET (*$CFUNCNAME)($CARGS);")
 end
 
-local function doxygen_funcret(r, func, prefix)
-	if not func or func.ret.fulltype == "void" or func.ret.comment == nil then
+-- Split doxygen comment body into description lines and tagged sections.
+-- Tagged sections start with @tagname and include continuation lines.
+local function split_doxygen_tags(doxygen)
+	local desc = {}
+	local tagged = {}
+	local current = nil
+
+	local normalize = { remark = "remarks" }
+	for _, line in ipairs(doxygen) do
+		local tag = line:match("^@(%w+)")
+		if tag then
+			if normalize[tag] then
+				line = line:gsub("^@" .. tag, "@" .. normalize[tag], 1)
+				tag = normalize[tag]
+			end
+			current = { tag = tag, lines = {line} }
+			tagged[#tagged+1] = current
+		elseif current then
+			current.lines[#current.lines+1] = line
+		else
+			desc[#desc+1] = line
+		end
+	end
+
+	return desc, tagged
+end
+
+-- Emit tagged sections matching given tag names, with prefix for each line.
+local function emit_tagged_sections(result, tagged, prefix, tags)
+	for _, section in ipairs(tagged) do
+		for _, tag in ipairs(tags) do
+			if section.tag == tag then
+				result[#result+1] = prefix
+				for _, line in ipairs(section.lines) do
+					result[#result+1] = prefix .. " " .. line
+				end
+				break
+			end
+		end
+	end
+end
+
+local function doxygen_funcret(r, func, prefix, cont, strip)
+	if not func or not func.ret or func.ret.fulltype == "void" or func.ret.comment == nil then
 		return
 	end
 	r[#r+1] = prefix
 	r[#r+1] = string.format("%s @returns %s", prefix, func.ret.comment[1])
 	for i = 2,#func.ret.comment do
-		r[#r+1] = string.format("%s  %s", prefix, func.ret.comment[i])
+		local text = func.ret.comment[i]
+		if strip then
+			text = text:match("^%s*(.*)$")
+		end
+		r[#r+1] = string.format("%s%s%s", prefix, cont, text)
 	end
 	return r
 end
 
-local function doxygen_func(r, func, prefix)
+local function doxygen_func(r, func, prefix, cont, strip)
 	if not func or not func.args or #func.args == 0 then
 		return
 	end
@@ -594,7 +646,7 @@ local function doxygen_func(r, func, prefix)
 		if arg.out then
 			inout = "out"
 		elseif arg.inout then
-			inout = "inout"
+			inout = "in,out"
 		else
 			inout = "in"
 		end
@@ -602,13 +654,16 @@ local function doxygen_func(r, func, prefix)
 		if arg.comment then
 			r[#r+1] = comment .. " " .. arg.comment[1]
 			for i = 2,#arg.comment do
-				r[#r+1] = string.format("%s  %s", prefix, arg.comment[i])
+				local text = arg.comment[i]
+				if strip then
+					text = text:match("^%s*(.*)$")
+				end
+				r[#r+1] = string.format("%s%s%s", prefix, cont, text)
 			end
 		else
 			r[#r+1] = comment
 		end
 	end
-	doxygen_funcret(r, func, prefix)
 	return r
 end
 
@@ -616,11 +671,30 @@ function codegen.doxygen_type(doxygen, func, cname)
 	if doxygen == nil then
 		return
 	end
+	local desc, tagged = split_doxygen_tags(doxygen)
 	local result = {}
-	for _, line in ipairs(doxygen) do
+
+	-- 1. Description
+	for _, line in ipairs(desc) do
 		result[#result+1] = "/// " .. line
 	end
-	doxygen_func(result, func, "///")
+
+	-- 2. @param (from function arguments)
+	doxygen_func(result, func, "///", "   ", true)
+
+	-- 3. @returns (from function return type)
+	doxygen_funcret(result, func, "///", "   ", true)
+
+	-- 4. @returns from comment body
+	emit_tagged_sections(result, tagged, "///", {"returns"})
+
+	-- 5. @remarks/@remark from comment body
+	emit_tagged_sections(result, tagged, "///", {"remarks", "remark"})
+
+	-- 6. @attention/@warning from comment body
+	emit_tagged_sections(result, tagged, "///", {"attention", "warning"})
+
+	-- 7. @attention C99 equivalent binding
 	if cname then
 		result[#result+1] = "///"
 		if type(cname) == "string" then
@@ -630,11 +704,23 @@ function codegen.doxygen_type(doxygen, func, cname)
 			for _, v in ipairs(cname) do
 				names[#names+1] = "`" .. v .. "`"
 			end
-			result[#result+1] = string.format("/// @attention C99's equivalent bindings are %s.", table.concat(names, ","))
+			result[#result+1] = string.format("/// @attention C99's equivalent bindings are %s.", table.concat(names, ", "))
 		end
 	end
 	result[#result+1] = "///"
-	return table.concat(result, "\n")
+
+	-- Collapse consecutive empty comment lines (///) into at most one.
+	local collapsed = {}
+	for _, line in ipairs(result) do
+		local is_empty = (line == "///" or line == "/// ")
+		local prev_empty = #collapsed > 0 and (collapsed[#collapsed] == "///" or collapsed[#collapsed] == "/// ")
+		if is_empty and prev_empty then
+			-- skip duplicate empty comment line
+		else
+			collapsed[#collapsed+1] = line
+		end
+	end
+	return table.concat(collapsed, "\n")
 end
 
 function codegen.doxygen_ctype(doxygen, func)
@@ -647,10 +733,26 @@ function codegen.doxygen_ctype(doxygen, func)
 	for _, line in ipairs(doxygen) do
 		result[#result+1] = " * " .. line
 	end
-	doxygen_func(result, func, " *")
+	doxygen_func(result, func, " *", "  ")
+	-- Only emit @returns when @param was emitted (preserves original behavior)
+	if func and func.args and #func.args > 0 then
+		doxygen_funcret(result, func, " *", "  ")
+	end
 	result[#result+1] = " *"
 	result[#result+1] = " */"
-	return table.concat(result, "\n")
+
+	-- Collapse consecutive empty comment lines ( *) into at most one.
+	local collapsed = {}
+	for _, line in ipairs(result) do
+		local is_empty = (line == " *" or line == " * ")
+		local prev_empty = #collapsed > 0 and (collapsed[#collapsed] == " *" or collapsed[#collapsed] == " * ")
+		if is_empty and prev_empty then
+			-- skip duplicate empty comment line
+		else
+			collapsed[#collapsed+1] = line
+		end
+	end
+	return table.concat(collapsed, "\n")
 end
 
 local enum_temp = [[
@@ -668,6 +770,12 @@ struct $NAME
 
 function codegen.gen_enum_define(enum)
 	assert(type(enum.enum) == "table", "Not an enum")
+	local max_name_len = 0
+	for _, item in ipairs(enum.enum) do
+		if item.comment and #item.name > max_name_len then
+			max_name_len = #item.name
+		end
+	end
 	local items = {}
 	for _, item in ipairs(enum.enum) do
 		local text
@@ -676,12 +784,12 @@ function codegen.gen_enum_define(enum)
 		else
 			local comment = table.concat(item.comment, " ")
 			text = string.format("%s,%s //!< %s",
-				item.name, namealign(item.name), comment)
+				item.name, namealign(item.name, max_name_len), comment)
 		end
 		items[#items+1] = text
 	end
-	local comment = ""
-	if enum.comment then
+	local comment = "//EMPTYLINE"
+	if enum.comment and enum.comment ~= "" then
 		comment = "/// " .. enum.comment
 	end
 	local temp = {
@@ -689,7 +797,7 @@ function codegen.gen_enum_define(enum)
 		COMMENT = comment,
 		ITEMS = table.concat(items, "\n\t\t"),
 	}
-	return (enum_temp:gsub("$(%u+)", temp))
+	return remove_emptylines(enum_temp:gsub("$(%u+)", temp))
 end
 
 local cenum_temp = [[
@@ -832,7 +940,7 @@ function codegen.gen_flag_cdefine(flag)
 	return table.concat(s, "\n")
 end
 
-local function text_with_comments(items, item, cstyle, is_classmember)
+local function text_with_comments(items, item, cstyle, is_classmember, name_align, comment_align)
 	local name = item.name
 	if item.array then
 		if cstyle then
@@ -850,25 +958,40 @@ local function text_with_comments(items, item, cstyle, is_classmember)
 	if is_classmember then
 		name = "m_" .. name
 	end
-	local text = string.format("%s%s %s;", typename, namealign(typename), name)
+	local default = ""
+	if not cstyle and item.default ~= nil then
+		default = " = " .. tostring(item.default)
+	end
+	local text = string.format("%s%s %s%s;", typename, namealign(typename, name_align or DEFAULT_NAME_ALIGN), name, default)
 	if item.comment then
 		if #item.comment > 1 then
-			table.insert(items, "")
 			if cstyle then
+				table.insert(items, "")
 				table.insert(items, "/**")
 				for _, c in ipairs(item.comment) do
 					table.insert(items, " * " .. c)
 				end
 				table.insert(items, " */")
 			else
-				for _, c in ipairs(item.comment) do
-					table.insert(items, "/// " .. c)
+				local comment_col = math.max(#text + 1, comment_align)
+				local padding = string.rep(" ", comment_col - #text)
+				text = text .. padding .. "//!< " .. item.comment[1]
+				items[#items+1] = text
+				local cont_padding = string.rep(" ", comment_col) .. "///  "
+				for i = 2, #item.comment do
+					items[#items+1] = cont_padding .. item.comment[i]
 				end
+				return
 			end
 		else
-			text = string.format(
-				cstyle and "%s %s/** %s%s */" or "%s %s//!< %s",
-				text, namealign(text, 40),  item.comment[1], namealign(item.comment[1], 40))
+			if cstyle then
+				text = string.format("%s %s/** %s%s */",
+					text, namealign(text, 40), item.comment[1], namealign(item.comment[1], 40))
+			else
+				local comment_col = math.max(#text + 1, comment_align)
+				local padding = string.rep(" ", comment_col - #text)
+				text = text .. padding .. "//!< " .. item.comment[1]
+			end
 		end
 	end
 	items[#items+1] = text
@@ -885,9 +1008,30 @@ struct $NAME
 
 function codegen.gen_struct_define(struct, methods)
 	assert(type(struct.struct) == "table", "Not a struct")
+	local is_classmember = methods ~= nil and not struct.shortname
+	local max_text_len = 0
+	for _, item in ipairs(struct.struct) do
+		if item.comment then
+			local name = item.name
+			if item.array then
+				name = name .. item.array
+			end
+			if is_classmember then
+				name = "m_" .. name
+			end
+			local text_len = #item.fulltype + 1 + #name + 1
+			if item.default ~= nil then
+				text_len = text_len + 3 + #tostring(item.default)
+			end
+			if text_len > max_text_len then
+				max_text_len = text_len
+			end
+		end
+	end
+	local comment_align = max_text_len + 1
 	local items = {}
 	for _, item in ipairs(struct.struct) do
-		text_with_comments(items, item, false, methods ~= nil and not struct.shortname)
+		text_with_comments(items, item, false, is_classmember, 0, comment_align)
 	end
 	local ctor = {}
 	if struct.ctor then
@@ -905,6 +1049,12 @@ function codegen.gen_struct_define(struct, methods)
 			ctor[#ctor+1] = ""
 		end
 	end
+	-- Remove trailing empty separators when no struct items follow
+	if #items == 0 then
+		while #ctor > 0 and ctor[#ctor] == "" do
+			ctor[#ctor] = nil
+		end
+	end
 	local subs = {}
 	if struct.substruct then
 		for _, v in ipairs(struct.substruct) do
@@ -917,7 +1067,7 @@ function codegen.gen_struct_define(struct, methods)
 	local temp = {
 		NAME = struct.name,
 		SUBSTRUCTS = lines(subs),
-		ITEMS = table.concat(items, "\n\t"),
+		ITEMS = #items > 0 and table.concat(items, "\n\t") or "//EMPTYLINE",
 		METHODS = lines(ctor),
 	}
 	return remove_emptylines(struct_temp:gsub("$(%u+)", temp))
@@ -952,18 +1102,138 @@ end
 local chandle_temp = [[
 typedef struct $NAME_s { uint16_t idx; } $NAME_t;
 ]]
+
+local tagged_chandle_temp = [[
+typedef struct $NAME_s { uint16_t idx; uint16_t type; } $NAME_t;
+
+typedef enum $NAME_type
+{
+$CENUMS
+	$UPPERNAME_TYPE_COUNT
+
+} $NAME_type_t;
+
+$CCONVERTERS
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define $UPPERNAME(_handle) _Generic( (_handle)$CGENERIC \
+	)(_handle)
+#endif // defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+]]
+
+local cconverter_temp = [[
+static inline $NAME_t $CONVERTER($TAGGEDCNAME _handle)
+{
+	$NAME_t handle;
+	handle.idx  = _handle.idx;
+	handle.type = $CTAG;
+	return handle;
+}
+]]
+
 function codegen.gen_chandle(handle)
 	assert(handle.handle, "Not a handle")
-	return (chandle_temp:gsub("$(%u+)", { NAME = handle.cname:match "(.-)_t$" }))
+
+	local name = handle.cname:match "(.-)_t$"
+
+	if not handle.tagged then
+		return (chandle_temp:gsub("$(%u+)", { NAME = name }))
+	end
+
+	local base = camelcase_to_underscorecase(assert(handle.name:match "(.-)Handle$"
+		, "Tagged handle name must end with `Handle`") )
+
+	local enums      = {}
+	local converters = {}
+	local generic    = {}
+	local align      = 0
+
+	for _, taggedName in ipairs(handle.tagged) do
+		align = math.max(align, #camelcase_to_underscorecase(taggedName) + 7)
+	end
+
+	for _, taggedName in ipairs(handle.tagged) do
+		local tag       = assert(taggedName:match "(.-)Handle$", "Tagged handle type must be a handle")
+		local ctag      = name:upper() .. "_TYPE_" .. camelcase_to_underscorecase(tag):upper()
+		local converter = "bgfx_" .. base .. "_from_" .. camelcase_to_underscorecase(tag)
+		local ctagged   = "bgfx_" .. camelcase_to_underscorecase(taggedName) .. "_t"
+
+		enums[#enums+1] = "\t" .. ctag .. ","
+		converters[#converters+1] = (cconverter_temp:gsub("$(%u+)", {
+			NAME        = name,
+			CONVERTER   = converter,
+			TAGGEDCNAME = ctagged,
+			CTAG        = ctag,
+		}))
+		generic[#generic+1] = "\t, " .. ctagged .. string.rep(" ", align - #ctagged) .. ": " .. converter
+	end
+
+	return (tagged_chandle_temp:gsub("$(%u+)", {
+		NAME        = name,
+		UPPERNAME   = name:upper(),
+		CENUMS      = table.concat(enums, "\n") .. "\n",
+		CCONVERTERS = table.concat(converters, "\n"),
+		CGENERIC    = " \\\n" .. table.concat(generic, " \\\n"),
+	}))
 end
 
-local handle_temp = [[
-struct $NAME { uint16_t idx; };
-inline bool isValid($NAME _handle) { return bgfx::kInvalidHandle != _handle.idx; }
+local handle_temp = "BGFX_HANDLE($NAME)"
+
+local tagged_handle_temp = [[
+
+struct $NAME
+{
+	enum Enum
+	{
+$ENUMS
+		Count
+	};
+
+	$NAME()
+		: idx(kInvalidHandle)
+		, type(Count)
+	{
+	}
+
+$CTORS
+	uint16_t idx;
+	uint16_t type;
+};
+
+inline bool isValid($NAME _handle) { return bgfx::kInvalidHandle != _handle.idx; }]]
+
+local tagged_ctor_temp = [[
+	$NAME($TAGGEDNAME _handle)
+		: idx(_handle.idx)
+		, type($TAG)
+	{
+	}
 ]]
+
 function codegen.gen_handle(handle)
 	assert(handle.handle, "Not a handle")
-	return (handle_temp:gsub("$(%u+)", { NAME = handle.name }))
+
+	if not handle.tagged then
+		return (handle_temp:gsub("$(%u+)", { NAME = handle.name }))
+	end
+
+	local enums = {}
+	local ctors = {}
+
+	for _, name in ipairs(handle.tagged) do
+		local tag = assert(name:match "(.-)Handle$", "Tagged handle type must be a handle")
+		enums[#enums+1] = "\t\t" .. tag .. ","
+		ctors[#ctors+1] = (tagged_ctor_temp:gsub("$(%u+)", {
+			NAME       = handle.name,
+			TAGGEDNAME = name,
+			TAG        = tag,
+		}))
+	end
+
+	return (tagged_handle_temp:gsub("$(%u+)", {
+		NAME  = handle.name,
+		ENUMS = table.concat(enums, "\n") .. "\n",
+		CTORS = table.concat(ctors, "\n"),
+	}))
 end
 
 local idl = require "idl"

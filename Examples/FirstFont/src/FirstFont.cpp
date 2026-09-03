@@ -49,7 +49,7 @@ void FirstFont::Initialize()
 	// Use Tools/bmfont_to_json.py to convert bmfont's fnt file to json file 
 	font->AddFontSize("assets/fonts/font.json", atlas);
 
-	auto pixelText = new PixelText(font, u8"你好, 世界!\nHello, World!", Color::White);
+	auto pixelText = new PixelText(font, "你好, 世界!\nHello, World!", Color::White);
 	pixelText->Position(Math::Vec2(-100.f, 30.f));
 	entity->Add(pixelText);
 

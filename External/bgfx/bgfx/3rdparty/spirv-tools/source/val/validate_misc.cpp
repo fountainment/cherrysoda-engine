@@ -13,11 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "source/val/validate.h"
-
 #include "source/opcode.h"
 #include "source/spirv_target_env.h"
 #include "source/val/instruction.h"
+#include "source/val/validate.h"
 #include "source/val/validate_scopes.h"
 #include "source/val/validation_state.h"
 
@@ -50,10 +49,22 @@ spv_result_t ValidateShaderClock(ValidationState_t& _,
   bool is_int32 = false, is_const_int32 = false;
   uint32_t value = 0;
   std::tie(is_int32, is_const_int32, value) = _.EvalInt32IfConst(scope);
-  if (is_const_int32 && spv::Scope(value) != spv::Scope::Subgroup &&
-      spv::Scope(value) != spv::Scope::Device) {
-    return _.diag(SPV_ERROR_INVALID_DATA, inst)
-           << _.VkErrorID(4652) << "Scope must be Subgroup or Device";
+  if (is_const_int32) {
+    spv::Scope scope_val{value};
+    if (spvIsVulkanEnv(_.context()->target_env)) {
+      if (scope_val != spv::Scope::Subgroup &&
+          scope_val != spv::Scope::Device) {
+        return _.diag(SPV_ERROR_INVALID_DATA, inst)
+               << _.VkErrorID(4652) << "Scope must be Subgroup or Device";
+      }
+    } else if (spvIsOpenCLEnv(_.context()->target_env)) {
+      if (scope_val != spv::Scope::Workgroup &&
+          scope_val != spv::Scope::Subgroup &&
+          scope_val != spv::Scope::Device) {
+        return _.diag(SPV_ERROR_INVALID_DATA, inst)
+               << "Scope must be Subgroup, Workgroup, or Device";
+      }
+    }
   }
 
   // Result Type must be a 64 - bit unsigned integer type or
@@ -101,11 +112,28 @@ spv_result_t ValidateExpect(ValidationState_t& _, const Instruction* inst) {
   return SPV_SUCCESS;
 }
 
+spv_result_t ValidateAbort(ValidationState_t& _, const Instruction* inst) {
+  const auto message_type = _.FindDef(inst->GetOperandAs<uint32_t>(0u));
+  const auto source = _.FindDef(inst->GetOperandAs<uint32_t>(1u));
+  const auto source_type = _.FindDef(source->type_id());
+
+  if (source_type == message_type) return SPV_SUCCESS;
+
+  if (!_.LogicallyMatch(source_type, message_type, false)) {
+    return _.diag(SPV_ERROR_INVALID_ID, inst)
+           << "Type of Message operand does not logically match the type of "
+              "the Message Type operand";
+  }
+
+  return SPV_SUCCESS;
+}
+
 }  // namespace
 
 spv_result_t MiscPass(ValidationState_t& _, const Instruction* inst) {
   switch (inst->opcode()) {
     case spv::Op::OpUndef:
+    case spv::Op::OpPoisonKHR:
       if (auto error = ValidateUndef(_, inst)) return error;
       break;
     default:
@@ -188,6 +216,11 @@ spv_result_t MiscPass(ValidationState_t& _, const Instruction* inst) {
       break;
     case spv::Op::OpExpectKHR:
       if (auto error = ValidateExpect(_, inst)) {
+        return error;
+      }
+      break;
+    case spv::Op::OpAbortKHR:
+      if (auto error = ValidateAbort(_, inst)) {
         return error;
       }
       break;

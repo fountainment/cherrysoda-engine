@@ -86,11 +86,6 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../ParseHelper.h"
 #include "PpTokens.h"
 
-/* windows only pragma */
-#ifdef _MSC_VER
-    #pragma warning(disable : 4127)
-#endif
-
 namespace glslang {
 
 class TPpToken {
@@ -220,6 +215,7 @@ public:
         virtual bool peekContinuedPasting(int) { return false; } // true when non-spaced tokens can paste
         virtual bool endOfReplacementList() { return false; } // true when at the end of a macro replacement list (RHS of #define)
         virtual bool isMacroInput() { return false; }
+        virtual bool isStringInput() { return false; }
 
         // Will be called when we start reading tokens from this instance
         virtual void notifyActivated() {}
@@ -302,6 +298,11 @@ public:
                     case PpAtomConstFloat:
                     case PpAtomConstDouble:
                     case PpAtomConstFloat16:
+                    case PpAtomConstFloatE2M1:
+                    case PpAtomConstFloatE3M2:
+                    case PpAtomConstFloatE2M3:
+                    case PpAtomConstFloatUE8M0:
+                    case PpAtomConstFloatMXINT8:
                     case PpAtomConstString:
                     case PpAtomIdentifier:
                         return true;
@@ -315,7 +316,6 @@ public:
         int getToken(TParseContextBase&, TPpToken*);
         bool atEnd() { return currentPos >= stream.size(); }
         bool peekTokenizedPasting(bool lastTokenPastes);
-        bool peekUntokenizedPasting();
         void reset() { currentPos = 0; }
 
     protected:
@@ -360,7 +360,8 @@ protected:
     // Scanner data:
     int previous_token;
     TParseContextBase& parseContext;
-
+    std::vector<int> lastLineTokens;
+    std::vector<TSourceLoc> lastLineTokenLocs;
     // Get the next token from *stack* of input sources, popping input sources
     // that are out of tokens, down until an input source is found that has a token.
     // Return EndOfInput when there are no more tokens to be found by doing this.
@@ -374,7 +375,15 @@ protected:
                 break;
             popInput();
         }
-
+        if (!inputStack.empty() && inputStack.back()->isStringInput() && !inElseSkip) {
+            if (token == '\n') {
+                lastLineTokens.clear();
+                lastLineTokenLocs.clear();
+            } else {
+                lastLineTokens.push_back(token);
+                lastLineTokenLocs.push_back(ppToken->loc);
+            }
+        }
         return token;
     }
     int  getChar() { return inputStack.back()->getch(); }
@@ -389,9 +398,9 @@ protected:
 
     static const int maxIfNesting = 65;
 
-    int ifdepth;                  // current #if-#else-#endif nesting in the cpp.c file (pre-processor)
-    bool elseSeen[maxIfNesting];  // Keep a track of whether an else has been seen at a particular depth
-    int elsetracker;              // #if-#else and #endif constructs...Counter.
+    int ifdepth;                      // current #if-#else-#endif nesting in the cpp.c file (pre-processor)
+    bool elseSeen[maxIfNesting + 1];  // Keep a track of whether an else has been seen at a particular depth
+    int elsetracker;                  // #if-#else and #endif constructs...Counter.
 
     class tMacroInput : public tInput {
     public:
@@ -437,6 +446,15 @@ protected:
         static const int marker = -3;
     };
 
+    struct tStringifyLevelInput {
+      // PUSH is a token atom indicating a new stringizing (#) level
+      // during macro body expansion.
+      static constexpr int PUSH = -4;
+      // PUSH is a token atom indicating the end of a stringizing level
+      // during macro body expansion.
+      static constexpr int POP = -5;
+    };
+
     class tZeroInput : public tInput {
     public:
         tZeroInput(TPpContext* pp) : tInput(pp) { }
@@ -448,6 +466,10 @@ protected:
     std::vector<tInput*> inputStack;
     bool errorOnVersion;
     bool versionSeen;
+    // Current nesting depth of MacroExpand() calls; bounded to prevent
+    // stack overflow via unbounded MacroExpand <-> PrescanMacroArg recursion.
+    int macroExpandDepth = 0;
+    static const int maxMacroExpandDepth = 200;
 
     //
     // from Pp.cpp
@@ -527,7 +549,7 @@ protected:
     public:
         tStringInput(TPpContext* pp, TInputScanner& i) : tInput(pp), input(&i) { }
         virtual int scan(TPpToken*) override;
-
+        bool isStringInput() override { return true; }
         // Scanner used to get source stream characters.
         //  - Escaped newlines are handled here, invisibly to the caller.
         //  - All forms of newline are handled, and turned into just a '\n'.
@@ -711,6 +733,9 @@ protected:
 
     std::istringstream strtodStream;
     bool disableEscapeSequences;
+    // True if we're skipping a section enclosed by #if/#ifdef/#elif/#else which was evaluated to
+    // be inactive, e.g. #if 0
+    bool inElseSkip;
 };
 
 } // end namespace glslang

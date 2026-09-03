@@ -1,4 +1,60 @@
-project ("texturev")
+--
+-- Copyright 2010-2026 Branimir Karadzic. All rights reserved.
+-- License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
+--
+
+group "tools/texturev"
+
+project "l-smash"
+	kind "StaticLib"
+
+	removeflags { "FatalWarnings" }
+
+	includedirs {
+		path.join(MODULE_DIR, "3rdparty/l-smash"),
+	}
+
+	files {
+		path.join(MODULE_DIR, "3rdparty/l-smash/**.c"),
+		path.join(MODULE_DIR, "3rdparty/l-smash/**.h"),
+	}
+
+	configuration { "vs*" }
+		buildoptions {
+			"/wd4005", -- warning C4005: '_CRT_SECURE_NO_WARNINGS': macro redefinition
+			"/wd4018", -- warning C4018: '<=': signed/unsigned mismatch
+			"/wd4100", -- warning C4100: 'class': unreferenced parameter
+			"/wd4116", -- warning C4116: unnamed type definition in parentheses
+			"/wd4125", -- warning C4125: decimal digit terminates octal escape sequence
+			"/wd4133", -- warning C4133: '=': incompatible types - from 'lsmash_brand_type *' to 'uint32_t *'
+			"/wd4210", -- warning C4210: nonstandard extension used: function given file scope
+			"/wd4244", -- warning C4244: 'initializing': conversion from 'uint64_t' to 'uint32_t', possible loss of data
+			"/wd4245", -- warning C4245: '=': conversion from 'int' to 'uint32_t', signed/unsigned mismatch
+			"/wd4267", -- warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+			"/wd4389", -- warning C4389: '!=': signed/unsigned mismatch
+			"/wd4701", -- warning C4701: potentially uninitialized local variable 'src_movie_timescale' used
+		}
+
+	configuration { "*-gcc or *-clang" }
+		buildoptions {
+			"-Wno-empty-body",
+			"-Wno-implicit-fallthrough",
+			"-Wno-missing-field-initializers",
+			"-Wno-pragmas",
+			"-Wno-sign-compare",
+			"-Wno-type-limits",
+			"-Wno-undef",
+			"-Wno-unused-function",
+			"-Wno-unused-parameter",
+		}
+
+	configuration { "mingw*" }
+		buildoptions {
+			"-Wno-maybe-uninitialized",
+			"-Wno-stringop-overflow",
+		}
+
+project "texturev"
 	uuid (os.uuid("texturev") )
 	kind "ConsoleApp"
 
@@ -18,6 +74,7 @@ project ("texturev")
 	}
 
 	links {
+		"l-smash",
 		"example-common",
 		"bimg_decode",
 		"bimg",
@@ -29,13 +86,6 @@ project ("texturev")
 	if _OPTIONS["with-sdl"] then
 		defines { "ENTRY_CONFIG_USE_SDL=1" }
 		links   { "SDL2" }
-
-		configuration { "linux or freebsd" }
-			if _OPTIONS["with-wayland"]  then
-				links {
-					"wayland-egl",
-				}
-			end
 
 		configuration { "x32", "windows" }
 			libdirs { "$(SDL2_DIR)/lib/x86" }
@@ -50,15 +100,6 @@ project ("texturev")
 		defines { "ENTRY_CONFIG_USE_GLFW=1" }
 		links   { "glfw3" }
 
-		configuration { "linux or freebsd" }
-			links {
-				"Xrandr",
-				"Xinerama",
-				"Xi",
-				"Xxf86vm",
-				"Xcursor",
-			}
-
 		configuration { "osx*" }
 			linkoptions {
 				"-framework CoreVideo",
@@ -67,16 +108,24 @@ project ("texturev")
 		configuration {}
 	end
 
+	if _OPTIONS["with-libheif"] then
+		links {
+			"heif",
+		}
+
+		configuration {}
+	end
+
 	configuration { "vs*" }
 		linkoptions {
 			"/ignore:4199", -- LNK4199: /DELAYLOAD:*.dll ignored; no imports found from *.dll
 		}
-		links { -- this is needed only for testing with GLES2/3 on Windows with VS2008
+		links { -- this is needed only for testing with GLES on Windows with VS2008
 			"DelayImp",
 		}
 
 	configuration { "vs201*" }
-		linkoptions { -- this is needed only for testing with GLES2/3 on Windows with VS201x
+		linkoptions { -- this is needed only for testing with GLES on Windows with VS201x
 			"/DELAYLOAD:\"libEGL.dll\"",
 			"/DELAYLOAD:\"libGLESv2.dll\"",
 		}
@@ -151,6 +200,9 @@ project ("texturev")
 			"-framework Metal",
 			"-framework OpenGL",
 			"-framework QuartzCore",
+			"-weak_framework VideoToolbox",
+			"-weak_framework CoreMedia",
+			"-weak_framework CoreVideo",
 		}
 
 	configuration { "ios*" }
@@ -177,3 +229,5 @@ project ("texturev")
 	configuration {}
 
 	strip()
+
+group "tools"

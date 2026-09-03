@@ -41,5 +41,12 @@ static const char* const E_SPV_EXT_shader_atomic_float_min_max = "SPV_EXT_shader
 static const char* const E_SPV_EXT_shader_image_int64 = "SPV_EXT_shader_image_int64";
 static const char* const E_SPV_EXT_shader_tile_image = "SPV_EXT_shader_tile_image";
 static const char* const E_SPV_EXT_mesh_shader = "SPV_EXT_mesh_shader";
+static const char* const E_SPV_EXT_float8 = "SPV_EXT_float8";
+static const char* const E_SPV_EXT_shader_64bit_indexing = "SPV_EXT_shader_64bit_indexing";
+static const char* const E_SPV_EXT_shader_invocation_reorder = "SPV_EXT_shader_invocation_reorder";
+static const char* const E_SPV_EXT_long_vector = "SPV_EXT_long_vector";
+static const char* const E_SPV_EXT_cooperative_matrix_maintenance1 = "SPV_EXT_cooperative_matrix_maintenance1";
+static const char* const E_SPV_EXT_ocp_microscaling_types = "SPV_EXT_ocp_microscaling_types";
+static const char* const E_SPV_EXT_split_barrier = "SPV_EXT_split_barrier";
 
 #endif  // #ifndef GLSLextEXT_H

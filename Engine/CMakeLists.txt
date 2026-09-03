@@ -173,7 +173,7 @@ if(WINDOWS)
 endif()
 
 add_library(CherrySoda STATIC ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC} ${SHADER_COMPILE_STAMP})
-target_compile_features(CherrySoda PUBLIC cxx_std_14)
+target_compile_features(CherrySoda PUBLIC cxx_std_20)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SRC} ${EMBEDDED_SHADER_SRC})
 
 if(EMSCRIPTEN)

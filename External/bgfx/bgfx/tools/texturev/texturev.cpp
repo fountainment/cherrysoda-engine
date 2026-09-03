@@ -1,9 +1,11 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "common.h"
+
+#include "video_player.h"
 
 #include <bgfx/bgfx.h>
 
@@ -15,7 +17,7 @@
 #include <bx/os.h>
 #include <bx/process.h>
 #include <bx/settings.h>
-#include <bx/uint32_t.h>
+#include <bx/sort.h>
 
 #include <entry/entry.h>
 #include <entry/input.h>
@@ -69,24 +71,37 @@ static const bgfx::EmbeddedShader s_embeddedShaders[] =
 	BGFX_EMBEDDED_SHADER_END()
 };
 
-static const char* s_supportedExt[] =
+static bx::StringView s_supportedExt[32];
+static uint32_t       s_numSupportedExt = 0;
+
+static int32_t compareExt(const void* _lhs, const void* _rhs)
 {
-	"bmp",
-	"dds",
-	"exr",
-	"gif",
-	"gnf",
-	"jpg",
-	"jpeg",
-	"hdr",
-	"ktx",
-	"pgm",
-	"png",
-	"ppm",
-	"psd",
-	"pvr",
-	"tga",
-};
+	const bx::StringView& lhs = *(const bx::StringView*)_lhs;
+	const bx::StringView& rhs = *(const bx::StringView*)_rhs;
+	return bx::strCmpI(lhs, rhs);
+}
+
+static void initSupportedExt()
+{
+	const char* const* supportedExt = bimg::getSupportedExt();
+
+	for (s_numSupportedExt = 0
+		; s_numSupportedExt < BX_COUNTOF(s_supportedExt) && NULL != supportedExt[s_numSupportedExt]
+		; ++s_numSupportedExt)
+	{
+		s_supportedExt[s_numSupportedExt] = supportedExt[s_numSupportedExt];
+	}
+
+	BX_ASSERT(NULL == supportedExt[s_numSupportedExt], "s_supportedExt array is too small.");
+	BX_ASSERT(bx::isSorted(s_supportedExt, s_numSupportedExt, sizeof(s_supportedExt[0]), compareExt)
+		, "s_supportedExt must be sorted!"
+		);
+}
+
+static bool isExtSupported(const bx::StringView& _ext)
+{
+	return 0 <= bx::binarySearch(_ext, s_supportedExt, s_numSupportedExt, sizeof(s_supportedExt[0]), compareExt);
+}
 
 struct Binding
 {
@@ -96,6 +111,8 @@ struct Binding
 		View,
 		Help,
 		About,
+		Delete,
+		Video,
 
 		Count
 	};
@@ -125,84 +142,114 @@ struct Output
 	};
 };
 
-static const InputBinding s_bindingApp[] =
-{
-	{ entry::Key::KeyQ, entry::Modifier::None,  1, NULL, "exit"                },
-	{ entry::Key::KeyF, entry::Modifier::None,  1, NULL, "graphics fullscreen" },
-
-	INPUT_BINDING_END
-};
-
-const char* s_resetCmd =
+static const char* s_resetCmd =
 	"view zoom 1.0\n"
-	"view rotate 0\n"
+	"view rotate x 0\n"
+	"view rotate y 0\n"
+	"view rotate z 0\n"
 	"view cubemap\n"
 	"view pan\n"
 	"view ev\n"
 	;
 
-static const InputBinding s_bindingView[] =
+static const InputBinding s_bindingApp[] =
 {
-	{ entry::Key::Esc,       entry::Modifier::None,       1, NULL, "exit"                    },
-
-	{ entry::Key::Comma,     entry::Modifier::None,       1, NULL, "view mip prev"           },
-	{ entry::Key::Period,    entry::Modifier::None,       1, NULL, "view mip next"           },
-	{ entry::Key::Comma,     entry::Modifier::LeftShift,  1, NULL, "view mip"                },
-	{ entry::Key::Comma,     entry::Modifier::RightShift, 1, NULL, "view mip"                },
-
-	{ entry::Key::Slash,     entry::Modifier::None,       1, NULL, "view filter"             },
-
-	{ entry::Key::Key1,      entry::Modifier::None,       1, NULL, "view zoom 1.0\n"
-	                                                               "view fit\n"              },
-
-	{ entry::Key::Key0,      entry::Modifier::None,       1, NULL, s_resetCmd                },
-	{ entry::Key::Plus,      entry::Modifier::None,       1, NULL, "view zoom +0.1"          },
-	{ entry::Key::Minus,     entry::Modifier::None,       1, NULL, "view zoom -0.1"          },
-
-	{ entry::Key::KeyZ,      entry::Modifier::None,       1, NULL, "view rotate -90"         },
-	{ entry::Key::KeyZ,      entry::Modifier::LeftShift,  1, NULL, "view rotate +90"         },
+	{ entry::Key::KeyQ,      entry::Modifier::None,       1, NULL, "exit"                },
+	{ entry::Key::KeyF,      entry::Modifier::None,       1, NULL, "graphics fullscreen" },
 
 	{ entry::Key::Up,        entry::Modifier::None,       1, NULL, "view pan\n"
-	                                                               "view file-up"            },
+	                                                               "view file-up"        },
 	{ entry::Key::Down,      entry::Modifier::None,       1, NULL, "view pan\n"
-	                                                               "view file-down"          },
+	                                                               "view file-down"      },
 	{ entry::Key::PageUp,    entry::Modifier::None,       1, NULL, "view pan\n"
-	                                                               "view file-pgup"          },
+	                                                               "view file-pgup"      },
 	{ entry::Key::PageDown,  entry::Modifier::None,       1, NULL, "view pan\n"
-	                                                               "view file-pgdown"        },
+	                                                               "view file-pgdown"    },
 
-	{ entry::Key::Left,      entry::Modifier::None,       1, NULL, "view layer prev"         },
-	{ entry::Key::Right,     entry::Modifier::None,       1, NULL, "view layer next"         },
+	{ entry::Key::Return,    entry::Modifier::None,       1, NULL, "view files"          },
+	{ entry::Key::KeyH,      entry::Modifier::None,       1, NULL, "view help"           },
+	{ entry::Key::KeyI,      entry::Modifier::None,       1, NULL, "view info"           },
+	{ entry::Key::Delete,    entry::Modifier::None,       1, NULL, "view delete"         },
 
-	{ entry::Key::KeyR,      entry::Modifier::None,       1, NULL, "view rgb r"              },
-	{ entry::Key::KeyG,      entry::Modifier::None,       1, NULL, "view rgb g"              },
-	{ entry::Key::KeyB,      entry::Modifier::None,       1, NULL, "view rgb b"              },
-	{ entry::Key::KeyA,      entry::Modifier::None,       1, NULL, "view rgb a"              },
+	{ entry::Key::Key1,      entry::Modifier::None,       1, NULL, "view zoom 1.0\n"
+	                                                               "view fit\n"          },
+	{ entry::Key::Key0,      entry::Modifier::None,       1, NULL, s_resetCmd            },
+	{ entry::Key::Plus,      entry::Modifier::None,       1, NULL, "view zoom +0.1"      },
+	{ entry::Key::Minus,     entry::Modifier::None,       1, NULL, "view zoom -0.1"      },
 
-	{ entry::Key::KeyI,      entry::Modifier::None,       1, NULL, "view info"               },
+	{ entry::Key::KeyZ,      entry::Modifier::None,       1, NULL, "view rotate z -90"   },
+	{ entry::Key::KeyZ,      entry::Modifier::LeftShift,  1, NULL, "view rotate z +90"   },
 
-	{ entry::Key::KeyH,      entry::Modifier::None,       1, NULL, "view help"               },
+	{ entry::Key::KeyX,      entry::Modifier::None,       1, NULL, "view rotate x +180"  },
+	{ entry::Key::KeyY,      entry::Modifier::None,       1, NULL, "view rotate y +180"  },
 
-	{ entry::Key::Return,    entry::Modifier::None,       1, NULL, "view files"              },
+	{ entry::Key::KeyR,      entry::Modifier::None,       1, NULL, "view rgb r"          },
+	{ entry::Key::KeyG,      entry::Modifier::None,       1, NULL, "view rgb g"          },
+	{ entry::Key::KeyB,      entry::Modifier::None,       1, NULL, "view rgb b"          },
+	{ entry::Key::KeyA,      entry::Modifier::None,       1, NULL, "view rgb a"          },
 
-	{ entry::Key::KeyS,      entry::Modifier::None,       1, NULL, "view sdf"                },
+	{ entry::Key::KeyI,      entry::Modifier::None,       1, NULL, "view info"           },
+
+	{ entry::Key::KeyH,      entry::Modifier::None,       1, NULL, "view help"           },
+
+	{ entry::Key::Return,    entry::Modifier::None,       1, NULL, "view files"          },
+
+	INPUT_BINDING_END
+};
+
+static const InputBinding s_bindingView[] =
+{
+	{ entry::Key::Esc,       entry::Modifier::None,       1, NULL, "exit"                },
+
+	{ entry::Key::Comma,     entry::Modifier::None,       1, NULL, "view mip prev"       },
+	{ entry::Key::Period,    entry::Modifier::None,       1, NULL, "view mip next"       },
+	{ entry::Key::Comma,     entry::Modifier::LeftShift,  1, NULL, "view mip"            },
+	{ entry::Key::Comma,     entry::Modifier::RightShift, 1, NULL, "view mip"            },
+
+	{ entry::Key::Slash,     entry::Modifier::None,       1, NULL, "view filter"         },
+
+	{ entry::Key::Left,      entry::Modifier::None,       1, NULL, "view layer prev"     },
+	{ entry::Key::Right,     entry::Modifier::None,       1, NULL, "view layer next"     },
+
+	{ entry::Key::KeyS,      entry::Modifier::None,       1, NULL, "view sdf"            },
 
 	{ entry::Key::Space,     entry::Modifier::None,       1, NULL, "view geo\n"
-	                                                               "view pan\n"              },
+	                                                               "view pan\n"          },
 
 	INPUT_BINDING_END
 };
 
 static const InputBinding s_bindingHelp[] =
 {
-	{ entry::Key::Esc,  entry::Modifier::None,  1, NULL, "view help" },
-	{ entry::Key::KeyH, entry::Modifier::None,  1, NULL, "view help" },
+	{ entry::Key::Esc,  entry::Modifier::None, 1, NULL, "view help" },
+	{ entry::Key::KeyH, entry::Modifier::None, 1, NULL, "view help" },
 	INPUT_BINDING_END
 };
 
 static const InputBinding s_bindingAbout[] =
 {
-	{ entry::Key::Esc,  entry::Modifier::None,  1, NULL, "view about" },
+	{ entry::Key::Esc,  entry::Modifier::None, 1, NULL, "view about" },
+	INPUT_BINDING_END
+};
+
+static const InputBinding s_bindingDelete[] =
+{
+	{ entry::Key::KeyD, entry::Modifier::None, 1, NULL, "view delete file"   },
+	{ entry::Key::KeyT, entry::Modifier::None, 1, NULL, "view delete trash"  },
+	{ entry::Key::Esc,  entry::Modifier::None, 1, NULL, "view delete cancel" },
+	INPUT_BINDING_END
+};
+
+static const InputBinding s_bindingVideo[] =
+{
+	{ entry::Key::Esc,          entry::Modifier::None, 1, NULL, "exit"            },
+	{ entry::Key::Left,         entry::Modifier::None, 1, NULL, "video skip -8"   },
+	{ entry::Key::Right,        entry::Modifier::None, 1, NULL, "video skip +8"   },
+	{ entry::Key::Space,        entry::Modifier::None, 1, NULL, "video pause"     },
+	{ entry::Key::LeftBracket,  entry::Modifier::None, 1, NULL, "video rate down" },
+	{ entry::Key::RightBracket, entry::Modifier::None, 1, NULL, "video rate up"   },
+	{ entry::Key::KeyL,         entry::Modifier::None, 1, NULL, "video marker"    },
+
 	INPUT_BINDING_END
 };
 
@@ -212,8 +259,10 @@ static const char* s_bindingName[] =
 	"View",
 	"Help",
 	"About",
+	"Delete",
+	"Video",
 };
-BX_STATIC_ASSERT(Binding::Count == BX_COUNTOF(s_bindingName) );
+static_assert(Binding::Count == BX_COUNTOF(s_bindingName) );
 
 static const InputBinding* s_binding[] =
 {
@@ -221,11 +270,13 @@ static const InputBinding* s_binding[] =
 	s_bindingView,
 	s_bindingHelp,
 	s_bindingAbout,
+	s_bindingDelete,
+	s_bindingVideo,
 };
-BX_STATIC_ASSERT(Binding::Count == BX_COUNTOF(s_binding) );
+static_assert(Binding::Count == BX_COUNTOF(s_binding) );
 
 static const char* s_filter = ""
-	"All Image Formats (bmp, dds, exr, gif, gnf, jpg, jpeg, hdr, ktx, pgm, png, ppm, psd, pvr, tga) | *.bmp *.dds *.exr *.gif *.gnf *.jpg *.jpeg *.hdr *.ktx *.pgm *.png *.ppm *.psd *.pvr *.tga\n"
+	"All Image Formats (bmp, dds, exr, gif, gnf, jpg, jpeg, hdr, ktx, ktx2, pgm, png, ppm, psd, pvr, tga, webp) | *.bmp *.dds *.exr *.gif *.gnf *.jpg *.jpeg *.hdr *.ktx *.ktx2 *.pgm *.png *.ppm *.psd *.pvr *.tga *.webp\n"
 	"Windows Bitmap (bmp) | *.bmp\n"
 	"Direct Draw Surface (dds) | *.dds\n"
 	"OpenEXR (exr) | *.exr\n"
@@ -233,11 +284,13 @@ static const char* s_filter = ""
 	"JPEG Interchange Format (jpg, jpeg) | *.jpg *.jpeg\n"
 	"Radiance RGBE (hdr) | *.hdr\n"
 	"Khronos Texture (ktx) | *.ktx\n"
+	"Khronos Texture 2 (ktx2) | *.ktx2\n"
 	"Portable Graymap/Pixmap Format (pgm, ppm) | *.pgm *.ppm\n"
 	"Portable Network Graphics (png) | *.png\n"
 	"Photoshop Document (psd) | *.psd\n"
 	"PowerVR (pvr) | *.pvr\n"
 	"Truevision TGA (tga) | *.tga\n"
+	"WebP (webp) | *.webp\n"
 	;
 
 #if BX_PLATFORM_WINDOWS
@@ -253,21 +306,23 @@ struct RendererTypeRemap
 	bgfx::RendererType::Enum type;
 };
 
-static RendererTypeRemap s_rendererTypeRemap[] =
-{
-	{ "gl",    bgfx::RendererType::OpenGL     },
-	{ "d3d11", bgfx::RendererType::Direct3D11 },
-	{ "d3d11", bgfx::RendererType::Direct3D12 },
-	{ "vk",    bgfx::RendererType::Vulkan     },
-	{ "mtl",   bgfx::RendererType::Metal      },
-};
-
 struct View
 {
+	struct Action
+	{
+		enum Enum
+		{
+			None,
+			Delete,
+			Trash,
+		};
+	};
+
 	View()
 		: m_rendererType(bgfx::RendererType::Count)
 		, m_cubeMapGeo(Geometry::Quad)
 		, m_outputFormat(Output::sRGB)
+		, m_action(Action::None)
 		, m_fileIndex(0)
 		, m_scaleFn(0)
 		, m_mip(0)
@@ -281,7 +336,6 @@ struct View
 		, m_angx(0.0f)
 		, m_angy(0.0f)
 		, m_zoom(1.0f)
-		, m_angle(0.0f)
 		, m_orientation(0.0f)
 		, m_flipH(0.0f)
 		, m_flipV(0.0f)
@@ -293,11 +347,16 @@ struct View
 		, m_alpha(false)
 		, m_help(false)
 		, m_about(false)
+		, m_delete(false)
 		, m_info(false)
 		, m_files(false)
 		, m_sdf(false)
 		, m_inLinear(false)
 	{
+		m_rotate[0] = 0.0f;
+		m_rotate[1] = 0.0f;
+		m_rotate[2] = 0.0f;
+
 		load();
 
 		m_textureInfo.format = bgfx::TextureFormat::Count;
@@ -306,6 +365,7 @@ struct View
 	~View()
 	{
 	}
+
 	int32_t cmd(int32_t _argc, char const* const* _argv)
 	{
 		if (_argc >= 2)
@@ -332,7 +392,7 @@ struct View
 						bx::fromString(&mip, _argv[2]);
 					}
 
-					m_mip = bx::uint32_iclamp(mip, 0, m_textureInfo.numMips-1);
+					m_mip = bx::clamp(mip, 0, m_textureInfo.numMips-1);
 				}
 				else
 				{
@@ -361,7 +421,7 @@ struct View
 						bx::fromString(&layer, _argv[2]);
 					}
 
-					m_layer = bx::uint32_iclamp(layer, 0, m_textureInfo.numLayers-1);
+					m_layer = bx::clamp(layer, 0, m_textureInfo.numLayers-1);
 				}
 				else
 				{
@@ -484,24 +544,28 @@ struct View
 			{
 				if (_argc >= 3)
 				{
-					float angle;
-					bx::fromString(&angle, _argv[2]);
+					int8_t axis = bx::clamp<int8_t>(bx::toLower(_argv[2][0]) - 'x', 0, 2);
 
-					if (_argv[2][0] == '+'
-					||  _argv[2][0] == '-')
+					float angle;
+					bx::fromString(&angle, _argv[3]);
+
+					if (_argv[3][0] == '+'
+					||  _argv[3][0] == '-')
 					{
-						m_angle += bx::toRad(angle);
+						m_rotate[axis] += bx::toRad(angle);
 					}
 					else
 					{
-						m_angle = bx::toRad(angle);
+						m_rotate[axis] = bx::toRad(angle);
 					}
 
-					m_angle = bx::wrap(m_angle, bx::kPi*2.0f);
+					m_rotate[axis] = bx::wrap(m_rotate[axis], bx::kPi*2.0f);
 				}
 				else
 				{
-					m_angle = 0.0f;
+					m_rotate[0] = 0.0f;
+					m_rotate[1] = 0.0f;
+					m_rotate[2] = 0.0f;
 				}
 			}
 			else if (0 == bx::strCmp(_argv[1], "orientation") )
@@ -524,7 +588,8 @@ struct View
 						{
 							float angle;
 							bx::fromString(&angle, _argv[3]);
-							*dst = bx::toRad(angle);
+							angle = bx::toRad(angle);
+							*dst = bx::wrap(angle, bx::kPi*2.0f);
 						}
 						else
 						{
@@ -576,13 +641,13 @@ struct View
 			}
 			else if (0 == bx::strCmp(_argv[1], "file-up") )
 			{
-				m_fileIndex = bx::uint32_satsub(m_fileIndex, 1);
+				m_fileIndex = bx::satSub<uint32_t>(m_fileIndex, 1u);
 			}
 			else if (0 == bx::strCmp(_argv[1], "file-down") )
 			{
-				uint32_t numFiles = bx::uint32_satsub(uint32_t(m_fileList.size() ), 1);
+				uint32_t numFiles = bx::satSub<uint32_t>(uint32_t(m_fileList.size()), 1u);
 				++m_fileIndex;
-				m_fileIndex = bx::uint32_min(m_fileIndex, numFiles);
+				m_fileIndex = bx::min(m_fileIndex, numFiles);
 			}
 			else if (0 == bx::strCmp(_argv[1], "rgb") )
 			{
@@ -685,6 +750,30 @@ struct View
 			{
 				m_about ^= true;
 			}
+			else if (0 == bx::strCmp(_argv[1], "delete") )
+			{
+				if (_argc >= 3)
+				{
+					if (0 == bx::strCmp(_argv[2], "file") )
+					{
+						m_action = Action::Delete;
+					}
+					else if (0 == bx::strCmp(_argv[2], "trash") )
+					{
+						m_action = Action::Trash;
+					}
+
+					m_delete = false;
+				}
+				else if (!m_delete)
+				{
+					m_delete = !m_fileList.empty();
+				}
+				else
+				{
+					m_delete = false;
+				}
+			}
 			else if (0 == bx::strCmp(_argv[1], "save") )
 			{
 				save();
@@ -743,19 +832,7 @@ struct View
 				{
 					ext.set(ext.getPtr()+1, ext.getTerm() );
 
-					bool supported = false;
-					for (uint32_t ii = 0; ii < BX_COUNTOF(s_supportedExt); ++ii)
-					{
-						const bx::StringView supportedExt(s_supportedExt[ii]);
-
-						if (0 == bx::strCmpI(bx::max(ext.getPtr(), ext.getTerm() - supportedExt.getLength() ), supportedExt) )
-						{
-							supported = true;
-							break;
-						}
-					}
-
-					if (supported)
+					if (isExtSupported(ext) )
 					{
 						const bx::StringView fileName = fi.filePath.getFileName();
 						m_fileList.push_back(std::string(fileName.getPtr(), fileName.getTerm() ) );
@@ -864,6 +941,7 @@ struct View
 	bgfx::TextureInfo m_textureInfo;
 	Geometry::Enum m_cubeMapGeo;
 	Output::Enum m_outputFormat;
+	Action::Enum m_action;
 	uint32_t m_fileIndex;
 	uint32_t m_scaleFn;
 	uint32_t m_mip;
@@ -877,7 +955,7 @@ struct View
 	float    m_angx;
 	float    m_angy;
 	float    m_zoom;
-	float    m_angle;
+	float    m_rotate[3];
 	float    m_orientation;
 	float    m_flipH;
 	float    m_flipV;
@@ -889,6 +967,7 @@ struct View
 	bool     m_alpha;
 	bool     m_help;
 	bool     m_about;
+	bool     m_delete;
 	bool     m_info;
 	bool     m_files;
 	bool     m_sdf;
@@ -899,6 +978,52 @@ int cmdView(CmdContext* /*_context*/, void* _userData, int _argc, char const* co
 {
 	View* view = static_cast<View*>(_userData);
 	return view->cmd(_argc, _argv);
+}
+
+int cmdVideo(CmdContext* /*_context*/, void* _userData, int _argc, char const* const* _argv)
+{
+	VideoPlayer* player = static_cast<VideoPlayer*>(_userData);
+	if (NULL == player || !player->isOpen() || _argc < 2)
+	{
+		return 0;
+	}
+
+	const bx::StringView verb(_argv[1]);
+
+	if (0 == bx::strCmp(verb, "skip", 4) )
+	{
+		float seconds = 0.0f;
+		if (_argc >= 3)
+		{
+			bx::fromString(&seconds, _argv[2]);
+		}
+		player->seekRelative(int64_t(seconds * 1.0e6f) );
+	}
+	else if (0 == bx::strCmp(verb, "pause", 5) )
+	{
+		player->togglePause();
+	}
+	else if (0 == bx::strCmp(verb, "rate", 4) )
+	{
+		if (_argc >= 3 && 0 == bx::strCmp(_argv[2], "up", 2) )
+		{
+			player->rateUp();
+		}
+		else if (_argc >= 3 && 0 == bx::strCmp(_argv[2], "down", 4) )
+		{
+			player->rateDown();
+		}
+	}
+	else if (0 == bx::strCmp(verb, "marker", 6) )
+	{
+		player->cycleAbMarker();
+	}
+	else if (0 == bx::strCmp(verb, "restart", 7) )
+	{
+		player->restart();
+	}
+
+	return 0;
 }
 
 struct PosUvwColorVertex
@@ -1117,7 +1242,7 @@ struct InterpolatorT
 		if (isActive() )
 		{
 			const double freq = double(bx::getHPFrequency() );
-			int64_t now = bx::getHPCounter();
+			const int64_t now = bx::getHPCounter();
 			float time = (float)(double(now - offset) / freq);
 			float lerp = duration != 0.0f ? bx::clamp(time, 0.0f, duration) / duration : 0.0f;
 			return lerpT(from, to, easeT(lerp) );
@@ -1131,7 +1256,7 @@ struct InterpolatorT
 		if (0.0f < duration)
 		{
 			const double freq = double(bx::getHPFrequency() );
-			int64_t now = bx::getHPCounter();
+			const int64_t now = bx::getHPCounter();
 			float time = (float)(double(now - offset) / freq);
 			float lerp = bx::clamp(time, 0.0f, duration) / duration;
 			return lerp < 1.0f;
@@ -1188,15 +1313,15 @@ void associate()
 	str += "[HKEY_CLASSES_ROOT\\Applications\\texturev.exe\\shell\\open\\command]\r\n";
 	str += value;
 
-	for (uint32_t ii = 0; ii < BX_COUNTOF(s_supportedExt); ++ii)
+	for (uint32_t ii = 0; ii < s_numSupportedExt; ++ii)
 	{
-		const char* ext = s_supportedExt[ii];
+		const bx::StringView& ext = s_supportedExt[ii];
 
-		bx::stringPrintf(str, "[-HKEY_CLASSES_ROOT\\.%s]\r\n\r\n", ext);
-		bx::stringPrintf(str, "[-HKEY_CURRENT_USER\\Software\\Classes\\.%s]\r\n\r\n", ext);
+		bx::stringPrintf(str, "[-HKEY_CLASSES_ROOT\\.%S]\r\n\r\n", &ext);
+		bx::stringPrintf(str, "[-HKEY_CURRENT_USER\\Software\\Classes\\.%S]\r\n\r\n", &ext);
 
-		bx::stringPrintf(str, "[HKEY_CLASSES_ROOT\\.%s]\r\n@=\"texturev\"\r\n\r\n", ext);
-		bx::stringPrintf(str, "[HKEY_CURRENT_USER\\Software\\Classes\\.%s]\r\n@=\"texturev\"\r\n\r\n", ext);
+		bx::stringPrintf(str, "[HKEY_CLASSES_ROOT\\.%S]\r\n@=\"texturev\"\r\n\r\n", &ext);
+		bx::stringPrintf(str, "[HKEY_CURRENT_USER\\Software\\Classes\\.%S]\r\n@=\"texturev\"\r\n\r\n", &ext);
 	}
 
 	bx::FilePath filePath(bx::Dir::Temp);
@@ -1222,37 +1347,70 @@ void associate()
 		}
 	}
 #elif BX_PLATFORM_LINUX
-	std::string str;
-	str += "#/bin/bash\n\n";
 
-	for (uint32_t ii = 0; ii < BX_COUNTOF(s_supportedExt); ++ii)
+	std::string mimeType;
+
+	auto associate = [&mimeType](const bx::StringView _ext)
 	{
-		const char* ext = s_supportedExt[ii];
-		bx::stringPrintf(str, "xdg-mime default texturev.desktop image/%s\n", ext);
+		std::string tmp;
+		bx::stringPrintf(tmp, "default texturev.desktop image/%S", &_ext);
+
+		bx::ProcessReader reader;
+		bx::Error err;
+		if (bx::open(&reader, "xdg-mime", tmp.c_str(), &err) )
+		{
+			bx::close(&reader);
+		}
+		else
+		{
+			bx::printf("Failed to associate MIME type image/%S (error: \"%S\")!\n", &_ext, &err.getMessage() );
+		}
+
+		bx::stringPrintf(mimeType, "image/%S;", &_ext);
+	};
+
+	for (uint32_t ii = 0; ii < s_numSupportedExt; ++ii)
+	{
+		associate(s_supportedExt[ii]);
 	}
 
-	bx::stringPrintf(str, "xdg-mime default texturev.desktop image/x-dds\n");
-
-	str += "\n";
+	associate("x-dds");
 
 	bx::FileWriter writer;
 	bx::Error err;
-	if (bx::open(&writer, "/tmp/texturev.sh", false, &err) )
+	if (bx::open(&writer, "/usr/share/applications/texturev.desktop", false, &err) )
 	{
-		bx::write(&writer, str.c_str(), uint32_t(str.length()), &err);
+		bx::write(&writer, &err
+			, "[Desktop Entry]\n"
+			  "Version=%d.%d.%d\n"
+			  "Type=Application\n"
+			  "Name=texturev\n"
+			  "GenericName=bgfx Image/Texture Viewer\n"
+			  "Exec=texturev %%U\n"
+			  "Terminal=false\n"
+			  "Categories=Graphics\n"
+			  "StartupNotify=true\n"
+			  "MimeType=%s\n"
+			, BGFX_TEXTUREV_VERSION_MAJOR
+			, BGFX_TEXTUREV_VERSION_MINOR
+			, BGFX_API_VERSION
+			, mimeType.c_str()
+			);
 		bx::close(&writer);
-
-		if (err.isOk() )
-		{
-			bx::ProcessReader reader;
-			if (bx::open(&reader, "/bin/bash", "/tmp/texturev.sh", &err) )
-			{
-				bx::close(&reader);
-			}
-		}
+	}
+	else
+	{
+		bx::printf("Failed to create texturev desktop entry (error: \"%S\")! Permissions (try sudo)?!\n", &err.getMessage() );
 	}
 #endif // BX_PLATFORM_WINDOWS
 }
+
+static const bx::CommandLineOption s_options[] =
+{
+	{ 'h',  "help",      0, NULL, "Help."                                     },
+	{ 'v',  "version",   0, NULL, "Version information only."                 },
+	{ '\0', "associate", 0, NULL, "Associate file extensions with texturev."  },
+};
 
 void help(const char* _error = NULL)
 {
@@ -1263,7 +1421,7 @@ void help(const char* _error = NULL)
 
 	bx::printf(
 		  "texturev, bgfx texture viewer tool, version %d.%d.%d.\n"
-		  "Copyright 2011-2023 Branimir Karadzic. All rights reserved.\n"
+		  "Copyright 2011-2026 Branimir Karadzic. All rights reserved.\n"
 		  "License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE\n\n"
 		, BGFX_TEXTUREV_VERSION_MAJOR
 		, BGFX_TEXTUREV_VERSION_MINOR
@@ -1276,17 +1434,28 @@ void help(const char* _error = NULL)
 		  "Supported input file types:\n"
 		  );
 
-	for (uint32_t ii = 0; ii < BX_COUNTOF(s_supportedExt); ++ii)
+	for (uint32_t ii = 0; ii < s_numSupportedExt; ++ii)
 	{
-		bx::printf("    *.%s\n", s_supportedExt[ii]);
+		bx::printf("    *.%S\n", &s_supportedExt[ii]);
 	}
 
 	bx::printf(
 		  "\n"
 		  "Options:\n"
-		  "  -h, --help               Help.\n"
-		  "  -v, --version            Version information only.\n"
-		  "      --associate          Associate file extensions with texturev.\n"
+		);
+
+	bx::Error err;
+	bx::write(bx::getStdOut(), s_options, BX_COUNTOF(s_options), &err);
+
+	bx::printf("\n");
+
+	bx::write(bx::getStdOut(), Args::s_rendererOptions, BX_COUNTOF(Args::s_rendererOptions), &err);
+
+	bx::printf("\n");
+
+	bx::write(bx::getStdOut(), Args::s_vendorOptions, BX_COUNTOF(Args::s_vendorOptions), &err);
+
+	bx::printf(
 		  "\n"
 		  "For additional information, see https://github.com/bkaradzic/bgfx\n"
 		);
@@ -1294,7 +1463,9 @@ void help(const char* _error = NULL)
 
 int _main_(int _argc, char** _argv)
 {
-	bx::CommandLine cmdLine(_argc, _argv);
+	initSupportedExt();
+
+	bx::CommandLine cmdLine(_argc, _argv, s_options, BX_COUNTOF(s_options) );
 
 	if (cmdLine.hasArg('v', "version") )
 	{
@@ -1320,22 +1491,32 @@ int _main_(int _argc, char** _argv)
 
 	uint32_t debug = BGFX_DEBUG_TEXT;
 
+	Args args(_argc, _argv);
+
 	inputAddBindings(s_bindingName[Binding::App],  s_binding[Binding::App]);
 	inputAddBindings(s_bindingName[Binding::View], s_binding[Binding::View]);
 
 	View view;
 	cmdAdd("view", cmdView, &view);
 
+	VideoPlayer videoPlayer;
+	cmdAdd("video", cmdVideo, &videoPlayer);
+
 	entry::setWindowFlags(entry::kDefaultWindowHandle, ENTRY_WINDOW_FLAG_ASPECT_RATIO, false);
 	entry::setWindowSize(entry::kDefaultWindowHandle, view.m_width, view.m_height);
 
 	bgfx::Init init;
-	init.type = view.m_rendererType;
+	init.type = bgfx::RendererType::Count != args.m_type
+		? args.m_type
+		: view.m_rendererType
+		;
+	init.vendorId          = args.m_pciId;
 	init.platformData.nwh  = entry::getNativeWindowHandle(entry::kDefaultWindowHandle);
 	init.platformData.ndt  = entry::getNativeDisplayHandle();
 	init.resolution.width  = view.m_width;
 	init.resolution.height = view.m_height;
 	init.resolution.reset  = BGFX_RESET_VSYNC;
+	init.videoDecode       = true;
 
 	bgfx::init(init);
 
@@ -1353,6 +1534,12 @@ int _main_(int _argc, char** _argv)
 
 	const bgfx::Caps* caps = bgfx::getCaps();
 	bgfx::RendererType::Enum type = caps->rendererType;
+
+	if (0 != (caps->supported & BGFX_CAPS_VIDEO_DECODE) )
+	{
+		s_supportedExt[s_numSupportedExt++] = "mp4";
+		bx::quickSort(s_supportedExt, s_numSupportedExt, sizeof(s_supportedExt[0]), compareExt);
+	}
 
 	bgfx::UniformHandle s_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
 	bgfx::UniformHandle u_mtx      = bgfx::createUniform("u_mtx",      bgfx::UniformType::Mat4);
@@ -1433,7 +1620,9 @@ int _main_(int _argc, char** _argv)
 	Interpolator scale(1.0f);
 	Interpolator posx(0.0f);
 	Interpolator posy(0.0f);
-	InterpolatorAngle angle(0.0f);
+	InterpolatorAngle rotateX(0.0f);
+	InterpolatorAngle rotateY(0.0f);
+	InterpolatorAngle rotateZ(0.0f);
 	InterpolatorAngle angx(0.0f);
 	InterpolatorAngle angy(0.0f);
 
@@ -1449,25 +1638,26 @@ int _main_(int _argc, char** _argv)
 			|| scale.isActive()
 			|| posx.isActive()
 			|| posy.isActive()
-			|| angle.isActive()
+			|| rotateX.isActive()
+			|| rotateY.isActive()
+			|| rotateZ.isActive()
 			|| angx.isActive()
 			|| angy.isActive()
 			;
 	};
 
-	const char* filePath = _argc < 2 ? "" : _argv[1];
+	const char* filePath = cmdLine.getPositional(1);
+	filePath = NULL == filePath ? "" : filePath;
 
-	std::string path = filePath;
-	{
-		bx::FilePath fp(filePath);
-		view.updateFileList(fp);
-	}
+	view.updateFileList(filePath);
 
 	int exitcode = bx::kExitSuccess;
 	bgfx::TextureHandle texture = BGFX_INVALID_HANDLE;
+	bool videoOwnsTexture = false;
+	int playbackBinding = Binding::View;
 
 	{
-		uint32_t fileIndex = 0;
+		uint32_t fileIndex = UINT32_MAX;
 		bool dragging = false;
 
 		entry::WindowState windowState;
@@ -1494,7 +1684,7 @@ int _main_(int _argc, char** _argv)
 				,  uint16_t(view.m_height)
 				);
 
-			bool modalWindow = view.m_help || view.m_about;
+			bool modalWindow = view.m_help || view.m_about || view.m_delete;
 			bool overArea = false
 				|| ImGui::GetMousePos().y <= ImGui::GetTextLineHeightWithSpacing()
 				|| ImGui::MouseOverArea()
@@ -1700,14 +1890,82 @@ int _main_(int _argc, char** _argv)
 						name = " 2D Array";
 					}
 
-					ImGui::Text("%d x %d%s, mips: %d, layers %d, %s"
+					const char* codecName = "";
+
+					if (videoPlayer.isOpen() )
+					{
+						static const char* s_videoCodecName[] =
+						{
+							", H.264", // VideoCodec::H264
+							", H.265", // VideoCodec::H265
+							", AV1",   // VideoCodec::AV1
+						};
+						static_assert(BX_COUNTOF(s_videoCodecName) == bgfx::VideoCodec::Count);
+						const bgfx::VideoCodec::Enum codec = videoPlayer.codec();
+						codecName = s_videoCodecName[codec];
+					}
+
+					ImGui::Text("%d x %d%s, mips: %d, layers %d, %s%s"
 						, view.m_textureInfo.width
 						, view.m_textureInfo.height
 						, name
 						, view.m_textureInfo.numMips
 						, view.m_textureInfo.numLayers
 						, bimg::getName(bimg::TextureFormat::Enum(view.m_textureInfo.format) )
+						, codecName
 						);
+				}
+
+				if (videoPlayer.isOpen() )
+				{
+					ImGui::Separator();
+
+					const bool paused = videoPlayer.isPaused();
+					if (ImGui::Button(paused ? ICON_FA_PLAY : ICON_FA_PAUSE) )
+					{
+						videoPlayer.togglePause();
+					}
+
+					const int64_t curUs = videoPlayer.playbackTimeUs();
+					const int64_t durUs = int64_t(videoPlayer.durationUs() );
+					const float   curS  = float(double(curUs) * 1e-6);
+					const float   durS  = bx::max(0.001f, float(double(durUs) * 1e-6) );
+
+					float sliderS = bx::clamp(curS, 0.0f, durS);
+					ImGui::PushItemWidth(240.0f);
+
+					ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
+					if (ImGui::SliderFloat("##videoProgress", &sliderS, 0.0f, durS, "%.2fs", ImGuiSliderFlags_AlwaysClamp) )
+					{
+						videoPlayer.seekTo(uint64_t(double(sliderS) * 1e6) );
+					}
+
+					ImGui::PopItemFlag();
+					ImGui::PopItemWidth();
+
+					ImGui::Text("/ %5.2fs  " ICON_FA_FORWARD " %.2fx", durS, videoPlayer.playbackRate() );
+
+					const int64_t aUs = videoPlayer.aMarkerUs();
+					const int64_t bUs = videoPlayer.bMarkerUs();
+					if (aUs >= 0 && bUs >= 0)
+					{
+						ImGui::Separator();
+						ImGui::TextColored(
+							  ImVec4(1.0f, 1.0f, 0.0f, 1.0f)
+							, ICON_FA_REPEAT " A=%.2fs  B=%.2fs"
+							, double(aUs)*1e-6
+							, double(bUs)*1e-6
+							);
+					}
+					else if (aUs >= 0)
+					{
+						ImGui::Separator();
+						ImGui::TextColored(
+							  ImVec4(1.0f, 1.0f, 0.0f, 1.0f)
+							, "A=%.2fs"
+							, double(aUs)*1e-6
+							);
+					}
 				}
 
 				ImGui::EndMainMenuBar();
@@ -1717,7 +1975,10 @@ int _main_(int _argc, char** _argv)
 
 			static bool help = false;
 			static bool about = false;
+			static bool deleteFile = false;
+			static bool deleteOpened = false;
 			static bool mouseDelta = false;
+
 			if (!mouseDelta)
 			{
 				mouseStatePrev = mouseState;
@@ -1766,13 +2027,13 @@ int _main_(int _argc, char** _argv)
 				if (!help)
 				{
 					ImGui::OpenPopup("Help");
-					inputRemoveBindings(s_bindingName[Binding::View]);
+					inputRemoveBindings(s_bindingName[playbackBinding]);
 					inputAddBindings(s_bindingName[Binding::Help], s_binding[Binding::Help]);
 				}
 				else
 				{
 					inputRemoveBindings(s_bindingName[Binding::Help]);
-					inputAddBindings(s_bindingName[Binding::View], s_binding[Binding::View]);
+					inputAddBindings(s_bindingName[playbackBinding], s_binding[playbackBinding]);
 				}
 
 				help = view.m_help;
@@ -1783,16 +2044,36 @@ int _main_(int _argc, char** _argv)
 				if (!about)
 				{
 					ImGui::OpenPopup("About");
-					inputRemoveBindings(s_bindingName[Binding::View]);
+					inputRemoveBindings(s_bindingName[playbackBinding]);
 					inputAddBindings(s_bindingName[Binding::About], s_binding[Binding::About]);
 				}
 				else
 				{
 					inputRemoveBindings(s_bindingName[Binding::About]);
-					inputAddBindings(s_bindingName[Binding::View], s_binding[Binding::View]);
+					inputAddBindings(s_bindingName[playbackBinding], s_binding[playbackBinding]);
 				}
 
 				about = view.m_about;
+			}
+
+			if (deleteFile != view.m_delete)
+			{
+				if (!deleteFile)
+				{
+					ImGui::OpenPopup("Delete");
+					deleteOpened = true;
+					inputRemoveBindings(s_bindingName[Binding::App]);
+					inputRemoveBindings(s_bindingName[playbackBinding]);
+					inputAddBindings(s_bindingName[Binding::Delete], s_binding[Binding::Delete]);
+				}
+				else
+				{
+					inputRemoveBindings(s_bindingName[Binding::Delete]);
+					inputAddBindings(s_bindingName[Binding::App], s_binding[Binding::App]);
+					inputAddBindings(s_bindingName[playbackBinding], s_binding[playbackBinding]);
+				}
+
+				deleteFile = view.m_delete;
 			}
 
 			if (view.m_info)
@@ -1854,11 +2135,15 @@ int _main_(int _argc, char** _argv)
 
 			if (view.m_files)
 			{
+				ImGui::PushFont(ImGui::Font::Mono);
+				const float itemHeight = ImGui::GetTextLineHeightWithSpacing();
+				ImGui::PopFont();
+
 				char temp[bx::kMaxFilePath];
 				bx::snprintf(temp, BX_COUNTOF(temp), "%s##File", view.m_path.getCPtr() );
 
 				ImGui::SetNextWindowSize(
-					  ImVec2(400.0f, 400.0f)
+					  ImVec2(400.0f, 20*itemHeight)
 					, ImGuiCond_FirstUseEver
 					);
 
@@ -1867,7 +2152,6 @@ int _main_(int _argc, char** _argv)
 					if (ImGui::BeginChild("##file_list", ImVec2(0.0f, 0.0f) ) )
 					{
 						ImGui::PushFont(ImGui::Font::Mono);
-						const float itemHeight = ImGui::GetTextLineHeightWithSpacing();
 						const float listHeight =
 							  bx::max(1.0f, bx::floor(ImGui::GetWindowHeight()/itemHeight) )
 							* itemHeight
@@ -1881,26 +2165,23 @@ int _main_(int _argc, char** _argv)
 							ImGuiListClipper clipper;
 							clipper.Begin(itemCount, itemHeight);
 
-							int32_t start = clipper.DisplayStart;
-							int32_t end   = clipper.DisplayEnd;
+							const  int32_t index = int32_t(view.m_fileIndex);
+							static int32_t oldIndex  = index;
+							const  int32_t direction = bx::clamp(index - oldIndex, -1, 1);
+							oldIndex = index;
 
-							const int32_t index = int32_t(view.m_fileIndex);
-							if (index <= start)
-							{
-								ImGui::SetScrollY(ImGui::GetScrollY() - (start-index+1)*itemHeight);
-							}
-							else if (index >= end)
-							{
-								ImGui::SetScrollY(ImGui::GetScrollY() + (index-end+1)*itemHeight);
-							}
+							bool currentVisible = false;
 
 							while (clipper.Step() )
 							{
+								currentVisible |= index > clipper.DisplayStart && index < clipper.DisplayEnd;
+
 								for (int32_t pos = clipper.DisplayStart; pos < clipper.DisplayEnd; ++pos)
 								{
 									ImGui::PushID(pos);
 
-									bool isSelected = uint32_t(pos) == view.m_fileIndex;
+									bool isSelected = pos == index;
+
 									if (ImGui::Selectable(view.m_fileList[pos].c_str(), &isSelected) )
 									{
 										view.m_fileIndex = pos;
@@ -1908,6 +2189,13 @@ int _main_(int _argc, char** _argv)
 
 									ImGui::PopID();
 								}
+							}
+
+							if (0 != direction && !currentVisible)
+							{
+								const int32_t num  = int32_t(listHeight / itemHeight);
+								const int32_t posY = index + (1 == direction ? 1-num : 0);
+								ImGui::SetScrollY(posY*itemHeight);
 							}
 
 							clipper.End();
@@ -1925,11 +2213,9 @@ int _main_(int _argc, char** _argv)
 
 			if (ImGui::BeginPopupModal("About", &view.m_about, ImGuiWindowFlags_AlwaysAutoResize) )
 			{
-				ImGui::SetWindowFontScale(1.0f);
-
 				ImGui::Text(
 					"texturev, bgfx texture viewer tool " ICON_KI_WRENCH ", version %d.%d.%d.\n"
-					"Copyright 2011-2023 Branimir Karadzic. All rights reserved.\n"
+					"Copyright 2011-2026 Branimir Karadzic. All rights reserved.\n"
 					"License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE\n"
 					, BGFX_TEXTUREV_VERSION_MAJOR
 					, BGFX_TEXTUREV_VERSION_MINOR
@@ -1950,8 +2236,6 @@ int _main_(int _argc, char** _argv)
 
 			if (ImGui::BeginPopupModal("Help", &view.m_help, ImGuiWindowFlags_AlwaysAutoResize) )
 			{
-				ImGui::SetWindowFontScale(1.0f);
-
 				ImGui::Text("Key bindings:\n\n");
 
 				ImGui::PushFont(ImGui::Font::Mono);
@@ -1962,7 +2246,9 @@ int _main_(int _argc, char** _argv)
 
 				keyBindingHelp("LMB+drag",  "Pan.");
 				keyBindingHelp("=/- or MW", "Zoom in/out.");
-				keyBindingHelp("z/Z",       "Rotate.");
+				keyBindingHelp("x",         "Horizontal flip (z-axis relative).");
+				keyBindingHelp("y",         "Vertical flip (z-axis relative).");
+				keyBindingHelp("z/Z",       "Rotate around Z axis.");
 				keyBindingHelp("0",         "Reset.");
 				keyBindingHelp("1",         "Fit to window.");
 				ImGui::NextLine();
@@ -1979,6 +2265,9 @@ int _main_(int _argc, char** _argv)
 
 				keyBindingHelp("up",   "Previous texture.");
 				keyBindingHelp("down", "Next texture.");
+				ImGui::NextLine();
+
+				keyBindingHelp("delete", "Delete current file (or move it to trash).");
 				ImGui::NextLine();
 
 				keyBindingHelp("r/g/b", "Toggle R, G, or B color channel.");
@@ -2002,89 +2291,271 @@ int _main_(int _argc, char** _argv)
 				ImGui::EndPopup();
 			}
 
-			imguiEndFrame();
-
-			if ( (!bgfx::isValid(texture) || view.m_fileIndex != fileIndex)
-			&&  0 != view.m_fileList.size() )
+			if (ImGui::BeginPopupModal("Delete", &view.m_delete, ImGuiWindowFlags_AlwaysAutoResize) )
 			{
-				if (bgfx::isValid(texture) )
+				ImGui::Text("Delete file:\n\n");
+
+				ImGui::PushFont(ImGui::Font::Mono);
+				ImGui::Text("%s", view.m_fileList.empty() ? "" : view.m_fileList[view.m_fileIndex].c_str() );
+				ImGui::NextLine();
+
+				keyBindingHelp("d",     "Delete file.");
+				keyBindingHelp("t",     "Move file to trash.");
+				keyBindingHelp("[any]", "Cancel.");
+				ImGui::PopFont();
+
+				ImGui::Dummy(ImVec2(0.0f, 0.0f) );
+
+				bool cancel = false;
+
+				if (ImGui::Button("Delete", ImVec2(96.0f, 0.0f) ) )
 				{
-					bgfx::destroy(texture);
+					view.m_action = View::Action::Delete;
 				}
 
+				ImGui::SameLine();
+				if (ImGui::Button("Trash", ImVec2(96.0f, 0.0f) ) )
+				{
+					view.m_action = View::Action::Trash;
+				}
+
+				ImGui::SameLine();
+				cancel |= ImGui::Button("Cancel", ImVec2(96.0f, 0.0f) );
+
+				// Any key other than the ones bound above cancels. Skip the frame
+				// popup is opened, otherwise key that opened it would cancel it.
+				if (!deleteOpened)
+				{
+					for (int32_t key = ImGuiKey_Tab; key <= ImGuiKey_Oem102 && !cancel; ++key)
+					{
+						if (key >= ImGuiKey_LeftCtrl
+						&&  key <= ImGuiKey_RightSuper)
+						{
+							continue;
+						}
+
+						cancel = ImGui::IsKeyPressed(ImGuiKey(key), false);
+					}
+				}
+
+				deleteOpened = false;
+
+				if (cancel
+				||  View::Action::None != view.m_action
+				||  view.m_fileList.empty()
+				||  !view.m_delete)
+				{
+					view.m_delete = false;
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+			imguiEndFrame();
+
+			if (View::Action::None != view.m_action)
+			{
+				const View::Action::Enum action = view.m_action;
+				view.m_action = View::Action::None;
+
+				if (!view.m_fileList.empty() )
+				{
+					bx::FilePath fp = view.m_path;
+					fp.join(view.m_fileList[view.m_fileIndex].c_str() );
+
+					if (videoOwnsTexture)
+					{
+						videoPlayer.close();
+						videoOwnsTexture = false;
+						texture = BGFX_INVALID_HANDLE;
+					}
+					else if (bgfx::isValid(texture) )
+					{
+						bgfx::destroy(texture);
+						texture = BGFX_INVALID_HANDLE;
+					}
+
+					bx::Error err;
+					const bool result = View::Action::Trash == action
+						? bx::moveToTrash(fp, &err)
+						: bx::remove(fp, &err)
+						;
+
+					if (result)
+					{
+						view.m_fileList.erase(view.m_fileList.begin() + view.m_fileIndex);
+
+						if (view.m_fileIndex >= view.m_fileList.size() )
+						{
+							view.m_fileIndex = bx::satSub<uint32_t>(uint32_t(view.m_fileList.size() ), 1u);
+						}
+					}
+					else
+					{
+						const bx::StringView& msg = err.getMessage();
+						bx::printf("Failed to delete %s: %S\n", fp.getCPtr(), &msg);
+					}
+
+					fileIndex = UINT32_MAX;
+
+					if (view.m_fileList.empty() )
+					{
+						entry::setWindowTitle(entry::kDefaultWindowHandle, "texturev");
+					}
+				}
+			}
+
+			if (view.m_fileIndex != fileIndex
+			&&  0 != view.m_fileList.size() )
+			{
 				fileIndex = view.m_fileIndex;
 
 				bx::FilePath fp = view.m_path;
 				fp.join(view.m_fileList[view.m_fileIndex].c_str() );
 
-				bimg::Orientation::Enum orientation;
-				texture = loadTexture(fp.getCPtr()
-					, 0
-					| BGFX_SAMPLER_U_CLAMP
-					| BGFX_SAMPLER_V_CLAMP
-					| BGFX_SAMPLER_W_CLAMP
-					, 0
-					, &view.m_textureInfo
-					, &orientation
-					);
+				bx::StringView fileName(view.m_fileList[view.m_fileIndex].c_str() );
 
-				bimg::TextureFormat::Enum format = bimg::TextureFormat::Enum(view.m_textureInfo.format);
-
-				if (format < bimg::TextureFormat::Count)
+				bx::StringView ext;
+				if (fileName.getLength() >= 4)
 				{
-					view.m_inLinear = bimg::isFloat(format);
-
-					switch (orientation)
-					{
-					default:
-					case bimg::Orientation::R0:        cmdExec("view orientation\nview orientation z    0"); break;
-					case bimg::Orientation::R90:       cmdExec("view orientation\nview orientation z  -90"); break;
-					case bimg::Orientation::R180:      cmdExec("view orientation\nview orientation z -180"); break;
-					case bimg::Orientation::R270:      cmdExec("view orientation\nview orientation z -270"); break;
-					case bimg::Orientation::HFlip:     cmdExec("view orientation\nview orientation x -180"); break;
-					case bimg::Orientation::HFlipR90:  cmdExec("view orientation\nview orientation z  -90\nview orientation x -180");  break;
-					case bimg::Orientation::HFlipR270: cmdExec("view orientation\nview orientation z -270\nview orientation x -180"); break;
-					case bimg::Orientation::VFlip:     cmdExec("view orientation\nview orientation y -180"); break;
-					}
+					ext.set(fileName.getTerm() - 4, fileName.getTerm() );
 				}
 
-				std::string title;
-				if (isValid(texture) )
-				{
-					const char* name = "";
-					if (view.m_textureInfo.cubeMap)
-					{
-						name = " CubeMap";
-					}
-					else if (1 < view.m_textureInfo.depth)
-					{
-						name = " 3D";
-						view.m_textureInfo.numLayers = view.m_textureInfo.depth;
-					}
-					else if (1 < view.m_textureInfo.numLayers)
-					{
-						name = " 2D Array";
-					}
+				const bool nextIsVideo = false
+					|| 0 == bx::strCmpI(ext, ".mp4")
+					|| 0 == bx::strCmpI(ext, ".m4v")
+					;
 
-					bx::stringPrintf(title, "%s (%d x %d%s, mips: %d, layers %d, %s)"
-						, fp.getCPtr()
-						, view.m_textureInfo.width
-						, view.m_textureInfo.height
-						, name
-						, view.m_textureInfo.numMips
-						, view.m_textureInfo.numLayers
-						, bimg::getName(bimg::TextureFormat::Enum(view.m_textureInfo.format) )
-						);
+				if (videoOwnsTexture)
+				{
+					videoPlayer.close();
+					videoOwnsTexture = false;
+					texture = BGFX_INVALID_HANDLE;
+				}
+				else if (bgfx::isValid(texture) )
+				{
+					bgfx::destroy(texture);
+					texture = BGFX_INVALID_HANDLE;
+				}
+
+				const int desiredBinding = nextIsVideo ? Binding::Video : Binding::View;
+				const bool modalOpen = view.m_help || view.m_about || view.m_delete;
+				if (desiredBinding != playbackBinding && !modalOpen)
+				{
+					inputRemoveBindings(s_bindingName[playbackBinding]);
+					inputAddBindings(s_bindingName[desiredBinding], s_binding[desiredBinding]);
+				}
+				playbackBinding = desiredBinding;
+
+				std::string title;
+
+				if (nextIsVideo)
+				{
+					if (videoPlayer.open(fp.getCPtr() ) )
+					{
+						texture = videoPlayer.texture();
+						videoOwnsTexture = true;
+
+						view.m_textureInfo.format       = bgfx::TextureFormat::BGRA8;
+						view.m_textureInfo.storageSize  = 0;
+						view.m_textureInfo.width        = uint16_t(videoPlayer.width() );
+						view.m_textureInfo.height       = uint16_t(videoPlayer.height() );
+						view.m_textureInfo.depth        = 1;
+						view.m_textureInfo.numLayers    = 1;
+						view.m_textureInfo.numMips      = 1;
+						view.m_textureInfo.bitsPerPixel = 32;
+						view.m_textureInfo.cubeMap      = false;
+						view.m_inLinear = false;
+
+						cmdExec("view orientation\nview orientation z 0");
+
+						bx::stringPrintf(title, "%s (%d x %d, video, %5.2fs)"
+							, fp.getCPtr()
+							, view.m_textureInfo.width
+							, view.m_textureInfo.height
+							, double(videoPlayer.durationUs() ) * 1e-6
+							);
+					}
+					else
+					{
+						bx::stringPrintf(title, "Failed to load %s!", filePath);
+					}
 				}
 				else
 				{
-					bx::stringPrintf(title, "Failed to load %s!", filePath);
+					bimg::Orientation::Enum orientation;
+					bx::Error loadErr;
+					texture = loadTexture(fp.getCPtr()
+						, 0
+						| BGFX_SAMPLER_U_CLAMP
+						| BGFX_SAMPLER_V_CLAMP
+						| BGFX_SAMPLER_W_CLAMP
+						, 0
+						, &view.m_textureInfo
+						, &orientation
+						, &loadErr
+						);
+
+					bimg::TextureFormat::Enum format = bimg::TextureFormat::Enum(view.m_textureInfo.format);
+
+					if (format < bimg::TextureFormat::Count)
+					{
+						view.m_inLinear = bimg::isFloat(format);
+
+						switch (orientation)
+						{
+						default:
+						case bimg::Orientation::R0:        cmdExec("view orientation\nview orientation z    0"); break;
+						case bimg::Orientation::R90:       cmdExec("view orientation\nview orientation z  -90"); break;
+						case bimg::Orientation::R180:      cmdExec("view orientation\nview orientation z -180"); break;
+						case bimg::Orientation::R270:      cmdExec("view orientation\nview orientation z -270"); break;
+						case bimg::Orientation::HFlip:     cmdExec("view orientation\nview orientation x -180"); break;
+						case bimg::Orientation::HFlipR90:  cmdExec("view orientation\nview orientation z  -90\nview orientation x -180");  break;
+						case bimg::Orientation::HFlipR270: cmdExec("view orientation\nview orientation z -270\nview orientation x -180"); break;
+						case bimg::Orientation::VFlip:     cmdExec("view orientation\nview orientation y -180"); break;
+						}
+					}
+
+					if (!loadErr.isOk() )
+					{
+						const bx::StringView& msg = loadErr.getMessage();
+						bx::stringPrintf(title, "Failed to load %s: %S", filePath, &msg);
+						bx::printf("Failed to load %s: %S\n", filePath, &msg);
+					}
+					else
+					{
+						const char* name = "";
+						if (view.m_textureInfo.cubeMap)
+						{
+							name = " CubeMap";
+						}
+						else if (1 < view.m_textureInfo.depth)
+						{
+							name = " 3D";
+							view.m_textureInfo.numLayers = view.m_textureInfo.depth;
+						}
+						else if (1 < view.m_textureInfo.numLayers)
+						{
+							name = " 2D Array";
+						}
+
+						bx::stringPrintf(title, "%s (%d x %d%s, mips: %d, layers %d, %s)"
+							, fp.getCPtr()
+							, view.m_textureInfo.width
+							, view.m_textureInfo.height
+							, name
+							, view.m_textureInfo.numMips
+							, view.m_textureInfo.numLayers
+							, bimg::getName(bimg::TextureFormat::Enum(view.m_textureInfo.format) )
+							);
+					}
 				}
 
 				entry::setWindowTitle(entry::kDefaultWindowHandle, title.c_str() );
 			}
 
-			int64_t now = bx::getHPCounter();
+			const int64_t now = bx::getHPCounter();
 			static int64_t last = now;
 			const int64_t frameTime = now - last;
 			last = now;
@@ -2153,7 +2624,7 @@ int _main_(int _argc, char** _argv)
 			bgfx::dbgTextClear();
 
 			float orientation[16];
-			bx::mtxRotateXYZ(orientation, view.m_flipH, view.m_flipV, angle.getValue()+view.m_orientation);
+			bx::mtxRotateXYZ(orientation, rotateY.getValue()+view.m_flipH, rotateX.getValue()+view.m_flipV, rotateZ.getValue()+view.m_orientation);
 
 			if (view.m_fit)
 			{
@@ -2171,7 +2642,9 @@ int _main_(int _argc, char** _argv)
 			}
 
 			zoom.set(view.m_zoom, transitionTime);
-			angle.set(view.m_angle, transitionTime);
+			rotateX.set(view.m_rotate[0], transitionTime);
+			rotateY.set(view.m_rotate[1], transitionTime);
+			rotateZ.set(view.m_rotate[2], transitionTime);
 			angx.set(view.m_angx, transitionTime);
 			angy.set(view.m_angy, transitionTime);
 
@@ -2267,18 +2740,29 @@ int _main_(int _argc, char** _argv)
 				bgfx::discard();
 			}
 
+			if (videoPlayer.isOpen() )
+			{
+				videoPlayer.tick();
+			}
+
 			bgfx::frame();
 
 			// Slow down when nothing is animating...
 			if (!dragging
-			&&  !anyActive() )
+			&&  !anyActive()
+			&&  !videoPlayer.isOpen() )
 			{
 				bx::sleep(100);
 			}
 		}
 	}
 
-	if (bgfx::isValid(texture) )
+	if (videoOwnsTexture)
+	{
+		videoPlayer.close();
+		texture = BGFX_INVALID_HANDLE;
+	}
+	else if (bgfx::isValid(texture) )
 	{
 		bgfx::destroy(texture);
 	}

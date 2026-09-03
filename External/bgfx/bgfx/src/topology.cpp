@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -7,7 +7,6 @@
 #include <bx/debug.h>
 #include <bx/math.h>
 #include <bx/sort.h>
-#include <bx/uint32_t.h>
 
 #include "config.h"
 #include "topology.h"
@@ -47,7 +46,7 @@ namespace bgfx
 	{
 		const uint32_t numIndices = isEven(_numIndices) ? _numIndices + 1 : _numIndices;
 
-		if (NULL != _dst)
+		if (NULL == _dst)
 		{
 			return numIndices;
 		}
@@ -55,7 +54,8 @@ namespace bgfx
 		IndexT* dst = (IndexT*)_dst;
 		IndexT* end = &dst[_dstSize/sizeof(IndexT)];
 
-		if (isEven(_numIndices) )
+		if (isEven(_numIndices)
+		&&  dst < end)
 		{
 			*dst++ = _indices[_numIndices-1];
 		}
@@ -396,7 +396,7 @@ namespace bgfx
 			? sizeof(uint32_t)
 			: sizeof(uint16_t)
 			;
-		uint32_t  num  = bx::uint32_min(_numIndices*indexSize, _dstSize)/(indexSize*3);
+		uint32_t  num  = bx::min(_numIndices*indexSize, _dstSize)/(indexSize*3);
 		uint32_t* temp = (uint32_t*)bx::alloc(_allocator, sizeof(uint32_t)*num*4);
 
 		uint32_t* keys       = &temp[num*0];

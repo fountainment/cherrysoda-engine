@@ -91,9 +91,9 @@ public:
             parsingBuiltins(parsingBuiltins), scanContext(nullptr), ppContext(nullptr),
             limits(resources.limits),
             globalUniformBlock(nullptr),
-            globalUniformBinding(TQualifier::layoutBindingEnd),
-            globalUniformSet(TQualifier::layoutSetEnd),
-            atomicCounterBlockSet(TQualifier::layoutSetEnd)
+            globalUniformBinding(TQualifier::layoutNotSet),
+            globalUniformSet(TQualifier::layoutNotSet),
+            atomicCounterBlockSet(TQualifier::layoutNotSet)
     {
         // use storage buffer on SPIR-V 1.3 and up
         if (spvVersion.spv >= EShTargetSpv_1_3)
@@ -104,7 +104,6 @@ public:
     }
     virtual ~TParseContextBase() { }
 
-#if !defined(GLSLANG_WEB) || defined(GLSLANG_WEB_DEVEL)
     virtual void C_DECL   error(const TSourceLoc&, const char* szReason, const char* szToken,
                                 const char* szExtraInfoFormat, ...);
     virtual void C_DECL    warn(const TSourceLoc&, const char* szReason, const char* szToken,
@@ -113,11 +112,10 @@ public:
                                 const char* szExtraInfoFormat, ...);
     virtual void C_DECL  ppWarn(const TSourceLoc&, const char* szReason, const char* szToken,
                                 const char* szExtraInfoFormat, ...);
-#endif
 
     virtual void setLimits(const TBuiltInResource&) = 0;
 
-    void checkIndex(const TSourceLoc&, const TType&, int& index);
+    void checkIndex(const TSourceLoc&, const TType&, int64_t& index);
 
     EShLanguage getLanguage() const { return language; }
     void setScanContext(TScanContext* c) { scanContext = c; }
@@ -182,6 +180,7 @@ public:
     // Basic parsing state, easily accessible to the grammar
 
     TSymbolTable& symbolTable;        // symbol table that goes with the current language, version, and profile
+    TVector<TString> relaxedSymbols;
     int statementNestingLevel;        // 0 if outside all flow control or compound statements
     int loopNestingLevel;             // 0 if outside all loops
     int structNestingLevel;           // 0 if outside structures
@@ -198,6 +197,7 @@ public:
     struct TPragma contextPragma;
     int beginInvocationInterlockCount;
     int endInvocationInterlockCount;
+    bool compileOnly = false;
 
 protected:
     TParseContextBase(TParseContextBase&);
@@ -230,8 +230,8 @@ protected:
 
     // Manage the global uniform block (default uniforms in GLSL, $Global in HLSL)
     TVariable* globalUniformBlock;     // the actual block, inserted into the symbol table
-    unsigned int globalUniformBinding; // the block's binding number
-    unsigned int globalUniformSet;     // the block's set number
+    int globalUniformBinding;          // the block's binding number
+    int globalUniformSet;              // the block's set number
     int firstNewMember;                // the index of the first member not yet inserted into the symbol table
     // override this to set the language-specific name
     virtual const char* getGlobalUniformBlockName() const { return ""; }
@@ -240,7 +240,7 @@ protected:
 
     // Manage the atomic counter block (used for atomic_uints with Vulkan-Relaxed)
     TMap<int, TVariable*> atomicCounterBuffers;
-    unsigned int atomicCounterBlockSet;
+    int atomicCounterBlockSet;
     TMap<int, int> atomicCounterBlockFirstNewMember;
     // override this to set the language-specific name
     virtual const char* getAtomicCounterBlockName() const { return ""; }
@@ -331,10 +331,8 @@ public:
     TIntermTyped* handleBracketDereference(const TSourceLoc&, TIntermTyped* base, TIntermTyped* index);
     void handleIndexLimits(const TSourceLoc&, TIntermTyped* base, TIntermTyped* index);
 
-#ifndef GLSLANG_WEB
     void makeEditable(TSymbol*&) override;
     void ioArrayCheck(const TSourceLoc&, const TType&, const TString& identifier);
-#endif
     bool isIoResizeArray(const TType&) const;
     void fixIoArraySize(const TSourceLoc&, TType&);
     void handleIoResizeArrayAccess(const TSourceLoc&, TIntermTyped* base);
@@ -346,6 +344,7 @@ public:
     TIntermTyped* handleUnaryMath(const TSourceLoc&, const char* str, TOperator op, TIntermTyped* childNode);
     TIntermTyped* handleDotDereference(const TSourceLoc&, TIntermTyped* base, const TString& field);
     TIntermTyped* handleDotSwizzle(const TSourceLoc&, TIntermTyped* base, const TString& field);
+    TIntermTyped* handleTypeCast(const TSourceLoc&, TType *castType, TIntermTyped *base);
     void blockMemberExtensionCheck(const TSourceLoc&, const TIntermTyped* base, int member, const TString& memberName);
     TFunction* handleFunctionDeclarator(const TSourceLoc&, TFunction& function, bool prototype);
     TIntermAggregate* handleFunctionDefinition(const TSourceLoc&, TFunction&);
@@ -359,6 +358,7 @@ public:
     TIntermTyped* addOutputArgumentConversions(const TFunction&, TIntermAggregate&) const;
     TIntermTyped* addAssign(const TSourceLoc&, TOperator op, TIntermTyped* left, TIntermTyped* right);
     void builtInOpCheck(const TSourceLoc&, const TFunction&, TIntermOperator&);
+    void requireDerivativeLayout(const TSourceLoc&, const char* featureDesc, bool isDerivativeOp);
     void nonOpBuiltInCheck(const TSourceLoc&, const TFunction&, TIntermAggregate&);
     void userFunctionCallCheck(const TSourceLoc&, TIntermAggregate&);
     void samplerConstructorLocationCheck(const TSourceLoc&, const char* token, TIntermNode*);
@@ -370,6 +370,10 @@ public:
     TIntermTyped* vkRelaxedRemapFunctionCall(const TSourceLoc&, TFunction*, TIntermNode*);
     // returns true if the variable was remapped to something else
     bool vkRelaxedRemapUniformVariable(const TSourceLoc&, TString&, const TPublicType&, TArraySizes*, TIntermTyped*, TType&);
+    void vkRelaxedRemapUniformMembers(const TSourceLoc&, const TPublicType&, const TType&, const TString&);
+    void vkRelaxedRemapFunctionParameter(TFunction*, TParameter&, std::vector<int>* newParams = nullptr);
+    TIntermNode* vkRelaxedRemapFunctionArgument(const TSourceLoc&, TFunction*, TIntermTyped*);
+    TIntermTyped* vkRelaxedRemapDotDereference(const TSourceLoc&, TIntermTyped&, const TType&, const TString&);
 
     void assignError(const TSourceLoc&, const char* op, TString left, TString right);
     void unaryOpError(const TSourceLoc&, const char* op, TString operand);
@@ -379,10 +383,11 @@ public:
     void rValueErrorCheck(const TSourceLoc&, const char* op, TIntermTyped*) override;
     void constantValueCheck(TIntermTyped* node, const char* token);
     void integerCheck(const TIntermTyped* node, const char* token);
+    void arrayIndexCheck(const TIntermTyped* node, const char* token);
     void globalCheck(const TSourceLoc&, const char* token);
     bool constructorError(const TSourceLoc&, TIntermNode*, TFunction&, TOperator, TType&);
     bool constructorTextureSamplerError(const TSourceLoc&, const TFunction&);
-    void arraySizeCheck(const TSourceLoc&, TIntermTyped* expr, TArraySize&, const char *sizeType);
+    void arraySizeCheck(const TSourceLoc&, TIntermTyped* expr, TArraySize&, const char *sizeType, const bool isTypeParameter = false);
     bool arrayQualifierError(const TSourceLoc&, const TQualifier&);
     bool arrayError(const TSourceLoc&, const TType&);
     void arraySizeRequiredCheck(const TSourceLoc&, const TArraySizes&);
@@ -395,6 +400,8 @@ public:
     void samplerCheck(const TSourceLoc&, const TType&, const TString& identifier, TIntermTyped* initializer);
     void atomicUintCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void accStructCheck(const TSourceLoc & loc, const TType & type, const TString & identifier);
+    void hitObjectEXTCheck(const TSourceLoc& loc, const TType& type, const TString& identifier);
+    void hitObjectNVCheck(const TSourceLoc & loc, const TType & type, const TString & identifier);
     void transparentOpaqueCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void memberQualifierCheck(glslang::TPublicType&);
     void globalQualifierFixCheck(const TSourceLoc&, TQualifier&, bool isMemberCheck = false, const TPublicType* publicType = nullptr);
@@ -404,14 +411,14 @@ public:
     void setDefaultPrecision(const TSourceLoc&, TPublicType&, TPrecisionQualifier);
     int computeSamplerTypeIndex(TSampler&);
     TPrecisionQualifier getDefaultPrecision(TPublicType&);
-    void precisionQualifierCheck(const TSourceLoc&, TBasicType, TQualifier&);
+    void precisionQualifierCheck(const TSourceLoc&, TBasicType, TQualifier&, bool hasTypeParameter);
     void parameterTypeCheck(const TSourceLoc&, TStorageQualifier qualifier, const TType& type);
     bool containsFieldWithBasicType(const TType& type ,TBasicType basicType);
     TSymbol* redeclareBuiltinVariable(const TSourceLoc&, const TString&, const TQualifier&, const TShaderQualifiers&);
     void redeclareBuiltinBlock(const TSourceLoc&, TTypeList& typeList, const TString& blockName, const TString* instanceName, TArraySizes* arraySizes);
     void paramCheckFixStorage(const TSourceLoc&, const TStorageQualifier&, TType& type);
     void paramCheckFix(const TSourceLoc&, const TQualifier&, TType& type);
-    void nestedBlockCheck(const TSourceLoc&);
+    void nestedBlockCheck(const TSourceLoc&, const bool allowedInnerStruct = false);
     void nestedStructCheck(const TSourceLoc&);
     void arrayObjectCheck(const TSourceLoc&, const TType&, const char* op);
     void opaqueCheck(const TSourceLoc&, const TType&, const char* op);
@@ -422,6 +429,7 @@ public:
     void inductiveLoopCheck(const TSourceLoc&, TIntermNode* init, TIntermLoop* loop);
     void arrayLimitCheck(const TSourceLoc&, const TString&, int size);
     void limitCheck(const TSourceLoc&, int value, const char* limit, const char* feature);
+    void typeParametersCheck(const TSourceLoc&, const TPublicType&);
 
     void inductiveLoopBodyCheck(TIntermNode*, long long loopIndexId, TSymbolTable&);
     void constantIndexExpressionCheck(TIntermNode*);
@@ -446,8 +454,13 @@ public:
     TIntermTyped* addConstructor(const TSourceLoc&, TIntermNode*, const TType&);
     TIntermTyped* constructAggregate(TIntermNode*, const TType&, int, const TSourceLoc&);
     TIntermTyped* constructBuiltIn(const TType&, TOperator, TIntermTyped*, const TSourceLoc&, bool subset);
+    void makeVariadic(TFunction *F, const TSourceLoc &loc);
+    TParameter getParamWithDefault(const TPublicType& ty, TString* identifier, TIntermTyped* initializer,
+                                   const TSourceLoc& loc);
     void inheritMemoryQualifiers(const TQualifier& from, TQualifier& to);
-    void declareBlock(const TSourceLoc&, TTypeList& typeList, const TString* instanceName = nullptr, TArraySizes* arraySizes = nullptr);
+    void descHeapBuiltinRemap(TType* type, bool rootNode);
+    bool untypedHeapCheck(TSymbol* symbol, const TType& type, const TSourceLoc& loc, const char* name);
+    TIntermNode* declareBlock(const TSourceLoc&, TTypeList& typeList, const TString* instanceName = nullptr, TArraySizes* arraySizes = nullptr);
     void blockStorageRemap(const TSourceLoc&, const TString*, TQualifier&);
     void blockStageIoCheck(const TSourceLoc&, const TQualifier&);
     void blockQualifierCheck(const TSourceLoc&, const TQualifier&, bool instanceName);
@@ -466,7 +479,6 @@ public:
     const TTypeList* recordStructCopy(TStructRecord&, const TType*, const TType*);
     TLayoutFormat mapLegacyLayoutFormat(TLayoutFormat legacyLayoutFormat, TBasicType imageType);
 
-#ifndef GLSLANG_WEB
     TAttributeType attributeFromName(const TString& name) const;
     TAttributes* makeAttributes(const TString& identifier) const;
     TAttributes* makeAttributes(const TString& identifier, TIntermNode* node) const;
@@ -478,7 +490,7 @@ public:
     // Determine loop control from attributes
     void handleLoopAttributes(const TAttributes& attributes, TIntermNode*);
     // Function attributes
-    void handleFunctionAttributes(const TSourceLoc&, const TAttributes&);
+    void handleFunctionAttributes(const TSourceLoc&, TFunction&, const TAttributes&);
 
     // GL_EXT_spirv_intrinsics
     TSpirvRequirement* makeSpirvRequirement(const TSourceLoc& loc, const TString& name,
@@ -486,14 +498,13 @@ public:
     TSpirvRequirement* mergeSpirvRequirements(const TSourceLoc& loc, TSpirvRequirement* spirvReq1,
                                                 TSpirvRequirement* spirvReq2);
     TSpirvTypeParameters* makeSpirvTypeParameters(const TSourceLoc& loc, const TIntermConstantUnion* constant);
+    TSpirvTypeParameters* makeSpirvTypeParameters(const TSourceLoc& loc, const TPublicType& type);
     TSpirvTypeParameters* mergeSpirvTypeParameters(TSpirvTypeParameters* spirvTypeParams1,
                                                    TSpirvTypeParameters* spirvTypeParams2);
     TSpirvInstruction* makeSpirvInstruction(const TSourceLoc& loc, const TString& name, const TString& value);
     TSpirvInstruction* makeSpirvInstruction(const TSourceLoc& loc, const TString& name, int value);
     TSpirvInstruction* mergeSpirvInstruction(const TSourceLoc& loc, TSpirvInstruction* spirvInst1,
                                              TSpirvInstruction* spirvInst2);
-#endif
-
     void checkAndResizeMeshViewDim(const TSourceLoc&, TType&, bool isBlockMember);
 
 protected:
@@ -506,9 +517,10 @@ protected:
     bool isRuntimeLength(const TIntermTyped&) const;
     TIntermNode* executeInitializer(const TSourceLoc&, TIntermTyped* initializer, TVariable* variable);
     TIntermTyped* convertInitializerList(const TSourceLoc&, const TType&, TIntermTyped* initializer);
-#ifndef GLSLANG_WEB
     void finish() override;
-#endif
+    void handleCoopMat2FunctionCall(const TSourceLoc& loc, const TFunction* fnCandidate, TIntermTyped* result, TIntermNode* arguments);
+    void handleVector2CoopMatConversionCall(const TSourceLoc& loc, const TFunction* fnCandidate, TIntermTyped* &result, TIntermNode* arguments);
+    void handleLongVectorBuiltin(const TSourceLoc& loc, const TFunction* fnCandidate, TType* resultType, TIntermNode* arguments);
 
     virtual const char* getGlobalUniformBlockName() const override;
     virtual void finalizeGlobalUniformBlockLayout(TVariable&) override;
@@ -518,6 +530,32 @@ protected:
     virtual void finalizeAtomicCounterBlockLayout(TVariable&) override;
     virtual void setAtomicCounterBlockDefaults(TType& block) const override;
     virtual void setInvariant(const TSourceLoc& loc, const char* builtin) override;
+
+    // Returns true if the given long vector type is correctly parameterized.
+    // Otherwise emits an error and returns false.
+    template<typename TTYPE>
+    bool isValidLongVectorElseError(const TSourceLoc& loc, const TTYPE& type) {
+        assert(type.isLongVector());
+        const TTypeParameters* typeParams = type.getTypeParameters();
+        if (typeParams == nullptr) {
+            error(loc, "vector type missing type parameters", "", "");
+            return false;
+        }
+        const auto basicType = typeParams->basicType;
+        if (!isTypeInt(basicType) && !isTypeFloat(basicType) && basicType != EbtBool) {
+            error(loc, "invalid element type for vector", TType::getBasicString(typeParams->basicType), "");
+            return false;
+        }
+        if (typeParams->arraySizes == nullptr) {
+            error(loc, "vector type missing element count", "", "");
+            return false;
+        }
+        if (typeParams->arraySizes->getNumDims() != 1) {
+            error(loc, "vector type requires exactly 1 element count", "", "");
+            return false;
+        }
+        return true;
+    }
 
 public:
     //
@@ -545,9 +583,9 @@ protected:
     TQualifier globalOutputDefaults;
     TQualifier globalSharedDefaults;
     TString currentCaller;        // name of last function body entered (not valid when at global scope)
-#ifndef GLSLANG_WEB
     int* atomicUintOffsets;       // to become an array of the right size to hold an offset per binding point
     bool anyIndexLimits;
+    bool khrDerivativeLayoutQualifierSpecified;
     TIdSetType inductiveLoopIds;
     TVector<TIntermTyped*> needsIndexLimitationChecking;
     TStructRecord matrixFixRecord;
@@ -586,7 +624,6 @@ protected:
     //    array-sizing declarations
     //
     TVector<TSymbol*> ioArraySymbolResizeList;
-#endif
 };
 
 } // end namespace glslang

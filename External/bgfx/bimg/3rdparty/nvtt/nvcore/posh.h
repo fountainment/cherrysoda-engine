@@ -298,8 +298,8 @@ LLVM:
 ** Determine target operating system
 ** ----------------------------------------------------------------------------
 */
-#if defined linux || defined __linux__ || defined EMSCRIPTEN
-#  define POSH_OS_LINUX 1 
+#if defined linux || defined __linux__ || defined __EMSCRIPTEN__
+#  define POSH_OS_LINUX 1
 #  define POSH_OS_STRING "Linux"
 #endif
 
@@ -516,6 +516,16 @@ LLVM:
 #  define POSH_CPU_STRING "IA64"
 #endif
 
+#if defined __riscv64 || (defined __riscv && __riscv_xlen == 64)
+#  define POSH_CPU_RISCV64 1
+#  define POSH_CPU_STRING "RISC-V 64"
+#endif
+
+#if defined __loongarch64 || (defined __loongarch__ && __loongarch_grlen == 64)
+#  define POSH_CPU_LOONGARCH64 1
+#  define POSH_CPU_STRING "LoongArch64"
+#endif
+
 #if defined __X86__ || defined __i386__ || defined i386 || defined _M_IX86 || defined __386__ || defined __x86_64__ || defined _M_X64
 #  define POSH_CPU_X86 1
 #  if defined __x86_64__ || defined _M_X64
@@ -538,7 +548,7 @@ LLVM:
 #  define POSH_CPU_STRING "PA-RISC"
 #endif
 
-#if defined EMSCRIPTEN
+#if defined __EMSCRIPTEN__
 #  define POSH_CPU_EMSCRIPTEN 1
 #  define POSH_CPU_STRING "EMSCRIPTEN"
 #endif
@@ -680,7 +690,7 @@ LLVM:
 ** the MIPS series, so we have to be careful about those.
 ** ----------------------------------------------------------------------------
 */
-#if defined POSH_CPU_X86 || defined POSH_CPU_AXP || defined POSH_CPU_STRONGARM || defined POSH_CPU_AARCH64 || defined POSH_OS_WIN32 || defined POSH_OS_WINCE || defined __MIPSEL__ || defined POSH_CPU_EMSCRIPTEN
+#if defined POSH_CPU_X86 || defined POSH_CPU_AXP || defined POSH_CPU_STRONGARM || defined POSH_CPU_AARCH64 || defined POSH_CPU_RISCV64 || defined POSH_CPU_LOONGARCH64 || defined POSH_OS_WIN32 || defined POSH_OS_WINCE || defined __MIPSEL__ || defined POSH_CPU_EMSCRIPTEN
 #  define POSH_ENDIAN_STRING "little"
 #  define POSH_LITTLE_ENDIAN 1
 #else

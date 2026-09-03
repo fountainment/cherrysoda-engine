@@ -24,12 +24,12 @@ def compile_shader_program(shader_dir, shader_name):
             ['windows', 's_5_0', 3, 'dx11']
         ]
     compile_info += [
-        ['nacl',    None,    None, 'essl'],
-        ['android', None,    None, 'essl_a'],
-        ['linux',   '120',   None, 'glsl'],
-        ['osx',     'metal', None, 'metal'],
+        ['android', '300_es', None, 'essl_a'],
+        ['linux',   '430',    None, 'glsl'],
+        ['osx',     'metal',  None, 'metal'],
 #       ['orbis',   'pssl',  None, 'pssl'],
-        ['linux',   'spirv', None, 'spirv']
+        ['linux',   'spirv', None, 'spirv'],
+        ['linux',   'wgsl',  None, 'wgsl']
     ]
 
     for info_arr in compile_info:
@@ -53,11 +53,12 @@ def compile_embedded_shader_program(shader_dir, shader_name):
     compile_info = [
         {
             'platform': 'linux',
-            'profile': '120',
+            'profile': '430',
             'suffix': 'glsl'
         },
         {
             'platform': 'android',
+            'profile': '300_es',
             'suffix': 'essl'
         },
         {
@@ -70,6 +71,11 @@ def compile_embedded_shader_program(shader_dir, shader_name):
             'profile': 'metal',
             'opt_level': 3,
             'suffix': 'mtl'
+        },
+        {
+            'platform': 'linux',
+            'profile': 'wgsl',
+            'suffix': 'wgsl'
         }
     ]
     dx_compile_info = [
@@ -137,7 +143,7 @@ def generate_embedded_shader_header(shader_dir):
     embedded_shader_dir = cherry.join_path(shader_dir, 'embedded_shaders')
     file_list = cherry.get_file_list_from_wildcard(cherry.join_path(embedded_shader_dir, '*.bin.h'))
     shader_src = ' '.join(list(map(cherry.get_file_name, file_list)))
-    p = re.compile('fs_([A-Za-z0-9_]*)\.bin.h')
+    p = re.compile(r'fs_([A-Za-z0-9_]*)\.bin.h')
     shader_names = p.findall(shader_src)
     shader_names.sort()
     header_file = open(cherry.join_path(shader_dir, 'embedded_shaders.h'), 'w')
@@ -188,7 +194,7 @@ def main():
         compile_func(shader_dir, shader_name)
     elif args.file_list != None: 
         shader_src = args.file_list
-        p = re.compile('fs_([A-Za-z0-9_]*)\.sc')
+        p = re.compile(r'fs_([A-Za-z0-9_]*)\.sc')
         shader_names = p.findall(shader_src) 
         for shader_name in shader_names:
             compile_func(shader_dir, shader_name)

@@ -126,7 +126,44 @@ void spvValidatorOptionsSetAllowLocalSizeId(spv_validator_options options,
   options->allow_localsizeid = val;
 }
 
+void spvValidatorOptionsSetAllowOffsetTextureOperand(
+    spv_validator_options options, bool val) {
+  options->allow_offset_texture_operand = val;
+}
+
+void spvValidatorOptionsSetAllowVulkan32BitBitwise(
+    spv_validator_options options, bool val) {
+  options->allow_vulkan_32_bit_bitwise = val;
+}
+
 void spvValidatorOptionsSetFriendlyNames(spv_validator_options options,
                                          bool val) {
   options->use_friendly_names = val;
+}
+
+void spvValidatorOptionsSetBufferDescriptorLayout(spv_validator_options options,
+                                                  uint32_t size,
+                                                  uint32_t alignment) {
+  options->buffer_descriptor_layout.size = size;
+  options->buffer_descriptor_layout.alignment = alignment;
+}
+
+void spvValidatorOptionsSetImageDescriptorLayout(spv_validator_options options,
+                                                 uint32_t size,
+                                                 uint32_t alignment) {
+  options->image_descriptor_layout.size = size;
+  options->image_descriptor_layout.alignment = alignment;
+}
+
+void spvValidatorOptionsSetSamplerDescriptorLayout(
+    spv_validator_options options, uint32_t size, uint32_t alignment) {
+  options->sampler_descriptor_layout.size = size;
+  options->sampler_descriptor_layout.alignment = alignment;
+}
+
+void spvValidatorOptionsSetTensorDescriptorLayout(spv_validator_options options,
+                                                  uint32_t size,
+                                                  uint32_t alignment) {
+  options->tensor_descriptor_layout.size = size;
+  options->tensor_descriptor_layout.alignment = alignment;
 }

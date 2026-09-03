@@ -1,23 +1,15 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #ifndef BGFX_RENDERER_D3D_H_HEADER_GUARD
 #define BGFX_RENDERER_D3D_H_HEADER_GUARD
 
-#if 0 // BGFX_CONFIG_DEBUG && BGFX_CONFIG_RENDERER_DIRECT3D9 && !(BX_COMPILER_GCC || BX_COMPILER_CLANG)
-#	include <sal.h>
-#	include <dxerr.h>
-#	if BX_COMPILER_MSVC
-#		pragma comment(lib, "dxerr.lib")
-#	endif // BX_COMPILER_MSVC
-#	define DX_CHECK_EXTRA_F " (%s): %s"
-#	define DX_CHECK_EXTRA_ARGS , DXGetErrorString(__hr__), DXGetErrorDescription(__hr__)
-#else
-#	define DX_CHECK_EXTRA_F ""
-#	define DX_CHECK_EXTRA_ARGS
-#endif // BGFX_CONFIG_DEBUG && BGFX_CONFIG_RENDERER_DIRECT3D9
+#include "renderer.h"
+
+#define DX_CHECK_EXTRA_F ""
+#define DX_CHECK_EXTRA_ARGS
 
 #ifndef DXGI_ERROR_NOT_CURRENTLY_AVAILABLE
 #	define DXGI_ERROR_NOT_CURRENTLY_AVAILABLE HRESULT(0x887A0022)
@@ -73,6 +65,21 @@ namespace bgfx
 #else
 	typedef ::IGraphicsUnknown IUnknown;
 #endif // BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
+
+	inline constexpr uint32_t toPixColor(uint32_t _abgr)
+	{
+		// ABGR -> BGRA
+		return (_abgr >> 8) | (_abgr << 24);
+	}
+
+	inline bool isDebuggerAttached()
+	{
+#if BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
+		return !!::IsDebuggerPresent();
+#else
+		return false;
+#endif // BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
+	}
 
 #define _DX_CHECK(_call)                                                                   \
 			BX_MACRO_BLOCK_BEGIN                                                           \
@@ -161,60 +168,22 @@ namespace bgfx
 	}
 
 	template<typename Ty>
-	class StateCacheT
+	struct StateCacheFuncT<Ty*>
 	{
-	public:
-		void add(uint64_t _key, Ty* _value)
+		static void evict(Ty* _ptr)
 		{
-			invalidate(_key);
-			m_hashMap.insert(stl::make_pair(_key, _value) );
+			DX_RELEASE_W(_ptr, 0);
+		}
+
+		static void validate(Ty* _ptr, uint64_t _key)
+		{
+			BX_UNUSED(_ptr, _key);
 			BX_ASSERT(isGraphicsDebuggerPresent()
-				|| 1 == getRefCount(_value), "Interface ref count %d, hash %" PRIx64 "."
-				, getRefCount(_value)
+				|| 1 == getRefCount(_ptr), "Interface ref count %d, hash %" PRIx64 "."
+				, getRefCount(_ptr)
 				, _key
 				);
 		}
-
-		Ty* find(uint64_t _key)
-		{
-			typename HashMap::iterator it = m_hashMap.find(_key);
-			if (it != m_hashMap.end() )
-			{
-				return it->second;
-			}
-
-			return NULL;
-		}
-
-		void invalidate(uint64_t _key)
-		{
-			typename HashMap::iterator it = m_hashMap.find(_key);
-			if (it != m_hashMap.end() )
-			{
-				DX_RELEASE_W(it->second, 0);
-				m_hashMap.erase(it);
-			}
-		}
-
-		void invalidate()
-		{
-			for (typename HashMap::iterator it = m_hashMap.begin(), itEnd = m_hashMap.end(); it != itEnd; ++it)
-			{
-				DX_CHECK_REFCOUNT(it->second, 1);
-				it->second->Release();
-			}
-
-			m_hashMap.clear();
-		}
-
-		uint32_t getCount() const
-		{
-			return uint32_t(m_hashMap.size() );
-		}
-
-	private:
-		typedef stl::unordered_map<uint64_t, Ty*> HashMap;
-		HashMap m_hashMap;
 	};
 
 	template<>

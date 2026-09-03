@@ -36,7 +36,8 @@ using utils::ParseNumber;
 // Returns true if the given char is ':', '\0' or considered as blank space
 // (i.e.: '\n', '\r', '\v', '\t', '\f' and ' ').
 bool IsSeparator(char ch) {
-  return std::strchr(":\0", ch) || std::isspace(ch) != 0;
+  return std::strchr(":\0", ch) ||
+         std::isspace(static_cast<unsigned char>(ch)) != 0;
 }
 
 // Reads characters starting from |str| until it meets a separator. Parses a
@@ -246,9 +247,10 @@ Instruction* ConvertToSampledImagePass::CreateImageExtraction(
   InstructionBuilder builder(
       context(), sampled_image->NextNode(),
       IRContext::kAnalysisDefUse | IRContext::kAnalysisInstrToBlockMapping);
-  return builder.AddUnaryOp(
+  Instruction* result = builder.AddUnaryOp(
       GetImageTypeOfSampledImage(context()->get_type_mgr(), sampled_image),
       spv::Op::OpImage, sampled_image->result_id());
+  return result;
 }
 
 uint32_t ConvertToSampledImagePass::GetSampledImageTypeForImage(
@@ -270,6 +272,9 @@ Instruction* ConvertToSampledImagePass::UpdateImageUses(
   if (uses_of_load.empty()) return nullptr;
 
   auto* extracted_image = CreateImageExtraction(sampled_image_load);
+  if (extracted_image == nullptr) {
+    return nullptr;
+  }
   for (auto* user : uses_of_load) {
     user->SetInOperand(0, {extracted_image->result_id()});
     context()->get_def_use_mgr()->AnalyzeInstUse(user);
@@ -306,8 +311,12 @@ void ConvertToSampledImagePass::UpdateSampledImageUses(
       def_use_mgr->AnalyzeInstUse(image_load);
       context()->KillInst(sampled_image_inst);
     } else {
-      if (!image_extraction)
+      if (!image_extraction) {
         image_extraction = CreateImageExtraction(image_load);
+        if (image_extraction == nullptr) {
+          return;
+        }
+      }
       sampled_image_inst->SetInOperand(0, {image_extraction->result_id()});
       def_use_mgr->AnalyzeInstUse(sampled_image_inst);
     }
@@ -329,12 +338,13 @@ bool ConvertToSampledImagePass::ConvertImageVariableToSampledImage(
   if (sampled_image_type == nullptr) return false;
   auto storage_class = GetStorageClass(*image_variable);
   if (storage_class == spv::StorageClass::Max) return false;
-  analysis::Pointer sampled_image_pointer(sampled_image_type, storage_class);
-
   // Make sure |image_variable| is behind its type i.e., avoid the forward
   // reference.
-  uint32_t type_id =
-      context()->get_type_mgr()->GetTypeInstruction(&sampled_image_pointer);
+  uint32_t type_id = context()->get_type_mgr()->FindPointerToType(
+      sampled_image_type_id, storage_class);
+  if (type_id == 0) {
+    return false;
+  }
   MoveInstructionNextToType(image_variable, type_id);
   return true;
 }
@@ -427,7 +437,7 @@ ConvertToSampledImagePass::ParseDescriptorSetBindingPairsString(
     descriptor_set_binding_pairs->push_back({descriptor_set, binding});
 
     // Skip trailing spaces.
-    while (std::isspace(*str)) str++;
+    while (std::isspace(static_cast<unsigned char>(*str))) str++;
   }
 
   return descriptor_set_binding_pairs;
