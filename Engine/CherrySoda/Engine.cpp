@@ -162,6 +162,10 @@ void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
 {
 	ParseArgs(argc, argv);
 	Initialize();
+	if (!m_initialized) {
+		CHERRYSODA_LOG("Engine initialization failed!\n");
+		return;
+	}
 	LoadContent();
 
 	m_gameTime = 0.0;
