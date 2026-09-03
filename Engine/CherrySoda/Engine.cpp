@@ -345,6 +345,11 @@ void Engine::Update()
 	// Update input
 	MInput::Update();
 
+	// Reclaim finished one-shot audio instances
+	if (m_enableInternalAudio) {
+		Audio::Update();
+	}
+
 	if (ExitOnEscapeKeypress() && MInput::Keyboard()->Pressed(Keys::Escape)) {
 		Exit();
 		return;

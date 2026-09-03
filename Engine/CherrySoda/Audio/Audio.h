@@ -34,6 +34,8 @@ public:
 	struct EventDescription
 	{
 		String filename = "";
+		// When set, the buffer is owned by Audio (LoadFileFromMemory copies it)
+		// and must stay alive as long as instances are created from it
 		type::UInt8* data = nullptr;
 		int size = 0;
 
@@ -42,6 +44,9 @@ public:
 
 	static void Initialize();
 	static void Terminate();
+
+	// Reclaims one-shot instances created by Play() once they finish playing
+	static void Update();
 
 	static void LoadFile(const StringID& path, const String& filePath);
 	static void LoadFileFromMemory(const StringID& path, void* data, int size);
@@ -54,6 +59,11 @@ public:
 
 	static EventInstance CreateInstance(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
 	static EventInstance CreateLoopInstance(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
+
+	// Explicitly frees an instance's resources; instances returned by Play()
+	// are freed automatically once they finish playing, others (CreateInstance /
+	// Loop) live until Destroy() or Terminate()
+	static void Destroy(EventInstance instance);
 
 	static double GetLength(EventInstance instance);
 	static double GetPosition(EventInstance instance);
