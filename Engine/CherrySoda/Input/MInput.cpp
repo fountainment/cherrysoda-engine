@@ -1,5 +1,7 @@
 #include <CherrySoda/Input/MInput.h>
 
+#include <CherrySoda/Input/VirtualInput.h>
+
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/GUI.h>
 #include <CherrySoda/Util/Log.h>
@@ -164,8 +166,6 @@ void MInput::Initialize()
 	else {
 		ms_supportsGlobalMouse = false;
 	}
-
-	// TODO: VirtualInputs
 }
 
 void MInput::Terminate()
@@ -209,7 +209,8 @@ void MInput::Update()
 			ms_gamePads[i]->UpdateNull();
 		}
 	}
-	// TODO: VirtualInputs
+
+	VirtualInput::UpdateVirtualInputs();
 }
 
 void MInput::UpdateNull()
@@ -219,7 +220,6 @@ void MInput::UpdateNull()
 	for (int i = 0; i < 4; ++i) {
 		ms_gamePads[i]->UpdateNull();
 	}
-	// TODO: VirtualInputs
 }
 
 const MInput::KeyboardState MInput::GetKeyboardState()

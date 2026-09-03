@@ -836,7 +836,14 @@ public:
 	static void Initialize();
 	static void Terminate();
 
+	// While disabled, virtual inputs report no activity (raw keyboard/mouse/
+	// gamepad queries are unaffected)
+	static inline bool Disabled() { return ms_disabled; }
+	static inline void Disabled(bool disabled) { ms_disabled = disabled; }
+
 private:
+	static inline bool ms_disabled = false;
+
 	static const STL::List<Keys>& GetCurrentKeyboardKeys()
 	{
 		return ms_keyboardKeys;

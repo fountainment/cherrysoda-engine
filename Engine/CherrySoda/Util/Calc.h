@@ -70,6 +70,13 @@ public:
 	static Math::Vec2 FourWayNormal(Math::Vec2 vec);
 	static Math::Vec2 EightWayNormal(Math::Vec2 vec);
 	static Math::Vec2 SnapedNormal(Math::Vec2 vec, float slices);
+	static Math::Vec2 Snapped(Math::Vec2 vec, float slices);
+
+	static inline int SignThreshold(float value, float threshold)
+	{
+		int sign = value > 0.f ? 1 : (value < 0.f ? -1 : 0);
+		return sign * (Math_Abs(value) >= threshold ? 1 : 0);
+	}
 
 	static inline Math::Vec2 SafeNormalize(const Math::Vec2& vec, const Math::Vec2& ifZero)
 	{

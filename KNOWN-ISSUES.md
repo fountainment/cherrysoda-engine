@@ -50,14 +50,6 @@ entry has a stable ID, the location(s), the impact, and a fix sketch.
 - Fix sketch: extend `Graphics::CreateTexture` paths with bgfx 3D create
   flags and a `Texture::Type3D` loader.
 
-### F3: VirtualInputs / action mapping absent
-
-- Location: `Engine/CherrySoda/Input/MInput.cpp:138,182,192`
-- Impact: gameplay reads raw `Keyboard()->Pressed(...)`; rebinding and
-  pad/kbd equivalence need per-game workarounds.
-- Fix sketch: an action-map layer over the existing *Data buckets
-  (Check/Pressed/Released per named action, config-file backed).
-
 ### F4: Tracker / Pooler hooks not implemented
 
 - Location: `Engine/CherrySoda/InternalUtilities/EntityList.cpp:27,45`,

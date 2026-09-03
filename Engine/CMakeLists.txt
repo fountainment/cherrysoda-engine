@@ -79,6 +79,16 @@ set(ENGINE_SRC
   CherrySoda/Graphics/TileSet.h
   CherrySoda/Input/MInput.cpp
   CherrySoda/Input/MInput.h
+  CherrySoda/Input/VirtualAxis.cpp
+  CherrySoda/Input/VirtualAxis.h
+  CherrySoda/Input/VirtualButton.cpp
+  CherrySoda/Input/VirtualButton.h
+  CherrySoda/Input/VirtualInput.cpp
+  CherrySoda/Input/VirtualInput.h
+  CherrySoda/Input/VirtualIntegerAxis.cpp
+  CherrySoda/Input/VirtualIntegerAxis.h
+  CherrySoda/Input/VirtualJoystick.cpp
+  CherrySoda/Input/VirtualJoystick.h
   CherrySoda/Interface/Window.cpp
   CherrySoda/Interface/Window.h
   CherrySoda/InternalUtilities/ComponentList.cpp

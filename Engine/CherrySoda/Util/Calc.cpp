@@ -75,6 +75,14 @@ Math::Vec2 Calc::SnapedNormal(Math::Vec2 vec, float slices)
 	return AngleToVector(angle, 1.f);
 }
 
+Math::Vec2 Calc::Snapped(Math::Vec2 vec, float slices)
+{
+	float divider = Math::Pi2 / slices;
+
+	float angle = (float)Math_Floor((Calc::Angle(vec) + divider * .5f) / divider) * divider;
+	return AngleToVector(angle, Math_Length(vec));
+}
+
 Math::Vec2 Calc::ClosestPointOnLine(const Math::Vec2& lineA, const Math::Vec2& lineB, const Math::Vec2& closestTo)
 {
 	auto v = lineB - lineA;
