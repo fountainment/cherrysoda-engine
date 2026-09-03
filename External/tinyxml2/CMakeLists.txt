@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(tinyxml2 VERSION 9.0.0)
+project(tinyxml2 VERSION 11.0.0)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
