@@ -31,5 +31,8 @@ add_cherrysoda_executable(SceneTest)
 set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h StateMachineTest.cpp)
 add_cherrysoda_executable(StateMachineTest)
 
+set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h CoroutineTest.cpp)
+add_cherrysoda_executable(CoroutineTest)
+
 set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h AllTests.cpp)
 add_cherrysoda_executable(AllTests)

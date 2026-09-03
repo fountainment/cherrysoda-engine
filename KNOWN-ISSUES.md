@@ -83,15 +83,6 @@ entry has a stable ID, the location(s), the impact, and a fix sketch.
 - Fix sketch: parse kerning into the lookup; make space width configurable
   per font.
 
-### F7: StateMachine logging and coroutines
-
-- Location: `Engine/CherrySoda/Components/Logic/StateMachine.cpp:38-65`,
-  `Engine/CherrySoda/Components/Logic/StateMachine.h:42`
-- Impact: state changes are not logged to the debug console; no coroutine
-  style state bodies.
-- Fix sketch: log transitions behind `CHERRYSODA_DEBUG`; coroutine support
-  would need a small task/cotask helper compatible with -fno-exceptions.
-
 ### F8: MeshGraphicsComponent template name workaround
 
 - Location: `Engine/CherrySoda/Components/Graphics/MeshGraphicsComponent.h:15,23`
