@@ -28,12 +28,10 @@ bool Collide::Check(Entity* a, const Entity* b, const Math::Vec2& at)
 
 bool Collide::Check(const Entity* a, const CollidableComponent* b)
 {
-	if (a->GetCollider() == nullptr && b->GetCollider() == nullptr) {
+	if (a->GetCollider() == nullptr || b->GetCollider() == nullptr) {
 		return false;
 	}
-	else {
-		return b->Collidable() && b->GetEntity()->Collidable() && a->GetCollider()->Collide(b);
-	}
+	return b->Collidable() && b->GetEntity()->Collidable() && a->GetCollider()->Collide(b);
 }
 
 bool Collide::Check(Entity* a, const CollidableComponent* b, const Math::Vec2& at)
