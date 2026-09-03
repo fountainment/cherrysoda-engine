@@ -112,9 +112,90 @@ bool Grid::Collide(const Math::Rectangle& rect) const
 	}
 }
 
+// Liang-Barsky clip of segment [from, to] against rect; returns false if the segment misses the rect
+static bool ClipSegmentToRect(const Math::Rectangle& rect, const Math::Vec2& from, const Math::Vec2& to,
+                              Math::Vec2& start, Math::Vec2& end)
+{
+	float t0 = 0.f;
+	float t1 = 1.f;
+	const Math::Vec2 delta = to - from;
+	const float p[] = { -delta.x, delta.x, -delta.y, delta.y };
+	const float q[] = {
+		from.x - rect.Left(),  rect.Right() - from.x,
+		from.y - rect.Bottom(), rect.Top()  - from.y,
+	};
+	for (int i = 0; i < 4; ++i) {
+		if (p[i] == 0.f) {
+			if (q[i] < 0.f) {
+				return false;
+			}
+		}
+		else {
+			float r = q[i] / p[i];
+			if (p[i] < 0.f) {
+				if (r > t1) return false;
+				if (r > t0) t0 = r;
+			}
+			else {
+				if (r < t0) return false;
+				if (r < t1) t1 = r;
+			}
+		}
+	}
+	start = from + delta * t0;
+	end = from + delta * t1;
+	return true;
+}
+
 bool Grid::Collide(const Math::Vec2& from, const Math::Vec2& to) const
 {
-	return false;
+	if (CellWidth() <= 0.f || CellHeight() <= 0.f || CellsX() <= 0 || CellsY() <= 0) {
+		return false;
+	}
+
+	const Math::Rectangle bounds = Bounds();
+	Math::Vec2 start, end;
+	if (!ClipSegmentToRect(bounds, from, to, start, end)) {
+		return false;
+	}
+
+	// Amanatides-Woo grid traversal, in cell units
+	const float startX = (start.x - bounds.Left()) / CellWidth();
+	const float startY = (start.y - bounds.Bottom()) / CellHeight();
+	const float dirX = (end.x - start.x) / CellWidth();
+	const float dirY = (end.y - start.y) / CellHeight();
+
+	constexpr float kInf = 1e30f;
+	const int stepX = dirX > 0.f ? 1 : (dirX < 0.f ? -1 : 0);
+	const int stepY = dirY > 0.f ? 1 : (dirY < 0.f ? -1 : 0);
+	const float tDeltaX = stepX != 0 ? Math_Abs(1.f / dirX) : kInf;
+	const float tDeltaY = stepY != 0 ? Math_Abs(1.f / dirY) : kInf;
+
+	int x = static_cast<int>(Math_Floor(startX));
+	int y = static_cast<int>(Math_Floor(startY));
+	const int endX = static_cast<int>(Math_Floor(startX + dirX));
+	const int endY = static_cast<int>(Math_Floor(startY + dirY));
+	float tMaxX = stepX > 0 ? (static_cast<float>(x + 1) - startX) * tDeltaX
+	          : stepX < 0 ? (startX - static_cast<float>(x)) * tDeltaX : kInf;
+	float tMaxY = stepY > 0 ? (static_cast<float>(y + 1) - startY) * tDeltaY
+	          : stepY < 0 ? (startY - static_cast<float>(y)) * tDeltaY : kInf;
+
+	while (true) {
+		if (Get(x, y)) {
+			return true;
+		}
+		if (x == endX && y == endY) {
+			return false;
+		}
+		if (tMaxX < tMaxY) {
+			x += stepX;
+			tMaxX += tDeltaX;
+		}
+		else {
+			y += stepY;
+			tMaxY += tDeltaY;
+		}
+	}
 }
 
 void Grid::Render(const Camera* camera, const Color& color) const
