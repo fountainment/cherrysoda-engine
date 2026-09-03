@@ -19,6 +19,74 @@ void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<in
 			m_tiles->Set(x + offsetX, y + offsetY, tileset->Get(tiles[x][y]));
 }
 
+void TileGrid::Overlay(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX /* = 0*/,
+					   int offsetY /* = 0*/)
+{
+	if (STL::IsEmpty(tiles)) return;
+	for (int x = 0; x < static_cast<int>(STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
+		for (int y = 0; y < static_cast<int>(STL::Count(tiles[0])) && y + offsetY < TilesY(); ++y)
+			if (tiles[x][y] >= 0) m_tiles->Set(x + offsetX, y + offsetY, tileset->Get(tiles[x][y]));
+}
+
+void TileGrid::Extend(int left, int right, int up, int down)
+{
+	// Row 0 sits on the grid's bottom edge (the engine's Y axis points up)
+	Position(Position() - Math::Vec2(left * TileWidth(), down * TileHeight()));
+
+	int newWidth = TilesX() + left + right;
+	int newHeight = TilesY() + up + down;
+	if (newWidth <= 0 || newHeight <= 0) {
+		delete m_tiles;
+		m_tiles = new VirtualMap<const MTexture*>(0, 0);
+		return;
+	}
+
+	auto newTiles = new VirtualMap<const MTexture*>(newWidth, newHeight);
+
+	// Center
+	for (int x = 0; x < TilesX(); ++x) {
+		for (int y = 0; y < TilesY(); ++y) {
+			int atX = x + left;
+			int atY = y + down;
+
+			if (atX >= 0 && atX < newWidth && atY >= 0 && atY < newHeight) {
+				newTiles->Set(atX, atY, m_tiles->Get(x, y));
+			}
+		}
+	}
+
+	// Left
+	for (int x = 0; x < left; ++x) {
+		for (int y = 0; y < newHeight; ++y) {
+			newTiles->Set(x, y, m_tiles->Get(0, Math_Clamp(y - down, 0, TilesY() - 1)));
+		}
+	}
+
+	// Right
+	for (int x = newWidth - right; x < newWidth; ++x) {
+		for (int y = 0; y < newHeight; ++y) {
+			newTiles->Set(x, y, m_tiles->Get(TilesX() - 1, Math_Clamp(y - down, 0, TilesY() - 1)));
+		}
+	}
+
+	// Down
+	for (int y = 0; y < down; ++y) {
+		for (int x = 0; x < newWidth; ++x) {
+			newTiles->Set(x, y, m_tiles->Get(Math_Clamp(x - left, 0, TilesX() - 1), 0));
+		}
+	}
+
+	// Up
+	for (int y = newHeight - up; y < newHeight; ++y) {
+		for (int x = 0; x < newWidth; ++x) {
+			newTiles->Set(x, y, m_tiles->Get(Math_Clamp(x - left, 0, TilesX() - 1), TilesY() - 1));
+		}
+	}
+
+	delete m_tiles;
+	m_tiles = newTiles;
+}
+
 void TileGrid::FillRect(int x, int y, int columns, int rows, const MTexture* tile)
 {
 	int left = Math_Max(0, x);

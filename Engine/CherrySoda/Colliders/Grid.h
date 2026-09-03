@@ -2,6 +2,8 @@
 #define _CHERRYSODA_COLLIDERS_GRID_H_
 
 #include <CherrySoda/Colliders/Collider.h>
+#include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/VirtualMap.h>
 
 namespace cherrysoda {
@@ -16,6 +18,27 @@ public:
 		m_data = new VirtualMap<bool>(cellsX, cellsY);
 	}
 
+	// Sizes the grid to fit the bitstring, then loads it
+	Grid(float cellWidth, float cellHeight, const String& bitstring) : m_cellWidth(cellWidth), m_cellHeight(cellHeight)
+	{
+		int longest = 0;
+		int currentX = 0;
+		int currentY = 1;
+		for (char c : bitstring) {
+			if (c == '\n') {
+				++currentY;
+				longest = Math_Max(currentX, longest);
+				currentX = 0;
+			}
+			else {
+				++currentX;
+			}
+		}
+
+		m_data = new VirtualMap<bool>(longest, currentY);
+		LoadBitstring(bitstring);
+	}
+
 	~Grid()
 	{
 		delete m_data;
@@ -24,6 +47,21 @@ public:
 
 	void SetRect(int x, int y, int width, int height, bool to = true);
 	bool CheckRect(int x, int y, int width, int height) const;
+
+	// Grows the grid on each side, shifting Position to compensate; the new
+	// border cells repeat the old edge data
+	void Extend(int left, int right, int up, int down);
+
+	void LoadBitstring(const String& bitstring);
+	String GetBitstring() const;
+
+	void Clear(bool to = false);
+
+	bool CheckColumn(int x) const;
+	bool CheckRow(int y) const;
+	bool IsEmpty() const;
+
+	static bool IsBitstringEmpty(const String& bitstring);
 
 	bool Collide(const Circle* circle) const override;
 	bool Collide(const ColliderList* list) const override;

@@ -34,6 +34,10 @@ public:
 	}
 
 	template<typename T> inline T Choose(const T& a, const T& b) { return Next(2) ? a : b; }
+	template<typename T> inline T Choose(const STL::Vector<T>& choices)
+	{
+		return choices[Next(static_cast<type::UInt32>(STL::Count(choices)))];
+	}
 
 	inline Math::Vec2 Range(const Math::Vec2& min, const Math::Vec2& max)
 	{

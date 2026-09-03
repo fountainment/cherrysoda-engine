@@ -66,6 +66,159 @@ bool Grid::CheckRect(int x, int y, int width, int height) const
 	return false;
 }
 
+void Grid::Extend(int left, int right, int up, int down)
+{
+	// Row 0 sits on the grid's bottom edge (the engine's Y axis points up),
+	// so extending down shifts the collider like extending up does in Monocle
+	Position2D(Position2D() - Math::Vec2(left * CellWidth(), down * CellHeight()));
+
+	int newWidth = CellsX() + left + right;
+	int newHeight = CellsY() + up + down;
+	if (newWidth <= 0 || newHeight <= 0) {
+		delete m_data;
+		m_data = new VirtualMap<bool>(0, 0);
+		return;
+	}
+
+	auto newData = new VirtualMap<bool>(newWidth, newHeight);
+
+	// Center
+	for (int x = 0; x < CellsX(); ++x) {
+		for (int y = 0; y < CellsY(); ++y) {
+			int atX = x + left;
+			int atY = y + down;
+
+			if (atX >= 0 && atX < newWidth && atY >= 0 && atY < newHeight) {
+				newData->Set(atX, atY, m_data->Get(x, y));
+			}
+		}
+	}
+
+	// Left
+	for (int x = 0; x < left; ++x) {
+		for (int y = 0; y < newHeight; ++y) {
+			newData->Set(x, y, m_data->Get(0, Math_Clamp(y - down, 0, CellsY() - 1)));
+		}
+	}
+
+	// Right
+	for (int x = newWidth - right; x < newWidth; ++x) {
+		for (int y = 0; y < newHeight; ++y) {
+			newData->Set(x, y, m_data->Get(CellsX() - 1, Math_Clamp(y - down, 0, CellsY() - 1)));
+		}
+	}
+
+	// Down (new rows below the old bottom edge repeat the old bottom row)
+	for (int y = 0; y < down; ++y) {
+		for (int x = 0; x < newWidth; ++x) {
+			newData->Set(x, y, m_data->Get(Math_Clamp(x - left, 0, CellsX() - 1), 0));
+		}
+	}
+
+	// Up (new rows above the old top edge repeat the old top row)
+	for (int y = newHeight - up; y < newHeight; ++y) {
+		for (int x = 0; x < newWidth; ++x) {
+			newData->Set(x, y, m_data->Get(Math_Clamp(x - left, 0, CellsX() - 1), CellsY() - 1));
+		}
+	}
+
+	delete m_data;
+	m_data = newData;
+}
+
+void Grid::LoadBitstring(const String& bitstring)
+{
+	int x = 0;
+	int y = 0;
+
+	for (char c : bitstring) {
+		if (c == '\n') {
+			while (x < CellsX()) {
+				m_data->Set(x, y, false);
+				++x;
+			}
+
+			x = 0;
+			++y;
+
+			if (y >= CellsY()) {
+				return;
+			}
+		}
+		else if (x < CellsX()) {
+			m_data->Set(x, y, c != '0');
+			++x;
+		}
+	}
+}
+
+String Grid::GetBitstring() const
+{
+	String bits;
+	for (int y = 0; y < CellsY(); ++y) {
+		if (y != 0) {
+			bits += '\n';
+		}
+
+		for (int x = 0; x < CellsX(); ++x) {
+			bits += m_data->Get(x, y) ? '1' : '0';
+		}
+	}
+
+	return bits;
+}
+
+void Grid::Clear(bool to /* = false*/)
+{
+	for (int x = 0; x < CellsX(); ++x) {
+		for (int y = 0; y < CellsY(); ++y) {
+			m_data->Set(x, y, to);
+		}
+	}
+}
+
+bool Grid::CheckColumn(int x) const
+{
+	for (int y = 0; y < CellsY(); ++y) {
+		if (!m_data->Get(x, y)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Grid::CheckRow(int y) const
+{
+	for (int x = 0; x < CellsX(); ++x) {
+		if (!m_data->Get(x, y)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Grid::IsEmpty() const
+{
+	for (int x = 0; x < CellsX(); ++x) {
+		for (int y = 0; y < CellsY(); ++y) {
+			if (m_data->Get(x, y)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Grid::IsBitstringEmpty(const String& bitstring)
+{
+	for (char c : bitstring) {
+		if (c == '1') {
+			return false;
+		}
+	}
+	return true;
+}
+
 bool Grid::Collide(const Circle* circle) const
 {
 	CHERRYSODA_DEBUG("Grid-Circle collision is not implemented!\n");

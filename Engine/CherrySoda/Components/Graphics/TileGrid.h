@@ -36,9 +36,27 @@ public:
 	inline int TilesX() const { return m_tiles->Columns(); }
 	inline int TilesY() const { return m_tiles->Rows(); }
 
+	const MTexture* Get(int x, int y) const
+	{
+		if (x >= 0 && y >= 0 && x < TilesX() && y < TilesY()) return m_tiles->Get(x, y);
+		return nullptr;
+	}
+	void Set(int x, int y, const MTexture* tile) { m_tiles->Set(x, y, tile); }
+
 	void Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX = 0, int offsetY = 0);
+	// Like Populate, but tiles with a negative index are skipped instead of
+	// clearing the cell
+	void Overlay(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX = 0, int offsetY = 0);
 	void FillRect(int x, int y, int columns, int rows, const MTexture* tile);
+	// Grows the tile map on each side, shifting Position to compensate; the
+	// new border cells repeat the old edge tiles
+	void Extend(int left, int right, int up, int down);
 	void Clear();
+
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, Alpha, m_alpha);
+	CHERRYSODA_GETTER_SETTER_OF_TYPE(int, VisualExtend, m_visualExtend);
+	inline const Color GetColor() const { return m_color; }
+	inline void SetColor(const Color& color) { m_color = color; }
 
 	inline void ClipCamera(Camera* camera) { m_clipCamera = camera; }
 
