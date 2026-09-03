@@ -53,4 +53,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_UTIL_ATLAS_H_
+#endif // _CHERRYSODA_GRAPHICS_ATLAS_H_

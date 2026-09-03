@@ -1,5 +1,5 @@
-#ifndef _CHERYSODA_PARTICLE_PARTICLESYSTEM_H_
-#define _CHERYSODA_PARTICLE_PARTICLESYSTEM_H_
+#ifndef _CHERRYSODA_PARTICLES_PARTICLESYSTEM_H_
+#define _CHERRYSODA_PARTICLES_PARTICLESYSTEM_H_
 
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Particles/Particle.h>
@@ -105,4 +105,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERYSODA_PARTICLE_PARTICLESYSTEM_H_
+#endif // _CHERRYSODA_PARTICLES_PARTICLESYSTEM_H_

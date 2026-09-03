@@ -1,5 +1,5 @@
-#ifndef _CHERRYSODA_PROILE_H_
-#define _CHERRYSODA_PROILE_H_
+#ifndef _CHERRYSODA_PROFILE_H_
+#define _CHERRYSODA_PROFILE_H_
 
 #if defined(CHERRYSODA_ENABLE_PROFILE)
 #include <tracy/Tracy.hpp>
@@ -12,4 +12,4 @@
 #define CHERRYSODA_PROFILE_FUNCTION()
 #endif // CHERRYSODA_PROFILE
 
-#endif // _CHERRYSODA_PROILE_H_
+#endif // _CHERRYSODA_PROFILE_H_

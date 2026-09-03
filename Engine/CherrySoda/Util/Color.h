@@ -142,4 +142,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRRYSODA_UTIL_COLOR_H_
+#endif // _CHERRYSODA_UTIL_COLOR_H_

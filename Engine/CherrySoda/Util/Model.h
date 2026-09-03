@@ -36,4 +36,4 @@ private:
 
 } // namespace cherrysoda
 
-#endif // _CHERRYSODA_UTIL_CGLTFUTIL_H_
+#endif // _CHERRYSODA_UTIL_MODEL_H_

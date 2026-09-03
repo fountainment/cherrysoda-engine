@@ -28,7 +28,7 @@ private:
 
 	STL::Vector<STL::List<Entity*>> m_lists;
 	STL::Vector<bool> m_unsorted;
-	bool m_areAnyUnsorted;
+	bool m_areAnyUnsorted = false;
 };
 
 } // namespace cherrysoda

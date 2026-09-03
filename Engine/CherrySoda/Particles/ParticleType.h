@@ -1,5 +1,5 @@
-#ifndef _CHERYSODA_PARTICLE_PARTICLETYPE_H_
-#define _CHERYSODA_PARTICLE_PARTICLETYPE_H_
+#ifndef _CHERRYSODA_PARTICLES_PARTICLETYPE_H_
+#define _CHERRYSODA_PARTICLES_PARTICLETYPE_H_
 
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Graphics/MTexture.h>
@@ -89,4 +89,4 @@ public:
 
 } // namespace cherrysoda
 
-#endif // _CHERYSODA_PARTICLE_PARTICLETYPE_H_
+#endif // _CHERRYSODA_PARTICLES_PARTICLETYPE_H_
