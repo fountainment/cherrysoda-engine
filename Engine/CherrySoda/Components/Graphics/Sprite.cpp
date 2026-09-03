@@ -26,7 +26,8 @@ void Sprite::Update()
 			m_animationTimer -= Math_Sign(m_animationTimer) * m_currentAnimation->m_delay;
 
 			// End of Animation
-			if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation->m_frames))) {
+			if (m_currentAnimationFrame < 0 ||
+				m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation->m_frames))) {
 				auto was = m_currentAnimationID;
 				if (m_onLastFrame) {
 					m_onLastFrame(m_currentAnimationID);
@@ -69,7 +70,6 @@ void Sprite::Update()
 						if (m_onFinish) {
 							m_onFinish(id);
 						}
-
 					}
 				}
 			}
@@ -83,8 +83,7 @@ void Sprite::Update()
 
 void Sprite::SetFrame(const MTexture& texture)
 {
-	if (Texture() == texture)
-		return;
+	if (Texture() == texture) return;
 
 	Texture(texture);
 	if (m_justifyHasValue) {
@@ -102,7 +101,7 @@ void Sprite::SetAnimationFrame(int frame)
 	SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
 }
 
-void Sprite::Play(const StringID& id, bool restart/* = false*/, bool randomizeFrame/* = false*/)
+void Sprite::Play(const StringID& id, bool restart /* = false*/, bool randomizeFrame /* = false*/)
 {
 	if (m_currentAnimationID != id || restart) {
 		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str());

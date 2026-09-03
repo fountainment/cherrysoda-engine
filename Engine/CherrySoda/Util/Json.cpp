@@ -2,8 +2,8 @@
 
 #include <CherrySoda/Util/String.h>
 
-#include <rapidjson/istreamwrapper.h>
 #include <fstream>
+#include <rapidjson/istreamwrapper.h>
 
 namespace cherrysoda {
 

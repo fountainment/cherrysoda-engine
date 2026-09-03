@@ -16,10 +16,16 @@ public:
 
 	inline Graphics::TextureHandle GetHandle() const { return m_texture; }
 	inline bool IsValid() const { return m_texture != Graphics::InvalidHandle; }
-	inline void Dispose() { if (IsValid()) { Graphics::DestroyTexture(GetHandle()); m_texture = Graphics::InvalidHandle; } }
+	inline void Dispose()
+	{
+		if (IsValid()) {
+			Graphics::DestroyTexture(GetHandle());
+			m_texture = Graphics::InvalidHandle;
+		}
+	}
 
-	inline bool operator == (const Texture& texture) const { return m_texture == texture.m_texture; }
-	inline bool operator != (const Texture& texture) const { return m_texture != texture.m_texture; }
+	inline bool operator==(const Texture& texture) const { return m_texture == texture.m_texture; }
+	inline bool operator!=(const Texture& texture) const { return m_texture != texture.m_texture; }
 
 protected:
 	Graphics::TextureHandle m_texture = Graphics::InvalidHandle;
@@ -40,11 +46,11 @@ public:
 	inline const Math::IVec2 Size() const { return Math::IVec2(Width(), Height()); }
 	inline int TotalPixels() const { return Width() * Height(); }
 
-	inline bool operator == (const Texture2D& texture) const { return m_texture == texture.m_texture; }
-	inline bool operator != (const Texture2D& texture) const { return m_texture != texture.m_texture; }
+	inline bool operator==(const Texture2D& texture) const { return m_texture == texture.m_texture; }
+	inline bool operator!=(const Texture2D& texture) const { return m_texture != texture.m_texture; }
 
 private:
-	int m_width  = 0;
+	int m_width = 0;
 	int m_height = 0;
 };
 

@@ -4,33 +4,48 @@ namespace {
 
 TEST(CalcTestClosestPointOnLine, Horizontal)
 {
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(5.0f,0.0f),Math::Vec2(2.5f,2.5f),Math::Vec2(2.5f,0.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f,9.0f),Math::Vec2(15.0f,9.0f),Math::Vec2(8.5f,8.5f),Math::Vec2(8.5f,9.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f,9.0f),Math::Vec2(15.0f,9.0f),Math::Vec2(-100.5f,8.5f),Math::Vec2(7.0f,9.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f,9.0f),Math::Vec2(15.0f,9.0f),Math::Vec2(100.5f,8.5f),Math::Vec2(15.0f,9.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f,9.0f),Math::Vec2(15.0f,9.0f),Math::Vec2(10.5f,9.0f),Math::Vec2(10.5f,9.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(5.0f, 0.0f), Math::Vec2(2.5f, 2.5f),
+							Math::Vec2(2.5f, 0.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f, 9.0f), Math::Vec2(15.0f, 9.0f), Math::Vec2(8.5f, 8.5f),
+							Math::Vec2(8.5f, 9.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f, 9.0f), Math::Vec2(15.0f, 9.0f), Math::Vec2(-100.5f, 8.5f),
+							Math::Vec2(7.0f, 9.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f, 9.0f), Math::Vec2(15.0f, 9.0f), Math::Vec2(100.5f, 8.5f),
+							Math::Vec2(15.0f, 9.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(7.0f, 9.0f), Math::Vec2(15.0f, 9.0f), Math::Vec2(10.5f, 9.0f),
+							Math::Vec2(10.5f, 9.0f));
 }
 
 TEST(CalcTestClosestPointOnLine, Vertical)
 {
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(0.0f,5.0f),Math::Vec2(2.5f,2.5f),Math::Vec2(0.0f,2.5f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f,8.5f),Math::Vec2(9.5f,12.5f),Math::Vec2(10.5f,10.5f),Math::Vec2(9.5f,10.5f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f,8.5f),Math::Vec2(9.5f,12.5f),Math::Vec2(10.5f,-100.5f),Math::Vec2(9.5f,8.5f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f,8.5f),Math::Vec2(9.5f,12.5f),Math::Vec2(10.5f,100.5f),Math::Vec2(9.5f,12.5f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f,8.5f),Math::Vec2(9.5f,12.5f),Math::Vec2(9.5f,10.5f),Math::Vec2(9.5f,10.5f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(0.0f, 5.0f), Math::Vec2(2.5f, 2.5f),
+							Math::Vec2(0.0f, 2.5f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f, 8.5f), Math::Vec2(9.5f, 12.5f), Math::Vec2(10.5f, 10.5f),
+							Math::Vec2(9.5f, 10.5f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f, 8.5f), Math::Vec2(9.5f, 12.5f), Math::Vec2(10.5f, -100.5f),
+							Math::Vec2(9.5f, 8.5f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f, 8.5f), Math::Vec2(9.5f, 12.5f), Math::Vec2(10.5f, 100.5f),
+							Math::Vec2(9.5f, 12.5f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(9.5f, 8.5f), Math::Vec2(9.5f, 12.5f), Math::Vec2(9.5f, 10.5f),
+							Math::Vec2(9.5f, 10.5f));
 }
 
 TEST(CalcTestClosestPointOnLine, Diagonal)
 {
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(100.0f,100.0f),Math::Vec2(100.0f,0.0f),Math::Vec2(50.0f,50.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(100.0f,50.0f),Math::Vec2(100.0f,0.0f),Math::Vec2(80.0f,40.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(100.0f, 100.0f), Math::Vec2(100.0f, 0.0f),
+							Math::Vec2(50.0f, 50.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(100.0f, 50.0f), Math::Vec2(100.0f, 0.0f),
+							Math::Vec2(80.0f, 40.0f));
 }
 
 TEST(CalcTestClosestPointOnLine, Extreme)
 {
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(0.000001f,0.0f),Math::Vec2(-100.0f,0.0f),Math::Vec2(0.0f,0.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(0.000001f,0.0f),Math::Vec2(100.0f,0.0f),Math::Vec2(0.000001f,0.0f));
-	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f,0.0f),Math::Vec2(0.0f,0.0f),Math::Vec2(100.0f,0.0f),Math::Vec2(0.0f,0.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(0.000001f, 0.0f), Math::Vec2(-100.0f, 0.0f),
+							Math::Vec2(0.0f, 0.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(0.000001f, 0.0f), Math::Vec2(100.0f, 0.0f),
+							Math::Vec2(0.000001f, 0.0f));
+	TEST_CLOSESTPOINTONLINE(Math::Vec2(0.0f, 0.0f), Math::Vec2(0.0f, 0.0f), Math::Vec2(100.0f, 0.0f),
+							Math::Vec2(0.0f, 0.0f));
 }
 
 TEST(CalcTestFileExist, Normal)
@@ -48,7 +63,7 @@ TEST(CalcTestRandom, DeterministicWithSameSeed)
 	for (int i = 0; i < 10; ++i) {
 		type::UInt32 va = a.Next();
 		EXPECT_EQ(va, b.Next());
-		EXPECT_NE(va, c.Next());  // astronomically unlikely to match every time
+		EXPECT_NE(va, c.Next()); // astronomically unlikely to match every time
 	}
 
 	Random a2(42);
@@ -156,7 +171,8 @@ TEST(CalcTestApproach, MovesTowardTarget)
 {
 	EXPECT_EQ(Math::Vec2(3.f, 0.f), Calc::Approach(Math::Vec2(0.f), Math::Vec2(10.f, 0.f), 3.f));
 	EXPECT_EQ(Math::Vec2(1.5f, 2.f), Calc::Approach(Math::Vec2(0.f), Math::Vec2(3.f, 4.f), 2.5f)); // 3-4-5 triangle
-	EXPECT_EQ(Math::Vec2(3.f, 4.f), Calc::Approach(Math::Vec2(0.f), Math::Vec2(3.f, 4.f), 10.f)); // overshoot clamps to target
+	EXPECT_EQ(Math::Vec2(3.f, 4.f),
+			  Calc::Approach(Math::Vec2(0.f), Math::Vec2(3.f, 4.f), 10.f)); // overshoot clamps to target
 	EXPECT_EQ(Math::Vec2(2.f, 0.f), Calc::Approach(Math::Vec2(0.f), Math::Vec2(2.f, 0.f), 5.f));
 
 	// Already at target or zero max move stays put
@@ -167,7 +183,7 @@ TEST(CalcTestApproach, MovesTowardTarget)
 TEST(CalcTestNormals, FourWay)
 {
 	EXPECT_EQ(Math::Vec2(1.f, 0.f), Calc::FourWayNormal(Math::Vec2(1.f, 0.1f)));
-	EXPECT_EQ(Math::Vec2(0.f, 1.f), Calc::FourWayNormal(Math::Vec2(1.f, 1.f)));    // diagonals snap up
+	EXPECT_EQ(Math::Vec2(0.f, 1.f), Calc::FourWayNormal(Math::Vec2(1.f, 1.f))); // diagonals snap up
 	EXPECT_EQ(Math::Vec2(-1.f, 0.f), Calc::FourWayNormal(Math::Vec2(-3.f, 0.2f)));
 	EXPECT_EQ(Math::Vec2(0.f, -1.f), Calc::FourWayNormal(Math::Vec2(0.f, -1.f)));
 	EXPECT_EQ(Math::Vec2(0.f, 0.f), Calc::FourWayNormal(Vec2_Zero));

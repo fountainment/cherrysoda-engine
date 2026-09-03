@@ -1,15 +1,16 @@
 #include <CherrySoda/Renderers/RendererBase.h>
 
 #include <CherrySoda/Engine.h>
-#include <CherrySoda/Scene.h>
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/Math.h>
 
 namespace cherrysoda {
 
 void RendererBase::RenderPrepare(Scene* scene)
 {
-	CHERRYSODA_ASSERT(!(RenderPass() == 0 && GetRenderTarget() != nullptr), "Renderpass 0 is preserved to use screen render target.\n");
+	CHERRYSODA_ASSERT(!(RenderPass() == 0 && GetRenderTarget() != nullptr),
+					  "Renderpass 0 is preserved to use screen render target.\n");
 	Math::IVec2 renderTargetSize = Graphics::GetRenderTargetSize(GetRenderTarget());
 	if (!FixedCameraSize()) {
 		GetCamera()->SetSize(renderTargetSize);

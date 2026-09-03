@@ -7,15 +7,11 @@ TEST(EaseTestBoundary, StartAndEnd)
 	// All of these easers hit exactly 0 at t=0 and 1 at t=1
 	// (the Expo family is tested separately since ExpoIn(0) is not 0).
 	const Easer easers[] = {
-		Ease::Linear,
-		Ease::SineIn, Ease::SineOut, Ease::SineInOut,
-		Ease::QuadIn, Ease::QuadOut, Ease::QuadInOut,
-		Ease::CubeIn, Ease::CubeOut, Ease::CubeInOut,
-		Ease::QuintIn, Ease::QuintOut, Ease::QuintInOut,
-		Ease::BackIn, Ease::BackOut, Ease::BackInOut,
-		Ease::BigBackIn, Ease::BigBackOut, Ease::BigBackInOut,
-		Ease::ElasticIn, Ease::ElasticOut, Ease::ElasticInOut,
-		Ease::BounceIn, Ease::BounceOut, Ease::BounceInOut,
+		Ease::Linear,     Ease::SineIn,       Ease::SineOut,    Ease::SineInOut,    Ease::QuadIn,
+		Ease::QuadOut,    Ease::QuadInOut,    Ease::CubeIn,     Ease::CubeOut,      Ease::CubeInOut,
+		Ease::QuintIn,    Ease::QuintOut,     Ease::QuintInOut, Ease::BackIn,       Ease::BackOut,
+		Ease::BackInOut,  Ease::BigBackIn,    Ease::BigBackOut, Ease::BigBackInOut, Ease::ElasticIn,
+		Ease::ElasticOut, Ease::ElasticInOut, Ease::BounceIn,   Ease::BounceOut,    Ease::BounceInOut,
 	};
 
 	for (const Easer& easer : easers) {
@@ -27,10 +23,10 @@ TEST(EaseTestBoundary, StartAndEnd)
 TEST(EaseTestBoundary, ExpoSpecialValues)
 {
 	// ExpoIn has no special case for t=0, so it never quite reaches the boundaries.
-	EXPECT_FLOAT_EQ(0.0009765625f, Ease::ExpoIn(0.f));   // 2^-10
+	EXPECT_FLOAT_EQ(0.0009765625f, Ease::ExpoIn(0.f)); // 2^-10
 	EXPECT_FLOAT_EQ(1.f, Ease::ExpoIn(1.f));
 	EXPECT_FLOAT_EQ(0.f, Ease::ExpoOut(0.f));
-	EXPECT_FLOAT_EQ(0.9990234375f, Ease::ExpoOut(1.f));  // 1 - 2^-10
+	EXPECT_FLOAT_EQ(0.9990234375f, Ease::ExpoOut(1.f));    // 1 - 2^-10
 	EXPECT_FLOAT_EQ(0.00048828125f, Ease::ExpoInOut(0.f)); // 2^-11
 	EXPECT_FLOAT_EQ(0.99951171875f, Ease::ExpoInOut(1.f)); // 1 - 2^-11
 }
@@ -55,8 +51,8 @@ TEST(EaseTestMidpoint, KnownValues)
 	EXPECT_FLOAT_EQ(0.96875f, Ease::QuintOut(0.5f));
 	EXPECT_FLOAT_EQ(0.5f, Ease::QuintInOut(0.5f));
 
-	EXPECT_FLOAT_EQ(0.03125f, Ease::ExpoIn(0.5f));   // 2^-5
-	EXPECT_FLOAT_EQ(0.96875f, Ease::ExpoOut(0.5f));  // 1 - 2^-5
+	EXPECT_FLOAT_EQ(0.03125f, Ease::ExpoIn(0.5f));  // 2^-5
+	EXPECT_FLOAT_EQ(0.96875f, Ease::ExpoOut(0.5f)); // 1 - 2^-5
 
 	EXPECT_NEAR(-0.0876975f, Ease::BackIn(0.5f), 1e-6f); // back overshoots below zero
 	EXPECT_FLOAT_EQ(-0.25f, Ease::BigBackIn(0.5f));
@@ -71,7 +67,7 @@ TEST(EaseTestMidpoint, KnownValues)
 
 TEST(EaseTestInvert, OutIsInvertedIn)
 {
-	const float ts[] = { 0.25f, 0.5f, 0.75f };
+	const float ts[] = {0.25f, 0.5f, 0.75f};
 
 	for (float t : ts) {
 		EXPECT_FLOAT_EQ(1.f - Ease::SineIn(1.f - t), Ease::SineOut(t));

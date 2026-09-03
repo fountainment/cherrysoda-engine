@@ -27,8 +27,7 @@ public:
 	}
 };
 
-ParticleEditor::ParticleEditor()
-	: base(1280, 800, "Particle Editor 0.1 - CherrySoda Engine")
+ParticleEditor::ParticleEditor() : base(1280, 800, "Particle Editor 0.1 - CherrySoda Engine")
 {
 	SetClearColor(Color("#606060"));
 }
@@ -42,26 +41,24 @@ static String GetParticleCode()
 	result += "\tauto particleSystem = new ParticleSystem(-1, 1000);\n";
 	result += "\tauto particleType = new ParticleType();\n";
 	if (s_particleType->m_color != defaultParticleType.m_color) {
-		result += StringUtil::Format("\tparticleType->m_color = Color(%.3ff,%.3ff,%.3ff,%.3ff);\n"
-			, s_particleType->m_color.R()
-			, s_particleType->m_color.G()
-			, s_particleType->m_color.B()
-			, s_particleType->m_color.A());
+		result += StringUtil::Format("\tparticleType->m_color = Color(%.3ff,%.3ff,%.3ff,%.3ff);\n",
+									 s_particleType->m_color.R(), s_particleType->m_color.G(),
+									 s_particleType->m_color.B(), s_particleType->m_color.A());
 	}
 	if (s_particleType->m_color2 != defaultParticleType.m_color2) {
-		result += StringUtil::Format("\tparticleType->m_color2 = Color(%.3ff,%.3ff,%.3ff,%.3ff);\n"
-			, s_particleType->m_color2.R()
-			, s_particleType->m_color2.G()
-			, s_particleType->m_color2.B()
-			, s_particleType->m_color2.A());
+		result += StringUtil::Format("\tparticleType->m_color2 = Color(%.3ff,%.3ff,%.3ff,%.3ff);\n",
+									 s_particleType->m_color2.R(), s_particleType->m_color2.G(),
+									 s_particleType->m_color2.B(), s_particleType->m_color2.A());
 	}
 	if (s_particleType->m_colorMode != defaultParticleType.m_colorMode) {
-		const char* colorModes[] = { "Static", "Choose", "Blink", "Fade" };
-		result += StringUtil::Format("\tparticleType->m_colorMode = ParticleType::ColorModes::%s;\n", colorModes[(int)s_particleType->m_colorMode]);
+		const char* colorModes[] = {"Static", "Choose", "Blink", "Fade"};
+		result += StringUtil::Format("\tparticleType->m_colorMode = ParticleType::ColorModes::%s;\n",
+									 colorModes[(int)s_particleType->m_colorMode]);
 	}
 	if (s_particleType->m_fadeMode != defaultParticleType.m_fadeMode) {
-		const char* fadeModes[] = { "None", "Linear", "Late", "InAndOut" };
-		result += StringUtil::Format("\tparticleType->m_fadeMode = ParticleType::FadeModes::%s;\n", fadeModes[(int)s_particleType->m_fadeMode]);
+		const char* fadeModes[] = {"None", "Linear", "Late", "InAndOut"};
+		result += StringUtil::Format("\tparticleType->m_fadeMode = ParticleType::FadeModes::%s;\n",
+									 fadeModes[(int)s_particleType->m_fadeMode]);
 	}
 	if (s_particleType->m_speedMin != defaultParticleType.m_speedMin) {
 		result += StringUtil::Format("\tparticleType->m_speedMin = %.3ff;\n", s_particleType->m_speedMin);
@@ -73,7 +70,8 @@ static String GetParticleCode()
 		result += StringUtil::Format("\tparticleType->m_speedMultiplier = %.3ff;\n", s_particleType->m_speedMultiplier);
 	}
 	if (s_particleType->m_acceleration != defaultParticleType.m_acceleration) {
-		result += StringUtil::Format("\tparticleType->m_acceleration = Math::Vec2(%.3ff,%.3ff);\n", s_particleType->m_acceleration.x, s_particleType->m_acceleration.y);
+		result += StringUtil::Format("\tparticleType->m_acceleration = Math::Vec2(%.3ff,%.3ff);\n",
+									 s_particleType->m_acceleration.x, s_particleType->m_acceleration.y);
 	}
 	if (s_particleType->m_friction != defaultParticleType.m_friction) {
 		result += StringUtil::Format("\tparticleType->m_friction = %.3ff;\n", s_particleType->m_friction);
@@ -103,23 +101,26 @@ static String GetParticleCode()
 		result += StringUtil::Format("\tparticleType->m_spinMax = %.3ff;\n", s_particleType->m_spinMax);
 	}
 	if (s_particleType->m_spinFlippedChance != defaultParticleType.m_spinFlippedChance) {
-		result += StringUtil::Format("\tparticleType->m_spinFlippedChance = %s;\n", s_particleType->m_spinFlippedChance ? "true" : "false");
+		result += StringUtil::Format("\tparticleType->m_spinFlippedChance = %s;\n",
+									 s_particleType->m_spinFlippedChance ? "true" : "false");
 	}
 	if (s_particleType->m_rotationMode != defaultParticleType.m_rotationMode) {
-		const char* rotationModes[] = { "None", "Random", "SameAsDirection" };
-		result += StringUtil::Format("\tparticleType->m_rotationMode = ParticleType::RotationModes::%s;\n", rotationModes[(int)s_particleType->m_rotationMode]);
+		const char* rotationModes[] = {"None", "Random", "SameAsDirection"};
+		result += StringUtil::Format("\tparticleType->m_rotationMode = ParticleType::RotationModes::%s;\n",
+									 rotationModes[(int)s_particleType->m_rotationMode]);
 	}
 	if (s_particleType->m_scaleOut != defaultParticleType.m_scaleOut) {
-		result += StringUtil::Format("\tparticleType->m_scaleOut = %s;\n", s_particleType->m_scaleOut ? "true" : "false");
+		result +=
+			StringUtil::Format("\tparticleType->m_scaleOut = %s;\n", s_particleType->m_scaleOut ? "true" : "false");
 	}
 	if (s_particleType->m_useActualDeltaTime != defaultParticleType.m_useActualDeltaTime) {
-		result += StringUtil::Format("\tparticleType->m_useActualDeltaTime = %s;\n", s_particleType->m_useActualDeltaTime ? "true" : "false");
+		result += StringUtil::Format("\tparticleType->m_useActualDeltaTime = %s;\n",
+									 s_particleType->m_useActualDeltaTime ? "true" : "false");
 	}
-	result += StringUtil::Format("\tauto particleEmitter = new ParticleEmitter(particleSystem, particleType, Vec2_Zero, Math::Vec2(%.3ff, %.3ff), %d, %.3ff);\n"
-		, s_particleEmitter->PositionRange().x
-		, s_particleEmitter->PositionRange().y
-		, s_particleEmitter->Amount()
-		, s_particleEmitter->Interval());
+	result += StringUtil::Format("\tauto particleEmitter = new ParticleEmitter(particleSystem, particleType, "
+								 "Vec2_Zero, Math::Vec2(%.3ff, %.3ff), %d, %.3ff);\n",
+								 s_particleEmitter->PositionRange().x, s_particleEmitter->PositionRange().y,
+								 s_particleEmitter->Amount(), s_particleEmitter->Interval());
 	result += "\t// Generated from ParticleEditor\n";
 	result += "\n";
 	result += "\t// scene->Add(particleSystem);\n";
@@ -143,7 +144,7 @@ void ParticleEditor::Update()
 	static Color s_backgroundColor = GetClearColor();
 
 	static int lang_i = 1;
-	#define LANGS(A,B) (lang_i?(B):(A))
+#define LANGS(A, B) (lang_i ? (B) : (A))
 
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu(LANGS("文件", "File"))) {
@@ -155,11 +156,9 @@ void ParticleEditor::Update()
 		}
 		if (ImGui::BeginMenu(LANGS("选项", "Options"))) {
 			if (ImGui::BeginMenu(LANGS("背景颜色", "Background Color"))) {
-				ImGuiColorEditFlags colorEditFlags = 0
-					| ImGuiColorEditFlags_NoLabel
-					| ImGuiColorEditFlags_NoSidePreview
-					| ImGuiColorEditFlags_NoSmallPreview
-					;
+				ImGuiColorEditFlags colorEditFlags = 0 | ImGuiColorEditFlags_NoLabel |
+													 ImGuiColorEditFlags_NoSidePreview |
+													 ImGuiColorEditFlags_NoSmallPreview;
 				if (ImGui::ColorPicker3("Color", reinterpret_cast<float*>(&s_backgroundColor), colorEditFlags)) {
 					SetClearColor(s_backgroundColor);
 				}
@@ -175,13 +174,9 @@ void ParticleEditor::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	ImGuiWindowFlags windowFlags = 0
-		| ImGuiWindowFlags_NoResize
-		| ImGuiWindowFlags_NoMove
-		| ImGuiWindowFlags_NoSavedSettings
-		| ImGuiWindowFlags_NoDocking
-		| ImGuiWindowFlags_NoTitleBar
-		;
+	ImGuiWindowFlags windowFlags = 0 | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+								   ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDocking |
+								   ImGuiWindowFlags_NoTitleBar;
 
 	ImGui::Begin("Particle Editor", nullptr, windowFlags);
 	{
@@ -207,12 +202,14 @@ void ParticleEditor::Update()
 		}
 		int activeAmount = s_particleSystem->ActiveAmount();
 		ImGui::PushItemWidth(160.f);
-		ImGui::LabelText("##ActiveAmount", LANGS("当前总数:%4d", "Amount:%4d"), activeAmount); ImGui::SameLine();
+		ImGui::LabelText("##ActiveAmount", LANGS("当前总数:%4d", "Amount:%4d"), activeAmount);
+		ImGui::SameLine();
 		ImGui::PopItemWidth();
 		static int s_maxActiveAmount = activeAmount;
 		s_maxActiveAmount = Math_Max(s_maxActiveAmount, activeAmount);
 		ImGui::PushItemWidth(70.f);
-		ImGui::LabelText("##MaxActiveAmount", LANGS("最大:%4d", "Max:%4d"), s_maxActiveAmount); ImGui::SameLine();
+		ImGui::LabelText("##MaxActiveAmount", LANGS("最大:%4d", "Max:%4d"), s_maxActiveAmount);
+		ImGui::SameLine();
 		ImGui::PopItemWidth();
 		if (ImGui::Button(LANGS("重置最大统计", "Clear Max"))) {
 			s_maxActiveAmount = 0;
@@ -223,14 +220,18 @@ void ParticleEditor::Update()
 		ImGui::Text(LANGS("颜色:", "Colors:"));
 		ImGui::Indent();
 		{
-			ImGui::ColorEdit4(LANGS("颜色", "Color"), reinterpret_cast<float*>(&s_particleType->m_color), ImGuiColorEditFlags_AlphaPreview);
-			ImGui::ColorEdit4(LANGS("颜色2", "Color2"), reinterpret_cast<float*>(&s_particleType->m_color2), ImGuiColorEditFlags_AlphaPreview);
+			ImGui::ColorEdit4(LANGS("颜色", "Color"), reinterpret_cast<float*>(&s_particleType->m_color),
+							  ImGuiColorEditFlags_AlphaPreview);
+			ImGui::ColorEdit4(LANGS("颜色2", "Color2"), reinterpret_cast<float*>(&s_particleType->m_color2),
+							  ImGuiColorEditFlags_AlphaPreview);
 			static int s_colorMode = static_cast<int>(s_particleType->m_colorMode);
-			if (ImGui::Combo(LANGS("颜色模式", "Color Mode"), &s_colorMode, LANGS("静态\0选择\0闪烁\0褪色\0", "Static\0Choose\0Blink\0Fade\0"))) {
+			if (ImGui::Combo(LANGS("颜色模式", "Color Mode"), &s_colorMode,
+							 LANGS("静态\0选择\0闪烁\0褪色\0", "Static\0Choose\0Blink\0Fade\0"))) {
 				s_particleType->m_colorMode = static_cast<ParticleType::ColorModes>(s_colorMode);
 			}
 			static int s_fadeMode = 0;
-			if (ImGui::Combo(LANGS("褪色模式", "Fade Mode"), &s_fadeMode, LANGS("无\0线性\0延迟\0进出\0", "None\0Linear\0Late\0InAndOut\0"))) {
+			if (ImGui::Combo(LANGS("褪色模式", "Fade Mode"), &s_fadeMode,
+							 LANGS("无\0线性\0延迟\0进出\0", "None\0Linear\0Late\0InAndOut\0"))) {
 				s_particleType->m_fadeMode = static_cast<ParticleType::FadeModes>(s_fadeMode);
 			}
 		}
@@ -253,7 +254,8 @@ void ParticleEditor::Update()
 		ImGui::Indent();
 		{
 			ImGui::SliderFloat(LANGS("方向", "Direction"), &s_particleType->m_direction, 0.f, Math::Pi2);
-			ImGui::SliderFloat(LANGS("方向范围", "Range##Direction"), &s_particleType->m_directionRange, 0.f, Math::Pi2);
+			ImGui::SliderFloat(LANGS("方向范围", "Range##Direction"), &s_particleType->m_directionRange, 0.f,
+							   Math::Pi2);
 		}
 		ImGui::Unindent();
 		ImGui::Separator();
@@ -283,7 +285,8 @@ void ParticleEditor::Update()
 			ImGui::SliderFloat(LANGS("最大旋转速度", "Spin Max"), &s_particleType->m_spinMax, 0.f, Math::Pi2 * 5.f);
 			ImGui::Checkbox(LANGS("一半概率反向旋转", "Spin Flipped Chance"), &s_particleType->m_spinFlippedChance);
 			static int s_rotationMode = static_cast<int>(s_particleType->m_rotationMode);
-			ImGui::Combo(LANGS("转向模式", "Rotation Mode"), &s_rotationMode, LANGS("无\0随机\0与运动方向保持一致\0", "None\0Random\0SameAsDirection\0"));
+			ImGui::Combo(LANGS("转向模式", "Rotation Mode"), &s_rotationMode,
+						 LANGS("无\0随机\0与运动方向保持一致\0", "None\0Random\0SameAsDirection\0"));
 			s_particleType->m_rotationMode = static_cast<ParticleType::RotationModes>(s_rotationMode);
 		}
 		ImGui::Unindent();
@@ -315,7 +318,8 @@ void ParticleEditor::Initialize()
 	ImFontConfig config;
 	config.MergeMode = true;
 	// 0.0f = implicit font size, required by imgui 1.92+ when merging into the implicit-sized default font
-	io.Fonts->AddFontFromMemoryCompressedTTF(vowaon_compressed_data, vowaon_compressed_size, 0.f, &config, io.Fonts->GetGlyphRangesChineseFull());
+	io.Fonts->AddFontFromMemoryCompressedTTF(vowaon_compressed_data, vowaon_compressed_size, 0.f, &config,
+											 io.Fonts->GetGlyphRangesChineseFull());
 	GUI::BuildFontTexture();
 
 	auto scene = new Scene();

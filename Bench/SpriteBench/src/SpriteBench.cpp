@@ -11,22 +11,15 @@ class SpriteRotate : public Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(SpriteRotate, Component);
 
-	SpriteRotate(float speed)
-		: base(true, false)
-		, m_speed(speed)
-		{}
+	SpriteRotate(float speed) : base(true, false), m_speed(speed) {}
 
-	void Update() override
-	{
-		GetEntity()->Get<Sprite>()->RotateOnZ(Engine::Instance()->DeltaTime() * m_speed);
-	}
+	void Update() override { GetEntity()->Get<Sprite>()->RotateOnZ(Engine::Instance()->DeltaTime() * m_speed); }
 
 private:
 	float m_speed;
 };
 
-SpriteBench::SpriteBench()
-	: base(500, 500, "SpriteBench")
+SpriteBench::SpriteBench() : base(500, 500, "SpriteBench")
 {
 	SetClearColor(Color::Black);
 }

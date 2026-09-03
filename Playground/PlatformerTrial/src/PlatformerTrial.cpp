@@ -8,8 +8,7 @@ using platformertrial::PlatformerTrial;
 
 using namespace cherrysoda;
 
-PlatformerTrial::PlatformerTrial()
-	: base(960, 540, 960, 540, "PlatformerTrial", false)
+PlatformerTrial::PlatformerTrial() : base(960, 540, 960, 540, "PlatformerTrial", false)
 {
 	SetClearColor(Color::Black);
 }

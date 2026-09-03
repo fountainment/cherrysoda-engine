@@ -2,8 +2,8 @@
 
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 #define CGLTF_IMPLEMENTATION
 #include <cgltf.h>
@@ -52,12 +52,14 @@ Model Model::FromGltf(const String& gltfFile)
 					Graphics::MeshInfo mesh;
 					if (primitive.material->has_pbr_metallic_roughness) {
 						auto baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
-						auto metallicRoughnessTexture = primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
+						auto metallicRoughnessTexture =
+							primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
 						if (baseColorTexture) {
 							mesh.baseColorTexture = ret.m_textures[baseColorTexture - data->textures].GetHandle();
 						}
 						if (metallicRoughnessTexture) {
-							mesh.metallicRoughnessTexture = ret.m_textures[metallicRoughnessTexture - data->textures].GetHandle();
+							mesh.metallicRoughnessTexture =
+								ret.m_textures[metallicRoughnessTexture - data->textures].GetHandle();
 						}
 					}
 					auto normalTexture = primitive.material->normal_texture.texture;
@@ -72,20 +74,20 @@ Model Model::FromGltf(const String& gltfFile)
 						auto& attribute = primitive.attributes[i];
 						if (attribute.index == 0) {
 							switch (attribute.type) {
-								case cgltf_attribute_type_position:
-									positionAccessor = attribute.data;
-									break;
-								case cgltf_attribute_type_normal:
-									normalAccessor = attribute.data;
-									break;
-								case cgltf_attribute_type_texcoord:
-									texcoord0Accessor = attribute.data;
-									break;
-								case cgltf_attribute_type_color:
-									colorAccessor = attribute.data;
-									break;
-								default:
-									break;
+							case cgltf_attribute_type_position:
+								positionAccessor = attribute.data;
+								break;
+							case cgltf_attribute_type_normal:
+								normalAccessor = attribute.data;
+								break;
+							case cgltf_attribute_type_texcoord:
+								texcoord0Accessor = attribute.data;
+								break;
+							case cgltf_attribute_type_color:
+								colorAccessor = attribute.data;
+								break;
+							default:
+								break;
 							}
 						}
 					}
@@ -93,32 +95,39 @@ Model Model::FromGltf(const String& gltfFile)
 						for (int i = 0; i < static_cast<int>(positionAccessor->count); ++i) {
 							Math::Vec3 position;
 							cgltf_accessor_read_float(positionAccessor, i, reinterpret_cast<float*>(&position), 3);
-							STL::Add(mesh.vertices, Graphics::VertexInfo{ position, Vec4_One, Vec3_ZUp, Vec2_Zero });
+							STL::Add(mesh.vertices, Graphics::VertexInfo{position, Vec4_One, Vec3_ZUp, Vec2_Zero});
 						}
 					}
 					if (colorAccessor) {
-						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == colorAccessor->count, "Color attribute count incorrect!\n");
+						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == colorAccessor->count,
+										  "Color attribute count incorrect!\n");
 						for (int i = 0; i < static_cast<int>(colorAccessor->count); ++i) {
-							cgltf_accessor_read_float(colorAccessor, i, reinterpret_cast<float*>(&(mesh.vertices[i].color)), 4);
+							cgltf_accessor_read_float(colorAccessor, i,
+													  reinterpret_cast<float*>(&(mesh.vertices[i].color)), 4);
 						}
 					}
 					if (normalAccessor) {
-						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == normalAccessor->count, "Normal attribute count incorrect!\n");
+						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == normalAccessor->count,
+										  "Normal attribute count incorrect!\n");
 						for (int i = 0; i < static_cast<int>(normalAccessor->count); ++i) {
-							cgltf_accessor_read_float(normalAccessor, i, reinterpret_cast<float*>(&(mesh.vertices[i].normal)), 3);
+							cgltf_accessor_read_float(normalAccessor, i,
+													  reinterpret_cast<float*>(&(mesh.vertices[i].normal)), 3);
 						}
 					}
 					if (texcoord0Accessor) {
-						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == texcoord0Accessor->count, "Texcoord0 attribute count incorrect!\n");
+						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == texcoord0Accessor->count,
+										  "Texcoord0 attribute count incorrect!\n");
 						for (int i = 0; i < static_cast<int>(texcoord0Accessor->count); ++i) {
-							cgltf_accessor_read_float(texcoord0Accessor, i, reinterpret_cast<float*>(&(mesh.vertices[i].texcoord0)), 2);
+							cgltf_accessor_read_float(texcoord0Accessor, i,
+													  reinterpret_cast<float*>(&(mesh.vertices[i].texcoord0)), 2);
 						}
 					}
 					cgltf_accessor* indexAccessor = primitive.indices;
 					if (indexAccessor) {
 						for (int i = 0; i < static_cast<int>(indexAccessor->count); ++i) {
 							cgltf_size index = cgltf_accessor_read_index(indexAccessor, i);
-							CHERRYSODA_ASSERT(index == static_cast<cgltf_size>(static_cast<type::UInt16>(index)), "Index out of UInt16 range!\n");
+							CHERRYSODA_ASSERT(index == static_cast<cgltf_size>(static_cast<type::UInt16>(index)),
+											  "Index out of UInt16 range!\n");
 							STL::Add(mesh.indices, static_cast<type::UInt16>(index));
 						}
 					}

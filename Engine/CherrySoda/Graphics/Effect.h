@@ -11,10 +11,7 @@ class Effect
 public:
 	Effect() = default;
 
-	Effect(Graphics::ShaderHandle shader)
-	{
-		m_program = shader;
-	}
+	Effect(Graphics::ShaderHandle shader) { m_program = shader; }
 
 	void LoadFromFile(const String& name)
 	{
@@ -44,7 +41,13 @@ public:
 
 	// Effect is a non-owning handle: copies alias the same program, so whoever
 	// loaded it is responsible for calling Dispose()
-	inline void Dispose() { if (IsValid()) { Graphics::DestroyShader(m_program); m_program = Graphics::InvalidHandle; } }
+	inline void Dispose()
+	{
+		if (IsValid()) {
+			Graphics::DestroyShader(m_program);
+			m_program = Graphics::InvalidHandle;
+		}
+	}
 
 	inline bool IsValid() const { return m_program != Graphics::InvalidHandle; }
 

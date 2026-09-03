@@ -14,7 +14,7 @@ public:
 
 	static inline void Disable() { ms_enabled = false; }
 	static inline void Enable() { ms_enabled = true; }
-	static inline bool Enabled() { return ms_enabled;  }
+	static inline bool Enabled() { return ms_enabled; }
 
 	static inline void DisableInternalConsole() { ms_internalConsoleEnabled = false; }
 	static inline void EnableInternalConsole() { ms_internalConsoleEnabled = true; }

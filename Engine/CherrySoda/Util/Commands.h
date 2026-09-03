@@ -5,24 +5,24 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-#define CHERRYSODA_CONSOLE_VARIABLE(VAR,TYPE,VALUE,HELP) \
-static TYPE VAR=VALUE; \
-static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##VAR(#VAR, \
-[](const cherrysoda::STL::Vector<cherrysoda::String>& args) \
-{ \
-	if (cherrysoda::STL::Count(args) >= 1) \
-		cherrysoda::StringUtil::SafeTo<TYPE>(args[0],VAR); \
-	cherrysoda::Commands::Log(cherrysoda::StringUtil::ToString(VAR)); \
-	cherrysoda::Commands::Return(static_cast<float>(VAR)); \
-},HELP)
+#define CHERRYSODA_CONSOLE_VARIABLE(VAR, TYPE, VALUE, HELP)                                            \
+	static TYPE VAR = VALUE;                                                                           \
+	static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##VAR(                 \
+		#VAR,                                                                                          \
+		[](const cherrysoda::STL::Vector<cherrysoda::String>& args) {                                  \
+			if (cherrysoda::STL::Count(args) >= 1) cherrysoda::StringUtil::SafeTo<TYPE>(args[0], VAR); \
+			cherrysoda::Commands::Log(cherrysoda::StringUtil::ToString(VAR));                          \
+			cherrysoda::Commands::Return(static_cast<float>(VAR));                                     \
+		},                                                                                             \
+		HELP)
 
-#define CHERRYSODA_REGISTER_COMMAND(COMMAND,FUNC,HELP) \
-static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##COMMAND(#COMMAND,FUNC,HELP)
+#define CHERRYSODA_REGISTER_COMMAND(COMMAND, FUNC, HELP) \
+	static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##COMMAND(#COMMAND, FUNC, HELP)
 
-#define CHERRYSODA_COMMAND(COMMAND,HELP) \
-void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \
-CHERRYSODA_REGISTER_COMMAND(COMMAND,CherrySodaCommand_##COMMAND,HELP); \
-void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args)
+#define CHERRYSODA_COMMAND(COMMAND, HELP)                                                      \
+	void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \
+	CHERRYSODA_REGISTER_COMMAND(COMMAND, CherrySodaCommand_##COMMAND, HELP);                   \
+	void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args)
 
 namespace cherrysoda {
 
@@ -94,7 +94,7 @@ private:
 	static ReturnValue ms_returnValue;
 
 	static char ms_currentText[512];
-	static STL::Vector<STL::Pair<Color,String>> ms_drawCommands;
+	static STL::Vector<STL::Pair<Color, String>> ms_drawCommands;
 	static bool ms_consoleTextScrollNeeded;
 
 	static STL::Vector<String> ms_commandHistory;
@@ -137,7 +137,8 @@ private:
 class CommandRegisterHelper
 {
 public:
-	inline CommandRegisterHelper(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
+	inline CommandRegisterHelper(const String& command, STL::Action<const STL::Vector<String>&> action,
+								 const String& help)
 	{
 		Commands::Register(command, action, help);
 	}

@@ -29,15 +29,20 @@ public:
 	inline float NextAngle() { return NextFloat(Math::Pi2); }
 	inline Math::Vec2 ShakeVector()
 	{
-		constexpr float shakeVectorOffsets[5] = { -1.f, -1.f, 0.f, 1.f, 1.f };
+		constexpr float shakeVectorOffsets[5] = {-1.f, -1.f, 0.f, 1.f, 1.f};
 		return Math::Vec2(shakeVectorOffsets[Next(5)], shakeVectorOffsets[Next(5)]);
 	}
 
-	template <typename T>
-	inline T Choose(const T& a, const T& b) { return Next(2) ? a : b; }
+	template<typename T> inline T Choose(const T& a, const T& b) { return Next(2) ? a : b; }
 
-	inline Math::Vec2 Range(const Math::Vec2& min, const Math::Vec2& max) { return min + Math::Vec2(NextFloat(max.x - min.x), NextFloat(max.y - min.y)); }
-	inline Math::Vec3 Range(const Math::Vec3& min, const Math::Vec3& max) { return min + Math::Vec3(NextFloat(max.x - min.x), NextFloat(max.y - min.y), NextFloat(max.z - min.z)); }
+	inline Math::Vec2 Range(const Math::Vec2& min, const Math::Vec2& max)
+	{
+		return min + Math::Vec2(NextFloat(max.x - min.x), NextFloat(max.y - min.y));
+	}
+	inline Math::Vec3 Range(const Math::Vec3& min, const Math::Vec3& max)
+	{
+		return min + Math::Vec3(NextFloat(max.x - min.x), NextFloat(max.y - min.y), NextFloat(max.z - min.z));
+	}
 
 	static type::UInt32 TrueRandomNext();
 
@@ -88,4 +93,3 @@ private:
 } // namespace cherrysoda
 
 #endif // _CHERRYSODA_UTIL_CALC_H_
- 

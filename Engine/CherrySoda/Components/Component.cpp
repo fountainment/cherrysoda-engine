@@ -80,17 +80,10 @@ void Component::RemoveSelf()
 
 void Component::AutoDeleteWhenRemoved(PoolInterface* pool)
 {
-	m_onRemoved =
-		[pool](Component* component, Entity* entity)
-		{
-			pool->INTERNAL_Hide(component);
-			entity->GetScene()->AddActionOnEndOfFrame(
-				[pool, component]()
-				{
-					pool->INTERNAL_Destroy(component);
-				}
-			);
-		};
+	m_onRemoved = [pool](Component* component, Entity* entity) {
+		pool->INTERNAL_Hide(component);
+		entity->GetScene()->AddActionOnEndOfFrame([pool, component]() { pool->INTERNAL_Destroy(component); });
+	};
 }
 
 Scene* Component::GetScene() const
@@ -100,7 +93,7 @@ Scene* Component::GetScene() const
 
 void Component::DeleteComponent(Component* component, Entity* entity)
 {
-	entity->GetScene()->AddActionOnEndOfFrame([component](){ delete component; });
+	entity->GetScene()->AddActionOnEndOfFrame([component]() { delete component; });
 }
 
 } // namespace cherrysoda

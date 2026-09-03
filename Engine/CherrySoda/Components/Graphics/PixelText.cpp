@@ -7,8 +7,7 @@
 
 namespace cherrysoda {
 
-PixelText::PixelText(PixelFont* font, const String& text, const Color& color)
-	: base(false, true)
+PixelText::PixelText(PixelFont* font, const String& text, const Color& color) : base(false, true)
 {
 	Font(font);
 	Text(text);
@@ -46,12 +45,10 @@ void PixelText::Refresh()
 		// add char
 		auto fontChar = m_size.Get(c);
 		if (fontChar != nullptr) {
-			STL::Add(m_characters, Char
-			{
-				offset + Math::Vec2(fontChar->m_xOffset, m_size.LineHeight() - fontChar->m_texture.Height() - fontChar->m_yOffset),
-				fontChar,
-				fontChar->m_texture.ClipRect()
-			});
+			STL::Add(m_characters,
+					 Char{offset + Math::Vec2(fontChar->m_xOffset,
+											  m_size.LineHeight() - fontChar->m_texture.Height() - fontChar->m_yOffset),
+						  fontChar, fontChar->m_texture.ClipRect()});
 			if (offset.x > widest) {
 				widest = static_cast<int>(offset.x);
 			}

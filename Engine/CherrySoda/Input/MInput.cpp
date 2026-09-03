@@ -58,34 +58,68 @@ void MInput::GamePadData::StopRumble()
 
 bool MInput::KeyboardState::InternalGetKey(Keys key) const
 {
-	type::UInt32 mask = (type::UInt32) 1 << ((int)key & 0x1f);
+	type::UInt32 mask = (type::UInt32)1 << ((int)key & 0x1f);
 	type::UInt32 element;
 	switch (((int)key) >> 5) {
-		case 0: element = keys0; break;
-		case 1: element = keys1; break;
-		case 2: element = keys2; break;
-		case 3: element = keys3; break;
-		case 4: element = keys4; break;
-		case 5: element = keys5; break;
-		case 6: element = keys6; break;
-		case 7: element = keys7; break;
-		default: element = 0; break;
+	case 0:
+		element = keys0;
+		break;
+	case 1:
+		element = keys1;
+		break;
+	case 2:
+		element = keys2;
+		break;
+	case 3:
+		element = keys3;
+		break;
+	case 4:
+		element = keys4;
+		break;
+	case 5:
+		element = keys5;
+		break;
+	case 6:
+		element = keys6;
+		break;
+	case 7:
+		element = keys7;
+		break;
+	default:
+		element = 0;
+		break;
 	};
 	return (element & mask) != 0;
 }
 
 void MInput::KeyboardState::InternalSetKey(Keys key)
 {
-	type::UInt32 mask = (type::UInt32) 1 << ((int)key & 0x1f);
+	type::UInt32 mask = (type::UInt32)1 << ((int)key & 0x1f);
 	switch (((int)key) >> 5) {
-		case 0: keys0 |= mask; break;
-		case 1: keys1 |= mask; break;
-		case 2: keys2 |= mask; break;
-		case 3: keys3 |= mask; break;
-		case 4: keys4 |= mask; break;
-		case 5: keys5 |= mask; break;
-		case 6: keys6 |= mask; break;
-		case 7: keys7 |= mask; break;
+	case 0:
+		keys0 |= mask;
+		break;
+	case 1:
+		keys1 |= mask;
+		break;
+	case 2:
+		keys2 |= mask;
+		break;
+	case 3:
+		keys3 |= mask;
+		break;
+	case 4:
+		keys4 |= mask;
+		break;
+	case 5:
+		keys5 |= mask;
+		break;
+	case 6:
+		keys6 |= mask;
+		break;
+	case 7:
+		keys7 |= mask;
+		break;
 	}
 }
 
@@ -123,12 +157,8 @@ void MInput::Initialize()
 	}
 
 	StringID platform = SDL_GetPlatform();
-	if (platform == StringID("Windows") ||
-		platform == StringID("macOS") ||
-		platform == StringID("Linux") ||
-		platform == StringID("OpenBSD") ||
-		platform == StringID("FreeBSD") ||
-		platform == StringID("NetBSD")) {
+	if (platform == StringID("Windows") || platform == StringID("macOS") || platform == StringID("Linux") ||
+		platform == StringID("OpenBSD") || platform == StringID("FreeBSD") || platform == StringID("NetBSD")) {
 		ms_supportsGlobalMouse = true;
 	}
 	else {
@@ -231,36 +261,14 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 	}
 
 	// Sticks
-	Math::Vec2 stickLeft(
-		(float)SDL_GetGamepadAxis(
-			device,
-			SDL_GAMEPAD_AXIS_LEFTX
-		) / 32767.0f,
-		(float)SDL_GetGamepadAxis(
-			device,
-			SDL_GAMEPAD_AXIS_LEFTY
-		) / -32767.0f
-	);
-	Math::Vec2 stickRight(
-		(float)SDL_GetGamepadAxis(
-			device,
-			SDL_GAMEPAD_AXIS_RIGHTX
-		) / 32767.0f,
-		(float)SDL_GetGamepadAxis(
-			device,
-			SDL_GAMEPAD_AXIS_RIGHTY
-		) / -32767.0f
-	);
+	Math::Vec2 stickLeft((float)SDL_GetGamepadAxis(device, SDL_GAMEPAD_AXIS_LEFTX) / 32767.0f,
+						 (float)SDL_GetGamepadAxis(device, SDL_GAMEPAD_AXIS_LEFTY) / -32767.0f);
+	Math::Vec2 stickRight((float)SDL_GetGamepadAxis(device, SDL_GAMEPAD_AXIS_RIGHTX) / 32767.0f,
+						  (float)SDL_GetGamepadAxis(device, SDL_GAMEPAD_AXIS_RIGHTY) / -32767.0f);
 
 	// Triggers
-	float triggerLeft = (float)SDL_GetGamepadAxis(
-		device,
-		SDL_GAMEPAD_AXIS_LEFT_TRIGGER
-	) / 32767.0f;
-	float triggerRight = (float)SDL_GetGamepadAxis(
-		device,
-		SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
-	) / 32767.0f;
+	float triggerLeft = (float)SDL_GetGamepadAxis(device, SDL_GAMEPAD_AXIS_LEFT_TRIGGER) / 32767.0f;
+	float triggerRight = (float)SDL_GetGamepadAxis(device, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) / 32767.0f;
 
 	// Buttons
 	Buttons buttonState = Buttons::None;
@@ -341,12 +349,8 @@ const MInput::GamePadState MInput::GetGamePadState(int index)
 		buttonState |= Buttons::TouchPadEXT;
 	}
 
-	GamePadState builtState(
-		GamePadThumbSticks(stickLeft, stickRight),
-		GamePadTriggers(triggerLeft, triggerRight),
-		GamePadButtons(buttonState),
-		GamePadDPad(dpadUp, dpadDown, dpadLeft, dpadRight)
-	);
+	GamePadState builtState(GamePadThumbSticks(stickLeft, stickRight), GamePadTriggers(triggerLeft, triggerRight),
+							GamePadButtons(buttonState), GamePadDPad(dpadUp, dpadDown, dpadLeft, dpadRight));
 	builtState.m_connected = true;
 	return builtState;
 }
@@ -368,12 +372,8 @@ bool MInput::SetGamePadVibration(int index, float leftMotor, float rightMotor)
 		return false;
 	}
 
-	return SDL_RumbleGamepad(
-		device,
-		(type::UInt16)((Math_Clamp(leftMotor, 0.0f, 1.0f) * 0xFFFF)),
-		(type::UInt16)((Math_Clamp(rightMotor, 0.0f, 1.0f) * 0xFFFF)),
-		0
-	);
+	return SDL_RumbleGamepad(device, (type::UInt16)((Math_Clamp(leftMotor, 0.0f, 1.0f) * 0xFFFF)),
+							 (type::UInt16)((Math_Clamp(rightMotor, 0.0f, 1.0f) * 0xFFFF)), 0);
 }
 
 void MInput::AddControllerInstance(int instanceID)
@@ -410,9 +410,9 @@ void MInput::RemoveControllerInstance(int instanceID)
 STL::List<Keys> MInput::ms_keyboardKeys;
 MInput::KeyboardData* MInput::ms_keyboard = nullptr;
 MInput::MouseData* MInput::ms_mouse = nullptr;
-MInput::GamePadData* MInput::ms_gamePads[4] = { nullptr, nullptr, nullptr, nullptr };
-void* MInput::ms_internalDevices[4] = { nullptr, nullptr, nullptr, nullptr };
-STL::Map<int,int> MInput::ms_internalInstanceMap;
+MInput::GamePadData* MInput::ms_gamePads[4] = {nullptr, nullptr, nullptr, nullptr};
+void* MInput::ms_internalDevices[4] = {nullptr, nullptr, nullptr, nullptr};
+STL::Map<int, int> MInput::ms_internalInstanceMap;
 
 int MInput::ms_internalMouseWheel = 0;
 bool MInput::ms_supportsGlobalMouse = true;

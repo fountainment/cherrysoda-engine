@@ -8,13 +8,13 @@ struct Block
 {
 	enum class Type : cherrysoda::type::UInt8
 	{
-		None   = 0,
-		White  = 1,
-		Black  = 2,
-		Red    = 3,
-		Green  = 4,
-		Blue   = 5,
-		Count  = 6
+		None = 0,
+		White = 1,
+		Black = 2,
+		Red = 3,
+		Green = 4,
+		Blue = 5,
+		Count = 6
 	};
 
 	Type m_type = Type::None;

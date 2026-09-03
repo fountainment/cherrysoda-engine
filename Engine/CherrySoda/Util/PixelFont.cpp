@@ -8,14 +8,15 @@
 
 namespace cherrysoda {
 
-const PixelFontSize PixelFont::AddFontSize(const String& path, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
+const PixelFontSize PixelFont::AddFontSize(const String& path, Atlas* atlas /* = nullptr*/, bool outline /* = false*/)
 {
 	json::Document json;
 	JsonUtil::ReadJsonFile(json, path);
 	return AddFontSize(path, &json, atlas, outline);
 }
 
-const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas/* = nullptr*/, bool outline/* = false*/)
+const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value* jsonValue,
+										   Atlas* atlas /* = nullptr*/, bool outline /* = false*/)
 {
 	// check if size already exists
 	auto data = jsonValue->GetObject();
@@ -63,7 +64,7 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value
 
 	// add font size
 	STL::Add(m_sizes, fontSize);
-	STL::Sort(m_sizes, [](const auto& a, const auto& b){ return a.Size() < b.Size(); });
+	STL::Sort(m_sizes, [](const auto& a, const auto& b) { return a.Size() < b.Size(); });
 
 	return fontSize;
 }

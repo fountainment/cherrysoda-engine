@@ -1,12 +1,12 @@
 #include <CherrySoda/Engine.h>
 
-#include <CherrySoda/Scene.h>
 #include <CherrySoda/Audio/Audio.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Input/MInput.h>
 #include <CherrySoda/Interface/Window.h>
-#include <CherrySoda/Util/Commands.h>
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/Color.h>
+#include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/GUI.h>
 #include <CherrySoda/Util/Log.h>
@@ -30,8 +30,7 @@ void Engine::MainLoop()
 }
 #endif // __EMSCRIPTEN__
 
-Engine::Engine(int width, int height, int windowWidth, int windowHeight,
-               const String& title, bool fullscreen)
+Engine::Engine(int width, int height, int windowWidth, int windowHeight, const String& title, bool fullscreen)
 {
 	ms_instance = this;
 #if defined(CHIP)
@@ -138,9 +137,7 @@ void Engine::SetTextInputEnabled(bool enable)
 }
 
 #ifdef __EMSCRIPTEN__
-EM_JS(void, EM_SetClipboardText, (const char* text), {
-	navigator.clipboard.writeText(UTF8ToString(text));
-});
+EM_JS(void, EM_SetClipboardText, (const char* text), { navigator.clipboard.writeText(UTF8ToString(text)); });
 #endif // __EMSCRIPTEN__
 
 const char* Engine::GetClipboardText()
@@ -158,7 +155,7 @@ void Engine::SetClipboardText(const char* text)
 #endif // __EMSCRIPTEN__
 }
 
-void Engine::Run(int argc/* = 0*/, char* argv[]/* = {}*/)
+void Engine::Run(int argc /* = 0*/, char* argv[] /* = {}*/)
 {
 	ParseArgs(argc, argv);
 	Initialize();

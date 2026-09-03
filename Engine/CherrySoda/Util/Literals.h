@@ -12,10 +12,10 @@ struct cherrysoda_su_proxy
 
 constexpr cherrysoda_su_proxy operator""_su(unsigned long long int lit)
 {
-	return { static_cast<cherrysoda::type::UInt16>(lit) };
+	return {static_cast<cherrysoda::type::UInt16>(lit)};
 }
 
-constexpr cherrysoda::type::UInt16 operator + (cherrysoda::type::UInt16 a, cherrysoda_su_proxy b)
+constexpr cherrysoda::type::UInt16 operator+(cherrysoda::type::UInt16 a, cherrysoda_su_proxy b)
 {
 	return static_cast<cherrysoda::type::UInt16>(a + b.v);
 }

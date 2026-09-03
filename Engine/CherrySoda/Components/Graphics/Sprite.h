@@ -41,12 +41,9 @@ public:
 	CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(Justify, m_justify, CHERRYSODA_NONE_OP, m_justifyHasValue = true);
 	void ClearJustify() { m_justifyHasValue = false; }
 
-	void operator = (const Sprite& sprite) = delete;
+	void operator=(const Sprite& sprite) = delete;
 
-	MTexture GetFrame(const String& animation, int frame) const
-	{
-		return m_animations.at(animation).m_frames[frame];
-	}
+	MTexture GetFrame(const String& animation, int frame) const { return m_animations.at(animation).m_frames[frame]; }
 
 	Math::Vec2 Center() const { return Math::Vec2(Width() * .5f, Height() * .5f); }
 
@@ -57,35 +54,38 @@ public:
 	inline STL::Vector<MTexture> GetFrames(const String& path)
 	{
 		auto ret = m_atlas->GetAtlasSubtextures(m_path + path);
-		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
+		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n",
+								 (m_path + path).c_str());
 		m_width = Math_Max(m_width, ret[0].Width());
 		m_height = Math_Max(m_height, ret[0].Height());
 		return ret;
 	}
 
-	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f, Chooser<StringID> into = Chooser<StringID>())
+	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f,
+					Chooser<StringID> into = Chooser<StringID>())
 	{
-		m_animations[id] = { delay, GetFrames(path), into };
+		m_animations[id] = {delay, GetFrames(path), into};
 	}
 
 	void Add(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
 	{
-		m_animations[id] = { delay, GetFrames(path, frames), Chooser<StringID>() };
+		m_animations[id] = {delay, GetFrames(path, frames), Chooser<StringID>()};
 	}
 
-	inline void Add(const StringID& id, const String& path, float delay, Chooser<StringID> into, const STL::Vector<int>& frames)
+	inline void Add(const StringID& id, const String& path, float delay, Chooser<StringID> into,
+					const STL::Vector<int>& frames)
 	{
-		m_animations[id] = { delay, GetFrames(path, frames), into };
+		m_animations[id] = {delay, GetFrames(path, frames), into};
 	}
 
 	inline void AddLoop(const StringID& id, const String& path, float delay = 1.f / 15.f)
 	{
-		m_animations[id] = { delay, GetFrames(path), Chooser<StringID>(id, 1.f) };
+		m_animations[id] = {delay, GetFrames(path), Chooser<StringID>(id, 1.f)};
 	}
 
 	inline void AddLoop(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
 	{
-		m_animations[id] = { delay, GetFrames(path, frames), Chooser<StringID>(id, 1.f) };
+		m_animations[id] = {delay, GetFrames(path, frames), Chooser<StringID>(id, 1.f)};
 	}
 
 	void ClearAnimations()
@@ -96,10 +96,7 @@ public:
 
 	void Play(const StringID& id, bool restart = false, bool randomizeFrame = false);
 
-	inline bool Has(const StringID& id) const
-	{
-		return STL::ContainsKey(m_animations, id);
-	}
+	inline bool Has(const StringID& id) const { return STL::ContainsKey(m_animations, id); }
 
 	inline bool IsPlaying(const StringID& id) const
 	{
@@ -130,7 +127,7 @@ public:
 	inline void OnLoop(STL::Action<StringID> onLoop) { m_onLoop = onLoop; }
 	inline void OnFrameChange(STL::Action<StringID> onFrameChange) { m_onFrameChange = onFrameChange; }
 	inline void OnLastFrame(STL::Action<StringID> onLastFrame) { m_onLastFrame = onLastFrame; }
-	inline void OnChange(STL::Action<StringID,StringID> onChange) { m_onChange = onChange; }
+	inline void OnChange(STL::Action<StringID, StringID> onChange) { m_onChange = onChange; }
 
 	float Width() const override { return m_width; }
 	float Height() const override { return m_height; }
@@ -167,10 +164,12 @@ private:
 		auto fullPath = m_path + path;
 		for (int frameIndex : frames) {
 			auto frame = m_atlas->GetAtlasSubtextureAt(fullPath, frameIndex);
-			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(), frameIndex);
+			CHERRYSODA_ASSERT_FORMAT(frame.IsValid(), "Can't find sprite %s with index %d\n", fullPath.c_str(),
+									 frameIndex);
 			STL::Add(ret, frame);
-		}	
-		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n", (m_path + path).c_str());
+		}
+		CHERRYSODA_ASSERT_FORMAT(STL::IsNotEmpty(ret), "No frames found for animation path '%s'!\n",
+								 (m_path + path).c_str());
 		m_width = Math_Max(m_width, ret[0].Width());
 		m_height = Math_Max(m_height, ret[0].Height());
 		return ret;
@@ -193,11 +192,11 @@ private:
 	STL::Action<StringID> m_onLoop;
 	STL::Action<StringID> m_onFrameChange;
 	STL::Action<StringID> m_onLastFrame;
-	STL::Action<StringID,StringID> m_onChange;
+	STL::Action<StringID, StringID> m_onChange;
 
 	Atlas* m_atlas = nullptr;
 	String m_path;
-	STL::HashMap<StringID,Animation> m_animations;
+	STL::HashMap<StringID, Animation> m_animations;
 	Animation* m_currentAnimation = nullptr;
 	float m_animationTimer = 0.f;
 	int m_width = 0;

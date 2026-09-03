@@ -4,9 +4,9 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
-#include <CherrySoda/Util/NumType.h>
 
 #include "Voxel/Block.h"
 
@@ -57,12 +57,19 @@ public:
 	}
 	static inline int GetBlockIndexFast(const cherrysoda::Math::IVec3& v)
 	{
-		CHERRYSODA_ASSERT(!(v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()), "Block Index Out of Range!\n");
+		CHERRYSODA_ASSERT(!(v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()),
+						  "Block Index Out of Range!\n");
 		return v.z * Size() * Size() + v.y * Size() + v.x;
 	}
 
-	inline cherrysoda::Math::AABB GetAABB() const { return { Position(), Position() + cherrysoda::Math::Vec3(static_cast<float>(Size())) }; }
-	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const { return { Position() + cherrysoda::Math::Vec3(v), Position() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
+	inline cherrysoda::Math::AABB GetAABB() const
+	{
+		return {Position(), Position() + cherrysoda::Math::Vec3(static_cast<float>(Size()))};
+	}
+	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const
+	{
+		return {Position() + cherrysoda::Math::Vec3(v), Position() + cherrysoda::Math::Vec3(v) + Vec3_One};
+	}
 
 	void Update() override;
 
@@ -79,7 +86,7 @@ private:
 	static constexpr cherrysoda::type::UInt16 ms_ChunkSize = 16;
 
 	static inline int GetBlockIndex(const cherrysoda::Math::IVec3& v)
-	{ 
+	{
 		if (v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()) return -1;
 		return v.z * Size() * Size() + v.y * Size() + v.x;
 	}

@@ -2,9 +2,9 @@
 
 #include <CherrySoda/CherrySoda.h>
 
-#include "Program.h"
 #include "Entities/Player.h"
 #include "Graphics/Skybox.h"
+#include "Program.h"
 #include "Voxel/Chunk.h"
 #include "Voxel/World.h"
 
@@ -15,11 +15,7 @@ class SkyboxRenderer : public SingleTagRenderer
 public:
 	typedef SingleTagRenderer base;
 
-	SkyboxRenderer(const BitTag& tag)
-	: base(tag)
-	{
-		SetEffect(GameApp::ms_skyboxShader);
-	}
+	SkyboxRenderer(const BitTag& tag) : base(tag) { SetEffect(GameApp::ms_skyboxShader); }
 };
 
 class VoxelRenderer : public SingleTagRenderer
@@ -27,11 +23,7 @@ class VoxelRenderer : public SingleTagRenderer
 public:
 	typedef SingleTagRenderer base;
 
-	VoxelRenderer(const BitTag& tag)
-	: base(tag)
-	{
-		SetEffect(GameApp::ms_voxelShader);
-	}
+	VoxelRenderer(const BitTag& tag) : base(tag) { SetEffect(GameApp::ms_voxelShader); }
 };
 
 void MainScene::Begin()
@@ -40,7 +32,7 @@ void MainScene::Begin()
 
 	m_uniformMtx = Graphics::CreateUniformMat4("u_mtx");
 
-	Graphics::SetRenderPassOrder({ 0, 1, 2 });
+	Graphics::SetRenderPassOrder({0, 1, 2});
 	Graphics::UseRenderPass(1)->SetClearDiscard();
 	Graphics::UseRenderPass(2)->SetClearDiscard();
 
@@ -86,10 +78,10 @@ void MainScene::Begin()
 	Graphics::SetUniformMaterial(Math::Vec3(0.08f), 0.3f, 0.1f, 0.f); // Glass
 	// Graphics::SetUniformMaterial(Math::Vec3(1.f, 0.72f, 0.29f), 1.0f, 0.f, 0.f); // Gold
 
-	Graphics::SetUniformLight(0, Math::Vec3(  0.f, 68.f,   0.f), Vec3_One * 5.f, false);
-	Graphics::SetUniformLight(1, Math::Vec3( 30.f, 68.f,   0.f), Vec3_XUp * 5.f, false);
+	Graphics::SetUniformLight(0, Math::Vec3(0.f, 68.f, 0.f), Vec3_One * 5.f, false);
+	Graphics::SetUniformLight(1, Math::Vec3(30.f, 68.f, 0.f), Vec3_XUp * 5.f, false);
 	Graphics::SetUniformLight(2, Math::Vec3(-15.f, 68.f, -26.f), Vec3_YUp * 5.f, false);
-	Graphics::SetUniformLight(3, Math::Vec3(-15.f, 68.f,  26.f), Vec3_ZUp * 5.f, false);
+	Graphics::SetUniformLight(3, Math::Vec3(-15.f, 68.f, 26.f), Vec3_ZUp * 5.f, false);
 	Graphics::SubmitUniformLight();
 
 	// Renderers
@@ -148,11 +140,11 @@ void MainScene::Update()
 		}
 	}
 
-	static float albedo[] = { 0.08f, 0.08f, 0.08f };
+	static float albedo[] = {0.08f, 0.08f, 0.08f};
 	static float metallic = 0.3f;
 	static float roughness = 0.1f;
 	static float ao = 0;
-	static float color[] = { 1.0f, 1.0f, 1.0f };
+	static float color[] = {1.0f, 1.0f, 1.0f};
 	ImGui::Begin("VoxelExperiment");
 	static bool firstFrame = true;
 	if (firstFrame) {
@@ -190,8 +182,12 @@ void MainScene::Update()
 	Graphics::SetUniformMaterial(Math::Vec3(albedo[0], albedo[1], albedo[2]), metallic, roughness, ao);
 	Graphics::SetUniformLight(0, Math::Vec3(0.f, 68.f, 0.f), Math::Vec3(color[0], color[1], color[2]) * 5.f, false);
 	Graphics::SetUniformLight(1, Math::Vec3(Math_Cos(s_t) * 30.0f, 68.f, Math_Sin(s_t) * 30.0f), Vec3_XUp * 5.f, false);
-	Graphics::SetUniformLight(2, Math::Vec3(Math_Cos(s_t + Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t + Math::Pi2 / 3.f) * 30.0f), Vec3_YUp * 5.f, false);
-	Graphics::SetUniformLight(3, Math::Vec3(Math_Cos(s_t - Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t - Math::Pi2 / 3.f) * 30.0f), Vec3_ZUp * 5.f, false);
+	Graphics::SetUniformLight(
+		2, Math::Vec3(Math_Cos(s_t + Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t + Math::Pi2 / 3.f) * 30.0f),
+		Vec3_YUp * 5.f, false);
+	Graphics::SetUniformLight(
+		3, Math::Vec3(Math_Cos(s_t - Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t - Math::Pi2 / 3.f) * 30.0f),
+		Vec3_ZUp * 5.f, false);
 	Graphics::SubmitUniformLight();
 
 	base::Update();

@@ -2,10 +2,10 @@
 #define _CHERRYSODA_UTIL_PIXELFONT_H_
 
 #include <CherrySoda/Graphics/MTexture.h>
+#include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
-#include <CherrySoda/Util/Json.h>
 
 namespace cherrysoda {
 
@@ -18,7 +18,8 @@ public:
 	{
 		m_character = character;
 		auto json = jsonValue->GetObject();
-		m_texture = texture.GetSubtexture(json["x"].GetInt(), json["y"].GetInt(), json["width"].GetInt(), json["height"].GetInt());
+		m_texture = texture.GetSubtexture(json["x"].GetInt(), json["y"].GetInt(), json["width"].GetInt(),
+										  json["height"].GetInt());
 		m_xOffset = json["xoffset"].GetInt();
 		m_yOffset = json["yoffset"].GetInt();
 		m_xAdvance = json["xadvance"].GetInt();
@@ -43,10 +44,7 @@ public:
 	// TODO: 1/3 line height for space width could be inappropriate in some cases?
 	inline float Size() const { return m_size; }
 
-	const PixelFontCharacter* Get(type::UInt32 id) const
-	{
-		return STL::GetValueAddress(m_characters, id);
-	}
+	const PixelFontCharacter* Get(type::UInt32 id) const { return STL::GetValueAddress(m_characters, id); }
 
 private:
 	friend class PixelFont;
@@ -64,7 +62,8 @@ public:
 	PixelFont(const String& face) { m_face = face; }
 
 	const PixelFontSize AddFontSize(const String& path, Atlas* atlas = nullptr, bool outline = false);
-	const PixelFontSize AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas = nullptr, bool outline = false);
+	const PixelFontSize AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas = nullptr,
+									bool outline = false);
 
 	const PixelFontSize Get(float size) const;
 

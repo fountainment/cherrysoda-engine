@@ -21,9 +21,7 @@ public:
 
 	static const BitTag StaticTag;
 
-	Simple2DPhysicsComponent()
-	: base(true, false)
-	{}
+	Simple2DPhysicsComponent() : base(true, false) {}
 
 	void Added(Entity* entity) override
 	{
@@ -32,20 +30,11 @@ public:
 		entity->AddTag(DynamicTag);
 	}
 
-	inline void Move(const Math::Vec2& v)
-	{
-		m_pendingMove += v;
-	}
+	inline void Move(const Math::Vec2& v) { m_pendingMove += v; }
 
-	inline bool IsOnGround() const
-	{
-		return m_isOnGround;
-	}
+	inline bool IsOnGround() const { return m_isOnGround; }
 
-	inline bool IsAnythingAbove() const
-	{
-		return m_isAnythingAbove;
-	}
+	inline bool IsAnythingAbove() const { return m_isAnythingAbove; }
 
 	Math::Vec2 ActualMove(bool passive = false)
 	{
@@ -67,7 +56,6 @@ public:
 		Math::Vec2 actualMove(moveX, moveY);
 
 		if (moveX != 0 || moveY != 0) {
-
 			entity->Collidable(false);
 
 			if (moveX != 0) {
@@ -96,7 +84,8 @@ public:
 						if (entity->CollideCheck(dynamicEntity)) {
 							auto dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
 							Math::Vec2 oldDynamicPendingMove = dynamic->m_pendingMove;
-							float pushMoveX = moveX > 0 ? entity->Right() - dynamicEntity->Left() : entity->Left() - dynamicEntity->Right();
+							float pushMoveX = moveX > 0 ? entity->Right() - dynamicEntity->Left()
+														: entity->Left() - dynamicEntity->Right();
 							dynamic->m_pendingMove = Math::Vec2(pushMoveX, 0.f);
 							Math::Vec2 dynamicActualMove = dynamic->ActualMove(true);
 							dynamic->m_pendingMove = oldDynamicPendingMove;
@@ -135,7 +124,8 @@ public:
 						if (entity->CollideCheck(dynamicEntity)) {
 							auto dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
 							Math::Vec2 oldDynamicPendingMove = dynamic->m_pendingMove;
-							float pushMoveY = moveY > 0 ? entity->Top() - dynamicEntity->Bottom() : entity->Bottom() - dynamicEntity->Top();
+							float pushMoveY = moveY > 0 ? entity->Top() - dynamicEntity->Bottom()
+														: entity->Bottom() - dynamicEntity->Top();
 							dynamic->m_pendingMove = Math::Vec2(0.f, pushMoveY);
 							Math::Vec2 dynamicActualMove = dynamic->ActualMove(true);
 							dynamic->m_pendingMove = oldDynamicPendingMove;
@@ -150,11 +140,13 @@ public:
 		}
 
 		m_isOnGround = false;
-		if (entity->CollideCheck(StaticTag, entity->Position2D() - Vec2_YUp) || entity->CollideCheck(DynamicTag, entity->Position2D() - Vec2_YUp)) {
+		if (entity->CollideCheck(StaticTag, entity->Position2D() - Vec2_YUp) ||
+			entity->CollideCheck(DynamicTag, entity->Position2D() - Vec2_YUp)) {
 			m_isOnGround = true;
 		}
 		m_isAnythingAbove = false;
-		if (entity->CollideCheck(StaticTag, entity->Position2D() + Vec2_YUp) || entity->CollideCheck(DynamicTag, entity->Position2D() + Vec2_YUp)) {
+		if (entity->CollideCheck(StaticTag, entity->Position2D() + Vec2_YUp) ||
+			entity->CollideCheck(DynamicTag, entity->Position2D() + Vec2_YUp)) {
 			m_isAnythingAbove = true;
 		}
 
@@ -184,16 +176,9 @@ class HollowRectGraphicsComponent : public GraphicsComponent
 public:
 	CHERRYSODA_DECLARE_COMPONENT(HollowRectGraphicsComponent, GraphicsComponent);
 
-	HollowRectGraphicsComponent(int width, int height)
-	: base(false)
-	, m_width(width)
-	, m_height(height)
-	{}
+	HollowRectGraphicsComponent(int width, int height) : base(false), m_width(width), m_height(height) {}
 
-	void Render() override
-	{
-		Draw::HollowRect(RenderPosition().x, RenderPosition().y, m_width, m_height, GetColor());
-	}
+	void Render() override { Draw::HollowRect(RenderPosition().x, RenderPosition().y, m_width, m_height, GetColor()); }
 
 private:
 	int m_width;
@@ -240,14 +225,10 @@ public:
 		physComp->Move(Math::Vec2(speedX, m_speedY) * deltaTime);
 	}
 
-	void Jump()
-	{
-		m_speedY = 200.f;
-	}
+	void Jump() { m_speedY = 200.f; }
 
 private:
 	float m_speedY = 0.f;
-
 };
 
 class ScreenSpaceQuadGraphicsComponent : public GraphicsComponent
@@ -255,10 +236,7 @@ class ScreenSpaceQuadGraphicsComponent : public GraphicsComponent
 public:
 	CHERRYSODA_DECLARE_COMPONENT(ScreenSpaceQuadGraphicsComponent, GraphicsComponent);
 
-	ScreenSpaceQuadGraphicsComponent(const Texture2D& texture)
-		: base(false)
-		, m_texture(texture)
-	{}
+	ScreenSpaceQuadGraphicsComponent(const Texture2D& texture) : base(false), m_texture(texture) {}
 
 	void Render() override
 	{
@@ -289,7 +267,7 @@ MainScene::~MainScene()
 void MainScene::Begin()
 {
 	Graphics::SetPointTextureSampling();
-	Graphics::SetRenderPassOrder({ 0, kBackgroundPass, kMainPass, kScreenTexturePass });
+	Graphics::SetRenderPassOrder({0, kBackgroundPass, kMainPass, kScreenTexturePass});
 
 	Graphics::UseRenderPass(kBackgroundPass)->SetClearColor(Color::Black);
 	Graphics::UseRenderPass(kMainPass)->SetClearDiscard();
@@ -318,7 +296,8 @@ void MainScene::Begin()
 	m_mainRenderer->GetCamera()->Position(Math::Vec3(0.f, 0.f, 1.f));
 	m_mainRenderer->GetCamera()->UseOrthoProjection(true);
 
-	m_screenTexRenderer->GetCamera()->Position(Math::Vec3(m_mainScreenTarget->Width() * 0.5f, m_mainScreenTarget->Height() * 0.5f, 1.f));
+	m_screenTexRenderer->GetCamera()->Position(
+		Math::Vec3(m_mainScreenTarget->Width() * 0.5f, m_mainScreenTarget->Height() * 0.5f, 1.f));
 	m_screenTexRenderer->GetCamera()->UseOrthoProjection(true);
 	m_screenTexRenderer->GetCamera()->CenterOrigin();
 	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(3.f));
@@ -377,8 +356,8 @@ void MainScene::Update()
 	s_physCompPool.Traverse([](Simple2DPhysicsComponent* ptr) { ptr->ActualMove(); });
 
 	auto viewSize = Engine::Instance()->GetViewSize();
-	int cameraScale = Math_Min(Math_Max(1.f, viewSize.x / (float)m_mainScreenTarget->Width()), \
-		Math_Max(1.f, viewSize.y / (float)m_mainScreenTarget->Height()));
+	int cameraScale = Math_Min(Math_Max(1.f, viewSize.x / (float)m_mainScreenTarget->Width()),
+							   Math_Max(1.f, viewSize.y / (float)m_mainScreenTarget->Height()));
 	m_screenTexRenderer->GetCamera()->Scale2D(Math::Vec2(cameraScale));
 
 	base::Update();

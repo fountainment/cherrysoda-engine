@@ -28,7 +28,7 @@ const STL::Vector<MTexture>& Atlas::GetAtlasSubtextures(const String& key) const
 {
 	if (!STL::ContainsKey(m_orderedTexturesCache, key)) {
 		STL::Vector<MTexture> list;
-		for (int index = 0; ; ++index) {
+		for (int index = 0;; ++index) {
 			MTexture texture = GetAtlasSubtextureFromAtlasAt(key, index);
 			if (texture.IsValid())
 				STL::Add(list, texture);
@@ -76,22 +76,23 @@ const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index
 	return result;
 }
 
-void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format/* = AtlasDataFormat::CrunchJson*/)
+void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format /* = AtlasDataFormat::CrunchJson*/)
 {
 	switch (format) {
-	case AtlasDataFormat::CrunchJson:
-	{
+	case AtlasDataFormat::CrunchJson: {
 		cherrysoda::json::Document doc;
 		JsonUtil::ReadJsonFile(doc, path);
 		const auto& at = doc["textures"];
-		CHERRYSODA_ASSERT_FORMAT(at.IsArray(), "Atlas json parse failed: \"textures\" scope is not an array in \"%s\"!\n");
+		CHERRYSODA_ASSERT_FORMAT(at.IsArray(),
+								 "Atlas json parse failed: \"textures\" scope is not an array in \"%s\"!\n");
 		for (const auto& tex : at.GetArray()) {
 			String texturePath = StringUtil::Path_GetDirectoryName(path) + tex["name"].GetString() + ".png";
 			auto texture = Texture2D::FromFile(texturePath);
 			auto mTexture = MTexture(texture);
 			STL::Add(atlas->m_sources, texture);
 			const auto& img = tex["images"];
-			CHERRYSODA_ASSERT_FORMAT(img.IsArray(), "Atlas json parse failed: \"images\" scope is not an array in \"%s\"!\n");
+			CHERRYSODA_ASSERT_FORMAT(img.IsArray(),
+									 "Atlas json parse failed: \"images\" scope is not an array in \"%s\"!\n");
 			for (const auto& sub : img.GetArray()) {
 				const char* name = sub["n"].GetString();
 				auto clipRect = Math::IRectangle{
@@ -99,7 +100,9 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 					Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
 				};
 				if (sub.HasMember("fx")) {
-					atlas->m_textures[name] = MTexture(mTexture, name, clipRect, Math::Vec2(-sub["fx"].GetInt(), -sub["fy"].GetInt()), sub["fw"].GetInt(), sub["fh"].GetInt());
+					atlas->m_textures[name] =
+						MTexture(mTexture, name, clipRect, Math::Vec2(-sub["fx"].GetInt(), -sub["fy"].GetInt()),
+								 sub["fw"].GetInt(), sub["fh"].GetInt());
 				}
 				else {
 					atlas->m_textures[name] = MTexture(mTexture, name, clipRect);

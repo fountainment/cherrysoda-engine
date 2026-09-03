@@ -4,7 +4,7 @@ namespace {
 
 TEST(MathTestRectangle, GettersAndClamp)
 {
-	Math::Rectangle r{ Math::Vec2(1.f, 2.f), Math::Vec2(3.f, 4.f) };
+	Math::Rectangle r{Math::Vec2(1.f, 2.f), Math::Vec2(3.f, 4.f)};
 
 	EXPECT_FLOAT_EQ(1.f, r.Left());
 	EXPECT_FLOAT_EQ(4.f, r.Right());
@@ -22,7 +22,7 @@ TEST(MathTestRectangle, GettersAndClamp)
 
 TEST(MathTestRectangle, Move)
 {
-	Math::Rectangle r{ Math::Vec2(1.f, 2.f), Math::Vec2(3.f, 4.f) };
+	Math::Rectangle r{Math::Vec2(1.f, 2.f), Math::Vec2(3.f, 4.f)};
 	r.Move(Math::Vec2(10.f, -1.f));
 	EXPECT_EQ(Math::Vec2(11.f, 1.f), r.m_coord);
 	EXPECT_FLOAT_EQ(11.f, r.Left());
@@ -31,20 +31,20 @@ TEST(MathTestRectangle, Move)
 
 TEST(MathTestRectangle, Intersects)
 {
-	Math::Rectangle r{ Math::Vec2(0.f, 0.f), Math::Vec2(10.f, 10.f) };
+	Math::Rectangle r{Math::Vec2(0.f, 0.f), Math::Vec2(10.f, 10.f)};
 
-	EXPECT_TRUE(r.Intersects(Math::Rectangle{ Math::Vec2(5.f, 5.f), Math::Vec2(10.f, 10.f) }));
-	EXPECT_TRUE(r.Intersects(Math::Rectangle{ Math::Vec2(-5.f, -5.f), Math::Vec2(10.f, 10.f) }));
-	EXPECT_FALSE(r.Intersects(Math::Rectangle{ Math::Vec2(10.f, 0.f), Math::Vec2(5.f, 5.f) }));  // touching right edge
-	EXPECT_FALSE(r.Intersects(Math::Rectangle{ Math::Vec2(0.f, 10.f), Math::Vec2(5.f, 5.f) }));  // touching top edge
-	EXPECT_FALSE(r.Intersects(Math::Rectangle{ Math::Vec2(100.f, 100.f), Math::Vec2(5.f, 5.f) }));
+	EXPECT_TRUE(r.Intersects(Math::Rectangle{Math::Vec2(5.f, 5.f), Math::Vec2(10.f, 10.f)}));
+	EXPECT_TRUE(r.Intersects(Math::Rectangle{Math::Vec2(-5.f, -5.f), Math::Vec2(10.f, 10.f)}));
+	EXPECT_FALSE(r.Intersects(Math::Rectangle{Math::Vec2(10.f, 0.f), Math::Vec2(5.f, 5.f)})); // touching right edge
+	EXPECT_FALSE(r.Intersects(Math::Rectangle{Math::Vec2(0.f, 10.f), Math::Vec2(5.f, 5.f)})); // touching top edge
+	EXPECT_FALSE(r.Intersects(Math::Rectangle{Math::Vec2(100.f, 100.f), Math::Vec2(5.f, 5.f)}));
 }
 
 TEST(MathTestIRectangle, EqualityAndClamp)
 {
-	Math::IRectangle a{ Math::IVec2(0, 0), Math::IVec2(10, 10) };
-	Math::IRectangle b{ Math::IVec2(0, 0), Math::IVec2(10, 10) };
-	Math::IRectangle c{ Math::IVec2(1, 0), Math::IVec2(10, 10) };
+	Math::IRectangle a{Math::IVec2(0, 0), Math::IVec2(10, 10)};
+	Math::IRectangle b{Math::IVec2(0, 0), Math::IVec2(10, 10)};
+	Math::IRectangle c{Math::IVec2(1, 0), Math::IVec2(10, 10)};
 
 	EXPECT_TRUE(a == b);
 	EXPECT_FALSE(a == c);
@@ -74,7 +74,7 @@ TEST(MathTestBitCount, Values)
 
 TEST(MathTestRaycastAABB, HitInterval)
 {
-	Math::AABB box{ Math::Vec3(5.f, -1.f, -1.f), Math::Vec3(6.f, 1.f, 1.f) };
+	Math::AABB box{Math::Vec3(5.f, -1.f, -1.f), Math::Vec3(6.f, 1.f, 1.f)};
 
 	float t1 = -1.f;
 	float t2 = -1.f;
@@ -90,17 +90,17 @@ TEST(MathTestRaycastAABB, HitInterval)
 
 TEST(MathTestRaycastAABB, MissAndInside)
 {
-	Math::AABB box{ Math::Vec3(5.f, -1.f, -1.f), Math::Vec3(6.f, 1.f, 1.f) };
+	Math::AABB box{Math::Vec3(5.f, -1.f, -1.f), Math::Vec3(6.f, 1.f, 1.f)};
 
 	// Offset too far on Y, moving along X
 	EXPECT_FALSE(Math::RaycastAABB_(Math::Vec3(0.f), Math::Vec3(1.f, 0.f, 0.f),
-	                                Math::AABB{ Math::Vec3(5.f, 2.f, -1.f), Math::Vec3(6.f, 3.f, 1.f) }));
+									Math::AABB{Math::Vec3(5.f, 2.f, -1.f), Math::Vec3(6.f, 3.f, 1.f)}));
 
 	// Box behind the ray direction
 	EXPECT_FALSE(Math::RaycastAABB_(Math::Vec3(0.f), Math::Vec3(-1.f, 0.f, 0.f), box));
 
 	// Start inside the box: the interval begins at 0
-	Math::AABB aroundOrigin{ Math::Vec3(-1.f), Math::Vec3(1.f) };
+	Math::AABB aroundOrigin{Math::Vec3(-1.f), Math::Vec3(1.f)};
 	float t1 = -1.f;
 	float t2 = -1.f;
 	EXPECT_TRUE(Math::RaycastAABB_(Math::Vec3(0.f), Math::Vec3(1.f, 0.f, 0.f), aroundOrigin, &t1, &t2));

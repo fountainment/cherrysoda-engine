@@ -13,7 +13,7 @@ public:
 	~RenderTarget2D();
 
 	RenderTarget2D(const RenderTarget2D&) = delete;
-	RenderTarget2D& operator = (const RenderTarget2D&) = delete;
+	RenderTarget2D& operator=(const RenderTarget2D&) = delete;
 
 	void Dispose();
 

@@ -6,8 +6,7 @@ using mathbench::MathBench;
 
 using namespace cherrysoda;
 
-MathBench::MathBench()
-	: base()
+MathBench::MathBench() : base()
 {
 	SetTitle("MathBench");
 	SetClearColor(Color::Black);

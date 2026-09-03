@@ -9,14 +9,15 @@
 #include <string>
 
 #define CHERRYSODA_FORMAT cherrysoda::StringUtil::Format
-#define CHERRYSODA_DEBUG_FORMAT(format,...)            CHERRYSODA_DEBUG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
-#define CHERRYSODA_LOG_FORMAT(format,...)              CHERRYSODA_LOG(CHERRYSODA_FORMAT(format,##__VA_ARGS__))
-#define CHERRYSODA_ASSERT_FORMAT(condition,format,...) CHERRYSODA_ASSERT(condition,CHERRYSODA_FORMAT(format,##__VA_ARGS__))
+#define CHERRYSODA_DEBUG_FORMAT(format, ...) CHERRYSODA_DEBUG(CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
+#define CHERRYSODA_LOG_FORMAT(format, ...) CHERRYSODA_LOG(CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
+#define CHERRYSODA_ASSERT_FORMAT(condition, format, ...) \
+	CHERRYSODA_ASSERT(condition, CHERRYSODA_FORMAT(format, ##__VA_ARGS__))
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
-#	define CHERRYSODA_STRINGID_CONSTEXPR inline
+#define CHERRYSODA_STRINGID_CONSTEXPR inline
 #else
-#	define CHERRYSODA_STRINGID_CONSTEXPR constexpr
+#define CHERRYSODA_STRINGID_CONSTEXPR constexpr
 #endif
 
 namespace cherrysoda {
@@ -48,11 +49,14 @@ public:
 			int tmp = 0;
 			if (str[i] >= 'a' && str[i] <= 'f') {
 				tmp = str[i] - 'a' + 10;
-			} else if (str[i] >= 'A' && str[i] <= 'F') {
+			}
+			else if (str[i] >= 'A' && str[i] <= 'F') {
 				tmp = str[i] - 'A' + 10;
-			} else if (str[i] >= '0' && str[i] <= '9') {
+			}
+			else if (str[i] >= '0' && str[i] <= '9') {
 				tmp = str[i] - '0';
-			} else {
+			}
+			else {
 				CHERRYSODA_ASSERT(false, "Hex string invalid.\n");
 			}
 			ans |= tmp;
@@ -68,17 +72,15 @@ public:
 	static float ToFloat(const String& s) { return std::stof(s); }
 	static int ToInt(const String& s) { return std::stoi(s); }
 
-	template <typename T>
-	static const String ToString(T t) { return std::to_string(t); }
+	template<typename T> static const String ToString(T t) { return std::to_string(t); }
 
-	template <typename T>
-	static bool SafeTo(const String& s, T& t)
+	template<typename T> static bool SafeTo(const String& s, T& t)
 	{
 		T val;
 		std::stringstream ss;
 		ss << s;
 		ss >> val;
-		if(ss.fail()) {
+		if (ss.fail()) {
 			return false;
 		}
 		t = val;
@@ -106,21 +108,18 @@ public:
 
 	constexpr type::Int32 GetID() const { return m_id; }
 	constexpr operator type::Int32() const { return GetID(); }
-	constexpr bool operator ==(const StringID& other) const { return GetID() == other.GetID(); }
+	constexpr bool operator==(const StringID& other) const { return GetID() == other.GetID(); }
 	constexpr bool IsEmpty() const { return GetID() == 0; }
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
 public:
-	StringID(const char* str)
-	: m_id(StringUtil::GetHashBKDR(str))
-	, m_str(String(str))
+	StringID(const char* str) : m_id(StringUtil::GetHashBKDR(str)), m_str(String(str))
 	{
-		STL::Map<type::Int32,String>& hashCollisionCheckMap = INTERNAL_GetHashCollisionCheckMap();
+		STL::Map<type::Int32, String>& hashCollisionCheckMap = INTERNAL_GetHashCollisionCheckMap();
 		auto it = STL::FindKey(hashCollisionCheckMap, m_id);
 		if (it != hashCollisionCheckMap.end()) {
-			CHERRYSODA_ASSERT_FORMAT(it->second == m_str, \
-				"StringID Hash Collision: \"%s\" collide with \"%s\" at %d!", \
-				m_str.c_str(), it->second.c_str(), m_id);
+			CHERRYSODA_ASSERT_FORMAT(it->second == m_str, "StringID Hash Collision: \"%s\" collide with \"%s\" at %d!",
+									 m_str.c_str(), it->second.c_str(), m_id);
 		}
 		else {
 			hashCollisionCheckMap[m_id] = m_str;
@@ -129,11 +128,9 @@ public:
 
 	inline String GetStr() const { return m_str; }
 
-#else // CHERRYSODA_ENABLE_DEBUG
+#else  // CHERRYSODA_ENABLE_DEBUG
 public:
-	constexpr StringID(const char* str)
-		: m_id(StringUtil::GetHashBKDR(str))
-	{}
+	constexpr StringID(const char* str) : m_id(StringUtil::GetHashBKDR(str)) {}
 
 	inline String GetStr() const { return ""; }
 #endif // CHERRYSODA_ENABLE_DEBUG
@@ -142,7 +139,7 @@ private:
 	type::Int32 m_id;
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
-	static STL::Map<type::Int32,String>& INTERNAL_GetHashCollisionCheckMap();
+	static STL::Map<type::Int32, String>& INTERNAL_GetHashCollisionCheckMap();
 
 	String m_str;
 #endif // CHERRYSODA_ENABLE_DEBUG

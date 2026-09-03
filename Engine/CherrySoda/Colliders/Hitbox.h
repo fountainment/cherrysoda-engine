@@ -16,9 +16,7 @@ class Hitbox : public Collider
 public:
 	CHERRYSODA_DECLARE_COLLIDER(Hitbox, Collider);
 
-	Hitbox(float width, float height, float x = 0.f, float y = 0.f)
-		: m_width(width)
-		, m_height(height)
+	Hitbox(float width, float height, float x = 0.f, float y = 0.f) : m_width(width), m_height(height)
 	{
 		Position2D(Math::Vec2(x, y));
 	}
@@ -42,9 +40,18 @@ public:
 	void Width(float width) { m_width = width; }
 	void Height(float height) { m_height = height; }
 
-	inline float AbsoluteLeft() const { return GetEntity() ? InternalLeft() + GetEntity()->PositionX() : InternalLeft(); }
-	inline float AbsoluteRight() const { return GetEntity() ? InternalRight() + GetEntity()->PositionX() : InternalRight(); }
-	inline float AbsoluteBottom() const { return GetEntity() ? InternalBottom() + GetEntity()->PositionY() : InternalBottom(); }
+	inline float AbsoluteLeft() const
+	{
+		return GetEntity() ? InternalLeft() + GetEntity()->PositionX() : InternalLeft();
+	}
+	inline float AbsoluteRight() const
+	{
+		return GetEntity() ? InternalRight() + GetEntity()->PositionX() : InternalRight();
+	}
+	inline float AbsoluteBottom() const
+	{
+		return GetEntity() ? InternalBottom() + GetEntity()->PositionY() : InternalBottom();
+	}
 	inline float AbsoluteTop() const { return GetEntity() ? InternalTop() + GetEntity()->PositionY() : InternalTop(); }
 
 	void CenterOrigin()
@@ -56,7 +63,7 @@ public:
 	inline bool Intersects(const Hitbox* hitbox) const
 	{
 		return AbsoluteLeft() < hitbox->AbsoluteRight() && AbsoluteRight() > hitbox->AbsoluteLeft() &&
-			AbsoluteBottom() < hitbox->AbsoluteTop() && AbsoluteTop() > hitbox->AbsoluteBottom();
+			   AbsoluteBottom() < hitbox->AbsoluteTop() && AbsoluteTop() > hitbox->AbsoluteBottom();
 	}
 
 private:

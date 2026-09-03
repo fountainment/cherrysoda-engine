@@ -9,7 +9,7 @@ TEST(ColliderTestCircle, PointCollision)
 	Circle circle(2.f, Math::Vec2(5.f, 5.f));
 
 	EXPECT_TRUE(circle.Collide(Math::Vec2(5.f, 5.f)));
-	EXPECT_TRUE(circle.Collide(Math::Vec2(7.f, 5.f)));   // exactly on the rim
+	EXPECT_TRUE(circle.Collide(Math::Vec2(7.f, 5.f))); // exactly on the rim
 	EXPECT_TRUE(circle.Collide(Math::Vec2(3.f, 5.f)));
 	EXPECT_FALSE(circle.Collide(Math::Vec2(7.01f, 5.f)));
 	EXPECT_FALSE(circle.Collide(Math::Vec2(0.f, 0.f)));
@@ -19,14 +19,14 @@ TEST(ColliderTestCircle, CircleRectAndLineCollision)
 {
 	Circle circle(2.f, Math::Vec2(5.f, 5.f));
 
-	Circle touching(1.f, Math::Vec2(8.f, 5.f));      // distance 3 == 2 + 1
+	Circle touching(1.f, Math::Vec2(8.f, 5.f)); // distance 3 == 2 + 1
 	EXPECT_TRUE(circle.Collide(&touching));
-	Circle apart(0.9f, Math::Vec2(8.f, 5.f));        // distance 3 > 2.9
+	Circle apart(0.9f, Math::Vec2(8.f, 5.f)); // distance 3 > 2.9
 	EXPECT_FALSE(circle.Collide(&apart));
 
 	// Rectangle containing the circle center
-	EXPECT_TRUE(circle.Collide(Math::Rectangle{ Math::Vec2(3.f, 3.f), Math::Vec2(4.f, 4.f) }));
-	EXPECT_FALSE(circle.Collide(Math::Rectangle{ Math::Vec2(10.f, 10.f), Math::Vec2(4.f, 4.f) }));
+	EXPECT_TRUE(circle.Collide(Math::Rectangle{Math::Vec2(3.f, 3.f), Math::Vec2(4.f, 4.f)}));
+	EXPECT_FALSE(circle.Collide(Math::Rectangle{Math::Vec2(10.f, 10.f), Math::Vec2(4.f, 4.f)}));
 
 	// Line through the center vs. far away line
 	EXPECT_TRUE(circle.Collide(Math::Vec2(-5.f, 5.f), Math::Vec2(15.f, 5.f)));
@@ -50,7 +50,7 @@ TEST(ColliderTestHitbox, PointAndIntersects)
 {
 	Hitbox hitbox(10.f, 10.f);
 
-	EXPECT_TRUE(hitbox.Collide(Math::Vec2(0.f, 0.f)));   // bottom-left corner counts as inside
+	EXPECT_TRUE(hitbox.Collide(Math::Vec2(0.f, 0.f))); // bottom-left corner counts as inside
 	EXPECT_TRUE(hitbox.Collide(Math::Vec2(9.99f, 9.99f)));
 	EXPECT_FALSE(hitbox.Collide(Math::Vec2(10.f, 5.f))); // right edge is exclusive
 	EXPECT_FALSE(hitbox.Collide(Math::Vec2(-0.01f, 5.f)));
@@ -59,7 +59,7 @@ TEST(ColliderTestHitbox, PointAndIntersects)
 	Hitbox overlapping(5.f, 5.f, 5.f, 5.f);
 	EXPECT_TRUE(hitbox.Intersects(&overlapping));
 
-	Hitbox touching(5.f, 5.f, 10.f, 10.f);               // shares only the right edge
+	Hitbox touching(5.f, 5.f, 10.f, 10.f); // shares only the right edge
 	EXPECT_FALSE(hitbox.Intersects(&touching));
 
 	Hitbox separate(5.f, 5.f, 100.f, 100.f);
@@ -71,8 +71,8 @@ TEST(ColliderTestHitbox, RectLineAndCircleCollision)
 	Hitbox hitbox(2.f, 10.f);
 
 	// Rectangle overlap
-	EXPECT_TRUE(hitbox.Collide(Math::Rectangle{ Math::Vec2(1.f, 5.f), Math::Vec2(2.f, 2.f) }));
-	EXPECT_FALSE(hitbox.Collide(Math::Rectangle{ Math::Vec2(3.f, 5.f), Math::Vec2(2.f, 2.f) }));
+	EXPECT_TRUE(hitbox.Collide(Math::Rectangle{Math::Vec2(1.f, 5.f), Math::Vec2(2.f, 2.f)}));
+	EXPECT_FALSE(hitbox.Collide(Math::Rectangle{Math::Vec2(3.f, 5.f), Math::Vec2(2.f, 2.f)}));
 
 	// Line crossing vs. missing
 	EXPECT_TRUE(hitbox.Collide(Math::Vec2(-1.f, 5.f), Math::Vec2(5.f, 5.f)));
@@ -127,7 +127,7 @@ TEST(ColliderTestGrid, SetRectCheckRectClamping)
 	EXPECT_TRUE(clipped.CheckRect(-5, -5, 100, 100));
 	Grid empty(4, 4, 10, 10);
 	EXPECT_FALSE(empty.CheckRect(-5, -5, 100, 100));
-	EXPECT_FALSE(empty.CheckRect(4, 4, 1, 1));  // entirely outside
+	EXPECT_FALSE(empty.CheckRect(4, 4, 1, 1)); // entirely outside
 
 	// Out-of-bounds Get is always false
 	EXPECT_FALSE(grid.Get(-1, 0));
@@ -151,24 +151,24 @@ TEST(ColliderTestGrid, PointAndRectCollision)
 	EXPECT_FLOAT_EQ(40.f, grid.Width());
 	EXPECT_FLOAT_EQ(40.f, grid.Height());
 
-	EXPECT_TRUE(grid.Collide(Math::Vec2(15.f, 15.f)));   // cell (1,1)
-	EXPECT_TRUE(grid.Collide(Math::Vec2(25.f, 25.f)));   // cell (2,2)
-	EXPECT_FALSE(grid.Collide(Math::Vec2(5.f, 5.f)));    // cell (0,0)
-	EXPECT_FALSE(grid.Collide(Math::Vec2(45.f, 5.f)));   // outside on X
-	EXPECT_FALSE(grid.Collide(Math::Vec2(5.f, -1.f)));   // outside on Y
+	EXPECT_TRUE(grid.Collide(Math::Vec2(15.f, 15.f))); // cell (1,1)
+	EXPECT_TRUE(grid.Collide(Math::Vec2(25.f, 25.f))); // cell (2,2)
+	EXPECT_FALSE(grid.Collide(Math::Vec2(5.f, 5.f)));  // cell (0,0)
+	EXPECT_FALSE(grid.Collide(Math::Vec2(45.f, 5.f))); // outside on X
+	EXPECT_FALSE(grid.Collide(Math::Vec2(5.f, -1.f))); // outside on Y
 
-	EXPECT_TRUE(grid.Collide(Math::Rectangle{ Math::Vec2(12.f, 12.f), Math::Vec2(2.f, 2.f) }));
-	EXPECT_FALSE(grid.Collide(Math::Rectangle{ Math::Vec2(2.f, 2.f), Math::Vec2(2.f, 2.f) }));
-	EXPECT_FALSE(grid.Collide(Math::Rectangle{ Math::Vec2(50.f, 50.f), Math::Vec2(2.f, 2.f) }));
+	EXPECT_TRUE(grid.Collide(Math::Rectangle{Math::Vec2(12.f, 12.f), Math::Vec2(2.f, 2.f)}));
+	EXPECT_FALSE(grid.Collide(Math::Rectangle{Math::Vec2(2.f, 2.f), Math::Vec2(2.f, 2.f)}));
+	EXPECT_FALSE(grid.Collide(Math::Rectangle{Math::Vec2(50.f, 50.f), Math::Vec2(2.f, 2.f)}));
 }
 
 TEST(ColliderTestGrid, LineCollision)
 {
 	Grid grid(4, 4, 10, 10);
-	grid.Set(2, 0, true);   // spans world x in [20, 30), y in [0, 10)
+	grid.Set(2, 0, true); // spans world x in [20, 30), y in [0, 10)
 
-	EXPECT_TRUE(grid.Collide(Math::Vec2(0.f, 5.f), Math::Vec2(40.f, 5.f)));   // crosses the solid cell
-	EXPECT_FALSE(grid.Collide(Math::Vec2(0.f, 15.f), Math::Vec2(40.f, 15.f))); // same column, empty row
+	EXPECT_TRUE(grid.Collide(Math::Vec2(0.f, 5.f), Math::Vec2(40.f, 5.f)));     // crosses the solid cell
+	EXPECT_FALSE(grid.Collide(Math::Vec2(0.f, 15.f), Math::Vec2(40.f, 15.f)));  // same column, empty row
 	EXPECT_FALSE(grid.Collide(Math::Vec2(50.f, 50.f), Math::Vec2(80.f, 50.f))); // outside the grid
 
 	// Diagonal ray stepping across several cells into the solid one
@@ -179,12 +179,12 @@ TEST(ColliderTestColliderList, CollideDispatch)
 {
 	Circle circle(1.f);
 	Hitbox farBox(10.f, 10.f, 20.f, 20.f);
-	ColliderList::IterableColliders colliders = { &circle, &farBox };
+	ColliderList::IterableColliders colliders = {&circle, &farBox};
 	ColliderList list(colliders);
 
-	EXPECT_TRUE(list.Collide(Math::Vec2(0.f, 0.f)));     // hits the circle
-	EXPECT_TRUE(list.Collide(Math::Vec2(25.f, 25.f)));   // hits the hitbox
-	EXPECT_FALSE(list.Collide(Math::Vec2(10.f, 10.f)));  // hits neither
+	EXPECT_TRUE(list.Collide(Math::Vec2(0.f, 0.f)));    // hits the circle
+	EXPECT_TRUE(list.Collide(Math::Vec2(25.f, 25.f)));  // hits the hitbox
+	EXPECT_FALSE(list.Collide(Math::Vec2(10.f, 10.f))); // hits neither
 
 	Circle overlappingCircle(0.5f);
 	Hitbox overlappingBox(2.f, 2.f, 24.f, 24.f);
@@ -193,10 +193,10 @@ TEST(ColliderTestColliderList, CollideDispatch)
 	EXPECT_TRUE(list.Collide(&overlappingBox));
 	EXPECT_FALSE(list.Collide(&missingBox));
 
-	EXPECT_TRUE(list.Collide(Math::Rectangle{ Math::Vec2(-1.f, -1.f), Math::Vec2(1.f, 1.f) }));
-	EXPECT_FALSE(list.Collide(Math::Rectangle{ Math::Vec2(5.f, 5.f), Math::Vec2(1.f, 1.f) }));
+	EXPECT_TRUE(list.Collide(Math::Rectangle{Math::Vec2(-1.f, -1.f), Math::Vec2(1.f, 1.f)}));
+	EXPECT_FALSE(list.Collide(Math::Rectangle{Math::Vec2(5.f, 5.f), Math::Vec2(1.f, 1.f)}));
 
-	EXPECT_TRUE(list.Collide(Math::Vec2(-5.f, 0.f), Math::Vec2(5.f, 0.f)));  // line through the circle
+	EXPECT_TRUE(list.Collide(Math::Vec2(-5.f, 0.f), Math::Vec2(5.f, 0.f))); // line through the circle
 	EXPECT_FALSE(list.Collide(Math::Vec2(-5.f, 5.f), Math::Vec2(5.f, 5.f)));
 
 	// Union bounds over all children
@@ -225,11 +225,11 @@ TEST(ColliderTestColliderList, AddAndRemove)
 	ColliderList::IterableColliders empty;
 	ColliderList list(empty);
 
-	ColliderList::IterableColliders toAdd = { &circle };
+	ColliderList::IterableColliders toAdd = {&circle};
 	list.Add(toAdd);
 	EXPECT_TRUE(list.Collide(Math::Vec2(0.f, 0.f)));
 
-	ColliderList::IterableColliders toRemove = { &circle };
+	ColliderList::IterableColliders toRemove = {&circle};
 	list.Remove(toRemove);
 	EXPECT_FALSE(list.Collide(Math::Vec2(0.f, 0.f)));
 }

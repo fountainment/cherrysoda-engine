@@ -1,21 +1,27 @@
 #ifndef _CHERRYSODA_UTIL_LOG_H_
 #define _CHERRYSODA_UTIL_LOG_H_
 
-#include <string>
 #include <cassert>
+#include <string>
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
-#	define CHERRYSODA_DEBUG(output)                 cherrysoda::Log::DebugOutput(output)
-#	define CHERRYSODA_DEBUG_CHANNEL(output,channel) cherrysoda::Log::DebugOutput(output,channel)
-#	define CHERRYSODA_ASSERT(condition,output)      do{if(!(condition)){CHERRYSODA_DEBUG(output);assert(0);}}while(0)
+#define CHERRYSODA_DEBUG(output) cherrysoda::Log::DebugOutput(output)
+#define CHERRYSODA_DEBUG_CHANNEL(output, channel) cherrysoda::Log::DebugOutput(output, channel)
+#define CHERRYSODA_ASSERT(condition, output) \
+	do {                                     \
+		if (!(condition)) {                  \
+			CHERRYSODA_DEBUG(output);        \
+			assert(0);                       \
+		}                                    \
+	} while (0)
 #else
-#	define CHERRYSODA_DEBUG(output)
-#	define CHERRYSODA_DEBUG_CHANNEL(output,channel)
-#	define CHERRYSODA_ASSERT(condition,output)
+#define CHERRYSODA_DEBUG(output)
+#define CHERRYSODA_DEBUG_CHANNEL(output, channel)
+#define CHERRYSODA_ASSERT(condition, output)
 #endif
 
-#define CHERRYSODA_LOG(output)                   cherrysoda::Log::LogOutput(output)
-#define CHERRYSODA_LOG_CHANNEL(output,channel)   cherrysoda::Log::LogOutput(output,channel)
+#define CHERRYSODA_LOG(output) cherrysoda::Log::LogOutput(output)
+#define CHERRYSODA_LOG_CHANNEL(output, channel) cherrysoda::Log::LogOutput(output, channel)
 
 namespace cherrysoda {
 

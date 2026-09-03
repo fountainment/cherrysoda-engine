@@ -15,10 +15,14 @@ public:
 	typedef STL::List<Component*> IterableComponents;
 	typedef STL::HashSet<Component*> HashSetComponents;
 
-	enum class LockModes { Open, Locked, Error };
+	enum class LockModes
+	{
+		Open,
+		Locked,
+		Error
+	};
 
-	template<class T>
-	T* Get()
+	template<class T> T* Get()
 	{
 		for (auto component : m_components) {
 			if (T::ComponentTypeID() == component->TypeID()) {

@@ -27,7 +27,8 @@ void StateMachine::EntityAdded(Scene* scene)
 
 void StateMachine::State(int state)
 {
-	CHERRYSODA_ASSERT(state >= 0 && state < static_cast<int>(STL::Count(m_updates)), "StateMachine state out of range\n");
+	CHERRYSODA_ASSERT(state >= 0 && state < static_cast<int>(STL::Count(m_updates)),
+					  "StateMachine state out of range\n");
 
 	if (!m_locked && m_state != state) {
 		m_changedStates = true;
@@ -46,7 +47,8 @@ void StateMachine::State(int state)
 	}
 }
 
-void StateMachine::SetCallbacks(int state, STL::Func<int> onUpdate, STL::Func<void> coroutine/* = nullptr*/, STL::Action<> begin/* = nullptr*/, STL::Action<> end/* = nullptr*/)
+void StateMachine::SetCallbacks(int state, STL::Func<int> onUpdate, STL::Func<void> coroutine /* = nullptr*/,
+								STL::Action<> begin /* = nullptr*/, STL::Action<> end /* = nullptr*/)
 {
 	m_updates[state] = onUpdate;
 	m_begins[state] = begin;

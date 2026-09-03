@@ -12,9 +12,9 @@
 namespace cherrysoda {
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
-STL::Map<type::Int32,String>& StringID::INTERNAL_GetHashCollisionCheckMap()
+STL::Map<type::Int32, String>& StringID::INTERNAL_GetHashCollisionCheckMap()
 {
-	static STL::Map<type::Int32,String> hashCollisionCheckMap;
+	static STL::Map<type::Int32, String> hashCollisionCheckMap;
 	return hashCollisionCheckMap;
 }
 #endif // CHERRYSODA_ENABLE_DEBUG
@@ -29,7 +29,7 @@ const String StringUtil::Format(const char* format, ...)
 	return String(buffer);
 }
 
-const STL::Vector<String> StringUtil::Split(const String& s, char delim/* = ' '*/)
+const STL::Vector<String> StringUtil::Split(const String& s, char delim /* = ' '*/)
 {
 	std::stringstream ss(s);
 	std::string item;
@@ -40,27 +40,27 @@ const STL::Vector<String> StringUtil::Split(const String& s, char delim/* = ' '*
 	return elems;
 }
 
-const String StringUtil::Trim(const String& s, char trim/* = ' '*/)
+const String StringUtil::Trim(const String& s, char trim /* = ' '*/)
 {
 	int li = 0, ri = s.length() - 1;
-	while (s[li] == trim) ++li;
-	while (s[ri] == trim && ri > li) --ri;
+	while (s[li] == trim)
+		++li;
+	while (s[ri] == trim && ri > li)
+		--ri;
 	return s.substr(li, ri - li + 1);
 }
 
 const String StringUtil::ToLower(const String& s)
 {
 	String ret = s;
-	std::transform(s.begin(), s.end(), ret.begin(),
-		[](unsigned char c){ return std::tolower(c); });
+	std::transform(s.begin(), s.end(), ret.begin(), [](unsigned char c) { return std::tolower(c); });
 	return ret;
 }
 
 const String StringUtil::ToUpper(const String& s)
 {
 	String ret = s;
-	std::transform(s.begin(), s.end(), ret.begin(),
-		[](unsigned char c){ return std::toupper(c); });
+	std::transform(s.begin(), s.end(), ret.begin(), [](unsigned char c) { return std::toupper(c); });
 	return ret;
 }
 
@@ -96,7 +96,8 @@ const STL::Vector<type::UInt32> StringUtil::Utf8ToUnicode32(const String& text)
 		type::UInt8 u8Tmp = static_cast<type::UInt8>(text[index]);
 		type::UInt32 u32Tmp;
 		int fz = 0;
-		while (u8Tmp & (1 << (7 - fz))) fz++;
+		while (u8Tmp & (1 << (7 - fz)))
+			fz++;
 		CHERRYSODA_ASSERT(fz != 1 && fz < 8, "Error decoding utf-8 text.\n");
 		u32Tmp = static_cast<type::UInt32>(u8Tmp & rOne[7 - fz]);
 		for (int offset = 1; offset < fz; offset++) {
@@ -107,7 +108,8 @@ const STL::Vector<type::UInt32> StringUtil::Utf8ToUnicode32(const String& text)
 		STL::Add(result, u32Tmp);
 		if (fz) {
 			index += fz;
-		} else {
+		}
+		else {
 			index++;
 		}
 	}

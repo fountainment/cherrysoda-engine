@@ -5,8 +5,8 @@
 #include <CherrySoda/Util/Chooser.h>
 #include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
@@ -28,7 +28,7 @@ SpriteData::~SpriteData()
 	STL::Clear(m_sources);
 }
 
-void SpriteData::Add(const json::Value* jsonValue, const String& overridePath/* = ""*/)
+void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /* = ""*/)
 {
 	auto jsonObj = jsonValue->GetObject();
 

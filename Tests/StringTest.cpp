@@ -100,8 +100,8 @@ TEST(StringTestPath, DirectoryAndFileName)
 TEST(StringTestHash, BKDR)
 {
 	EXPECT_EQ(0, StringUtil::GetHashBKDR(""));
-	EXPECT_EQ(97, StringUtil::GetHashBKDR("a"));      // 'a' = 97
-	EXPECT_EQ(12805, StringUtil::GetHashBKDR("ab"));  // 97 * 131 + 98
+	EXPECT_EQ(97, StringUtil::GetHashBKDR("a"));     // 'a' = 97
+	EXPECT_EQ(12805, StringUtil::GetHashBKDR("ab")); // 97 * 131 + 98
 	EXPECT_NE(StringUtil::GetHashBKDR("abc"), StringUtil::GetHashBKDR("acb"));
 
 	// Explicit length limits the hashed range
@@ -131,7 +131,8 @@ TEST(StringTestUtf8, AsciiAndMultibyte)
 	ASSERT_EQ(1u, STL::Count(chinese));
 	EXPECT_EQ(0x4E2Du, chinese[0]);
 
-	auto mixed = StringUtil::Utf8ToUnicode32("A\xe4\xb8\xad""B");
+	auto mixed = StringUtil::Utf8ToUnicode32("A\xe4\xb8\xad"
+											 "B");
 	ASSERT_EQ(3u, STL::Count(mixed));
 	EXPECT_EQ(65u, mixed[0]);
 	EXPECT_EQ(0x4E2Du, mixed[1]);

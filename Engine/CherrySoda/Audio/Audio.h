@@ -28,7 +28,11 @@ public:
 		inline void Play() { Audio::Resume(*this); }
 		inline void Pause() { Audio::Pause(*this); }
 		inline void Stop() { Audio::Stop(*this); }
-		inline void Replay() { Audio::Stop(*this); Audio::Resume(*this); }
+		inline void Replay()
+		{
+			Audio::Stop(*this);
+			Audio::Resume(*this);
+		}
 	};
 
 	struct EventDescription
@@ -57,8 +61,10 @@ public:
 	static EventInstance Play(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
 	static EventInstance Loop(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
 
-	static EventInstance CreateInstance(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
-	static EventInstance CreateLoopInstance(const StringID& path, double volume = 1.0, double pitch = 1.0, double pan = 0.0);
+	static EventInstance CreateInstance(const StringID& path, double volume = 1.0, double pitch = 1.0,
+										double pan = 0.0);
+	static EventInstance CreateLoopInstance(const StringID& path, double volume = 1.0, double pitch = 1.0,
+											double pan = 0.0);
 
 	// Explicitly frees an instance's resources; instances returned by Play()
 	// are freed automatically once they finish playing, others (CreateInstance /

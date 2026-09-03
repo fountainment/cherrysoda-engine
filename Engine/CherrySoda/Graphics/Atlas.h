@@ -1,8 +1,8 @@
 #ifndef _CHERRYSODA_GRAPHICS_ATLAS_H_
 #define _CHERRYSODA_GRAPHICS_ATLAS_H_
 
-#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Graphics/MTexture.h>
+#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
@@ -24,7 +24,7 @@ public:
 	Atlas() = default;
 	~Atlas();
 
-	inline const MTexture& operator [] (const StringID& id) const { return Get(id); }
+	inline const MTexture& operator[](const StringID& id) const { return Get(id); }
 
 	inline bool Has(const StringID& id) const { return STL::ContainsKey(m_textures, id); }
 	inline const MTexture& Get(const StringID& id) const { return m_textures.at(id); }
@@ -47,8 +47,8 @@ private:
 
 	STL::List<Texture2D> m_sources;
 
-	STL::HashMap<StringID,MTexture> m_textures;
-	mutable STL::HashMap<StringID,STL::Vector<MTexture>> m_orderedTexturesCache;
+	STL::HashMap<StringID, MTexture> m_textures;
+	mutable STL::HashMap<StringID, STL::Vector<MTexture>> m_orderedTexturesCache;
 };
 
 } // namespace cherrysoda

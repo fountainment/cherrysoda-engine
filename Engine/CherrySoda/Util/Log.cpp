@@ -5,7 +5,7 @@
 #include <cstdio>
 
 #ifdef _WIN32
-	#include <Windows.h>
+#include <Windows.h>
 #endif
 
 namespace cherrysoda {

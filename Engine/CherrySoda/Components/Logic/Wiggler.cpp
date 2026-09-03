@@ -7,7 +7,8 @@
 
 namespace cherrysoda {
 
-Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onChange/* = nullptr*/, bool start/* = false*/, bool removeSelfOnFinish/* = false*/)
+Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onChange /* = nullptr*/,
+						 bool start /* = false*/, bool removeSelfOnFinish /* = false*/)
 {
 	Wiggler* wiggler = nullptr;
 	if (STL::IsEmpty(ms_cache)) {
@@ -22,7 +23,7 @@ Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onC
 
 void Wiggler::Removed(Entity* entity)
 {
-	CancleAutoDelete();	
+	CancleAutoDelete();
 	base::Removed(entity);
 	STL::Push(ms_cache, this);
 }
@@ -63,7 +64,6 @@ void Wiggler::Start()
 		if (m_onChange != nullptr) {
 			m_onChange(m_value);
 		}
-
 	}
 
 	Active(true);

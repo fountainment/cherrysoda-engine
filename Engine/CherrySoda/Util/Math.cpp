@@ -12,7 +12,8 @@ const Math::Mat4 Math::GetOrientationMatrix_(const Math::Mat4& matrix)
 	return glm::toMat4(rotation);
 }
 
-bool Math::RaycastAABB_(const Math::Vec3& start, const Math::Vec3& direction, const Math::AABB& aabb, float* t1 /* = nullptr */, float* t2 /* = nullptr */)
+bool Math::RaycastAABB_(const Math::Vec3& start, const Math::Vec3& direction, const Math::AABB& aabb,
+						float* t1 /* = nullptr */, float* t2 /* = nullptr */)
 {
 	/*
 	x = a + tx'
@@ -24,8 +25,7 @@ bool Math::RaycastAABB_(const Math::Vec3& start, const Math::Vec3& direction, co
 	Vec3 size = aabb.m_max - aabb.m_min;
 	float intervalT1 = 0.f;
 	float intervalT2 = FLT_MAX;
-	for (int i = 0; i < 3; ++i)
-	{
+	for (int i = 0; i < 3; ++i) {
 		if (direction[i] == 0.f) {
 			if ((0.f - startBC[i]) * (size[i] - startBC[i]) < 0.f) {
 				continue;

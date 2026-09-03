@@ -13,8 +13,7 @@ class Shaker : public Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(Shaker, Component);
 
-	Shaker(bool on = true, STL::Action<Math::Vec2> onShake = nullptr)
-		: base(true, false)
+	Shaker(bool on = true, STL::Action<Math::Vec2> onShake = nullptr) : base(true, false)
 	{
 		On(on);
 		m_onShake = onShake;

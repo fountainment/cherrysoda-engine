@@ -3,8 +3,8 @@
 
 #include <CherrySoda/Graphics/SpriteData.h>
 #include <CherrySoda/Util/Json.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 

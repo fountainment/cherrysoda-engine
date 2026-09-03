@@ -34,8 +34,8 @@ BraceWrapping:
   AfterNamespace: false
   AfterExternBlock: true
   AfterControlStatement: Never
-  BeforeElse: false
-  BeforeCatch: false
+  BeforeElse: true
+  BeforeCatch: true
   IndentBraces: false
   SplitEmptyFunction: true
   SplitEmptyRecord: true

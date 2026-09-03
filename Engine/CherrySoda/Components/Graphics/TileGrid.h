@@ -20,14 +20,16 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(Position, m_position);
 
 	TileGrid(int tileWidth, int tileHeight, int tilesX, int tilesY)
-		: base(false, true)
-		, m_tileWidth(tileWidth)
-		, m_tileHeight(tileHeight)
+		: base(false, true), m_tileWidth(tileWidth), m_tileHeight(tileHeight)
 	{
 		m_tiles = new VirtualMap<const MTexture*>(tilesX, tilesY);
 	}
 
-	~TileGrid() { delete m_tiles; m_tiles = nullptr; }
+	~TileGrid()
+	{
+		delete m_tiles;
+		m_tiles = nullptr;
+	}
 
 	inline int TileWidth() const { return m_tileWidth; }
 	inline int TileHeight() const { return m_tileHeight; }

@@ -1,10 +1,10 @@
 #ifndef _VOXELEXPERIMENT_VOXEL_CHUNKGRAPHICSCOMPONENT_H_
 #define _VOXELEXPERIMENT_VOXEL_CHUNKGRAPHICSCOMPONENT_H_
 
-#include <CherrySoda/Entity.h>
 #include <CherrySoda/Components/Graphics/MeshGraphicsComponent.h>
-#include <CherrySoda/Graphics/Mesh.h>
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/Graphics/Graphics.h>
+#include <CherrySoda/Graphics/Mesh.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
 

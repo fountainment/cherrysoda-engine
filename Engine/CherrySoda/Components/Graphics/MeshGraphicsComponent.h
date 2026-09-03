@@ -3,13 +3,12 @@
 
 #include <CherrySoda/Components/Graphics/GraphicsComponent.h>
 #include <CherrySoda/Graphics/Graphics.h>
-#include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Graphics/Mesh.h>
+#include <CherrySoda/Graphics/Texture.h>
 
 namespace cherrysoda {
 
-template <class VERTEX_T>
-class MeshGraphicsComponent : public GraphicsComponent
+template<class VERTEX_T> class MeshGraphicsComponent : public GraphicsComponent
 {
 public:
 	// TODO: It needs some workaround here for the template name

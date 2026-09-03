@@ -24,8 +24,8 @@ public:
 	void Font(PixelFont* font)
 	{
 		if (m_font != font) {
-		 	m_font = font;
-		 	m_dirty = true;
+			m_font = font;
+			m_dirty = true;
 		}
 	}
 

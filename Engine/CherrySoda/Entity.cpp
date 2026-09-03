@@ -1,6 +1,5 @@
 #include <CherrySoda/Entity.h>
 
-#include <CherrySoda/Scene.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/Collider.h>
 #include <CherrySoda/Components/CollidableComponent.h>
@@ -8,6 +7,7 @@
 #include <CherrySoda/InternalUtilities/ComponentList.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/TagLists.h>
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Pool.h>
@@ -85,19 +85,22 @@ void Entity::Tag(BitTagValueType tag)
 
 const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
 {
-	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::All(this, (*m_scene)[tag]);
 }
 
 bool Entity::CollideCheck(const BitTag& tag) const
 {
-	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::Check(this, (*m_scene)[tag]);
 }
 
 bool Entity::CollideCheck(const BitTag& tag, const Math::Vec2& at)
 {
-	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::Check(this, (*m_scene)[tag], at);
 }
 
@@ -133,20 +136,34 @@ bool Entity::CollideLine(const Math::Vec2& from, const Math::Vec2& to) const
 
 int Entity::CollideCount(const BitTag& tag) const
 {
-	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::Count(this, (*m_scene)[tag]);
 }
 
 Entity* Entity::CollideFirst(const BitTag& tag) const
 {
-	CHERRYSODA_ASSERT(m_scene != nullptr, "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
+	CHERRYSODA_ASSERT(m_scene != nullptr,
+					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 	return Collide::First(this, (*m_scene)[tag]);
 }
 
-float Entity::Left() const { return GetCollider() ? PositionX() + GetCollider()->Left() : PositionX(); }
-float Entity::Right() const { return GetCollider() ? PositionX() + GetCollider()->Right() : PositionX(); }
-float Entity::Bottom() const { return GetCollider() ? PositionY() + GetCollider()->Bottom() : PositionY(); }
-float Entity::Top() const { return GetCollider() ? PositionY() + GetCollider()->Top() : PositionY(); }
+float Entity::Left() const
+{
+	return GetCollider() ? PositionX() + GetCollider()->Left() : PositionX();
+}
+float Entity::Right() const
+{
+	return GetCollider() ? PositionX() + GetCollider()->Right() : PositionX();
+}
+float Entity::Bottom() const
+{
+	return GetCollider() ? PositionY() + GetCollider()->Bottom() : PositionY();
+}
+float Entity::Top() const
+{
+	return GetCollider() ? PositionY() + GetCollider()->Top() : PositionY();
+}
 
 void Entity::Left(float left)
 {
@@ -216,19 +233,12 @@ void Entity::RemoveAllComponents()
 
 void Entity::AutoDeleteWhenRemoved(PoolInterface* pool)
 {
-	m_onRemoved =
-		[pool](Entity* entity, Scene* scene)
-		{
-			pool->INTERNAL_Hide(entity);
-			entity->SetCollider(nullptr);
-			entity->RemoveAllComponents();
-			scene->AddActionOnEndOfFrame(
-				[pool, entity]()
-				{
-					pool->INTERNAL_Destroy(entity);
-				}
-			);
-		};
+	m_onRemoved = [pool](Entity* entity, Scene* scene) {
+		pool->INTERNAL_Hide(entity);
+		entity->SetCollider(nullptr);
+		entity->RemoveAllComponents();
+		scene->AddActionOnEndOfFrame([pool, entity]() { pool->INTERNAL_Destroy(entity); });
+	};
 }
 
 void Entity::Depth(int depth)
@@ -243,8 +253,7 @@ void Entity::Depth(int depth)
 
 void Entity::DebugRender(Camera* camera)
 {
-	if (GetCollider() != nullptr)
-		GetCollider()->Render(camera, Collidable() ? Color::Yellow : Color::DarkYellow);
+	if (GetCollider() != nullptr) GetCollider()->Render(camera, Collidable() ? Color::Yellow : Color::DarkYellow);
 	m_components->DebugRender(camera);
 }
 
@@ -290,7 +299,8 @@ void Entity::SetCollider(Collider* collider)
 	if (m_collider == collider) {
 		return;
 	}
-	CHERRYSODA_ASSERT(collider == nullptr || collider->GetEntity() == nullptr, "Setting an Entity's Collider to a Collider already in use by another object\n");
+	CHERRYSODA_ASSERT(collider == nullptr || collider->GetEntity() == nullptr,
+					  "Setting an Entity's Collider to a Collider already in use by another object\n");
 
 	if (m_collider != nullptr) {
 		m_collider->Removed();
@@ -309,14 +319,14 @@ void Entity::AutoDeleteAllInsideWhenRemoved()
 	}
 	for (auto component : *m_components) {
 		component->AutoDeleteWhenRemoved();
-	}	
+	}
 }
 
 void Entity::CleanAndDeleteEntity(Entity* entity, Scene* scene)
 {
 	entity->SetCollider(nullptr);
 	entity->RemoveAllComponents();
-	scene->AddActionOnEndOfFrame([entity](){ delete entity; });
+	scene->AddActionOnEndOfFrame([entity]() { delete entity; });
 }
 
 } // namespace cherrysoda

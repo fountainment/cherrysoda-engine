@@ -6,8 +6,7 @@ using cherrysodatemplate::CherrySodaTemplate;
 
 using namespace cherrysoda;
 
-CherrySodaTemplate::CherrySodaTemplate()
-	: base(500, 500, "CherrySodaOriginal")
+CherrySodaTemplate::CherrySodaTemplate() : base(500, 500, "CherrySodaOriginal")
 {
 	SetClearColor(Color::Black);
 }

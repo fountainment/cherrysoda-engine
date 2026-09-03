@@ -60,16 +60,16 @@ void EntityList::UpdateLists()
 	}
 
 	if (STL::IsNotEmpty(m_toAdd)) {
-        STL::AddRange(m_toAwake, m_toAdd);
-        m_toAdd.clear();
-        m_adding.clear();
+		STL::AddRange(m_toAwake, m_toAdd);
+		m_toAdd.clear();
+		m_adding.clear();
 
-        for (auto entity : m_toAwake) {
-            if (entity->GetScene() == m_scene) {
-                entity->Awake(m_scene);
-            }
-        }
-        m_toAwake.clear();
+		for (auto entity : m_toAwake) {
+			if (entity->GetScene() == m_scene) {
+				entity->Awake(m_scene);
+			}
+		}
+		m_toAwake.clear();
 	}
 }
 

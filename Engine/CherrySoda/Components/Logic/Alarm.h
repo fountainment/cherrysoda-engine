@@ -27,7 +27,8 @@ public:
 	inline float Progress() const { return 1.0f - ProgressLeft(); }
 
 	static Alarm* Create(AlarmMode mode, STL::Action<> onComplete, float duration = 1.f, bool start = false);
-	static Alarm* Set(Entity* entity, float duration, STL::Action<> onComplete, AlarmMode alarmMode = AlarmMode::Oneshot);
+	static Alarm* Set(Entity* entity, float duration, STL::Action<> onComplete,
+					  AlarmMode alarmMode = AlarmMode::Oneshot);
 
 	void Update() override;
 	void Removed(Entity* entity) override;

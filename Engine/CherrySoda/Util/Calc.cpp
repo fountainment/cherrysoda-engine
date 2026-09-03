@@ -9,7 +9,7 @@
 
 namespace cherrysoda {
 
-STL::Stack<Random> Calc::ms_randomStack({ Random() });
+STL::Stack<Random> Calc::ms_randomStack({Random()});
 
 type::UInt32 Random::TrueRandomNext()
 {
@@ -35,8 +35,7 @@ Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float
 
 Math::Vec2 Calc::FourWayNormal(Math::Vec2 vec)
 {
-	if (vec == Vec2_Zero)
-		return Vec2_Zero;
+	if (vec == Vec2_Zero) return Vec2_Zero;
 
 	float angle = (float)Math_Floor((Calc::Angle(vec) + (float)Math::PiHalf * .5f) / Math::PiHalf) * Math::PiHalf;
 
@@ -56,10 +55,11 @@ Math::Vec2 Calc::FourWayNormal(Math::Vec2 vec)
 
 Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 {
-	if (vec == Vec2_Zero)
-		return Vec2_Zero;
+	if (vec == Vec2_Zero) return Vec2_Zero;
 
-	vec = AngleToVector((float)Math_Floor((Angle(vec) + (float)Math::PiQuarter * .5f) / ((float)Math::PiQuarter)) * ((float)Math::PiQuarter), 1.f);
+	vec = AngleToVector((float)Math_Floor((Angle(vec) + (float)Math::PiQuarter * .5f) / ((float)Math::PiQuarter)) *
+							((float)Math::PiQuarter),
+						1.f);
 	if (Math_Abs(vec.x) < .5f)
 		vec.x = 0.f;
 	else if (Math_Abs(vec.y) < .5f)

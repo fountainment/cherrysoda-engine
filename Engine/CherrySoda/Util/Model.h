@@ -4,8 +4,8 @@
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/Texture.h>
 #include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
@@ -16,9 +16,9 @@ public:
 	~Model();
 
 	Model(const Model&) = delete;
-	Model& operator = (const Model&) = delete;
+	Model& operator=(const Model&) = delete;
 	Model(Model&&) = default;
-	Model& operator = (Model&&) = default;
+	Model& operator=(Model&&) = default;
 
 	void Dispose();
 

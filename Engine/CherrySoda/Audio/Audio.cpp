@@ -1,12 +1,12 @@
 #include <CherrySoda/Audio/Audio.h>
 
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/NumType.h>
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
-#include <CherrySoda/Util/NumType.h>
 
-#include <cmixer.h>
 #include <SDL3/SDL.h>
+#include <cmixer.h>
 
 #include <cstring>
 
@@ -41,12 +41,12 @@ Audio::EventInstance Audio::EventDescription::CreateInstance()
 	}
 	if (source == nullptr) {
 		CHERRYSODA_LOG(CHERRYSODA_FORMAT("Audio: failed to create source from \"%s\"!\n",
-		                                 filename.empty() ? "<memory>" : filename.c_str()));
-		return { -1 };
+										 filename.empty() ? "<memory>" : filename.c_str()));
+		return {-1};
 	}
 	int id = s_sourceCount++;
 	s_sources[id] = source;
-	return { id };
+	return {id};
 }
 
 static SDL_Mutex* audio_mutex;
@@ -87,9 +87,9 @@ void Audio::Initialize()
 	audio_mutex = SDL_CreateMutex();
 
 	/* Init SDL audio */
-	fmt.format   = SDL_AUDIO_S16;
+	fmt.format = SDL_AUDIO_S16;
 	fmt.channels = 2;
-	fmt.freq     = 44100;
+	fmt.freq = 44100;
 
 	s_sdlAudioStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &fmt, audio_callback, NULL);
 	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioStream, "Error: failed to open audio device '%s'\n", SDL_GetError());
@@ -118,7 +118,7 @@ void Audio::Update()
 		}
 	}
 	for (int id : finished) {
-		Destroy({ id });
+		Destroy({id});
 	}
 }
 
@@ -170,7 +170,7 @@ void Audio::MasterVolume(double volume)
 
 void Audio::LoadFile(const StringID& path, const String& filePath)
 {
-	s_descriptions[path] = Audio::EventDescription{ filePath };
+	s_descriptions[path] = Audio::EventDescription{filePath};
 }
 
 void Audio::LoadFileFromMemory(const StringID& path, void* data, int size)
@@ -186,7 +186,8 @@ void Audio::LoadFileFromMemory(const StringID& path, void* data, int size)
 	description.size = size;
 }
 
-Audio::EventInstance Audio::Play(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
+Audio::EventInstance Audio::Play(const StringID& path, double volume /* = 1.0*/, double pitch /* = 1.0*/,
+								 double pan /* = 0.0*/)
 {
 	Audio::EventInstance instance = CreateInstance(path, volume, pitch, pan);
 	if (instance.IsValid()) {
@@ -196,7 +197,8 @@ Audio::EventInstance Audio::Play(const StringID& path, double volume/* = 1.0*/, 
 	return instance;
 }
 
-Audio::EventInstance Audio::Loop(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
+Audio::EventInstance Audio::Loop(const StringID& path, double volume /* = 1.0*/, double pitch /* = 1.0*/,
+								 double pan /* = 0.0*/)
 {
 	Audio::EventInstance instance = CreateLoopInstance(path, volume, pitch, pan);
 	if (instance.IsValid()) {
@@ -205,12 +207,13 @@ Audio::EventInstance Audio::Loop(const StringID& path, double volume/* = 1.0*/, 
 	return instance;
 }
 
-Audio::EventInstance Audio::CreateInstance(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
+Audio::EventInstance Audio::CreateInstance(const StringID& path, double volume /* = 1.0*/, double pitch /* = 1.0*/,
+										   double pan /* = 0.0*/)
 {
 	Audio::EventInstance instance = s_descriptions[path].CreateInstance();
 	cm_Source* src = GetSource(instance.id);
 	if (src == nullptr) {
-		return { -1 };
+		return {-1};
 	}
 	cm_set_gain(src, volume);
 	cm_set_pitch(src, pitch);
@@ -218,12 +221,13 @@ Audio::EventInstance Audio::CreateInstance(const StringID& path, double volume/*
 	return instance;
 }
 
-Audio::EventInstance Audio::CreateLoopInstance(const StringID& path, double volume/* = 1.0*/, double pitch/* = 1.0*/, double pan/* = 0.0*/)
+Audio::EventInstance Audio::CreateLoopInstance(const StringID& path, double volume /* = 1.0*/, double pitch /* = 1.0*/,
+											   double pan /* = 0.0*/)
 {
 	Audio::EventInstance instance = s_descriptions[path].CreateInstance();
 	cm_Source* src = GetSource(instance.id);
 	if (src == nullptr) {
-		return { -1 };
+		return {-1};
 	}
 	cm_set_gain(src, volume);
 	cm_set_pitch(src, pitch);

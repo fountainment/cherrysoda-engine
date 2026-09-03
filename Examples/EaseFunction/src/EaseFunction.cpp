@@ -6,11 +6,10 @@ using easefunction::EaseFunction;
 
 using namespace cherrysoda;
 
-static STL::Vector<STL::Func<Math::Vec3,float>> s_posFunctions;
+static STL::Vector<STL::Func<Math::Vec3, float>> s_posFunctions;
 static MeshGraphicsComponent<Graphics::PosColorVertex>* s_points;
 
-EaseFunction::EaseFunction()
-	: base()
+EaseFunction::EaseFunction() : base()
 {
 	SetTitle("EaseFunction");
 	SetClearColor(Color::Black);
@@ -35,12 +34,10 @@ void EaseFunction::Update()
 		size *= 0.08f;
 		for (auto posFunc : s_posFunctions) {
 			auto origin = posFunc(x) - size * 0.5f;
-			s_points->GetMesh()->AddQuad(
-				Graphics::PosColorVertex::MakeVertex(origin + size),
-				Graphics::PosColorVertex::MakeVertex(origin + Math::Vec3(0.f, size.y, 0.f)),
-				Graphics::PosColorVertex::MakeVertex(origin + Math::Vec3(size.x, 0.f, 0.f)),
-				Graphics::PosColorVertex::MakeVertex(origin)
-			);
+			s_points->GetMesh()->AddQuad(Graphics::PosColorVertex::MakeVertex(origin + size),
+										 Graphics::PosColorVertex::MakeVertex(origin + Math::Vec3(0.f, size.y, 0.f)),
+										 Graphics::PosColorVertex::MakeVertex(origin + Math::Vec3(size.x, 0.f, 0.f)),
+										 Graphics::PosColorVertex::MakeVertex(origin));
 		}
 	}
 	s_points->GetMesh()->SubmitBuffer();
@@ -59,17 +56,14 @@ void EaseFunction::Initialize()
 
 	lines->GetMesh()->SetPrimitiveType(Graphics::PrimitiveType::Lines);
 	int pointNum = 300;
-	STL::Vector<Easer> easers = { Ease::SineIn, Ease::SineOut, Ease::SineInOut,
-	                              Ease::QuadIn, Ease::QuadOut, Ease::QuadInOut,
-	                              Ease::CubeIn, Ease::CubeOut, Ease::CubeInOut,
-	                              Ease::QuintIn, Ease::QuintOut, Ease::QuintInOut,
-	                              Ease::ExpoIn, Ease::ExpoOut, Ease::ExpoInOut,
-	                              Ease::BackIn, Ease::BackOut, Ease::BackInOut,
-	                              Ease::ElasticIn, Ease::ElasticOut, Ease::ElasticInOut,
-	                              Ease::BounceIn, Ease::BounceOut, Ease::BounceInOut};
+	STL::Vector<Easer> easers = {
+		Ease::SineIn,    Ease::SineOut,    Ease::SineInOut,    Ease::QuadIn,   Ease::QuadOut,   Ease::QuadInOut,
+		Ease::CubeIn,    Ease::CubeOut,    Ease::CubeInOut,    Ease::QuintIn,  Ease::QuintOut,  Ease::QuintInOut,
+		Ease::ExpoIn,    Ease::ExpoOut,    Ease::ExpoInOut,    Ease::BackIn,   Ease::BackOut,   Ease::BackInOut,
+		Ease::ElasticIn, Ease::ElasticOut, Ease::ElasticInOut, Ease::BounceIn, Ease::BounceOut, Ease::BounceInOut};
 	for (int k = 0; k < (int)easers.size(); ++k) {
 		Math::Vec3 origin((k / 3) * 2.f, -(k % 3) * 2.f, 0.f);
-		auto posFunc = [origin, easers, k](float x){ return origin + Math::Vec3(x, easers[k](x), 0.f); };
+		auto posFunc = [origin, easers, k](float x) { return origin + Math::Vec3(x, easers[k](x), 0.f); };
 		STL::Add(s_posFunctions, posFunc);
 		lines->GetMesh()->AddPointNoIndex(Graphics::PosColorVertex::MakeVertex(posFunc(0.f)));
 		for (int i = 0; i < pointNum; ++i) {

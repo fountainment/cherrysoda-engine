@@ -1,8 +1,8 @@
 #ifndef _CHERRYSODA_COMPONENTS_GRAPHICS_PARTICLEEMITTER_H_
 #define _CHERRYSODA_COMPONENTS_GRAPHICS_PARTICLEEMITTER_H_
 
-#include <CherrySoda/Entity.h>
 #include <CherrySoda/Components/Component.h>
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/Particles/ParticleSystem.h>
 #include <CherrySoda/Particles/ParticleType.h>
 #include <CherrySoda/Util/Math.h>
@@ -18,9 +18,12 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(int, Amount, m_amount);
 	CHERRYSODA_GETTER_SETTER_OF_VEC2(PositionRange, m_range);
 
-	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, int amount, float interval);
-	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, float direction, int amount, float interval);
-	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Entity* track, const Math::Vec2& position, const Math::Vec2& range, float direction, int amount, float interval);
+	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position,
+					const Math::Vec2& range, int amount, float interval);
+	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position,
+					const Math::Vec2& range, float direction, int amount, float interval);
+	ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Entity* track, const Math::Vec2& position,
+					const Math::Vec2& range, float direction, int amount, float interval);
 
 	void Emit();
 	void Update() override;

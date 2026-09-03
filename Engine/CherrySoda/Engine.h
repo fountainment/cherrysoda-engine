@@ -61,7 +61,7 @@ public:
 	inline int FPS() { return m_FPS; }
 	inline bool ConsoleOpened() { return m_consoleOpened; }
 	inline void OpenConsole() { m_consoleOpened = true; }
-	inline void CloseConsole() { m_consoleOpened = false; }	
+	inline void CloseConsole() { m_consoleOpened = false; }
 	inline void ToggleConsole() { m_consoleOpened = !m_consoleOpened; }
 
 	inline bool DoShowCursor() const { return m_showCursor; }
@@ -78,7 +78,7 @@ public:
 	inline Scene* GetScene() { return m_scene; }
 	void SetScene(Scene* scene);
 
-	inline bool IsActive()  { return m_active; }
+	inline bool IsActive() { return m_active; }
 
 	inline bool Initialized() { return m_initialized; }
 
@@ -107,8 +107,16 @@ protected:
 private:
 	friend class Window;
 
-	inline void SetWindowSize(int width, int height) { m_windowWidth = width; m_windowHeight = height; }
-	inline void SetViewSize(int width, int height) { m_width = width; m_height = height; }
+	inline void SetWindowSize(int width, int height)
+	{
+		m_windowWidth = width;
+		m_windowHeight = height;
+	}
+	inline void SetViewSize(int width, int height)
+	{
+		m_width = width;
+		m_height = height;
+	}
 
 	void IsActive(bool active);
 

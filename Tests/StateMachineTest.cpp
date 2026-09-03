@@ -29,21 +29,15 @@ TEST(StateMachineTest, UpdateDrivesTransitionsWithCallbacks)
 	StateMachine stateMachine(3);
 
 	STL::Vector<String> events;
-	stateMachine.SetCallbacks(0,
-	                          [&]() { return 1; },
-	                          nullptr,
-	                          [&]() { STL::Add(events, String("begin0")); },
-	                          [&]() { STL::Add(events, String("end0")); });
-	stateMachine.SetCallbacks(1,
-	                          [&]() { return 1; },
-	                          nullptr,
-	                          [&]() { STL::Add(events, String("begin1")); },
-	                          [&]() { STL::Add(events, String("end1")); });
-	stateMachine.SetCallbacks(2,
-	                          nullptr,
-	                          nullptr,
-	                          [&]() { STL::Add(events, String("begin2")); },
-	                          [&]() { STL::Add(events, String("end2")); });
+	stateMachine.SetCallbacks(
+		0, [&]() { return 1; }, nullptr, [&]() { STL::Add(events, String("begin0")); },
+		[&]() { STL::Add(events, String("end0")); });
+	stateMachine.SetCallbacks(
+		1, [&]() { return 1; }, nullptr, [&]() { STL::Add(events, String("begin1")); },
+		[&]() { STL::Add(events, String("end1")); });
+	stateMachine.SetCallbacks(
+		2, nullptr, nullptr, [&]() { STL::Add(events, String("begin2")); },
+		[&]() { STL::Add(events, String("end2")); });
 
 	entity.Add(&stateMachine);
 	scene.Add(&entity);

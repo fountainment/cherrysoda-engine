@@ -3,13 +3,12 @@
 
 #include <CherrySoda/Util/Calc.h>
 #include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
-template <class T>
-class Chooser
+template<class T> class Chooser
 {
 private:
 	class Choice
@@ -20,19 +19,13 @@ private:
 
 		Choice() = default;
 
-		Choice(const T& value, float weight)
-		: m_value(value)
-		, m_weight(weight)
-		{}
+		Choice(const T& value, float weight) : m_value(value), m_weight(weight) {}
 	};
 
 public:
 	Chooser() = default;
 
-	Chooser(const T& firstChoice, float weight)
-	{
-		Add(firstChoice, weight);
-	}
+	Chooser(const T& firstChoice, float weight) { Add(firstChoice, weight); }
 
 	Chooser<T>& Add(const T& choice, float weight)
 	{
@@ -40,7 +33,6 @@ public:
 		STL::Add(m_choices, Choice(choice, weight));
 		m_totalWeight += weight;
 		return *this;
-
 	}
 
 	const T& Choose() const

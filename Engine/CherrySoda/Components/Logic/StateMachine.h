@@ -14,8 +14,7 @@ class StateMachine : public Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(StateMachine, Component);
 
-	StateMachine(int maxStates = 32)
-		: base(true, false)
+	StateMachine(int maxStates = 32) : base(true, false)
 	{
 		STL::Resize(m_begins, maxStates);
 		STL::Resize(m_updates, maxStates);
@@ -30,7 +29,8 @@ public:
 	inline int State() const { return m_state; }
 	void State(int state);
 
-	void SetCallbacks(int state, STL::Func<int> onUpdate, STL::Func<void> coroutine = nullptr, STL::Action<> begin = nullptr, STL::Action<> end = nullptr);
+	void SetCallbacks(int state, STL::Func<int> onUpdate, STL::Func<void> coroutine = nullptr,
+					  STL::Action<> begin = nullptr, STL::Action<> end = nullptr);
 
 	void Update() override;
 

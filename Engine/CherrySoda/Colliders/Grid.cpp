@@ -1,8 +1,8 @@
 #include <CherrySoda/Colliders/Grid.h>
 
+#include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/ColliderList.h>
-#include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
@@ -12,7 +12,7 @@
 
 namespace cherrysoda {
 
-void Grid::SetRect(int x, int y, int width, int height, bool to/* = true*/)
+void Grid::SetRect(int x, int y, int width, int height, bool to /* = true*/)
 {
 	if (x < 0) {
 		width += x;
@@ -59,8 +59,7 @@ bool Grid::CheckRect(int x, int y, int width, int height) const
 
 	for (int i = 0; i < width; ++i) {
 		for (int j = 0; j < height; ++j) {
-			if (m_data->Get(x + i, y + j))
-				return true;
+			if (m_data->Get(x + i, y + j)) return true;
 		}
 	}
 
@@ -91,8 +90,10 @@ bool Grid::Collide(const Grid* grid) const
 
 bool Grid::Collide(const Math::Vec2& point) const
 {
-	if (point.x >= AbsoluteLeft() && point.y >= AbsoluteBottom() && point.x < AbsoluteRight() && point.y < AbsoluteTop())
-		return m_data->Get((int)((point.x - AbsoluteLeft()) / CellWidth()), (int)((point.y - AbsoluteBottom()) / CellHeight()));
+	if (point.x >= AbsoluteLeft() && point.y >= AbsoluteBottom() && point.x < AbsoluteRight() &&
+		point.y < AbsoluteTop())
+		return m_data->Get((int)((point.x - AbsoluteLeft()) / CellWidth()),
+						   (int)((point.y - AbsoluteBottom()) / CellHeight()));
 	else
 		return false;
 }
@@ -103,7 +104,7 @@ bool Grid::Collide(const Math::Rectangle& rect) const
 		int x = (int)((rect.Left() - AbsoluteLeft()) / CellWidth());
 		int y = (int)((rect.Bottom() - AbsoluteBottom()) / CellHeight());
 		int w = (int)((rect.Right() - AbsoluteLeft() - 1) / CellWidth()) - x + 1;
-		int h = (int)((rect.Top() - AbsoluteBottom() - 1) / CellHeight()) - y + 1;	
+		int h = (int)((rect.Top() - AbsoluteBottom() - 1) / CellHeight()) - y + 1;
 
 		return CheckRect(x, y, w, h);
 	}
@@ -114,15 +115,17 @@ bool Grid::Collide(const Math::Rectangle& rect) const
 
 // Liang-Barsky clip of segment [from, to] against rect; returns false if the segment misses the rect
 static bool ClipSegmentToRect(const Math::Rectangle& rect, const Math::Vec2& from, const Math::Vec2& to,
-                              Math::Vec2& start, Math::Vec2& end)
+							  Math::Vec2& start, Math::Vec2& end)
 {
 	float t0 = 0.f;
 	float t1 = 1.f;
 	const Math::Vec2 delta = to - from;
-	const float p[] = { -delta.x, delta.x, -delta.y, delta.y };
+	const float p[] = {-delta.x, delta.x, -delta.y, delta.y};
 	const float q[] = {
-		from.x - rect.Left(),  rect.Right() - from.x,
-		from.y - rect.Bottom(), rect.Top()  - from.y,
+		from.x - rect.Left(),
+		rect.Right() - from.x,
+		from.y - rect.Bottom(),
+		rect.Top() - from.y,
 	};
 	for (int i = 0; i < 4; ++i) {
 		if (p[i] == 0.f) {
@@ -175,10 +178,12 @@ bool Grid::Collide(const Math::Vec2& from, const Math::Vec2& to) const
 	int y = static_cast<int>(Math_Floor(startY));
 	const int endX = static_cast<int>(Math_Floor(startX + dirX));
 	const int endY = static_cast<int>(Math_Floor(startY + dirY));
-	float tMaxX = stepX > 0 ? (static_cast<float>(x + 1) - startX) * tDeltaX
-	          : stepX < 0 ? (startX - static_cast<float>(x)) * tDeltaX : kInf;
-	float tMaxY = stepY > 0 ? (static_cast<float>(y + 1) - startY) * tDeltaY
-	          : stepY < 0 ? (startY - static_cast<float>(y)) * tDeltaY : kInf;
+	float tMaxX = stepX > 0   ? (static_cast<float>(x + 1) - startX) * tDeltaX
+				  : stepX < 0 ? (startX - static_cast<float>(x)) * tDeltaX
+							  : kInf;
+	float tMaxY = stepY > 0   ? (static_cast<float>(y + 1) - startY) * tDeltaY
+				  : stepY < 0 ? (startY - static_cast<float>(y)) * tDeltaY
+							  : kInf;
 
 	while (true) {
 		if (Get(x, y)) {
@@ -204,7 +209,8 @@ void Grid::Render(const Camera* camera, const Color& color) const
 		for (int i = 0; i < CellsX(); ++i)
 			for (int j = 0; j < CellsY(); ++j)
 				if (m_data->Get(i, j))
-					Draw::HollowRect(AbsoluteLeft() + i * CellWidth(), AbsoluteBottom() + j * CellHeight(), CellWidth(), CellHeight(), color);
+					Draw::HollowRect(AbsoluteLeft() + i * CellWidth(), AbsoluteBottom() + j * CellHeight(), CellWidth(),
+									 CellHeight(), color);
 	}
 	else {
 		int left = (int)Math_Max(0.f, ((camera->Left() - AbsoluteLeft()) / CellWidth()));
@@ -215,7 +221,8 @@ void Grid::Render(const Camera* camera, const Color& color) const
 		for (int tx = left; tx <= right; ++tx)
 			for (int ty = bottom; ty <= top; ++ty)
 				if (m_data->Get(tx, ty))
-					Draw::HollowRect(AbsoluteLeft() + tx * CellWidth(), AbsoluteBottom() + ty * CellHeight(), CellWidth(), CellHeight(), color);
+					Draw::HollowRect(AbsoluteLeft() + tx * CellWidth(), AbsoluteBottom() + ty * CellHeight(),
+									 CellWidth(), CellHeight(), color);
 	}
 }
 

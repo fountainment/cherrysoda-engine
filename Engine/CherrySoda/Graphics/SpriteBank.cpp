@@ -5,8 +5,8 @@
 #include <CherrySoda/Graphics/SpriteData.h>
 #include <CherrySoda/Util/Json.h>
 #include <CherrySoda/Util/Log.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
@@ -22,7 +22,8 @@ SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 		for (const auto& element : m_json["Sprites"].GetArray()) {
 			const char* elementName = element["Name"].GetString();
 			STL::Add(elements, STL::MakePair(StringID(elementName), &element));
-			CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(m_spriteData, elementName), "Duplicate sprite name in SpriteData: '%s'!", elementName);
+			CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(m_spriteData, elementName),
+									 "Duplicate sprite name in SpriteData: '%s'!", elementName);
 
 			auto data = m_spriteData[elementName] = new SpriteData(m_atlas);
 			if (element.HasMember("copy")) {
@@ -37,7 +38,7 @@ SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 }
 
 SpriteBank::SpriteBank(const String& atlasPath, const String& jsonPath)
-: SpriteBank(Atlas::FromAtlas(atlasPath), jsonPath)
+	: SpriteBank(Atlas::FromAtlas(atlasPath), jsonPath)
 {
 	m_ownAtlas = true;
 }

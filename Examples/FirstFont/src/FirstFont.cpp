@@ -6,8 +6,7 @@ using firstfont::FirstFont;
 
 using namespace cherrysoda;
 
-FirstFont::FirstFont()
-	: base()
+FirstFont::FirstFont() : base()
 {
 	SetTitle("FirstFont");
 	SetClearColor(Color::Black);
@@ -46,7 +45,7 @@ void FirstFont::Initialize()
 	auto font = new PixelFont("test");
 	auto atlas = Atlas::FromAtlas("assets/atlases/atlas.json");
 
-	// Use Tools/bmfont_to_json.py to convert bmfont's fnt file to json file 
+	// Use Tools/bmfont_to_json.py to convert bmfont's fnt file to json file
 	font->AddFontSize("assets/fonts/font.json", atlas);
 
 	auto pixelText = new PixelText(font, "你好, 世界!\nHello, World!", Color::White);
@@ -62,4 +61,3 @@ void FirstFont::LoadContent()
 
 	// Load textures, sprites, shaders and other resources here
 }
-

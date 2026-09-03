@@ -46,20 +46,18 @@ void Particle::Update(float dt)
 	case ParticleType::FadeModes::Late:
 		alpha = Math_Min(1.f, ease / .25f);
 		break;
-	case ParticleType::FadeModes::InAndOut:
-		{
-			if (ease > .75f) {
-				alpha = 1.f - ((ease - .75f) / .25f);
-			}
-			else if (ease < .25f) {
-				alpha = ease / .25f;
-			}
-			else {
-				alpha = 1.f;
-			}
-
+	case ParticleType::FadeModes::InAndOut: {
+		if (ease > .75f) {
+			alpha = 1.f - ((ease - .75f) / .25f);
 		}
-		break;
+		else if (ease < .25f) {
+			alpha = ease / .25f;
+		}
+		else {
+			alpha = 1.f;
+		}
+
+	} break;
 	default:
 		alpha = 1.f;
 		break;
@@ -107,7 +105,8 @@ void Particle::Render()
 	if (m_track != nullptr) {
 		renderAt += m_track->Position2D();
 	}
-	Draw::GetSpriteBatch()->Draw(m_source->Texture(), renderAt, m_source->ClipRect(), m_color, m_rotation, m_source->Center(), Math::Vec2(m_size), SpriteEffects::None, 0);
+	Draw::GetSpriteBatch()->Draw(m_source->Texture(), renderAt, m_source->ClipRect(), m_color, m_rotation,
+								 m_source->Center(), Math::Vec2(m_size), SpriteEffects::None, 0);
 }
 
 } // namespace cherrysoda

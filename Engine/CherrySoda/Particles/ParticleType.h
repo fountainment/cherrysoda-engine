@@ -15,9 +15,26 @@ namespace cherrysoda {
 class ParticleType
 {
 public:
-	enum class ColorModes : type::UInt8 { Static, Choose, Blink, Fade };
-	enum class FadeModes : type::UInt8 { None, Linear, Late, InAndOut };
-	enum class RotationModes : type::UInt8 { None, Random, SameAsDirection };
+	enum class ColorModes : type::UInt8
+	{
+		Static,
+		Choose,
+		Blink,
+		Fade
+	};
+	enum class FadeModes : type::UInt8
+	{
+		None,
+		Linear,
+		Late,
+		InAndOut
+	};
+	enum class RotationModes : type::UInt8
+	{
+		None,
+		Random,
+		SameAsDirection
+	};
 
 	ParticleType() = default;
 
@@ -41,7 +58,8 @@ public:
 		return Create(particle, nullptr, position, direction, color);
 	}
 
-	Particle* Create(Particle* particle, Entity* entity, const Math::Vec2& position, float direction, const Color& color) const;
+	Particle* Create(Particle* particle, Entity* entity, const Math::Vec2& position, float direction,
+					 const Color& color) const;
 
 	MTexture m_source;
 	Chooser<MTexture> m_sourceChooser;

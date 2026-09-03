@@ -25,8 +25,7 @@ public:
 
 STL::Vector<STL::Action<>> s_updaters;
 
-FirstModel::FirstModel()
-	: base()
+FirstModel::FirstModel() : base()
 {
 	SetTitle("FirstModel");
 	SetClearColor(Color::Black);

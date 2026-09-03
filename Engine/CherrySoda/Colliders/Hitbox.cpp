@@ -1,8 +1,8 @@
 #include <CherrySoda/Colliders/Hitbox.h>
 
+#include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Collide.h>
 #include <CherrySoda/Colliders/ColliderList.h>
-#include <CherrySoda/Colliders/Circle.h>
 #include <CherrySoda/Colliders/Grid.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
@@ -13,7 +13,8 @@ namespace cherrysoda {
 
 bool Hitbox::Collide(const Circle* circle) const
 {
-	return Collide::RectToCircle(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, circle->AbsolutePosition2D(), circle->Radius());
+	return Collide::RectToCircle(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, circle->AbsolutePosition2D(),
+								 circle->Radius());
 }
 
 bool Hitbox::Collide(const ColliderList* list) const
@@ -38,7 +39,8 @@ bool Hitbox::Collide(const Math::Vec2& point) const
 
 bool Hitbox::Collide(const Math::Rectangle& rect) const
 {
-	return AbsoluteLeft() < rect.Right() && AbsoluteRight() > rect.Left() && AbsoluteBottom() < rect.Top() && AbsoluteTop() > rect.Bottom();
+	return AbsoluteLeft() < rect.Right() && AbsoluteRight() > rect.Left() && AbsoluteBottom() < rect.Top() &&
+		   AbsoluteTop() > rect.Bottom();
 }
 
 bool Hitbox::Collide(const Math::Vec2& from, const Math::Vec2& to) const

@@ -59,19 +59,18 @@ public:
 	inline float TimeActive() const { return m_timeActive; }
 	inline float RawTimeActive() const { return m_rawTimeActive; }
 
-	inline bool OnInterval(float interval) {
+	inline bool OnInterval(float interval)
+	{
 		return (int)((TimeActive() - Engine::Instance()->DeltaTime()) / interval) < (int)(TimeActive() / interval);
 	}
 
 	inline bool OnInterval(float interval, float offset)
 	{
-		return Math_Floor((TimeActive() - offset - Engine::Instance()->DeltaTime()) / interval) < Math_Floor((TimeActive() - offset) / interval);
+		return Math_Floor((TimeActive() - offset - Engine::Instance()->DeltaTime()) / interval) <
+			   Math_Floor((TimeActive() - offset) / interval);
 	}
 
-	inline bool BetweenInterval(float interval)
-	{
-		return Math_Mod(TimeActive(), interval * 2) > interval;
-	}
+	inline bool BetweenInterval(float interval) { return Math_Mod(TimeActive(), interval * 2) > interval; }
 
 	inline bool BetweenInterval(float interval, float offset)
 	{
@@ -82,7 +81,7 @@ public:
 	bool CollideCheck(const Math::Vec2& from, const Math::Vec2& to, int tag) const;
 	Math::Vec2 LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision) const;
 
-	const STL::List<Entity*>& operator [] (const BitTag& tag) const;
+	const STL::List<Entity*>& operator[](const BitTag& tag) const;
 	const STL::List<Entity*>& Get(const BitTag& tag) const;
 
 	void AddActionOnEndOfFrame(STL::Action<> func);
@@ -101,7 +100,7 @@ private:
 	bool m_paused = false;
 
 	STL::Vector<STL::Action<>> m_onEndOfFrame;
-	STL::HashMap<int,double> m_actualDepthLookup;
+	STL::HashMap<int, double> m_actualDepthLookup;
 };
 
 } // namespace cherrysoda

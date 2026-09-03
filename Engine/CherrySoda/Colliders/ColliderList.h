@@ -2,8 +2,8 @@
 #define _CHERRYSODA_COLLIDERS_COLLIDERLIST_H_
 
 #include <CherrySoda/Colliders/Collider.h>
-#include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/Log.h>
+#include <CherrySoda/Util/STL.h>
 
 namespace cherrysoda {
 

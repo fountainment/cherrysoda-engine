@@ -67,21 +67,15 @@ void Collider::Render(const Camera* camera) const
 
 void Collider::AutoDeleteWhenRemoved(PoolInterface* pool)
 {
-	m_onRemoved =
-		[pool](Collider* collider, Entity* entity)
-		{
-			pool->INTERNAL_Hide(collider);
-			entity->GetScene()->AddActionOnEndOfFrame(
-				[collider, pool]()
-				{
-					pool->INTERNAL_Destroy(collider);
-				});
-		};
+	m_onRemoved = [pool](Collider* collider, Entity* entity) {
+		pool->INTERNAL_Hide(collider);
+		entity->GetScene()->AddActionOnEndOfFrame([collider, pool]() { pool->INTERNAL_Destroy(collider); });
+	};
 }
 
 void Collider::DeleteCollider(Collider* collider, Entity* entity)
 {
-	entity->GetScene()->AddActionOnEndOfFrame([collider](){ delete collider; });
+	entity->GetScene()->AddActionOnEndOfFrame([collider]() { delete collider; });
 }
 
 } // namespace cherrysoda

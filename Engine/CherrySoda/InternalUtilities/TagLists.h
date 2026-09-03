@@ -10,7 +10,7 @@ class Entity;
 class TagLists
 {
 public:
-	const STL::List<Entity*>& operator [] (int index) const;
+	const STL::List<Entity*>& operator[](int index) const;
 
 private:
 	friend class Entity;
@@ -19,7 +19,7 @@ private:
 
 	TagLists();
 
-	STL::List<Entity*>& operator [] (int index);
+	STL::List<Entity*>& operator[](int index);
 
 	void MarkUnsorted(int index);
 	void UpdateLists();

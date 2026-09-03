@@ -79,23 +79,23 @@ public:
 
 	void RemoveAllComponents();
 
-	void AutoDeleteWhenRemoved() { if (m_onRemoved == nullptr) m_onRemoved = Entity::CleanAndDeleteEntity; }
+	void AutoDeleteWhenRemoved()
+	{
+		if (m_onRemoved == nullptr) m_onRemoved = Entity::CleanAndDeleteEntity;
+	}
 	void AutoDeleteAllInsideWhenRemoved();
 	void CancleAutoDelete() { m_onRemoved = nullptr; }
 
 	void Depth(int depth);
 	inline int Depth() const { return m_depth; }
 
-	template<class T>
-	T* Get() { return m_components != nullptr ? m_components->Get<T>() : nullptr; }
+	template<class T> T* Get() { return m_components != nullptr ? m_components->Get<T>() : nullptr; }
 
 	inline Scene* GetScene() { return m_scene; }
-	template <typename T>
-	inline T* GetSceneAs() const { return static_cast<T*>(m_scene); }
+	template<typename T> inline T* GetSceneAs() const { return static_cast<T*>(m_scene); }
 
 	inline Collider* GetCollider() const { return m_collider; }
-	template <typename T>
-	inline T* GetColliderAs() const { return static_cast<T*>(m_collider); }
+	template<typename T> inline T* GetColliderAs() const { return static_cast<T*>(m_collider); }
 	void SetCollider(Collider* collider);
 
 private:

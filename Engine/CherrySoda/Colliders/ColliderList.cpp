@@ -4,10 +4,10 @@
 #include <CherrySoda/Colliders/Grid.h>
 #include <CherrySoda/Colliders/Hitbox.h>
 #include <CherrySoda/Components/Component.h>
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Camera.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
-#include <CherrySoda/Entity.h>
 
 namespace cherrysoda {
 
@@ -47,56 +47,49 @@ void ColliderList::Remove(const ColliderList::IterableColliders& toRemove)
 bool ColliderList::Collide(const Circle* circle) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(circle))
-			return true;
+		if (c->Collide(circle)) return true;
 	return false;
 }
 
 bool ColliderList::Collide(const ColliderList* list) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(list))
-			return true;
+		if (c->Collide(list)) return true;
 	return false;
 }
 
 bool ColliderList::Collide(const Hitbox* hitbox) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(hitbox))
-			return true;
+		if (c->Collide(hitbox)) return true;
 	return false;
 }
 
 bool ColliderList::Collide(const Grid* grid) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(grid))
-			return true;
+		if (c->Collide(grid)) return true;
 	return false;
 }
 
 bool ColliderList::Collide(const Math::Vec2& point) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(point))
-			return true;
+		if (c->Collide(point)) return true;
 	return false;
 }
 
 bool ColliderList::Collide(const Math::Rectangle& rect) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(rect))
-			return true;
+		if (c->Collide(rect)) return true;
 	return false;
 }
 
 bool ColliderList::Collide(const Math::Vec2& from, const Math::Vec2& to) const
 {
 	for (auto c : m_colliders)
-		if (c->Collide(from, to))
-			return true;
+		if (c->Collide(from, to)) return true;
 	return false;
 }
 

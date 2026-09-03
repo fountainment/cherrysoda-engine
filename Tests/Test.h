@@ -9,10 +9,7 @@ using namespace cherrysoda;
 class Vec2TestWrapper
 {
 public:
-	Vec2TestWrapper(const Math::Vec2& v2)
-		: x(v2.x)
-		, y(v2.y)
-	{}
+	Vec2TestWrapper(const Math::Vec2& v2) : x(v2.x), y(v2.y) {}
 
 	friend void PrintTo(const Vec2TestWrapper& v2, std::ostream* os)
 	{
@@ -29,10 +26,10 @@ private:
 	float y;
 };
 
-#define TEST_CLOSESTPOINTONLINE(a,b,p,e) \
-{ \
-	auto expectedResult = Vec2TestWrapper(e); \
-	EXPECT_EQ(Vec2TestWrapper(Calc::ClosestPointOnLine(a,b,p)),expectedResult); \
-}
+#define TEST_CLOSESTPOINTONLINE(a, b, p, e)                                            \
+	{                                                                                  \
+		auto expectedResult = Vec2TestWrapper(e);                                      \
+		EXPECT_EQ(Vec2TestWrapper(Calc::ClosestPointOnLine(a, b, p)), expectedResult); \
+	}
 
 #endif // _CHERRYSODA_TEST_H_

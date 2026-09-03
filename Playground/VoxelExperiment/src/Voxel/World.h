@@ -11,10 +11,7 @@ class World
 public:
 	CHERRYSODA_ITERABLE(m_chunks);
 
-	World(cherrysoda::Math::Vec3 basePosition = Vec3_Zero)
-	: m_basePosition(basePosition)
-	{
-	}
+	World(cherrysoda::Math::Vec3 basePosition = Vec3_Zero) : m_basePosition(basePosition) {}
 
 	Chunk* LoadChunks();
 
@@ -46,7 +43,7 @@ public:
 	Block* GetBlock(const cherrysoda::Math::IVec3& v, Chunk** chunkOut = nullptr)
 	{
 		constexpr int worldBlockSize = WorldBlockSize();
-		if (v.x < 0 || v.x >= worldBlockSize || v.y < 0 || v.y >= worldBlockSize || v.z < 0 || v.z >=worldBlockSize) {
+		if (v.x < 0 || v.x >= worldBlockSize || v.y < 0 || v.y >= worldBlockSize || v.z < 0 || v.z >= worldBlockSize) {
 			return nullptr;
 		}
 		Chunk* chunk = GetChunk(v / Chunk::Size());
@@ -58,8 +55,7 @@ public:
 	{
 		Chunk* chunk = nullptr;
 		Block* block = GetBlock(v, &chunk);
-		if (block && block->m_type != type)
-		{
+		if (block && block->m_type != type) {
 			auto oldType = block->m_type;
 			block->m_type = type;
 			chunk->SetChanged();
@@ -88,20 +84,35 @@ public:
 	}
 
 	inline cherrysoda::Math::Vec3 BasePosition() const { return m_basePosition; }
-	inline cherrysoda::Math::Vec3 GetChunkPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + GetWorldChunkPosition(v); }
-	inline cherrysoda::Math::Vec3 GetBlockPosition(const cherrysoda::Math::IVec3& v) const { return BasePosition() + cherrysoda::Math::Vec3(v); }
+	inline cherrysoda::Math::Vec3 GetChunkPosition(const cherrysoda::Math::IVec3& v) const
+	{
+		return BasePosition() + GetWorldChunkPosition(v);
+	}
+	inline cherrysoda::Math::Vec3 GetBlockPosition(const cherrysoda::Math::IVec3& v) const
+	{
+		return BasePosition() + cherrysoda::Math::Vec3(v);
+	}
 
-	inline cherrysoda::Math::AABB GetAABB() const { return { BasePosition(), BasePosition() + cherrysoda::Math::Vec3(static_cast<float>(WorldBlockSize())) }; }
+	inline cherrysoda::Math::AABB GetAABB() const
+	{
+		return {BasePosition(), BasePosition() + cherrysoda::Math::Vec3(static_cast<float>(WorldBlockSize()))};
+	}
 	inline cherrysoda::Math::AABB GetChunkAABB(const cherrysoda::Math::IVec3& v) const
 	{
-		cherrysoda::Math::AABB ret = { Vec3_Zero, Vec3_Zero };
+		cherrysoda::Math::AABB ret = {Vec3_Zero, Vec3_Zero};
 		auto ck = GetChunk(v);
 		if (ck) ret = ck->GetAABB();
 		return ret;
 	}
-	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const { return { BasePosition() + cherrysoda::Math::Vec3(v), BasePosition() + cherrysoda::Math::Vec3(v) + Vec3_One }; }
+	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const
+	{
+		return {BasePosition() + cherrysoda::Math::Vec3(v), BasePosition() + cherrysoda::Math::Vec3(v) + Vec3_One};
+	}
 
-	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(const cherrysoda::Math::IVec3& v) { return cherrysoda::Math::Vec3(v * Chunk::Size()); }
+	static inline const cherrysoda::Math::Vec3 GetWorldChunkPosition(const cherrysoda::Math::IVec3& v)
+	{
+		return cherrysoda::Math::Vec3(v * Chunk::Size());
+	}
 
 private:
 	cherrysoda::STL::Vector<Chunk> m_chunks;

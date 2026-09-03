@@ -1,8 +1,8 @@
 #include <CherrySoda/Engine.h>
 
 namespace cherrysoda {
-	class Effect;
-	class TextureCube;
+class Effect;
+class TextureCube;
 } // namespace cherrysoda
 
 namespace voxelexperiment {

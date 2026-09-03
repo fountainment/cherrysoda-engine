@@ -56,7 +56,8 @@ TextureCube TextureCube::FromFile(const String& filename)
 	TextureCube result;
 	Graphics::TextureInfo info;
 	result.m_texture = Graphics::CreateTexture(filename, &info);
-	CHERRYSODA_ASSERT(info.m_cubeMap, CHERRYSODA_FORMAT("Loading texture \"%s\" is not a cubemap!\n", filename.c_str()));
+	CHERRYSODA_ASSERT(info.m_cubeMap,
+					  CHERRYSODA_FORMAT("Loading texture \"%s\" is not a cubemap!\n", filename.c_str()));
 	return result;
 }
 

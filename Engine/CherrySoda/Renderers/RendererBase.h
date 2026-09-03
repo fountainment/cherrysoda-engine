@@ -29,7 +29,10 @@ public:
 	inline void FixedCameraSize(bool fixedCameraSize) { m_fixedCameraSize = fixedCameraSize; }
 	inline bool FixedCameraSize() { return m_fixedCameraSize; }
 
-	inline void KeepCameraCenterOrigin(bool keepCameraCenterOrigin) { m_keepCameraCenterOrigin = keepCameraCenterOrigin; }
+	inline void KeepCameraCenterOrigin(bool keepCameraCenterOrigin)
+	{
+		m_keepCameraCenterOrigin = keepCameraCenterOrigin;
+	}
 	inline bool DoKeepCameraCenterOrigin() { return m_keepCameraCenterOrigin; }
 
 protected:

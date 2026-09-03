@@ -14,9 +14,7 @@ static const BitTag s_npcTag("csd_scene_test_npc");
 class SceneTestComponent : public Component
 {
 public:
-	SceneTestComponent()
-		: base(true, false)
-	{}
+	SceneTestComponent() : base(true, false) {}
 
 	CHERRYSODA_DECLARE_COMPONENT(SceneTestComponent, Component);
 
@@ -32,25 +30,13 @@ public:
 		base::Removed(entity);
 	}
 
-	void EntityAdded(Scene* scene) override
-	{
-		++entityAddedCount;
-	}
+	void EntityAdded(Scene* scene) override { ++entityAddedCount; }
 
-	void EntityRemoved(Scene* scene) override
-	{
-		++entityRemovedCount;
-	}
+	void EntityRemoved(Scene* scene) override { ++entityRemovedCount; }
 
-	void EntityAwake() override
-	{
-		++awakeCount;
-	}
+	void EntityAwake() override { ++awakeCount; }
 
-	void Update() override
-	{
-		++updateCount;
-	}
+	void Update() override { ++updateCount; }
 
 	int addedCount = 0;
 	int removedCount = 0;
@@ -159,7 +145,7 @@ TEST(SceneTestTags, AddRemoveAndLookup)
 	auto taggedBoth = scene.GetEntitiesByTagMask(s_solidTag | s_playerTag);
 	EXPECT_EQ(2u, STL::Count(taggedBoth));
 	auto excludingSolid = scene.GetEntitiesExcludingTagMask(s_solidTag);
-	EXPECT_EQ(1u, STL::Count(excludingSolid));  // only the scene's untagged helper entity
+	EXPECT_EQ(1u, STL::Count(excludingSolid)); // only the scene's untagged helper entity
 	auto npcOnly = scene.GetEntitiesByTagMask(s_npcTag);
 	EXPECT_EQ(0u, STL::Count(npcOnly));
 
@@ -199,7 +185,7 @@ TEST(SceneTestDepth, EntitiesSortedByActualDepth)
 	for (auto entity : *scene.Entities()) {
 		STL::Add(order, entity);
 	}
-	ASSERT_EQ(5u, STL::Count(order));  // four entities plus the scene's helper entity
+	ASSERT_EQ(5u, STL::Count(order)); // four entities plus the scene's helper entity
 	EXPECT_EQ(&deep, order[0]);
 	EXPECT_EQ(&middle, order[1]);
 	EXPECT_EQ(&tied, order[2]);
@@ -325,7 +311,7 @@ TEST(SceneTestPool, PooledEntityRemovedAndRecycled)
 	EXPECT_FALSE(pool.IsFull());
 	Entity* recycled = pool.Create();
 	EXPECT_NE(nullptr, recycled);
-	EXPECT_EQ(first, recycled);  // LIFO slot reuse
+	EXPECT_EQ(first, recycled); // LIFO slot reuse
 }
 
 } // namespace

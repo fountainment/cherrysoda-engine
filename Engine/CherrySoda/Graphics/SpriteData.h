@@ -2,8 +2,8 @@
 #define _CHERRYSODA_GRAPHICS_SPRITEDATA_H_
 
 #include <CherrySoda/Util/Json.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 

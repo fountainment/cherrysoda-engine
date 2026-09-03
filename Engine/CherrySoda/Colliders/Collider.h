@@ -7,16 +7,20 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
-
-#define CHERRYSODA_DECLARE_COLLIDER(COLL,BASE) \
-typedef BASE base; \
-virtual cherrysoda::type::Int32 TypeID() const override \
-{ return COLL::ColliderTypeID(); } \
-virtual const char* TypeCStr() const override \
-{ return #COLL; } \
-static CHERRYSODA_STRINGID_CONSTEXPR cherrysoda::type::Int32 ColliderTypeID() \
-{ return cherrysoda::StringID(#COLL).GetID(); }
-
+#define CHERRYSODA_DECLARE_COLLIDER(COLL, BASE)                                   \
+	typedef BASE base;                                                            \
+	virtual cherrysoda::type::Int32 TypeID() const override                       \
+	{                                                                             \
+		return COLL::ColliderTypeID();                                            \
+	}                                                                             \
+	virtual const char* TypeCStr() const override                                 \
+	{                                                                             \
+		return #COLL;                                                             \
+	}                                                                             \
+	static CHERRYSODA_STRINGID_CONSTEXPR cherrysoda::type::Int32 ColliderTypeID() \
+	{                                                                             \
+		return cherrysoda::StringID(#COLL).GetID();                               \
+	}
 
 namespace cherrysoda {
 
@@ -57,8 +61,14 @@ public:
 	virtual float Width() const = 0;
 	virtual float Height() const = 0;
 
-	inline Math::Vec2 AbsolutePosition2D() const { return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D(); }
-	inline Math::Vec3 AbsolutePosition() const { return m_entity != nullptr ? m_entity->Position() + Position() : Position(); }
+	inline Math::Vec2 AbsolutePosition2D() const
+	{
+		return m_entity != nullptr ? m_entity->Position2D() + Position2D() : Position2D();
+	}
+	inline Math::Vec3 AbsolutePosition() const
+	{
+		return m_entity != nullptr ? m_entity->Position() + Position() : Position();
+	}
 	inline float AbsoluteTop() const { return m_entity != nullptr ? Top() + m_entity->PositionY() : Top(); }
 	inline float AbsoluteBottom() const { return m_entity != nullptr ? Bottom() + m_entity->PositionY() : Bottom(); }
 	inline float AbsoluteLeft() const { return m_entity != nullptr ? Left() + m_entity->PositionX() : Left(); }
@@ -66,7 +76,7 @@ public:
 
 	inline Math::Rectangle Bounds() const
 	{
-		return Math::Rectangle{ Math::Vec2(AbsoluteLeft(), AbsoluteBottom()), Math::Vec2(Width(), Height()) };
+		return Math::Rectangle{Math::Vec2(AbsoluteLeft(), AbsoluteBottom()), Math::Vec2(Width(), Height())};
 	}
 
 	void Render(const Camera* camera) const;
@@ -78,7 +88,10 @@ public:
 	virtual type::Int32 TypeID() const = 0;
 	virtual const char* TypeCStr() const = 0;
 
-	void AutoDeleteWhenRemoved() { if (m_onRemoved == nullptr) m_onRemoved = Collider::DeleteCollider; }
+	void AutoDeleteWhenRemoved()
+	{
+		if (m_onRemoved == nullptr) m_onRemoved = Collider::DeleteCollider;
+	}
 	void CancleAutoDelete() { m_onRemoved = nullptr; }
 
 private:

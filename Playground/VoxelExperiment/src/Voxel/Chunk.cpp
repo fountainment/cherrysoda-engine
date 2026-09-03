@@ -11,7 +11,7 @@
 using cherrysoda::Math;
 using cherrysoda::STL;
 
-static const Math::IVec3 s_offset[6] = { IVec3_XUp, -IVec3_XUp, IVec3_YUp, -IVec3_YUp, IVec3_ZUp, -IVec3_ZUp };
+static const Math::IVec3 s_offset[6] = {IVec3_XUp, -IVec3_XUp, IVec3_YUp, -IVec3_YUp, IVec3_ZUp, -IVec3_ZUp};
 
 Chunk::Chunk()
 {
@@ -41,8 +41,7 @@ void Chunk::FillAllBlocks(Block::Type type)
 {
 	bool changed = false;
 	cherrysoda::type::UInt8 blockSurrounding = type == Block::Type::None ? 0x3F : 0x00;
-	for (int i = 0; i < BlockAmount(); ++i)
-	{
+	for (int i = 0; i < BlockAmount(); ++i) {
 		if (GetBlocks()[i].m_type != type) {
 			GetBlocks()[i].m_type = type;
 			m_blockSurrounding[i] = blockSurrounding;
@@ -88,8 +87,8 @@ void Chunk::NotifyChanged(const Math::IVec3& v, Block::Type type)
 	if (m_world) {
 		Chunk* chunks[6];
 		for (int i = 0; i < 3; ++i) {
-			chunks[i << 1]       = (v[i] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + s_offset[i << 1])       : nullptr;
-			chunks[(i << 1) | 1] = (v[i] == 0)          ? m_world->GetChunk(m_chunkIndex + s_offset[(i << 1) | 1]) : nullptr;
+			chunks[i << 1] = (v[i] == Size() - 1) ? m_world->GetChunk(m_chunkIndex + s_offset[i << 1]) : nullptr;
+			chunks[(i << 1) | 1] = (v[i] == 0) ? m_world->GetChunk(m_chunkIndex + s_offset[(i << 1) | 1]) : nullptr;
 		}
 		for (int i = 0; i < 6; ++i) {
 			int ii = i - (i & 1) + ((i & 1) ^ 1);
@@ -121,7 +120,7 @@ void Chunk::NotifyChanged(const Math::IVec3& v, Block::Type type)
 
 Block* Chunk::GetBlock(const Math::IVec3& v)
 {
-	int index = GetBlockIndex(v); 
+	int index = GetBlockIndex(v);
 	if (index < 0) {
 		if (m_world) {
 			Math::IVec3 baseBlockIndex = m_chunkIndex * Chunk::Size();

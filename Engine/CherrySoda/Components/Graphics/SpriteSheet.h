@@ -7,16 +7,14 @@
 
 namespace cherrysoda {
 
-template <class T>
-class SpriteSheet : public Image
+template<class T> class SpriteSheet : public Image
 {
 public:
 	CHERRYSODA_DECLARE_COMPONENT(SpriteSheet<T>, Image);
 
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, CurrentFrame, m_currentFrame);
 
-	SpriteSheet(const MTexture& texture, int frameWidth, int frameHeight, int frameSep = 0)
-		: base(texture, true)
+	SpriteSheet(const MTexture& texture, int frameWidth, int frameHeight, int frameSep = 0) : base(texture, true)
 	{
 		SetFrames(texture, frameWidth, frameHeight, frameSep);
 	}
@@ -48,19 +46,19 @@ public:
 			// Next Frame
 			if (Math_Abs(m_animationTimer) >= m_currentAnimation.m_delay) {
 				m_currentAnimationFrame += Math_Sign(m_animationTimer);
-				m_animationTimer -= Math_Sign(m_animationTimer) * m_currentAnimation.m_delay;	
+				m_animationTimer -= Math_Sign(m_animationTimer) * m_currentAnimation.m_delay;
 
 				// End of Animation
-				if (m_currentAnimationFrame < 0 || m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation.m_frames))) {
+				if (m_currentAnimationFrame < 0 ||
+					m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation.m_frames))) {
 					// Looped
 					if (m_currentAnimation.m_loop) {
-						m_currentAnimationFrame -= Math_Sign(m_currentAnimationFrame) * STL::Count(m_currentAnimation.m_frames);
+						m_currentAnimationFrame -=
+							Math_Sign(m_currentAnimationFrame) * STL::Count(m_currentAnimation.m_frames);
 						m_currentFrame = m_currentAnimation.m_frames[m_currentAnimationFrame];
 
-						if (m_onAnimate != nullptr)
-							m_onAnimate(m_currentAnimationID);
-						if (m_onLoop != nullptr)
-							m_onLoop(m_currentAnimationID);
+						if (m_onAnimate != nullptr) m_onAnimate(m_currentAnimationID);
+						if (m_onLoop != nullptr) m_onLoop(m_currentAnimationID);
 					}
 					else {
 						// Ended
@@ -71,8 +69,7 @@ public:
 
 						m_animating = false;
 						m_animationTimer = 0.f;
-						if (m_onFinish != nullptr)
-							m_onFinish(m_currentAnimationID);
+						if (m_onFinish != nullptr) m_onFinish(m_currentAnimationID);
 					}
 				}
 				else {
@@ -94,23 +91,14 @@ public:
 
 	void Add(const T& id, bool loop, float delay, const STL::Vector<int>& frames)
 	{
-		m_animations[id] = Animation{ delay, frames, loop };
+		m_animations[id] = Animation{delay, frames, loop};
 	}
 
-	void Add(const T& id, float delay, const STL::Vector<int>& frames)
-	{
-		Add(id, true, delay, frames);
-	}
+	void Add(const T& id, float delay, const STL::Vector<int>& frames) { Add(id, true, delay, frames); }
 
-	void Add(const T& id, int frame)
-	{
-		Add(id, false, 0, { frame });
-	}
+	void Add(const T& id, int frame) { Add(id, false, 0, {frame}); }
 
-	void ClearAnimation()
-	{
-		STL::Clear(m_animations);
-	}
+	void ClearAnimation() { STL::Clear(m_animations); }
 
 	bool IsPlaying(const T& id)
 	{
@@ -123,7 +111,8 @@ public:
 	void Play(const T& id, bool restart = false)
 	{
 		if (!IsPlaying(id) || restart) {
-			CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(m_animations, id), "No Animation Defined For ID: %s\n", StringUtil::ToString(id).c_str());
+			CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(m_animations, id), "No Animation Defined For ID: %s\n",
+									 StringUtil::ToString(id).c_str());
 			m_currentAnimationID = id;
 			m_currentAnimation = m_animations[id];
 			m_animationTimer = 0.f;

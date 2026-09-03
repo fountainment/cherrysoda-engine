@@ -22,7 +22,8 @@ public:
 
 	void Update() override;
 
-	static Wiggler* Create(float duration, float frequency, STL::Action<float> onChange = nullptr, bool start = false, bool removeSelfOnFinish = false);
+	static Wiggler* Create(float duration, float frequency, STL::Action<float> onChange = nullptr, bool start = false,
+						   bool removeSelfOnFinish = false);
 
 private:
 	Wiggler() : base(false, false) {}

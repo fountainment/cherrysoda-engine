@@ -11,7 +11,7 @@ namespace cherrysoda {
 
 struct CommandTrieNode
 {
-	STL::Map<char,CommandTrieNode*> next;
+	STL::Map<char, CommandTrieNode*> next;
 	bool exists = false;
 };
 
@@ -68,7 +68,7 @@ static STL::Vector<String> CommandTrieFindPrefix(const String& prefix)
 Commands::ReturnValue Commands::ms_returnValue;
 
 char Commands::ms_currentText[512] = "";
-STL::Vector<STL::Pair<Color,String>> Commands::ms_drawCommands;
+STL::Vector<STL::Pair<Color, String>> Commands::ms_drawCommands;
 bool Commands::ms_consoleTextScrollNeeded = false;
 
 STL::Vector<String> Commands::ms_commandHistory;
@@ -87,8 +87,9 @@ STL::Stack<CommandBatches::CommandBatchInfo>* CommandBatches::ms_currentExecutio
 void Commands::Register(const String& command, STL::Action<const STL::Vector<String>&> action, const String& help)
 {
 	String lowerCommand = StringUtil::ToLower(command);
-	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(INTERNAL_GetCommands(), lowerCommand), "Command alreay exists: %s\n", lowerCommand.c_str());
-	INTERNAL_GetCommands()[lowerCommand] = { action, lowerCommand, help };
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(INTERNAL_GetCommands(), lowerCommand), "Command alreay exists: %s\n",
+							 lowerCommand.c_str());
+	INTERNAL_GetCommands()[lowerCommand] = {action, lowerCommand, help};
 	CommandTrieInsert(lowerCommand);
 }
 
@@ -104,7 +105,7 @@ void Commands::ExecuteCommand()
 
 void Commands::ExecuteCommand(const String& command)
 {
-	ms_returnValue = { false, 0.f, 0, "" };
+	ms_returnValue = {false, 0.f, 0, ""};
 	auto coms = StringUtil::Split(StringUtil::Trim(command), ';');
 	for (auto& com : coms) {
 		auto data = StringUtil::Split(StringUtil::Trim(com));
@@ -122,7 +123,7 @@ void Commands::ExecuteCommand(const String& command)
 	}
 }
 
-void Commands::Log(const String& str, const Color& color/* = Color::White*/)
+void Commands::Log(const String& str, const Color& color /* = Color::White*/)
 {
 	auto lines = StringUtil::Split(str, '\n');
 	for (auto& line : lines) {
@@ -262,7 +263,7 @@ void Commands::ShowHelp(const String& command)
 
 void Commands::AddParamSlider(const String& param, float minValue, float maxValue, float defaultValue)
 {
-	STL::Add(ms_sliderInfo, Commands::SliderInfo{ param, minValue, maxValue, defaultValue });
+	STL::Add(ms_sliderInfo, Commands::SliderInfo{param, minValue, maxValue, defaultValue});
 }
 
 STL::HashMap<StringID, Commands::CommandInfo>& Commands::INTERNAL_GetCommands()
@@ -282,12 +283,12 @@ void Commands::Terminate()
 	CommandTrieDelete(node);
 }
 
-
 void CommandBatches::Register(const String& alias, const String& commandBatch)
 {
 	String lowerAlias = StringUtil::ToLower(alias);
 	CHERRYSODA_ASSERT_FORMAT(!Commands::Exists(lowerAlias), "Command alreay exists: %s\n", lowerAlias.c_str());
-	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_commandBatches, lowerAlias), "Alias alreay exists: %s\n", lowerAlias.c_str());
+	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(ms_commandBatches, lowerAlias), "Alias alreay exists: %s\n",
+							 lowerAlias.c_str());
 	ms_commandBatches[lowerAlias] = commandBatch;
 	CommandTrieInsert(lowerAlias);
 }
@@ -297,10 +298,10 @@ void CommandBatches::ExecuteBatch(const String& batch)
 	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(ms_commandBatches, batch), "Batch \"%s\" doesn't exist\n", batch.c_str());
 	auto commands = StringUtil::Split(ms_commandBatches[batch], '\n');
 	if (InBatchExecution()) {
-		STL::Push(*ms_currentExecutionStack, CommandBatches::CommandBatchInfo{ commands });
+		STL::Push(*ms_currentExecutionStack, CommandBatches::CommandBatchInfo{commands});
 	}
 	else {
-		STL::Add(ms_pendingCommands, STL::Stack<CommandBatches::CommandBatchInfo>({{ commands }}));
+		STL::Add(ms_pendingCommands, STL::Stack<CommandBatches::CommandBatchInfo>({{commands}}));
 	}
 }
 
@@ -342,7 +343,6 @@ void CommandBatches::Update()
 		++it;
 	}
 }
-
 
 // Internal Commands
 

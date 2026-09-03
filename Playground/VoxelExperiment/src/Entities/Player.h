@@ -1,13 +1,12 @@
 #ifndef _VOXELEXPERIMENT_PLAYER_H_
 #define _VOXELEXPERIMENT_PLAYER_H_
 
-#include <CherrySoda/Entity.h>
 #include <CherrySoda/Components/Component.h>
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Math.h>
 
-namespace cherrysoda
-{
-	class Camera;
+namespace cherrysoda {
+class Camera;
 } // namespace cherrysoda
 
 class PlayerControl : public cherrysoda::Component
@@ -25,10 +24,7 @@ class PlayerCamera : public cherrysoda::Component
 public:
 	CHERRYSODA_DECLARE_COMPONENT(PlayerCamera, cherrysoda::Component);
 
-	PlayerCamera(cherrysoda::Camera* camera) : base(true, false)
-	, m_camera(camera)
-	{
-	}
+	PlayerCamera(cherrysoda::Camera* camera) : base(true, false), m_camera(camera) {}
 
 	cherrysoda::Camera* GetCamera() { return m_camera; }
 
@@ -53,10 +49,7 @@ public:
 		Move(FacingDirection() * xy.y);
 		Move(RightDirection() * xy.x);
 	}
-	inline void MoveZ(float z)
-	{
-		Move(UpDirection() * z);
-	}
+	inline void MoveZ(float z) { Move(UpDirection() * z); }
 	inline void RotateXY(const cherrysoda::Math::Vec2& xy)
 	{
 		m_leftDirection = Math_RotateVector(LeftDirection(), xy.x, DownDirection());

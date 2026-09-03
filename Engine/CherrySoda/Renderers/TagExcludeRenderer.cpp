@@ -1,9 +1,9 @@
 #include <CherrySoda/Renderers/TagExcludeRenderer.h>
 
-#include <CherrySoda/Scene.h>
 #include <CherrySoda/Graphics/Graphics.h>
 #include <CherrySoda/Graphics/SpriteBatch.h>
 #include <CherrySoda/InternalUtilities/EntityList.h>
+#include <CherrySoda/Scene.h>
 #include <CherrySoda/Util/Draw.h>
 
 namespace cherrysoda {

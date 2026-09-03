@@ -21,5 +21,4 @@ public:
 
 } // namespace cherrysoda
 
-
 #endif // _CHERRYSODA_UTIL_XML_H_

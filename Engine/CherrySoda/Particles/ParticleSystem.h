@@ -90,7 +90,8 @@ public:
 		}
 	}
 
-	void Emit(const ParticleType* type, int amount, const Math::Vec2& position, const Math::Vec2& positionRange, float direction)
+	void Emit(const ParticleType* type, int amount, const Math::Vec2& position, const Math::Vec2& positionRange,
+			  float direction)
 	{
 		for (int i = 0; i < amount; ++i) {
 			Emit(type, Calc::GetRandom()->Range(position - positionRange, position + positionRange), direction);

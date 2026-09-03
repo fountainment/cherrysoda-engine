@@ -16,8 +16,7 @@ using cherrysoda::Graphics;
 using cherrysoda::MInput;
 using cherrysoda::TextureCube;
 
-VoxelExperiment::VoxelExperiment()
-	: base()
+VoxelExperiment::VoxelExperiment() : base()
 {
 	SetTitle("VoxelExperiment");
 	SetClearColor(Color::Black);

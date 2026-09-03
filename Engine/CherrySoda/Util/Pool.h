@@ -14,8 +14,7 @@ public:
 	virtual void INTERNAL_Destroy(void* ptr) = 0;
 };
 
-template <typename T, type::UInt16 SIZE>
-class alignas(128) Pool : public PoolInterface
+template<typename T, type::UInt16 SIZE> class alignas(128) Pool : public PoolInterface
 {
 public:
 	typedef type::UInt16 SizeType;
@@ -27,21 +26,17 @@ public:
 		}
 	}
 
-	~Pool()
-	{
-		INTERNAL_Clear();
-	}
+	~Pool() { INTERNAL_Clear(); }
 
 	inline bool IsFull() { return STL::IsEmpty(m_available); }
 
-	template <typename... TT>
-	T* Create(TT... TTs)
+	template<typename... TT> T* Create(TT... TTs)
 	{
 		CHERRYSODA_ASSERT(!IsFull(), "Pool is full!\n");
 		if (IsFull()) return nullptr;
 		SizeType loc = STL::Pop(m_available);
 		STL::Add(m_allocated, loc);
-		auto t = new((T*)m_buffer + loc) T(TTs...);
+		auto t = new ((T*)m_buffer + loc) T(TTs...);
 		t->AutoDeleteWhenRemoved(this);
 		return t;
 	}
@@ -79,11 +74,11 @@ public:
 private:
 	alignas(64) STL::Stack<SizeType> m_available;
 	alignas(64) STL::Set<SizeType> m_allocated;
-	alignas(64) char m_buffer[SIZE * sizeof(T)] = { 0 };
+	alignas(64) char m_buffer[SIZE * sizeof(T)] = {0};
 };
 
 } // namespace cherrysoda
 
-#define CHERRYSODA_FRIEND_CLASS_POOL template <typename T, type::UInt16 SIZE> friend class Pool
+#define CHERRYSODA_FRIEND_CLASS_POOL template<typename T, type::UInt16 SIZE> friend class Pool
 
 #endif // _CHERRYSODA_UTIL_POOL_H_

@@ -26,9 +26,9 @@ public:
 	using BufferHandle = HandleType;
 	using FrameBufferHandle = HandleType;
 	using VertexBufferHandle = HandleType;
-	using IndexBufferHandle  = HandleType;
+	using IndexBufferHandle = HandleType;
 	using DynamicVertexBufferHandle = HandleType;
-	using DynamicIndexBufferHandle  = HandleType;
+	using DynamicIndexBufferHandle = HandleType;
 	using ShaderHandle = HandleType;
 	using UniformHandle = HandleType;
 	using TextureHandle = HandleType;
@@ -97,11 +97,11 @@ public:
 
 		static inline const PosColorVertex MakeVertex(const Math::Vec3& p, type::UInt32 c)
 		{
-			return { p[0], p[1], p[2], c };
+			return {p[0], p[1], p[2], c};
 		}
 		static inline const PosColorVertex MakeVertex(const Math::Vec3& p, const Color& c = Color::White)
 		{
-			return { p[0], p[1], p[2], c.U32ABGR() };
+			return {p[0], p[1], p[2], c.U32ABGR()};
 		}
 
 		static inline const PosColorVertex MakeVertex(const VertexInfo& vertex)
@@ -118,13 +118,15 @@ public:
 
 		static void Init();
 
-		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n = Vec3_ZUp)
+		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, type::UInt32 c,
+															const Math::Vec3& n = Vec3_ZUp)
 		{
-			return { p[0], p[1], p[2], c, EncodeNormalU32(n) };
+			return {p[0], p[1], p[2], c, EncodeNormalU32(n)};
 		}
-		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n = Vec3_ZUp)
+		static inline const PosColorNormalVertex MakeVertex(const Math::Vec3& p, const Color& c,
+															const Math::Vec3& n = Vec3_ZUp)
 		{
-			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n) };
+			return {p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n)};
 		}
 
 		static inline const PosColorNormalVertex MakeVertex(const VertexInfo& vertex)
@@ -141,13 +143,15 @@ public:
 
 		static void Init();
 
-		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec2& uv = Vec2_Zero)
+		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c,
+															   const Math::Vec2& uv = Vec2_Zero)
 		{
-			return { p[0], p[1], p[2], c, uv[0], uv[1] };
+			return {p[0], p[1], p[2], c, uv[0], uv[1]};
 		}
-		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec2& uv = Vec2_Zero)
+		static inline const PosColorTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c,
+															   const Math::Vec2& uv = Vec2_Zero)
 		{
-			return { p[0], p[1], p[2], c.U32ABGR(), uv[0], uv[1] };
+			return {p[0], p[1], p[2], c.U32ABGR(), uv[0], uv[1]};
 		}
 
 		static inline const PosColorTexCoord0Vertex MakeVertex(const VertexInfo& vertex)
@@ -164,9 +168,10 @@ public:
 
 		static void Init();
 
-		static inline const PosNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Math::Vec3& n = Vec3_ZUp, const Math::Vec2& uv = Vec2_Zero)
+		static inline const PosNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Math::Vec3& n = Vec3_ZUp,
+																const Math::Vec2& uv = Vec2_Zero)
 		{
-			return { p[0], p[1], p[2], EncodeNormalU32(n), uv[0], uv[1] };
+			return {p[0], p[1], p[2], EncodeNormalU32(n), uv[0], uv[1]};
 		}
 
 		static inline const PosNormalTexCoord0Vertex MakeVertex(const VertexInfo& vertex)
@@ -184,13 +189,17 @@ public:
 
 		static void Init();
 
-		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c, const Math::Vec3& n = Vec3_ZUp, const Math::Vec2& uv = Vec2_Zero)
+		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, type::UInt32 c,
+																	 const Math::Vec3& n = Vec3_ZUp,
+																	 const Math::Vec2& uv = Vec2_Zero)
 		{
-			return { p[0], p[1], p[2], c, EncodeNormalU32(n), uv[0], uv[1] };
+			return {p[0], p[1], p[2], c, EncodeNormalU32(n), uv[0], uv[1]};
 		}
-		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c, const Math::Vec3& n = Vec3_ZUp, const Math::Vec2& uv = Vec2_Zero)
+		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const Math::Vec3& p, const Color& c,
+																	 const Math::Vec3& n = Vec3_ZUp,
+																	 const Math::Vec2& uv = Vec2_Zero)
 		{
-			return { p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n), uv[0], uv[1] };
+			return {p[0], p[1], p[2], c.U32ABGR(), EncodeNormalU32(n), uv[0], uv[1]};
 		}
 
 		static inline const PosColorNormalTexCoord0Vertex MakeVertex(const VertexInfo& vertex)
@@ -225,12 +234,17 @@ public:
 	static inline void BeginRenderPass(type::UInt16 renderPassId) { Instance()->RenderPass(renderPassId); }
 	static inline void EndRenderPass(type::UInt16 renderPassId)
 	{
-		CHERRYSODA_ASSERT_FORMAT(Instance()->RenderPass() == renderPassId, "Current RenderPass %u != %u!\n", Instance()->RenderPass(), renderPassId);
+		CHERRYSODA_ASSERT_FORMAT(Instance()->RenderPass() == renderPassId, "Current RenderPass %u != %u!\n",
+								 Instance()->RenderPass(), renderPassId);
 		Discard();
 		Instance()->RenderPass(0);
 	}
 	static inline type::UInt16 CurrentRenderPass() { return Instance()->m_renderPassId; }
-	static inline Graphics* UseRenderPass(type::UInt16 renderPassId) { ms_renderPassHelperInstance->RenderPass(renderPassId); return ms_renderPassHelperInstance; }
+	static inline Graphics* UseRenderPass(type::UInt16 renderPassId)
+	{
+		ms_renderPassHelperInstance->RenderPass(renderPassId);
+		return ms_renderPassHelperInstance;
+	}
 	static inline Graphics* UseCurrentRenderPass() { return Instance(); }
 	static inline type::UInt16 MaxRenderPassCount() { return ms_maxRenderPassCount; }
 
@@ -259,8 +273,10 @@ public:
 	static void SetDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer, size_t indexAmount);
 	static void SetTransientVertexBuffer(TransientVertexBufferHandle vertexBuffer);
 	static void SetTransientIndexBuffer(TransientIndexBufferHandle indexBuffer, size_t startIndex, size_t indexAmount);
-	static void SetStateDefault(BlendFunction blendFunc = BlendFunction::Default, PrimitiveType = PrimitiveType::Triangles);
-	static void SetStateNoDepth(BlendFunction blendFunc = BlendFunction::Default, PrimitiveType = PrimitiveType::Triangles);
+	static void SetStateDefault(BlendFunction blendFunc = BlendFunction::Default,
+								PrimitiveType = PrimitiveType::Triangles);
+	static void SetStateNoDepth(BlendFunction blendFunc = BlendFunction::Default,
+								PrimitiveType = PrimitiveType::Triangles);
 	void Submit();
 	void Submit(const Effect* effect);
 	static void Submit(type::UInt16 renderPass);
@@ -293,7 +309,8 @@ public:
 	static UniformHandle CreateUniformMat4(const String& uniform);
 	static UniformHandle CreateUniformSampler(const String& sampler);
 
-	static void UpdateDynamicIndexBuffer(DynamicIndexBufferHandle handle, int index, const STL::Vector<type::UInt16>& indices);
+	static void UpdateDynamicIndexBuffer(DynamicIndexBufferHandle handle, int index,
+										 const STL::Vector<type::UInt16>& indices);
 
 	static void DestroyVertexBuffer(VertexBufferHandle vertexBuffer);
 	static void DestroyDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer);
@@ -319,7 +336,8 @@ public:
 
 	static void SetUniformCamPos(const Math::Vec3& camPos);
 	static void SetUniformMaterial(const Math::Vec3& albedo, float metallics, float roughness, float ao);
-	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor, bool submit = true);
+	static void SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor,
+								bool submit = true);
 	static void SubmitUniformLight();
 
 	static void SetTextureCube(const TextureCube* texture);
@@ -340,7 +358,10 @@ private:
 	inline void RenderPass(type::UInt16 renderPassId) { m_renderPassId = renderPassId; }
 	inline type::UInt16 RenderPass() { return m_renderPassId; }
 
-	static inline ShaderHandle CurrentShader() { return ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader; }
+	static inline ShaderHandle CurrentShader()
+	{
+		return ms_defaultShaderOverride != Graphics::InvalidHandle ? ms_defaultShaderOverride : ms_defaultShader;
+	}
 
 	static inline Graphics* Instance() { return ms_instance; }
 
@@ -377,10 +398,11 @@ private:
 	static Graphics* ms_renderPassHelperInstance;
 
 public:
-	#define CHERRYSODA_VERTEX_DECLARATION(VERTEX_T) \
-	static VertexBufferHandle CreateVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
-	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
-	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index, const STL::Vector<VERTEX_T>& vertices); \
+#define CHERRYSODA_VERTEX_DECLARATION(VERTEX_T)                                                            \
+	static VertexBufferHandle CreateVertexBuffer(const STL::Vector<VERTEX_T>& vertices);                   \
+	static DynamicVertexBufferHandle CreateDynamicVertexBuffer(const STL::Vector<VERTEX_T>& vertices);     \
+	static void UpdateDynamicVertexBuffer(DynamicVertexBufferHandle handle, int index,                     \
+										  const STL::Vector<VERTEX_T>& vertices);                          \
 	static TransientVertexBufferHandle CreateTransientVertexBuffer(const STL::Vector<VERTEX_T>& vertices); \
 	static TransientVertexBufferHandle CreateTransientVertexBuffer(const VERTEX_T* vertices, type::UInt32 vertexAmount);
 
@@ -391,7 +413,7 @@ public:
 	CHERRYSODA_VERTEX_DECLARATION(PosColorNormalTexCoord0Vertex);
 	CHERRYSODA_VERTEX_DECLARATION(ImGuiVertex);
 
-	#undef CHERRYSODA_VERTEX_DECLARATION
+#undef CHERRYSODA_VERTEX_DECLARATION
 };
 
 class MeshInterface

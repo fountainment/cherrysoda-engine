@@ -17,18 +17,13 @@ public:
 		GetMesh()->SetPrimitiveType(Graphics::PrimitiveType::Triangles);
 
 		GetMesh()->Clear();
-		GetMesh()->AddTriangle(
-			MK_VERT(Math::Vec3( 0.0f,   1.0f, 0.0f), Color::Red),
-			MK_VERT(Math::Vec3(-0.87f, -0.5f, 0.0f), Color::Green),
-			MK_VERT(Math::Vec3( 0.87f, -0.5f, 0.0f), Color::Blue)
-		);
+		GetMesh()->AddTriangle(MK_VERT(Math::Vec3(0.0f, 1.0f, 0.0f), Color::Red),
+							   MK_VERT(Math::Vec3(-0.87f, -0.5f, 0.0f), Color::Green),
+							   MK_VERT(Math::Vec3(0.87f, -0.5f, 0.0f), Color::Blue));
 		GetMesh()->SubmitBuffer();
 	}
 
-	void Update() override
-	{
-		RotateOnZ(Engine::Instance()->DeltaTime());
-	}
+	void Update() override { RotateOnZ(Engine::Instance()->DeltaTime()); }
 };
 
 FirstTriangle::FirstTriangle() : base()

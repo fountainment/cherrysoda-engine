@@ -50,9 +50,7 @@ enum TileType
 	TILE_COIN = 151
 };
 
-
 class Actor;
-
 
 class PickUpItemCallbackComponent : public Component
 {
@@ -62,12 +60,14 @@ public:
 	PickUpItemCallbackComponent(STL::Action<Actor*> onPickUp) : base(false, false) { OnPickUp(onPickUp); }
 
 	void OnPickUp(STL::Action<Actor*> onPickUp) { m_onPickUp = onPickUp; }
-	void CallOnPickUp(Actor* actor) { if (m_onPickUp != nullptr) m_onPickUp(actor); }
+	void CallOnPickUp(Actor* actor)
+	{
+		if (m_onPickUp != nullptr) m_onPickUp(actor);
+	}
 
 private:
 	STL::Action<Actor*> m_onPickUp = nullptr;
 };
-
 
 class InventoryComponent : public Component
 {
@@ -76,10 +76,7 @@ public:
 
 	InventoryComponent() : base(false, false) {}
 
-	void AddItem(const StringID& id, int amount = 1)
-	{
-		++m_items[id];
-	}
+	void AddItem(const StringID& id, int amount = 1) { ++m_items[id]; }
 
 	bool RemoveItem(const StringID& id, int amount = 1)
 	{
@@ -104,7 +101,6 @@ private:
 	STL::HashMap<StringID, int> m_items;
 };
 
-
 class FrontSensorComponent : public CollidableComponent
 {
 public:
@@ -113,7 +109,6 @@ public:
 	FrontSensorComponent() : base(false, false, true) {}
 };
 
-
 class UpSensorComponent : public CollidableComponent
 {
 public:
@@ -121,7 +116,6 @@ public:
 
 	UpSensorComponent() : base(false, false, true) {}
 };
-
 
 class Actor : public Entity
 {
@@ -187,13 +181,18 @@ public:
 		}
 	}
 
-	inline void Move(float x, float y) { MoveX(x); MoveY(y); }
+	inline void Move(float x, float y)
+	{
+		MoveX(x);
+		MoveY(y);
+	}
 	inline void Move(const Math::Vec2& move) { Move(move.x, move.y); }
 
 	void Update() override
 	{
 		m_isOnGround = false;
-		if (CollideCheck(s_solidTag, Position2D() - Vec2_YUp) || (!CollideCheck(s_platformTag) && CollideCheck(s_platformTag, Position2D() - Vec2_YUp))) {
+		if (CollideCheck(s_solidTag, Position2D() - Vec2_YUp) ||
+			(!CollideCheck(s_platformTag) && CollideCheck(s_platformTag, Position2D() - Vec2_YUp))) {
 			m_isOnGround = true;
 		}
 		m_isAnythingAbove = false;
@@ -232,12 +231,18 @@ public:
 		base::Update();
 	}
 
-	void TryClimb() { if (CollideCheck(s_climbTag)) { m_isOnClimb = true; } }
+	void TryClimb()
+	{
+		if (CollideCheck(s_climbTag)) {
+			m_isOnClimb = true;
+		}
+	}
 	void CancelClimb() { m_isOnClimb = false; }
 
 	void GetDownPlatform()
 	{
-		if (!CollideCheck(s_solidTag, Position2D() - Vec2_YUp) && !CollideCheck(s_platformTag) && CollideCheck(s_platformTag, Position2D() - Vec2_YUp)) {
+		if (!CollideCheck(s_solidTag, Position2D() - Vec2_YUp) && !CollideCheck(s_platformTag) &&
+			CollideCheck(s_platformTag, Position2D() - Vec2_YUp)) {
 			MovePositionY(-1.f);
 			TryClimb();
 		}
@@ -254,26 +259,20 @@ private:
 	bool m_isOnClimb = false;
 };
 
-
 class CameraFollow : public Component
 {
 public:
 	CHERRYSODA_DECLARE_COMPONENT(CameraFollow, Component);
 
 	CameraFollow(Camera* camera, const Math::Rectangle& followRect, const Math::Rectangle& limitRect)
-		: base(true, false)
-		, m_camera(camera)
-		, m_followRect(followRect)
-		, m_limitRect(limitRect)
-	{}
+		: base(true, false), m_camera(camera), m_followRect(followRect), m_limitRect(limitRect)
+	{
+	}
 
 	void Update() override
 	{
-		m_followRect =
-			Math::Rectangle{
-				Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f,
-				Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)
-			};
+		m_followRect = Math::Rectangle{Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f,
+									   Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)};
 
 		auto followRectCopy = m_followRect;
 		auto limitRectCopy = m_limitRect;
@@ -312,17 +311,15 @@ private:
 	Math::Rectangle m_limitRect;
 };
 
-
 class CameraAutoScale : public Component
 {
 public:
 	CHERRYSODA_DECLARE_COMPONENT(CameraAutoScale, Component);
 
 	CameraAutoScale(Camera* camera, Camera* scaleCamera)
-		: base(true, false)
-		, m_camera(camera)
-		, m_scaleCamera(scaleCamera)
-	{}
+		: base(true, false), m_camera(camera), m_scaleCamera(scaleCamera)
+	{
+	}
 
 	void Update() override
 	{
@@ -337,7 +334,6 @@ private:
 	Camera* m_camera;
 	Camera* m_scaleCamera;
 };
-
 
 class PlayerControl : public Component
 {
@@ -409,7 +405,6 @@ public:
 private:
 	float m_speedY = 0.f;
 };
-
 
 MainScene::~MainScene()
 {
@@ -556,9 +551,11 @@ void MainScene::Begin()
 	auto player = new Actor();
 	player->Add(new PlayerControl());
 	player->Add(new CameraAutoScale(camera, finalCamera));
-	player->Add(new CameraFollow(camera,
-		Math::Rectangle{ Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f, Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) },
-		Math::Rectangle{ Vec2_Zero, Math::Vec2(tilesX * tileWidth, tilesY * tileHeight) }));
+	player->Add(
+		new CameraFollow(camera,
+						 Math::Rectangle{Math::Vec2(camera_follow_rect_width, camera_follow_rect_height) * -0.5f,
+										 Math::Vec2(camera_follow_rect_width, camera_follow_rect_height)},
+						 Math::Rectangle{Vec2_Zero, Math::Vec2(tilesX * tileWidth, tilesY * tileHeight)}));
 	player->Add(new InventoryComponent);
 	auto spriteSheet = new SpriteSheet<StringID>(GameApp::GetAtlas()->Get("characters_packed"), 24, 24);
 	spriteSheet->Add("normal", 0);
@@ -587,7 +584,6 @@ void MainScene::Begin()
 
 	base::Begin();
 }
-
 
 void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int tileHeight)
 {
@@ -628,14 +624,16 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 		hitbox->PositionY(3.f);
 		hitbox->Height(12.f);
 		entity->AddTag(s_pickUpItemTag);
-		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ entity->Get<InventoryComponent>()->AddItem("key"); }));
+		entity->Add(
+			new PickUpItemCallbackComponent([](Entity* entity) { entity->Get<InventoryComponent>()->AddItem("key"); }));
 		break;
 	case TILE_DIAMOND:
 		hitbox->Position2D(Math::Vec2(2.f));
 		hitbox->Width(14.f);
 		hitbox->Height(14.f);
 		entity->AddTag(s_pickUpItemTag);
-		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ entity->Get<InventoryComponent>()->AddItem("diamond"); }));
+		entity->Add(new PickUpItemCallbackComponent(
+			[](Entity* entity) { entity->Get<InventoryComponent>()->AddItem("diamond"); }));
 		break;
 	case TILE_ROPE_H_LEFT:
 	case TILE_ROPE_H_MIDDLE:
@@ -646,15 +644,18 @@ void MainScene::InitializeTileObject(int id, Entity* entity, int tileWidth, int 
 		break;
 	case TILE_COIN:
 		entity->AddTag(s_pickUpItemTag);
-		entity->Add(new PickUpItemCallbackComponent([](Entity* entity){ s_coinSound.Stop(); s_coinSound.Play(); entity->Get<InventoryComponent>()->AddItem("coin"); }));
-		spriteSheet->Add(1, 0.5f, { TILE_COIN, TILE_COIN + 1 });
+		entity->Add(new PickUpItemCallbackComponent([](Entity* entity) {
+			s_coinSound.Stop();
+			s_coinSound.Play();
+			entity->Get<InventoryComponent>()->AddItem("coin");
+		}));
+		spriteSheet->Add(1, 0.5f, {TILE_COIN, TILE_COIN + 1});
 		spriteSheet->Play(1);
 		break;
 	}
 
 	entity->AutoDeleteAllInsideWhenRemoved();
 }
-
 
 float MainScene::GetControlAxisX()
 {
@@ -668,7 +669,6 @@ float MainScene::GetControlAxisX()
 	return axisX;
 }
 
-
 float MainScene::GetControlAxisY()
 {
 	float axisY = MInput::GamePads(0)->LeftStickVertical(0.2f);
@@ -681,7 +681,6 @@ float MainScene::GetControlAxisY()
 	return axisY;
 }
 
-
 bool MainScene::GetControlDownPressed()
 {
 	bool result = MInput::GamePads(0)->LeftStickDownPressed(0.2f);
@@ -691,12 +690,10 @@ bool MainScene::GetControlDownPressed()
 	return result;
 }
 
-
 bool MainScene::JumpButtonPressed()
 {
 	return MInput::GamePads(0)->Pressed(Buttons::A) || MInput::Keyboard()->Pressed(Keys::Space, Keys::J);
 }
-
 
 bool MainScene::JumpButtonCheck()
 {

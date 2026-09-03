@@ -10,7 +10,8 @@
 
 namespace cherrysoda {
 
-void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX/* = 0*/, int offsetY/* = 0*/)
+void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX /* = 0*/,
+						int offsetY /* = 0*/)
 {
 	if (STL::IsEmpty(tiles)) return;
 	for (int x = 0; x < static_cast<int>(STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
@@ -62,7 +63,7 @@ Math::Rectangle TileGrid::GetClippedRenderTiles() const
 	right = Math_Min(right, TilesX());
 	top = Math_Min(top, TilesY());
 
-	return Math::Rectangle{ Math::Vec2(left, bottom), Math::Vec2(right - left, top - bottom) };
+	return Math::Rectangle{Math::Vec2(left, bottom), Math::Vec2(right - left, top - bottom)};
 }
 
 void TileGrid::Render()
@@ -73,7 +74,7 @@ void TileGrid::Render()
 void TileGrid::RenderAt(const Math::Vec2& position)
 {
 	if (m_alpha <= 0.f) return;
-	
+
 	auto clip = GetClippedRenderTiles();
 	auto color = m_color * m_alpha;
 
@@ -81,7 +82,8 @@ void TileGrid::RenderAt(const Math::Vec2& position)
 		for (int ty = clip.Bottom(); ty < clip.Top(); ++ty) {
 			const MTexture* tile = m_tiles->Get(tx, ty);
 			if (tile != nullptr) {
-				tile->Draw(Math::Vec3(m_position + Math::Vec2(tx * TileWidth(), ty * TileHeight()), 0.f), Vec3_Zero, color);
+				tile->Draw(Math::Vec3(m_position + Math::Vec2(tx * TileWidth(), ty * TileHeight()), 0.f), Vec3_Zero,
+						   color);
 			}
 		}
 	}

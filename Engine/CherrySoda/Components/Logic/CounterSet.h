@@ -6,15 +6,12 @@
 
 namespace cherrysoda {
 
-template <class T>
-class CounterSet : public Component
+template<class T> class CounterSet : public Component
 {
 public:
 	CHERRYSODA_DECLARE_COMPONENT(CounterSet<T>, Component);
 
-	CounterSet()
-		: base(true, false)
-	{}
+	CounterSet() : base(true, false) {}
 
 	float Get(const T& index)
 	{
@@ -25,10 +22,7 @@ public:
 			return 0.f;
 	}
 
-	void Set(const T& index, float value)
-	{
-		m_counters[index] = m_timer + value;	
-	}
+	void Set(const T& index, float value) { m_counters[index] = m_timer + value; }
 
 	bool Check(const T& index)
 	{
@@ -39,10 +33,7 @@ public:
 			return false;
 	}
 
-	void Update() override
-	{
-		m_timer += Engine::Instance()->DeltaTime();
-	}
+	void Update() override { m_timer += Engine::Instance()->DeltaTime(); }
 
 private:
 	STL::HashMap<T, float> m_counters;

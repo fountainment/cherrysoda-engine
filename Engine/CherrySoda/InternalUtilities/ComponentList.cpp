@@ -137,20 +137,20 @@ void ComponentList::DebugRender(Camera* camera)
 
 void ComponentList::HandleGraphicsReset()
 {
-    LockMode(LockModes::Error);
-    for (auto component : m_components) {
-        component->HandleGraphicsReset();
-    }
-    LockMode(LockModes::Open);
+	LockMode(LockModes::Error);
+	for (auto component : m_components) {
+		component->HandleGraphicsReset();
+	}
+	LockMode(LockModes::Open);
 }
 
 void ComponentList::HandleGraphicsCreate()
 {
-    LockMode(LockModes::Error);
-    for (auto component : m_components) {
-        component->HandleGraphicsCreate();
-    }
-    LockMode(LockModes::Open);
+	LockMode(LockModes::Error);
+	for (auto component : m_components) {
+		component->HandleGraphicsCreate();
+	}
+	LockMode(LockModes::Open);
 }
 
 } // namespace cherrysoda

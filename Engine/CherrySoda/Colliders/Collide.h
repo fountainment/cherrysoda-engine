@@ -10,7 +10,18 @@ namespace cherrysoda {
 class CollidableComponent;
 class Entity;
 
-enum class PointSectors { Center = 0, Top = 1, Bottom = 2, TopLeft = 9, TopRight = 5, Left = 8, Right = 4, BottomLeft = 10, BottomRight = 6 };
+enum class PointSectors
+{
+	Center = 0,
+	Top = 1,
+	Bottom = 2,
+	TopLeft = 9,
+	TopRight = 5,
+	Left = 8,
+	Right = 4,
+	BottomLeft = 10,
+	BottomRight = 6
+};
 CHERRYSODA_DECLARE_ENUM_FLAG(PointSectors);
 
 class Collide
@@ -35,10 +46,12 @@ public:
 
 	// Line
 	static bool LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2);
-	static bool LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2, Math::Vec2& intersection);
+	static bool LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2,
+						  Math::Vec2& intersection);
 
 	// Circle
-	static inline bool CircleToLine(const Math::Vec2& cPosition, float cRadius, const Math::Vec2& lineFrom, const Math::Vec2& lineTo)
+	static inline bool CircleToLine(const Math::Vec2& cPosition, float cRadius, const Math::Vec2& lineFrom,
+									const Math::Vec2& lineTo)
 	{
 		return Math_LengthSq(cPosition - Calc::ClosestPointOnLine(lineFrom, lineTo, cPosition)) < cRadius * cRadius;
 	}
@@ -50,7 +63,8 @@ public:
 		return RectToCircle(rect.X(), rect.Y(), rect.Width(), rect.Height(), cPosition, cRadius);
 	}
 
-	static bool RectToLine(float rX, float rY, float rW, float rH, const Math::Vec2& lineFrom, const Math::Vec2& lineTo);
+	static bool RectToLine(float rX, float rY, float rW, float rH, const Math::Vec2& lineFrom,
+						   const Math::Vec2& lineTo);
 	static inline bool RectToLine(const Math::Rectangle& rect, const Math::Vec2& lineFrom, const Math::Vec2& lineTo)
 	{
 		return RectToLine(rect.X(), rect.Y(), rect.Width(), rect.Height(), lineFrom, lineTo);

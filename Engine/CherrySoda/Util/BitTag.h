@@ -3,8 +3,8 @@
 
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/NumType.h>
-#include <CherrySoda/Util/String.h>
 #include <CherrySoda/Util/STL.h>
+#include <CherrySoda/Util/String.h>
 
 namespace cherrysoda {
 
@@ -23,7 +23,8 @@ public:
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
 		m_name = name.GetStr();
-		CHERRYSODA_ASSERT(!STL::ContainsKey(GetNameMap(), name.GetID()), "Two tags defined with the same name: '" + m_name + "'!\n");
+		CHERRYSODA_ASSERT(!STL::ContainsKey(GetNameMap(), name.GetID()),
+						  "Two tags defined with the same name: '" + m_name + "'!\n");
 #endif
 
 		m_id = ms_totalTags;
@@ -40,7 +41,8 @@ public:
 
 	static BitTag Get(const StringID& name)
 	{
-		CHERRYSODA_ASSERT(STL::ContainsKey(GetNameMap(), name.GetID()), "No tag with the name '" + name.GetStr() + "' has been defined!\n");
+		CHERRYSODA_ASSERT(STL::ContainsKey(GetNameMap(), name.GetID()),
+						  "No tag with the name '" + name.GetStr() + "' has been defined!\n");
 		return GetNameMap()[name];
 	}
 
@@ -56,9 +58,9 @@ private:
 
 	static BitTag ms_byID[TagBitsAmount];
 
-	static inline STL::Map<type::Int32,BitTag>& GetNameMap()
+	static inline STL::Map<type::Int32, BitTag>& GetNameMap()
 	{
-		static STL::Map<type::Int32,BitTag> s_byName;
+		static STL::Map<type::Int32, BitTag> s_byName;
 		return s_byName;
 	}
 };

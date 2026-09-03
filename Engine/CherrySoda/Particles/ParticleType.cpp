@@ -7,7 +7,8 @@
 
 namespace cherrysoda {
 
-Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::Vec2& position, float direction, const Color& color) const
+Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::Vec2& position, float direction,
+							   const Color& color) const
 {
 	particle->m_track = entity;
 	particle->m_type = this;
@@ -27,7 +28,8 @@ Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::V
 
 	// size
 	if (m_sizeRange != 0.f) {
-		particle->m_startSize = particle->m_size = m_size - m_sizeRange * .5f + Calc::GetRandom()->NextFloat(m_sizeRange);
+		particle->m_startSize = particle->m_size =
+			m_size - m_sizeRange * .5f + Calc::GetRandom()->NextFloat(m_sizeRange);
 	}
 	else {
 		particle->m_startSize = particle->m_size = m_size;

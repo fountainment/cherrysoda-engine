@@ -11,9 +11,7 @@ class Grid : public Collider
 public:
 	CHERRYSODA_DECLARE_COLLIDER(Grid, Collider);
 
-	Grid(int cellsX, int cellsY, float cellWidth, float cellHeight)
-		: m_cellWidth(cellWidth)
-		, m_cellHeight(cellHeight)
+	Grid(int cellsX, int cellsY, float cellWidth, float cellHeight) : m_cellWidth(cellWidth), m_cellHeight(cellHeight)
 	{
 		m_data = new VirtualMap<bool>(cellsX, cellsY);
 	}
@@ -44,7 +42,13 @@ public:
 	float Width() const override { return InternalWidth(); }
 	float Height() const override { return InternalHeight(); }
 
-	bool Get(int x, int y) const { if (x >= 0 && y >= 0 && x < CellsX() && y < CellsY()) return m_data->Get(x, y); else return false; }
+	bool Get(int x, int y) const
+	{
+		if (x >= 0 && y >= 0 && x < CellsX() && y < CellsY())
+			return m_data->Get(x, y);
+		else
+			return false;
+	}
 	void Set(int x, int y, bool v) { m_data->Set(x, y, v); }
 
 	inline float CellWidth() const { return m_cellWidth; }

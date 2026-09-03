@@ -8,7 +8,7 @@ namespace cherrysoda {
 
 STL::Stack<Alarm*> Alarm::ms_cached;
 
-Alarm* Alarm::Create(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.f*/, bool start/* = false*/)
+Alarm* Alarm::Create(AlarmMode mode, STL::Action<> onComplete, float duration /* = 1.f*/, bool start /* = false*/)
 {
 	Alarm* alarm = nullptr;
 	if (STL::IsEmpty(ms_cached)) {
@@ -21,14 +21,15 @@ Alarm* Alarm::Create(AlarmMode mode, STL::Action<> onComplete, float duration/* 
 	return alarm;
 }
 
-Alarm* Alarm::Set(Entity* entity, float duration, STL::Action<> onComplete, AlarmMode alarmMode/* = Alarm::AlarmMode::Oneshot*/)
+Alarm* Alarm::Set(Entity* entity, float duration, STL::Action<> onComplete,
+				  AlarmMode alarmMode /* = Alarm::AlarmMode::Oneshot*/)
 {
 	Alarm* alarm = Alarm::Create(alarmMode, onComplete, duration, true);
 	entity->Add(alarm);
 	return alarm;
 }
 
-void Alarm::Init(AlarmMode mode, STL::Action<> onComplete, float duration/* = 1.f*/, bool start/* = false*/)
+void Alarm::Init(AlarmMode mode, STL::Action<> onComplete, float duration /* = 1.f*/, bool start /* = false*/)
 {
 	CHERRYSODA_ASSERT(duration > 0.f, "Alarm duration cannot be <= 0\n");
 

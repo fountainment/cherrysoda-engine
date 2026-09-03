@@ -19,7 +19,7 @@ MTexture MTexture::FromFile(const String& filename)
 MTexture::MTexture(const Texture2D& texture)
 {
 	m_texture = texture;
-	ClipRect({ IVec2_Zero, Math::IVec2(texture.Width(), texture.Height()) });
+	ClipRect({IVec2_Zero, Math::IVec2(texture.Width(), texture.Height())});
 	DrawOffset(IVec2_Zero);
 	ActualDrawOffset(IVec2_Zero);
 	Width(ClipRect().Width());
@@ -39,17 +39,18 @@ MTexture::MTexture(const MTexture& parent, int x, int y, int width, int height)
 }
 
 MTexture::MTexture(const MTexture& parent, const Math::IRectangle& clipRect)
-: MTexture(parent, clipRect.X(), clipRect.Y(), clipRect.Width(), clipRect.Height())
+	: MTexture(parent, clipRect.X(), clipRect.Y(), clipRect.Width(), clipRect.Height())
 {
 }
 
 MTexture::MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect)
-: MTexture(parent, clipRect)
+	: MTexture(parent, clipRect)
 {
 	m_atlasPath = atlasPath;
 }
 
-MTexture::MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect, const Math::Vec2& drawOffset, int width, int height)
+MTexture::MTexture(const MTexture& parent, const StringID& atlasPath, const Math::IRectangle& clipRect,
+				   const Math::Vec2& drawOffset, int width, int height)
 {
 	m_texture = parent.Texture();
 	m_atlasPath = atlasPath;
@@ -71,8 +72,8 @@ MTexture::MTexture(int width, int height, const Color& color)
 		*((type::UInt32*)(data + (i << 2))) = colorValue;
 	}
 	m_texture = Texture2D::FromRGBA(data, width, height);
-	delete [] data;
-	ClipRect({ IVec2_Zero, Math::IVec2(width, height) });
+	delete[] data;
+	ClipRect({IVec2_Zero, Math::IVec2(width, height)});
 	DrawOffset(IVec2_Zero);
 	ActualDrawOffset(IVec2_Zero);
 	Width(width);
@@ -90,7 +91,7 @@ Math::IRectangle MTexture::GetRelativeRect(int x, int y, int width, int height) 
 	int rW = Math_Max(0, Math_Min(atX + width, ClipRect().Right()) - rX);
 	int rH = Math_Max(0, Math_Min(atY + height, ClipRect().Top()) - rY);
 
-	return { Math::IVec2(rX, rY), Math::IVec2(rW, rH) };
+	return {Math::IVec2(rX, rY), Math::IVec2(rW, rH)};
 }
 
 Math::IRectangle MTexture::GetRelativeRect(const Math::IRectangle& rect) const
@@ -108,9 +109,12 @@ MTexture MTexture::GetSubtexture(const Math::IRectangle& rect) const
 	return MTexture(*this, rect);
 }
 
-void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin/* = Vec3_Zero*/, const Color& color/* = Color::White*/, const Math::Vec3& scale/* = Vec3_One*/, float zRotation/* = 0.f*/, SpriteEffects flip/* = SpriteEffects::None*/) const
+void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin /* = Vec3_Zero*/,
+					const Color& color /* = Color::White*/, const Math::Vec3& scale /* = Vec3_One*/,
+					float zRotation /* = 0.f*/, SpriteEffects flip /* = SpriteEffects::None*/) const
 {
-	Draw::GetSpriteBatch()->Draw(Texture(), Math::Vec2(renderPosition), ClipRect(), color, zRotation, Math::Vec2(origin) - ActualDrawOffset(), Math::Vec2(scale), flip, 0.f);
+	Draw::GetSpriteBatch()->Draw(Texture(), Math::Vec2(renderPosition), ClipRect(), color, zRotation,
+								 Math::Vec2(origin) - ActualDrawOffset(), Math::Vec2(scale), flip, 0.f);
 }
 
 void MTexture::SetUtil()

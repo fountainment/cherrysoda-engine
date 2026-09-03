@@ -1,8 +1,8 @@
 #ifndef _CHERRYSODA_COMPONENTS_GRAPHICSCOMPONENT_H_
 #define _CHERRYSODA_COMPONENTS_GRAPHICSCOMPONENT_H_
 
-#include <CherrySoda/Entity.h>
 #include <CherrySoda/Components/Component.h>
+#include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Color.h>
 #include <CherrySoda/Util/Math.h>
 
@@ -39,7 +39,10 @@ public:
 	virtual const Math::Mat4 GetTransformMatrix() const;
 
 private:
-	inline const Math::Vec3 EntityPos() const { return GetEntity() != nullptr ? GetEntity()->Position() : Math::Vec3(0.f); }
+	inline const Math::Vec3 EntityPos() const
+	{
+		return GetEntity() != nullptr ? GetEntity()->Position() : Math::Vec3(0.f);
+	}
 
 	Color m_color = Color::White;
 	Math::Vec3 m_position = Math::Vec3(0.f);

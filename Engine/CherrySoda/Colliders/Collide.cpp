@@ -122,39 +122,34 @@ bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::
 	float bDotDPerp = b.x * d.y - b.y * d.x;
 
 	// if b dot d == 0, it means the lines are parallel so have infinite intersection points
-	if (bDotDPerp == 0.f)
-		return false;
+	if (bDotDPerp == 0.f) return false;
 
 	Math::Vec2 c = b1 - a1;
 	float t = (c.x * d.y - c.y * d.x) / bDotDPerp;
-	if (t < 0.f || t > 1.f)
-		return false;
+	if (t < 0.f || t > 1.f) return false;
 
 	float u = (c.x * b.y - c.y * b.x) / bDotDPerp;
-	if (u < 0.f || u > 1.f)
-		return false;
+	if (u < 0.f || u > 1.f) return false;
 
 	return true;
 }
 
-bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2, Math::Vec2& intersection)
+bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2,
+						Math::Vec2& intersection)
 {
 	Math::Vec2 b = a2 - a1;
 	Math::Vec2 d = b2 - b1;
 	float bDotDPerp = b.x * d.y - b.y * d.x;
 
 	// if b dot d == 0, it means the lines are parallel so have infinite intersection points
-	if (bDotDPerp == 0.f)
-		return false;
+	if (bDotDPerp == 0.f) return false;
 
 	Math::Vec2 c = b1 - a1;
 	float t = (c.x * d.y - c.y * d.x) / bDotDPerp;
-	if (t < 0.f || t > 1.f)
-		return false;
+	if (t < 0.f || t > 1.f) return false;
 
 	float u = (c.x * b.y - c.y * b.x) / bDotDPerp;
-	if (u < 0.f || u > 1.f)
-		return false;
+	if (u < 0.f || u > 1.f) return false;
 
 	intersection = a1 + t * b;
 
@@ -164,8 +159,7 @@ bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::
 bool Collide::RectToCircle(float rX, float rY, float rW, float rH, const Math::Vec2& cPosition, float cRadius)
 {
 	// Check if the rectangle contains the circle's center point
-	if (RectToPoint(rX, rY, rW, rH, cPosition))
-		return true;
+	if (RectToPoint(rX, rY, rW, rH, cPosition)) return true;
 
 	// Check the circle against the relevant edges
 	Math::Vec2 edgeFrom;
@@ -175,29 +169,25 @@ bool Collide::RectToCircle(float rX, float rY, float rW, float rH, const Math::V
 	if (static_cast<int>(sector & PointSectors::Bottom) != 0) {
 		edgeFrom = Math::Vec2(rX, rY);
 		edgeTo = Math::Vec2(rX + rW, rY);
-		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo))
-			return true;
+		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo)) return true;
 	}
 
 	if (static_cast<int>(sector & PointSectors::Top) != 0) {
 		edgeFrom = Math::Vec2(rX, rY + rH);
 		edgeTo = Math::Vec2(rX + rW, rY + rH);
-		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo))
-			return true;
+		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo)) return true;
 	}
 
 	if (static_cast<int>(sector & PointSectors::Left) != 0) {
 		edgeFrom = Math::Vec2(rX, rY);
 		edgeTo = Math::Vec2(rX, rY + rH);
-		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo))
-			return true;
+		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo)) return true;
 	}
 
 	if (static_cast<int>(sector & PointSectors::Right) != 0) {
 		edgeFrom = Math::Vec2(rX + rW, rY);
 		edgeTo = Math::Vec2(rX + rW, rY + rH);
-		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo))
-			return true;
+		if (CircleToLine(cPosition, cRadius, edgeFrom, edgeTo)) return true;
 	}
 
 	return false;
@@ -222,29 +212,25 @@ bool Collide::RectToLine(float rX, float rY, float rW, float rH, const Math::Vec
 		if (static_cast<int>(both & PointSectors::Bottom) != 0) {
 			edgeFrom = Math::Vec2(rX, rY);
 			edgeTo = Math::Vec2(rX + rW, rY);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo))
-				return true;
+			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
 		}
 
 		if (static_cast<int>(both & PointSectors::Top) != 0) {
 			edgeFrom = Math::Vec2(rX, rY + rH);
 			edgeTo = Math::Vec2(rX + rW, rY + rH);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo))
-				return true;
+			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
 		}
 
 		if (static_cast<int>(both & PointSectors::Left) != 0) {
 			edgeFrom = Math::Vec2(rX, rY);
 			edgeTo = Math::Vec2(rX, rY + rH);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo))
-				return true;
+			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
 		}
 
 		if (static_cast<int>(both & PointSectors::Right) != 0) {
 			edgeFrom = Math::Vec2(rX + rW, rY);
 			edgeTo = Math::Vec2(rX + rW, rY + rH);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo))
-				return true;
+			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
 		}
 	}
 

@@ -9,7 +9,7 @@ namespace cherrysoda {
 
 STL::Stack<Tween*> Tween::ms_cached;
 
-Tween* Tween::Create(TweenMode mode, Easer easer/* = nullptr*/, float duration/* = 1.f*/, bool start/* = false*/)
+Tween* Tween::Create(TweenMode mode, Easer easer /* = nullptr*/, float duration /* = 1.f*/, bool start /* = false*/)
 {
 	Tween* tween = nullptr;
 	if (STL::IsEmpty(ms_cached)) {
@@ -42,7 +42,7 @@ void Tween::Init(TweenMode mode, Easer easer, float duration, bool start)
 
 void Tween::Removed(Entity* entity)
 {
-	CancleAutoDelete();	
+	CancleAutoDelete();
 	base::Removed(entity);
 	STL::Push(ms_cached, this);
 }
@@ -97,7 +97,7 @@ void Tween::Update()
 	}
 }
 
-void Tween::Start(bool reverse/* = false*/)
+void Tween::Start(bool reverse /* = false*/)
 {
 	m_startedReversed = (m_reverse = reverse);
 	m_timeLeft = m_duration;

@@ -5,7 +5,8 @@
 
 namespace cherrysoda {
 
-ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, int amount, float interval)
+ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position,
+								 const Math::Vec2& range, int amount, float interval)
 	: base(true, false)
 {
 	m_system = system;
@@ -16,14 +17,17 @@ ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* typ
 	m_interval = interval;
 }
 
-ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position, const Math::Vec2& range, float direction, int amount, float interval)
+ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Math::Vec2& position,
+								 const Math::Vec2& range, float direction, int amount, float interval)
 	: ParticleEmitter(system, type, position, range, amount, interval)
 {
 	m_direction = direction;
 	m_hasDirection = true;
 }
 
-ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Entity* track, const Math::Vec2& position, const Math::Vec2& range, float direction, int amount, float interval)
+ParticleEmitter::ParticleEmitter(ParticleSystem* system, const ParticleType* type, const Entity* track,
+								 const Math::Vec2& position, const Math::Vec2& range, float direction, int amount,
+								 float interval)
 	: ParticleEmitter(system, type, position, range, amount, interval)
 {
 	m_direction = direction;

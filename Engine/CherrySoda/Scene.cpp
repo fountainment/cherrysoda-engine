@@ -5,8 +5,8 @@
 #include <CherrySoda/InternalUtilities/EntityList.h>
 #include <CherrySoda/InternalUtilities/RendererList.h>
 #include <CherrySoda/InternalUtilities/TagLists.h>
-#include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Renderers/EverythingRenderer.h>
+#include <CherrySoda/Renderers/Renderer.h>
 #include <CherrySoda/Util/BitTag.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
@@ -111,7 +111,7 @@ Renderer* Scene::FirstRenderer()
 	return Renderers()->First();
 }
 
-const STL::List<Entity*>& Scene::operator [] (const BitTag& tag) const
+const STL::List<Entity*>& Scene::operator[](const BitTag& tag) const
 {
 	return (*m_tagLists)[tag.ID()];
 }
@@ -202,7 +202,7 @@ void Scene::INTERNAL_SetActualDepth(Entity* entity)
 	for (int i = 0; i < BitTag::TotalTags(); ++i) {
 		if (entity->TagCheck(1 << i)) {
 			m_tagLists->MarkUnsorted(i);
-	 	}
+		}
 	}
 }
 
@@ -239,8 +239,7 @@ Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, in
 	Math::Vec2 at = from + add;
 
 	for (int i = 0; i <= amount; ++i) {
-		if (CollideCheck(at, tag))
-			return prev;
+		if (CollideCheck(at, tag)) return prev;
 		prev = at;
 		at += add;
 	}
