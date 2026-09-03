@@ -65,3 +65,6 @@ External/android-project/local.properties
 
 # MacOS
 .DS_Store
+
+# ZCode session data
+.zcode/
