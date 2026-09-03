@@ -22,9 +22,11 @@ void Log::DebugOutput(const String& output, int channel)
 void Log::LogOutput(const String& output, int channel)
 {
 	DebugOutput(output, channel);
-	FILE* f = std::fopen("cherrysoda.log", "a");
-	std::fprintf(f, "%s", output.c_str());
-	std::fclose(f);
+	static FILE* s_logFile = std::fopen("cherrysoda.log", "a");
+	if (s_logFile != nullptr) {
+		std::fprintf(s_logFile, "%s", output.c_str());
+		std::fflush(s_logFile);
+	}
 }
 
 } // namespace cherrysoda
