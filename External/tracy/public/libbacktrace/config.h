@@ -1,5 +1,4 @@
-#include <limits.h>
-#if __WORDSIZE == 64
+#if __SIZEOF_POINTER__ == 8
 #  define BACKTRACE_ELF_SIZE 64
 #else
 #  define BACKTRACE_ELF_SIZE 32
