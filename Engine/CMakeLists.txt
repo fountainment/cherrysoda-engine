@@ -122,6 +122,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Calc.h
   CherrySoda/Util/Camera.cpp
   CherrySoda/Util/Camera.h
+  CherrySoda/Util/CheatListener.cpp
+  CherrySoda/Util/CheatListener.h
   CherrySoda/Util/ChoiceSet.h
   CherrySoda/Util/Chooser.h
   CherrySoda/Util/Color.cpp
@@ -132,6 +134,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Draw.h
   CherrySoda/Util/Ease.cpp
   CherrySoda/Util/Ease.h
+  CherrySoda/Util/ErrorLog.cpp
+  CherrySoda/Util/ErrorLog.h
   CherrySoda/Util/GUI.cpp
   CherrySoda/Util/GUI.h
   CherrySoda/Util/Literals.h
@@ -147,6 +151,8 @@ set(ENGINE_SRC
   CherrySoda/Util/Pool.h
   CherrySoda/Util/Profile.cpp
   CherrySoda/Util/Profile.h
+  CherrySoda/Util/SimpleCurve.cpp
+  CherrySoda/Util/SimpleCurve.h
   CherrySoda/Util/Json.cpp
   CherrySoda/Util/Json.h
   CherrySoda/Util/STL.h

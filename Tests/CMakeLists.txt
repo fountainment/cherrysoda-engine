@@ -43,5 +43,8 @@ add_cherrysoda_executable(TrackerTest)
 set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h TilerTest.cpp)
 add_cherrysoda_executable(TilerTest)
 
+set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h UtilExtTest.cpp)
+add_cherrysoda_executable(UtilExtTest)
+
 set(CHERRYSODA_EXECUTABLE_SRC TestMain.cpp Test.h AllTests.cpp)
 add_cherrysoda_executable(AllTests)
