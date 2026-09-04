@@ -245,7 +245,9 @@
         {
             var s = prompt(title, "");
             if (s != null) {
-                var ptr = Module['allocate'](Module['intArrayFromString'](s), Module['ALLOC_NORMAL']);
+                var size = Module['lengthBytesUTF8'](s) + 1;
+                var ptr = Module['_malloc'](size);
+                Module['stringToUTF8'](s, ptr, size);
                 Module['_UnserializeSettingForJS'](ptr);
                 Module['_free'](ptr);
             }
