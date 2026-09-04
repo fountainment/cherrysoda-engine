@@ -5,11 +5,12 @@
 #include <CherrySoda/Util/Time.h>
 
 #include <cstdio>
+#include <cstring>
 #include <ctime>
 #include <fstream>
 #include <sstream>
 
-#if defined(__APPLE__)
+#ifdef __APPLE__
 #define CHERRYSODA_ERRORLOG_OPEN_COMMAND "open \"%s\""
 #elif defined(_WIN32)
 #define CHERRYSODA_ERRORLOG_OPEN_COMMAND "start \"\" \"%s\""
@@ -42,15 +43,15 @@ void ErrorLog::Write(const String& str)
 		   << " Error Log\n"
 		   << Marker << "\n\n";
 
-	std::time_t now = static_cast<std::time_t>(Time::GetSystemTime());
+	auto now = static_cast<std::time_t>(Time::GetSystemTime());
 	char timeBuffer[64];
-	std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+	(void)std::strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
 	output << timeBuffer << "\n";
 
 	output << str << "\n";
 
 	if (!content.empty()) {
-		size_t at = content.find(Marker) + sizeof(Marker) - 1;
+		size_t at = content.find(Marker) + std::strlen(Marker) - 1;
 		output << content.substr(at);
 	}
 
@@ -62,8 +63,8 @@ void ErrorLog::Open()
 {
 	if (Calc::FileExists(ms_filename)) {
 		char command[512];
-		std::snprintf(command, sizeof(command), CHERRYSODA_ERRORLOG_OPEN_COMMAND, ms_filename.c_str());
-		std::system(command);
+		(void)std::snprintf(command, sizeof(command), CHERRYSODA_ERRORLOG_OPEN_COMMAND, ms_filename.c_str());
+		(void)std::system(command); // NOLINT(bugprone-command-processor,cert-env33-c) — intentionally open the log file
 	}
 }
 
