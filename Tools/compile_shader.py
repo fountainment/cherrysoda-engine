@@ -7,6 +7,12 @@ import sys
 import argparse
 
 
+def warn_compile_failed(shader, profile):
+    print('WARNING: shaderc failed on "%s" with profile "%s".' % (shader, profile))
+    print('         If the profile is unsupported (e.g. wgsl on the stale prebuilt Tools/bin/shaderc),')
+    print('         build a newer one with the shaderc preset to get Tools/bin/shaderc.local.')
+
+
 def compile_shader_program(shader_dir, shader_name):
     print('Compiling shader "' + shader_name + '" ...')
     vert_shader = cherry.join_path(shader_dir, 'shaders', 'vs_' + shader_name + '.sc')
@@ -35,8 +41,14 @@ def compile_shader_program(shader_dir, shader_name):
     for info_arr in compile_info:
         platform, profile, opt_level, shader_id = info_arr
         folder    = cherry.join_path(shader_out_dir, shader_id)
-        cherry.compile_shader(vert_shader, vert_out % folder, platform, 'vertex',   include_dirs, profile, opt_level)
-        cherry.compile_shader(frag_shader, frag_out % folder, platform, 'fragment', include_dirs, profile, opt_level)
+        if not cherry.compile_shader(vert_shader, vert_out % folder, platform, 'vertex',   include_dirs, profile, opt_level):
+            warn_compile_failed(vert_shader, profile)
+        if not cherry.compile_shader(frag_shader, frag_out % folder, platform, 'fragment', include_dirs, profile, opt_level):
+            warn_compile_failed(frag_shader, profile)
+
+
+def write_stub(file, name):
+    file.write('static const uint8_t %s[1] = { 0x00 };\n' % (name,))
 
 
 def compile_embedded_shader_program(shader_dir, shader_name):
@@ -100,10 +112,16 @@ def compile_embedded_shader_program(shader_dir, shader_name):
         profile   = info_dict.get('profile')
         opt_level = info_dict.get('opt_level')
         suffix    = info_dict.get('suffix', '')
-        cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dirs, profile, opt_level, 'vs_' + shader_name + '_' + suffix)
-        vs_file.write(cherry.read_file(shader_tmp))
-        cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dirs, profile, opt_level, 'fs_' + shader_name + '_' + suffix)
-        fs_file.write(cherry.read_file(shader_tmp))
+        if cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dirs, profile, opt_level, 'vs_' + shader_name + '_' + suffix):
+            vs_file.write(cherry.read_file(shader_tmp))
+        else:
+            warn_compile_failed(vert_shader, profile)
+            write_stub(vs_file, 'vs_' + shader_name + '_' + suffix)
+        if cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dirs, profile, opt_level, 'fs_' + shader_name + '_' + suffix):
+            fs_file.write(cherry.read_file(shader_tmp))
+        else:
+            warn_compile_failed(frag_shader, profile)
+            write_stub(fs_file, 'fs_' + shader_name + '_' + suffix)
     vs_file.write('extern const uint8_t* vs_' + shader_name + '_pssl;\n')
     vs_file.write('extern const uint32_t vs_' + shader_name + '_pssl_size;\n')
     fs_file.write('extern const uint8_t* fs_' + shader_name + '_pssl;\n')
@@ -118,10 +136,16 @@ def compile_embedded_shader_program(shader_dir, shader_name):
             profile   = info_dict.get('profile')
             opt_level = info_dict.get('opt_level')
             suffix    = info_dict.get('suffix', '')
-            cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dirs, profile, opt_level, 'vs_' + shader_name + '_' + suffix)
-            vs_file.write(cherry.read_file(shader_tmp))
-            cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dirs, profile, opt_level, 'fs_' + shader_name + '_' + suffix)
-            fs_file.write(cherry.read_file(shader_tmp))
+            if cherry.compile_shader(vert_shader, shader_tmp, platform, 'vertex',   include_dirs, profile, opt_level, 'vs_' + shader_name + '_' + suffix):
+                vs_file.write(cherry.read_file(shader_tmp))
+            else:
+                warn_compile_failed(vert_shader, profile)
+                write_stub(vs_file, 'vs_' + shader_name + '_' + suffix)
+            if cherry.compile_shader(frag_shader, shader_tmp, platform, 'fragment', include_dirs, profile, opt_level, 'fs_' + shader_name + '_' + suffix):
+                fs_file.write(cherry.read_file(shader_tmp))
+            else:
+                warn_compile_failed(frag_shader, profile)
+                write_stub(fs_file, 'fs_' + shader_name + '_' + suffix)
         vs_file.close()
         fs_file.close()
     else:

@@ -87,7 +87,7 @@ def make_sure_folder_exist(f):
 def execute_command(command, working_dir=None, show_command=False):
     if show_command:
         print('$ ' + ' '.join(command))
-    subprocess.call(command, cwd=working_dir)
+    return subprocess.call(command, cwd=working_dir)
 
 
 def compile_shader(shader_source, output, platform, shader_type, include_paths=None, profile=None, opt_level=None, bin2c_array=None):
@@ -105,7 +105,7 @@ def compile_shader(shader_source, output, platform, shader_type, include_paths=N
     make_sure_folder_exist(output)
     if shaderc_show_command:
         print(' '.join(command))
-    execute_command(command)
+    return execute_command(command) == 0
 
 
 def download_url_to(url, dest):
