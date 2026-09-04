@@ -24,8 +24,8 @@ public:
 
 	inline VERTEX_T* VertexBufferData() { return STL::Data(m_verticesFront); }
 	inline type::UInt16* IndexBufferData() { return STL::Data(m_indicesFront); }
-	inline size_t VertexBufferSize() const { return STL::Count(m_verticesFront); }
-	inline size_t IndexBufferSize() const { return STL::Count(m_indicesFront); }
+	inline size_t VertexBufferSize() const override { return STL::Count(m_verticesFront); }
+	inline size_t IndexBufferSize() const override { return STL::Count(m_indicesFront); }
 
 	inline void AddVertex(const VERTEX_T& vertex)
 	{
@@ -73,7 +73,7 @@ public:
 	inline void AddTriangle(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 3 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
-		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
+		const auto i = static_cast<type::UInt16>(VertexAmount());
 		STL::Add(m_vertices, v1);
 		STL::Add(m_vertices, v2);
 		STL::Add(m_vertices, v3);
@@ -91,7 +91,7 @@ public:
 	inline void AddQuad(const VERTEX_T& v1, const VERTEX_T& v2, const VERTEX_T& v3, const VERTEX_T& v4)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 4 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
-		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
+		const auto i = static_cast<type::UInt16>(VertexAmount());
 		STL::Add(m_vertices, v1);
 		STL::Add(m_vertices, v2);
 		STL::Add(m_vertices, v3);
@@ -113,7 +113,7 @@ public:
 						const VERTEX_T& v5, const VERTEX_T& v6, const VERTEX_T& v7, const VERTEX_T& v8)
 	{
 		CHERRYSODA_ASSERT(VertexAmount() + 8 <= UINT16_MAX, "Vertex amount beyond UINT16_MAX!\n");
-		const type::UInt16 i = static_cast<type::UInt16>(VertexAmount());
+		const auto i = static_cast<type::UInt16>(VertexAmount());
 		STL::AddRange(m_vertices, {v1, v2, v3, v4, v5, v6, v7, v8});
 		STL::AddRange(m_indices, {i, i + 1_su, i + 2_su, i + 1_su, i + 3_su, i + 2_su});
 		STL::AddRange(m_indices, {i + 4_su, i + 6_su, i + 5_su, i + 5_su, i + 6_su, i + 7_su});
@@ -135,9 +135,9 @@ public:
 		STL::Reserve(m_indices, IndexAmount() + i);
 	}
 
-	inline Graphics::BufferType GetBufferType() const { return m_bufferType; }
+	inline Graphics::BufferType GetBufferType() const override { return m_bufferType; }
 
-	inline void SetBufferType(Graphics::BufferType buffertype)
+	inline void SetBufferType(Graphics::BufferType buffertype) override
 	{
 		if (m_bufferType != buffertype) {
 			DestroyBuffer();
@@ -146,9 +146,9 @@ public:
 		}
 	}
 
-	inline Graphics::PrimitiveType GetPrimitiveType() const { return m_primitiveType; }
+	inline Graphics::PrimitiveType GetPrimitiveType() const override { return m_primitiveType; }
 
-	inline void SetPrimitiveType(Graphics::PrimitiveType primitiveType) { m_primitiveType = primitiveType; }
+	inline void SetPrimitiveType(Graphics::PrimitiveType primitiveType) override { m_primitiveType = primitiveType; }
 
 	void DestroyBuffer()
 	{
@@ -223,20 +223,20 @@ public:
 	void SubmitBufferWithMeshInfo(const Graphics::MeshInfo& mesh)
 	{
 		Clear();
-		for (auto& vertex : mesh.vertices) {
+		for (const auto& vertex : mesh.vertices) {
 			AddVertex(MK_VERT(vertex));
 		}
 		STL::AddRange(m_indices, mesh.indices);
 		SubmitBuffer();
 	}
 
-	inline Graphics::BufferHandle GetVertexBuffer() const { return m_vertexBuffer; }
-	inline Graphics::BufferHandle GetIndexBuffer() const { return m_indexBuffer; }
-	inline Graphics::TransientVertexBufferHandle CreateTransientVertexBuffer() const
+	inline Graphics::BufferHandle GetVertexBuffer() const override { return m_vertexBuffer; }
+	inline Graphics::BufferHandle GetIndexBuffer() const override { return m_indexBuffer; }
+	inline Graphics::TransientVertexBufferHandle CreateTransientVertexBuffer() const override
 	{
 		return Graphics::CreateTransientVertexBuffer(m_verticesFront);
 	}
-	inline Graphics::TransientIndexBufferHandle CreateTransientIndexBuffer() const
+	inline Graphics::TransientIndexBufferHandle CreateTransientIndexBuffer() const override
 	{
 		return Graphics::CreateTransientIndexBuffer(m_indicesFront);
 	}

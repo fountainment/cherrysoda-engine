@@ -71,7 +71,7 @@ public:
 
 		Math::Vec2 Value() const override
 		{
-			Math::Vec2 value = Vec2_Zero;
+			auto value = Vec2_Zero;
 
 			if (MInput::GamePads(m_gamepadIndex)->DPadRightCheck()) {
 				value.x = 1.f;

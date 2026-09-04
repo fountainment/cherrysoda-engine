@@ -2,6 +2,7 @@
 #define _CHERRYSODA_COMPONENTS_GRAPHICS_SPRITESHEET_H_
 
 #include <CherrySoda/Components/Graphics/Image.h>
+#include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
@@ -102,10 +103,9 @@ public:
 
 	bool IsPlaying(const T& id)
 	{
-		if (!m_played)
-			return false;
-		else
-			return m_currentAnimationID == id;
+		if (!m_played) return false;
+
+		return m_currentAnimationID == id;
 	}
 
 	void Play(const T& id, bool restart = false)
@@ -140,18 +140,16 @@ public:
 
 	float Width() const override
 	{
-		if (STL::IsNotEmpty(m_frames))
-			return m_frames[0].Width();
-		else
-			return 0.f;
+		if (STL::IsNotEmpty(m_frames)) return m_frames[0].Width();
+
+		return 0.f;
 	}
 
 	float Height() const override
 	{
-		if (STL::IsNotEmpty(m_frames))
-			return m_frames[0].Height();
-		else
-			return 0.f;
+		if (STL::IsNotEmpty(m_frames)) return m_frames[0].Height();
+
+		return 0.f;
 	}
 
 private:

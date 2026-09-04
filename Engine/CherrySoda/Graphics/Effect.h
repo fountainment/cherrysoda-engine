@@ -23,14 +23,14 @@ public:
 		m_program = Graphics::CreateShaderProgramFromEmbedded("vs_" + name, "fs_" + name);
 	}
 
-	static const Effect LoadEffectFromFile(const String& name)
+	static Effect LoadEffectFromFile(const String& name)
 	{
 		Effect effect;
 		effect.LoadFromFile(name);
 		return effect;
 	}
 
-	static const Effect LoadEffectFromEmbedded(const String& name)
+	static Effect LoadEffectFromEmbedded(const String& name)
 	{
 		Effect effect;
 		effect.LoadFromEmbedded(name);

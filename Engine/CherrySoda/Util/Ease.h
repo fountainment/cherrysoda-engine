@@ -48,19 +48,19 @@ public:
 	static const Easer BounceOut;
 	static const Easer BounceInOut;
 
-	static inline Easer Invert(Easer easer)
+	static inline Easer Invert(const Easer& easer)
 	{
 		return [easer](float t) { return 1.f - easer(1.f - t); };
 	}
 
-	static inline Easer Follow(Easer first, Easer second)
+	static inline Easer Follow(const Easer& first, const Easer& second)
 	{
 		return [first, second](float t) {
-			return (t <= 0.5f) ? first(t * 2.f) * 0.5f : second(t * 2.f - 1.f) * 0.5f + 0.5f;
+			return (t <= 0.5f) ? first(t * 2.f) * 0.5f : (second((t * 2.f) - 1.f) * 0.5f) + 0.5f;
 		};
 	}
 
-	static inline float UpDown(float eased) { return (eased <= 0.5f) ? eased * 2.f : 1.f - (eased - .5f) * 2.f; }
+	static inline float UpDown(float eased) { return (eased <= 0.5f) ? eased * 2.f : 1.f - ((eased - .5f) * 2.f); }
 };
 
 } // namespace cherrysoda

@@ -6,6 +6,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 template<class T> class Chooser
@@ -19,7 +21,7 @@ private:
 
 		Choice() = default;
 
-		Choice(const T& value, float weight) : m_value(value), m_weight(weight) {}
+		Choice(T value, float weight) : m_value(std::move(value)), m_weight(weight) {}
 	};
 
 public:
@@ -40,7 +42,7 @@ public:
 		if (m_totalWeight <= 0) {
 			return m_defaultChoice.m_value;
 		}
-		else if (STL::Count(m_choices) == 1) {
+		if (STL::Count(m_choices) == 1) {
 			return m_choices[0].m_value;
 		}
 

@@ -11,6 +11,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 class Sprite : public Image
@@ -31,7 +33,7 @@ public:
 		m_path = path;
 	}
 
-	virtual ~Sprite()
+	~Sprite() override
 	{
 		if (m_ownAtlas && m_atlas != nullptr) {
 			delete m_atlas;
@@ -46,7 +48,7 @@ public:
 
 	MTexture GetFrame(const String& animation, int frame) const { return m_animations.at(animation).m_frames[frame]; }
 
-	Math::Vec2 Center() const { return Math::Vec2(Width() * .5f, Height() * .5f); }
+	Math::Vec2 Center() const { return {Width() * .5f, Height() * .5f}; }
 
 	void Update() override;
 	void SetFrame(const MTexture& texture);
@@ -65,28 +67,29 @@ public:
 	inline void Add(const StringID& id, const String& path, float delay = 1.f / 15.f,
 					Chooser<StringID> into = Chooser<StringID>())
 	{
-		m_animations[id] = {delay, GetFrames(path), into};
+		m_animations[id] = {.m_delay = delay, .m_frames = GetFrames(path), .m_goto = std::move(into)};
 	}
 
 	void Add(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
 	{
-		m_animations[id] = {delay, GetFrames(path, frames), Chooser<StringID>()};
+		m_animations[id] = {.m_delay = delay, .m_frames = GetFrames(path, frames), .m_goto = Chooser<StringID>()};
 	}
 
 	inline void Add(const StringID& id, const String& path, float delay, Chooser<StringID> into,
 					const STL::Vector<int>& frames)
 	{
-		m_animations[id] = {delay, GetFrames(path, frames), into};
+		m_animations[id] = {.m_delay = delay, .m_frames = GetFrames(path, frames), .m_goto = std::move(into)};
 	}
 
 	inline void AddLoop(const StringID& id, const String& path, float delay = 1.f / 15.f)
 	{
-		m_animations[id] = {delay, GetFrames(path), Chooser<StringID>(id, 1.f)};
+		m_animations[id] = {.m_delay = delay, .m_frames = GetFrames(path), .m_goto = Chooser<StringID>(id, 1.f)};
 	}
 
 	inline void AddLoop(const StringID& id, const String& path, float delay, const STL::Vector<int>& frames)
 	{
-		m_animations[id] = {delay, GetFrames(path, frames), Chooser<StringID>(id, 1.f)};
+		m_animations[id] = {
+			.m_delay = delay, .m_frames = GetFrames(path, frames), .m_goto = Chooser<StringID>(id, 1.f)};
 	}
 
 	void ClearAnimations()
@@ -117,7 +120,7 @@ public:
 	}
 	STL::Func<bool> WaitRoutine()
 	{
-		return Coroutines::WaitUntil([this]() { return !Animating(); });
+		return Coroutines::WaitUntil([this] { return !Animating(); });
 	}
 
 	// Draws the current frame clipped to a rectangle in texture coordinates
@@ -134,12 +137,7 @@ public:
 
 	inline bool IsPlaying(const STL::Vector<StringID>& ids) const
 	{
-		for (auto id : ids) {
-			if (IsPlaying(id)) {
-				return true;
-			}
-		}
-		return false;
+		return std::ranges::any_of(ids, [this](const StringID& id) { return IsPlaying(id); });
 	}
 
 	inline void Stop()
@@ -154,11 +152,11 @@ public:
 
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(UseRawDeltaTime, m_useRawDeltaTime);
 
-	inline void OnFinish(STL::Action<StringID> onFinish) { m_onFinish = onFinish; }
-	inline void OnLoop(STL::Action<StringID> onLoop) { m_onLoop = onLoop; }
-	inline void OnFrameChange(STL::Action<StringID> onFrameChange) { m_onFrameChange = onFrameChange; }
-	inline void OnLastFrame(STL::Action<StringID> onLastFrame) { m_onLastFrame = onLastFrame; }
-	inline void OnChange(STL::Action<StringID, StringID> onChange) { m_onChange = onChange; }
+	inline void OnFinish(STL::Action<StringID> onFinish) { m_onFinish = std::move(onFinish); }
+	inline void OnLoop(STL::Action<StringID> onLoop) { m_onLoop = std::move(onLoop); }
+	inline void OnFrameChange(STL::Action<StringID> onFrameChange) { m_onFrameChange = std::move(onFrameChange); }
+	inline void OnLastFrame(STL::Action<StringID> onLastFrame) { m_onLastFrame = std::move(onLastFrame); }
+	inline void OnChange(STL::Action<StringID, StringID> onChange) { m_onChange = std::move(onChange); }
 
 	float Width() const override { return m_width; }
 	float Height() const override { return m_height; }
@@ -169,15 +167,14 @@ public:
 	inline int CurrentAnimationFrame() const { return m_currentAnimationFrame; }
 	inline int CurrentAnimationTotalFrame() const
 	{
-		if (m_currentAnimation != nullptr)
-			return STL::Count(m_currentAnimation->m_frames);
-		else
-			return 0;
+		if (m_currentAnimation != nullptr) return STL::Count(m_currentAnimation->m_frames);
+
+		return 0;
 	}
 
 	inline Sprite* CreateClone()
 	{
-		auto sprite = new Sprite();
+		auto* sprite = new Sprite();
 		sprite->AutoDeleteWhenRemoved();
 		return CloneInto(sprite);
 	}

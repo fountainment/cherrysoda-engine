@@ -28,16 +28,16 @@ public:
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(double, FreezeTimer, m_freezeTimer);
 	CHERRYSODA_GETTER_SETTER_OF_BOOL(ExitOnEscapeKeypress, m_exitOnEscapeKeypress);
 
-	inline int GetWidth() { return m_width; }
-	inline int GetHeight() { return m_height; }
-	inline Math::IVec2 GetViewSize() { return Math::IVec2(GetWidth(), GetHeight()); }
-	inline float GetAspectRatio() { return static_cast<float>(GetWidth()) / static_cast<float>(GetHeight()); }
-	inline int GetWindowWidth() { return m_windowWidth; }
-	inline int GetWindowHeight() { return m_windowHeight; }
-	inline Math::IVec2 GetWindowSize() { return Math::IVec2(GetWindowWidth(), GetWindowHeight()); }
-	inline const String GetTitle() { return m_title; }
+	inline int GetWidth() const { return m_width; }
+	inline int GetHeight() const { return m_height; }
+	inline Math::IVec2 GetViewSize() const { return {GetWidth(), GetHeight()}; }
+	inline float GetAspectRatio() const { return static_cast<float>(GetWidth()) / static_cast<float>(GetHeight()); }
+	inline int GetWindowWidth() const { return m_windowWidth; }
+	inline int GetWindowHeight() const { return m_windowHeight; }
+	inline Math::IVec2 GetWindowSize() const { return {GetWindowWidth(), GetWindowHeight()}; }
+	inline String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
-	inline const Color GetClearColor() { return m_clearColor; }
+	inline Color GetClearColor() { return m_clearColor; }
 	void SetClearColor(const Color& color);
 	Math::IVec2 GetWindowPosition();
 	void SetMousePosition(const Math::IVec2& pos);
@@ -58,8 +58,8 @@ public:
 	inline float DeltaTime() const { return static_cast<float>(m_deltaTime); }
 	inline double TimeRate() const { return m_timeRate; }
 	inline void TimeRate(double timeRate) { m_timeRate = timeRate; }
-	inline int FPS() { return m_fps; }
-	inline bool ConsoleOpened() { return m_consoleOpened; }
+	inline int FPS() const { return m_fps; }
+	inline bool ConsoleOpened() const { return m_consoleOpened; }
 	inline void OpenConsole() { m_consoleOpened = true; }
 	inline void CloseConsole() { m_consoleOpened = false; }
 	inline void ToggleConsole() { m_consoleOpened = !m_consoleOpened; }
@@ -78,9 +78,9 @@ public:
 	inline Scene* GetScene() { return m_scene; }
 	void SetScene(Scene* scene);
 
-	inline bool IsActive() { return m_active; }
+	inline bool IsActive() const { return m_active; }
 
-	inline bool Initialized() { return m_initialized; }
+	inline bool Initialized() const { return m_initialized; }
 
 	static inline Engine* Instance() { return ms_instance; }
 

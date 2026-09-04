@@ -3,9 +3,7 @@
 
 #include <cstdint>
 
-namespace cherrysoda {
-
-namespace type {
+namespace cherrysoda::type {
 
 typedef std::int8_t Int8;
 typedef std::int16_t Int16;
@@ -17,8 +15,6 @@ typedef std::uint16_t UInt16;
 typedef std::uint32_t UInt32;
 typedef std::uint64_t UInt64;
 
-} // namespace type
-
-} // namespace cherrysoda
+} // namespace cherrysoda::type
 
 #endif // _CHERRYSODA_UTIL_NUMTYPE_H_

@@ -6,6 +6,8 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 class Shaker : public Component
@@ -16,7 +18,7 @@ public:
 	Shaker(bool on = true, STL::Action<Math::Vec2> onShake = nullptr) : base(true, false)
 	{
 		On(on);
-		m_onShake = onShake;
+		m_onShake = std::move(onShake);
 	}
 
 	Shaker* ShakeFor(float seconds, bool removeOnFinish = false)

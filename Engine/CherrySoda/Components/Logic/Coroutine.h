@@ -59,9 +59,9 @@ inline STL::Func<bool> WaitFrames(int frames)
 }
 
 // Wait until the condition returns true
-inline STL::Func<bool> WaitUntil(STL::Func<bool> condition)
+inline STL::Func<bool> WaitUntil(const STL::Func<bool>& condition)
 {
-	return [condition]() { return condition == nullptr || condition(); };
+	return [condition] { return condition == nullptr || condition(); };
 }
 
 // Run the steps one after another; finishes when the last one has
@@ -120,9 +120,9 @@ inline STL::Func<bool> Repeat(STL::Func<STL::Func<bool>> createBody, int count =
 }
 
 // Run the action every frame; never finishes on its own
-inline STL::Func<bool> EachFrame(STL::Action<> action)
+inline STL::Func<bool> EachFrame(const STL::Action<>& action)
 {
-	return [action]() {
+	return [action] {
 		if (action != nullptr) {
 			action();
 		}

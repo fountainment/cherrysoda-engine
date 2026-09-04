@@ -38,7 +38,7 @@ public:
 
 	static Atlas* FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
 	{
-		Atlas* atlas = new Atlas;
+		auto* atlas = new Atlas;
 		ReadAtlasData(atlas, path, format);
 		return atlas;
 	}

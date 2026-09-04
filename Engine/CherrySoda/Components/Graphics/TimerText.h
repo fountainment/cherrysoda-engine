@@ -6,6 +6,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 // PixelText counting frames up or down, formatted as seconds with two
@@ -37,7 +39,7 @@ public:
 		m_countMode = countMode;
 		m_frames = frames;
 		m_justify = justify;
-		m_onComplete = onComplete;
+		m_onComplete = std::move(onComplete);
 
 		UpdateText();
 	}
@@ -77,15 +79,9 @@ public:
 private:
 	void UpdateText()
 	{
-		switch (m_timerMode) {
-		case TimerModes::SecondsMilliseconds:
-		default: {
-			constexpr float deltaTime = 1.f / 60.f;
-			float seconds = (m_frames / 60) + (m_frames % 60) * deltaTime;
-			Text(CHERRYSODA_FORMAT("%.2f", seconds));
-			break;
-		}
-		}
+		constexpr float deltaTime = 1.f / 60.f;
+		const int seconds = m_frames / 60;
+		Text(CHERRYSODA_FORMAT("%.2f", seconds + ((m_frames % 60) * deltaTime)));
 	}
 
 	TimerModes m_timerMode;

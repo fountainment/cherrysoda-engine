@@ -19,8 +19,8 @@ STL::Map<type::Int32, String>& StringID::INTERNAL_GetHashCollisionCheckMap()
 }
 #endif // CHERRYSODA_ENABLE_DEBUG
 
-String StringUtil::Format(const char* format,
-						  ...) // NOLINT(cert-dcl50-cpp,modernize-avoid-variadic-functions) — printf-style house API
+// printf-style variadic house API
+String StringUtil::Format(const char* format, ...) // NOLINT(cert-dcl50-cpp,modernize-avoid-variadic-functions)
 {
 	char buffer[256];
 	va_list args; // NOLINT(cppcoreguidelines-init-variables) — va_start initializes it; initializing va_list is not

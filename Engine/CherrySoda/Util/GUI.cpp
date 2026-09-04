@@ -642,8 +642,8 @@ void GUI::Render()
 				clipRect.w = (cmd->ClipRect.w - clipOff.y) * clipScale.y;
 				Graphics::SetScissor((int)clipRect.x, (int)clipRect.y, (int)(clipRect.z - clipRect.x),
 									 (int)(clipRect.w - clipRect.y));
-				Graphics::SetTexture(reinterpret_cast<Texture*>(static_cast<intptr_t>(
-					cmd->GetTexID()))); // NOLINT(performance-no-int-to-ptr) — ImGui ImTextureID is ImU64
+				auto textureId = static_cast<intptr_t>(cmd->GetTexID());
+				Graphics::SetTexture(reinterpret_cast<Texture*>(textureId)); // NOLINT(performance-no-int-to-ptr)
 				Graphics::SetTransientVertexBuffer(vb);
 				Graphics::SetTransientIndexBuffer(ib, cmd->IdxOffset, cmd->ElemCount);
 				Graphics::SetStateNoDepth(Graphics::BlendFunction::Alpha);

@@ -28,9 +28,7 @@ public:
 	{
 		for (auto& rows : m_segments) {
 			for (auto& segment : rows) {
-				if (segment != nullptr) {
-					delete segment;
-				}
+				delete segment;
 			}
 		}
 		STL::Clear(m_segments);
@@ -45,7 +43,7 @@ public:
 		if (seg == nullptr) {
 			return m_emptyValue;
 		}
-		return (*seg)[x - cx * ms_segmentSize][y - cy * ms_segmentSize];
+		return (*seg)[x - (cx * ms_segmentSize)][y - (cy * ms_segmentSize)];
 	}
 
 	void Set(int x, int y, const T& value)
@@ -62,7 +60,7 @@ public:
 						(*m_segments[cx][cy])[tx][ty] = m_emptyValue;
 			}
 		}
-		(*m_segments[cx][cy])[x - cx * ms_segmentSize][y - cy * ms_segmentSize] = value;
+		(*m_segments[cx][cy])[x - (cx * ms_segmentSize)][y - (cy * ms_segmentSize)] = value;
 	}
 
 	inline int Columns() const { return m_columns; }

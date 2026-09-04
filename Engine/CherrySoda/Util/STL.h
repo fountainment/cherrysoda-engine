@@ -90,7 +90,10 @@ public:
 
 	template<typename T, typename U> using Pair = std::pair<T, U>;
 
-	template<typename T, typename U> static constexpr Pair<T, U> MakePair(T t, U u) { return std::make_pair(t, u); }
+	template<typename T, typename U> static constexpr Pair<T, U> MakePair(const T& t, const U& u)
+	{
+		return std::make_pair(t, u);
+	}
 
 	template<typename T> using Set = std::set<T>;
 
@@ -223,7 +226,7 @@ public:
 		return Count(container) * sizeof(typename T::value_type);
 	}
 
-	template<typename T> static inline auto Find(const T& container, const typename T::value_type& element)
+	template<typename T> static inline auto Find(const T& container, const T::value_type& element)
 	{
 		return std::find(std::begin(container), std::end(container), element);
 	}
@@ -238,22 +241,22 @@ public:
 		return container.find(element);
 	}
 
-	template<typename T> static inline auto FindKey(const T& container, const typename T::key_type& key)
+	template<typename T> static inline auto FindKey(const T& container, const T::key_type& key)
 	{
 		return container.find(key);
 	}
 
-	template<typename T> static inline bool Contains(const T& container, const typename T::value_type& element)
+	template<typename T> static inline bool Contains(const T& container, const T::value_type& element)
 	{
 		return Find(container, element) != container.end();
 	}
 
-	template<typename T> static inline bool ContainsKey(const T& container, const typename T::key_type& key)
+	template<typename T> static inline bool ContainsKey(const T& container, const T::key_type& key)
 	{
 		return FindKey(container, key) != container.end();
 	}
 
-	template<typename T> static inline bool RemoveKey(T& container, const typename T::key_type& key)
+	template<typename T> static inline bool RemoveKey(T& container, const T::key_type& key)
 	{
 		auto it = FindKey(container, key);
 		if (it != container.end()) {
@@ -264,7 +267,7 @@ public:
 	}
 
 	template<typename T>
-	static inline bool TryGetValue(const T& container, const typename T::key_type& key, typename T::mapped_type& output)
+	static inline bool TryGetValue(const T& container, const T::key_type& key, T::mapped_type& output)
 	{
 		auto it = FindKey(container, key);
 		if (it != container.end()) {
@@ -274,8 +277,7 @@ public:
 		return false;
 	}
 
-	template<typename T>
-	static inline const typename T::mapped_type* GetValueAddress(const T& container, const typename T::key_type& key)
+	template<typename T> static inline const T::mapped_type* GetValueAddress(const T& container, const T::key_type& key)
 	{
 		auto it = FindKey(container, key);
 		if (it != container.end()) {
@@ -284,7 +286,7 @@ public:
 		return nullptr;
 	}
 
-	template<typename T> static inline bool TryGetFirst(const T& container, typename T::value_type& output)
+	template<typename T> static inline bool TryGetFirst(const T& container, T::value_type& output)
 	{
 		auto it = container.begin();
 		if (it != container.end()) {

@@ -6,6 +6,8 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 // Multi-value shaker for parallax-style effects; every entry of Values()
@@ -20,7 +22,7 @@ public:
 		STL::Resize(m_values, length);
 		STL::Fill(m_values, Vec2_Zero);
 		On(on);
-		m_onShake = onShake;
+		m_onShake = std::move(onShake);
 	}
 
 	ShakerList* ShakeFor(float seconds, bool removeOnFinish = false)

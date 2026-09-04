@@ -21,7 +21,7 @@ public:
 	virtual Camera* GetCamera() = 0;
 	virtual RenderTarget2D* GetRenderTarget() = 0;
 
-	inline bool Visible() { return m_visible; }
+	inline bool Visible() const { return m_visible; }
 	inline void Visible(bool v) { m_visible = v; }
 
 private:

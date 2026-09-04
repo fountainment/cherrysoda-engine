@@ -98,7 +98,7 @@ public:
 	template<class T> bool CollideCheck() const;
 	template<class T> bool CollideCheck(const Math::Vec2& at);
 	template<class T> T* CollideFirst() const;
-	template<class T> const STL::List<T*> CollideAll() const;
+	template<class T> STL::List<T*> CollideAll() const;
 	template<class T> void CollideDo(const STL::Action<T*>& action) const;
 
 	// Typed queries over tracked CollidableComponent types
@@ -106,7 +106,7 @@ public:
 	template<class T> bool CollideCheckByComponent() const;
 	template<class T> bool CollideCheckByComponent(const Math::Vec2& at);
 	template<class T> T* CollideFirstByComponent() const;
-	template<class T> const STL::List<T*> CollideAllByComponent() const;
+	template<class T> STL::List<T*> CollideAllByComponent() const;
 	template<class T> void CollideDoByComponent(const STL::Action<T*>& action) const;
 
 	float Left() const;

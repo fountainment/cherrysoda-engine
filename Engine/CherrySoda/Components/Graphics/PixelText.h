@@ -24,7 +24,7 @@ public:
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
 
-	inline const Color GetColor() const { return m_color; }
+	inline Color GetColor() const { return m_color; }
 	inline void SetColor(const Color& color) { m_color = color; }
 
 	void Font(PixelFont* font)

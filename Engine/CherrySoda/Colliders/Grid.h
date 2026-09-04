@@ -39,7 +39,7 @@ public:
 		LoadBitstring(bitstring);
 	}
 
-	~Grid()
+	~Grid() override
 	{
 		delete m_data;
 		m_data = nullptr;
@@ -82,10 +82,9 @@ public:
 
 	bool Get(int x, int y) const
 	{
-		if (x >= 0 && y >= 0 && x < CellsX() && y < CellsY())
-			return m_data->Get(x, y);
-		else
-			return false;
+		if (x >= 0 && y >= 0 && x < CellsX() && y < CellsY()) return m_data->Get(x, y);
+
+		return false;
 	}
 	void Set(int x, int y, bool v) { m_data->Set(x, y, v); }
 

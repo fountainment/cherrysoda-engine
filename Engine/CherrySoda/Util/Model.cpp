@@ -96,10 +96,12 @@ Model Model::FromGltf(const String& gltfFile)
 						for (int i = 0; std::cmp_less(i, positionAccessor->count); ++i) {
 							Math::Vec3 position;
 							cgltf_accessor_read_float(positionAccessor, i, reinterpret_cast<float*>(&position), 3);
-							STL::Add(mesh.vertices, Graphics::VertexInfo{.position = position,
-																		 .color = Vec4_One,
-																		 .normal = Vec3_ZUp,
-																		 .texcoord0 = Vec2_Zero});
+							STL::Add(mesh.vertices, Graphics::VertexInfo{
+														.position = position,
+														.color = Vec4_One,
+														.normal = Vec3_ZUp,
+														.texcoord0 = Vec2_Zero,
+													});
 						}
 					}
 					if (colorAccessor) {

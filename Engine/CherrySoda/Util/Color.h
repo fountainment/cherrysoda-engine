@@ -78,8 +78,12 @@ public:
 	constexpr float B() const { return m_b; }
 	constexpr float A() const { return m_a; }
 
-	static constexpr type::UInt8 F2U8(float f) { return static_cast<type::UInt8>(f * 255.0f + 0.5f); }
-	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>(f * 255.0f + 0.5f); }
+	// f is in [0, 1] by contract; lround would drop constexpr
+	// NOLINTBEGIN(bugprone-incorrect-roundings)
+	static constexpr type::UInt8 F2U8(float f) { return static_cast<type::UInt8>((f * 255.0f) + 0.5f); }
+
+	static constexpr type::UInt32 F2U32(float f) { return static_cast<type::UInt32>((f * 255.0f) + 0.5f); }
+	// NOLINTEND(bugprone-incorrect-roundings)
 
 	constexpr type::UInt32 U32() const { return F2U32(R()) << 24 | F2U32(G()) << 16 | F2U32(B()) << 8 | F2U32(A()); }
 	constexpr type::UInt32 U32ABGR() const
@@ -98,13 +102,13 @@ public:
 
 	constexpr Color operator+(const Color& other) const
 	{
-		return Color(m_r + other.m_r, m_g + other.m_g, m_b + other.m_b, m_a + other.m_a);
+		return {m_r + other.m_r, m_g + other.m_g, m_b + other.m_b, m_a + other.m_a};
 	}
 	constexpr Color operator-(const Color& other) const
 	{
-		return Color(m_r - other.m_r, m_g - other.m_g, m_b - other.m_b, m_a - other.m_a);
+		return {m_r - other.m_r, m_g - other.m_g, m_b - other.m_b, m_a - other.m_a};
 	}
-	constexpr Color operator*(float scale) const { return Color(m_r * scale, m_g * scale, m_b * scale, m_a * scale); }
+	constexpr Color operator*(float scale) const { return {m_r * scale, m_g * scale, m_b * scale, m_a * scale}; }
 	constexpr void operator*=(float scale) { *this = *this * scale; }
 
 	constexpr bool operator==(const Color& other) const

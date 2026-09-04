@@ -24,7 +24,7 @@ public:
 
 	template<class T> T* Get()
 	{
-		for (auto component : m_components) {
+		for (auto* component : m_components) {
 			if (T::ComponentTypeID() == component->TypeID()) {
 				return static_cast<T*>(component);
 			}

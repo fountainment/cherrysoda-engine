@@ -32,7 +32,7 @@ public:
 		type::Int32 seed = 131;
 		type::Int32 hash = 0;
 		for (int i = 0; (len == -1 || i < len) && str[i]; ++i) {
-			hash = static_cast<type::Int32>(static_cast<type::Int64>(hash) * seed + str[i]);
+			hash = static_cast<type::Int32>((static_cast<type::Int64>(hash) * seed) + str[i]);
 		}
 		return hash & 0x7fffffff;
 	}
@@ -64,7 +64,7 @@ public:
 		return ans;
 	}
 
-	static String Format(const char* format, ...);
+	static String Format(const char* format, ...); // NOLINT(cert-dcl50-cpp,modernize-avoid-variadic-functions)
 	static STL::Vector<String> Split(const String& s, char delim = ' ');
 	static inline int IndexOf(const String& s, char c) { return s.find(c, 0); }
 	static String Trim(const String& s, char trim = ' ');
@@ -72,7 +72,7 @@ public:
 	static float ToFloat(const String& s) { return std::stof(s); }
 	static int ToInt(const String& s) { return std::stoi(s); }
 
-	template<typename T> static const String ToString(T t) { return std::to_string(t); }
+	template<typename T> static String ToString(T t) { return std::to_string(t); }
 
 	template<typename T> static bool SafeTo(const String& s, T& t)
 	{
@@ -112,7 +112,7 @@ public:
 	constexpr bool IsEmpty() const { return GetID() == 0; }
 
 #ifdef CHERRYSODA_ENABLE_DEBUG
-public:
+
 	StringID(const char* str) : m_id(StringUtil::GetHashBKDR(str)), m_str(String(str))
 	{
 		STL::Map<type::Int32, String>& hashCollisionCheckMap = INTERNAL_GetHashCollisionCheckMap();

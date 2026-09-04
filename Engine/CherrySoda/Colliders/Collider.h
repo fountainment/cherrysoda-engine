@@ -76,7 +76,8 @@ public:
 
 	inline Math::Rectangle Bounds() const
 	{
-		return Math::Rectangle{Math::Vec2(AbsoluteLeft(), AbsoluteBottom()), Math::Vec2(Width(), Height())};
+		return Math::Rectangle{.m_coord = Math::Vec2(AbsoluteLeft(), AbsoluteBottom()),
+							   .m_size = Math::Vec2(Width(), Height())};
 	}
 
 	void Render(const Camera* camera) const;

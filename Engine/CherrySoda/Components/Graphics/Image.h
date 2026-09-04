@@ -5,6 +5,8 @@
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Graphics/SpriteBatch.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 class Image : public GraphicsComponent
@@ -12,9 +14,9 @@ class Image : public GraphicsComponent
 public:
 	CHERRYSODA_DECLARE_COMPONENT(Image, GraphicsComponent);
 
-	Image(const MTexture& texture) : base(false), m_texture(texture) {}
+	Image(MTexture texture) : base(false), m_texture(std::move(texture)) {}
 
-	Image(const MTexture& texture, bool active) : base(active), m_texture(texture) {}
+	Image(MTexture texture, bool active) : base(active), m_texture(std::move(texture)) {}
 
 	void Render() override
 	{
@@ -25,8 +27,8 @@ public:
 	inline void Texture(const MTexture& texture) { m_texture = texture; }
 	virtual float Width() const { return static_cast<float>(m_texture.Width()); }
 	virtual float Height() const { return static_cast<float>(m_texture.Height()); }
-	inline const Math::Vec2 Size() const { return Math::Vec2(Width(), Height()); }
-	inline const Math::Vec2 HalfSize() const { return Size() * 0.5f; }
+	inline Math::Vec2 Size() const { return {Width(), Height()}; }
+	inline Math::Vec2 HalfSize() const { return Size() * 0.5f; }
 	inline SpriteEffects GetSpriteEffects() { return m_effects; }
 	inline void SetSpriteEffects(SpriteEffects effects) { m_effects = effects; }
 

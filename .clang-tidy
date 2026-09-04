@@ -19,6 +19,17 @@
 #     -extra-arg="-isysroot$(xcrun --show-sdk-path)" \
 #     'Engine/CherrySoda/.*\.cpp'
 #
+# Editors (clangd) also analyze each header standalone, so sweep the headers
+# the same way to keep the in-editor view clean:
+#
+#   for h in $(find Engine/CherrySoda -name '*.h' | grep -v embedded_shaders); do
+#     /opt/homebrew/opt/llvm/bin/clang-tidy -p out/build/unix-debug \
+#       -extra-arg="-isysroot$(xcrun --show-sdk-path)" "$h"
+#   done
+#
+# Never run clang-tidy -fix over the headers in parallel: concurrent runs
+# rewrite shared headers interleaved and corrupt them.
+#
 # The engine builds without PCH or unity files, so no extra flags are needed
 # for tidy to see every TU.
 #
@@ -82,7 +93,10 @@
 #                                           are the documented engine convention
 #                                           (and embedded_shaders.h is generated
 #                                           by Tools/compile_shader.py with the
-#                                           same guard spelling)
+#                                           same guard spelling); the cert-dcl37-c
+#                                           /cert-dcl51-cpp aliases of the check
+#                                           must be disabled too or they keep
+#                                           firing on the same guards
 #   modernize-avoid-c-arrays                  fixed C buffers interop with SDL/
 #                                           bgfx/cmixer APIs and use sizeof/
 #                                           decay semantics; a std::array sweep
@@ -91,6 +105,36 @@
 #                                           through the CHERRYSODA_ASSERT macro
 #                                           (suggesting static_assert(false)
 #                                           on deliberate runtime guards)
+#   readability-trailing-comma                besides generated embedded_shaders
+#                                           headers (which must not be hand-
+#                                           edited), the comma insertions are
+#                                           pure style churn
+#   readability-redundant-inline-specifier    explicit `inline` on in-class
+#                                           member definitions is deliberate
+#                                           house style (see Math.h, STL.h,
+#                                           Camera.h); stripping ~1200 of them
+#                                           is pure churn
+#   modernize-use-nodiscard                   suggests [[nodiscard]] on
+#                                           essentially every const getter;
+#                                           adding ~950 attributes is churn the
+#                                           engine has never asked for
+#   bugprone-macro-parentheses                the house macros (Math.h, Log.h)
+#                                           define function signatures from
+#                                           parameters; the check and its fixit
+#                                           misread those as value expressions
+#                                           and corrupt the signatures
+#   misc-explicit-constructor                 single-argument constructors and
+#                                           conversion operators (StringID,
+#                                           Color, MTexture) implement
+#                                           deliberate implicit-conversion
+#                                           ergonomics
+#   performance-enum-size                     shrinking enum base types changes
+#                                           struct sizes; needs a deliberate
+#                                           layout pass, not an auto-fix
+#   modernize-use-std-numbers                 the engine spells its constants in
+#                                           Math (Math::Pi, Math::PiHalf …);
+#                                           rewriting raw literals to
+#                                           std::numbers fights that
 
 Checks:
   '-*,
@@ -127,9 +171,18 @@ Checks:
    -misc-const-correctness,
    -misc-use-anonymous-namespace,
    -bugprone-reserved-identifier,
+   -cert-dcl37-c,
+   -cert-dcl51-cpp,
    -modernize-avoid-c-arrays,
    -cert-dcl03-c,
-   -misc-static-assert'
+   -misc-static-assert,
+   -readability-trailing-comma,
+   -readability-redundant-inline-specifier,
+   -modernize-use-nodiscard,
+   -bugprone-macro-parentheses,
+   -misc-explicit-constructor,
+   -performance-enum-size,
+   -modernize-use-std-numbers'
 
 WarningsAsErrors: ''
 
@@ -139,8 +192,13 @@ WarningsAsErrors: ''
 CheckOptions:
   - key: readability-simplify-boolean-expr.SimplifyDeMorgan
     value: false
-# Generated headers (shaderc output) live under embedded_shaders/ and are
-# excluded from the header filter — never hand-edit or "clean" them.
-HeaderFilterRegex: '(Engine/CherrySoda|Examples|Playground|Bench|Tests|Tools)/(?!.*embedded_shaders).*\.h$'
+# NOTE: keep this regex POSIX-ERE compatible (llvm::Regex does not support
+# lookaheads), and match on the last path segment only — headers resolve
+# through -I flags spelled like `Engine/.`, which puts a `./` between Engine
+# and CherrySoda and would defeat an `Engine/CherrySoda/...` pattern.
+# Generated embedded_shaders/ headers are excluded because they must never be
+# hand-edited.
+HeaderFilterRegex: '(CherrySoda|Examples|Playground|Bench|Tests|Tools)/.*\.h$'
+ExcludeHeaderFilterRegex: 'embedded_shaders'
 
 FormatStyle: file

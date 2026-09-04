@@ -736,18 +736,18 @@ void Graphics::SetTransientIndexBuffer(Graphics::TransientIndexBufferHandle inde
 }
 
 void Graphics::SetStateDefault(Graphics::BlendFunction blendFunc /* = Graphics::BlendFunction::Normal*/,
-							   Graphics::PrimitiveType primType /* = Graphics::PimitiveType::Triangles*/)
+							   Graphics::PrimitiveType primitiveType /* = Graphics::PrimitiveType::Triangles*/)
 {
 	constexpr uint64_t stateDefault = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_WRITE_Z |
 									  BGFX_STATE_DEPTH_TEST_LEQUAL | BGFX_STATE_CULL_CW | BGFX_STATE_MSAA;
-	bgfx::setState(stateDefault | ms_blendFunctions[(int)blendFunc] | ms_primitiveTypes[(int)primType]);
+	bgfx::setState(stateDefault | ms_blendFunctions[(int)blendFunc] | ms_primitiveTypes[(int)primitiveType]);
 }
 
 void Graphics::SetStateNoDepth(Graphics::BlendFunction blendFunc /* = Graphics::BlendFunction::Normal*/,
-							   Graphics::PrimitiveType primType /* = Graphics::PimitiveType::Triangles*/)
+							   Graphics::PrimitiveType primitiveType /* = Graphics::PrimitiveType::Triangles*/)
 {
 	constexpr uint64_t stateNoDepth = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
-	bgfx::setState(stateNoDepth | ms_blendFunctions[(int)blendFunc] | ms_primitiveTypes[(int)primType]);
+	bgfx::setState(stateNoDepth | ms_blendFunctions[(int)blendFunc] | ms_primitiveTypes[(int)primitiveType]);
 }
 
 void Graphics::Submit()

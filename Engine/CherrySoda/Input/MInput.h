@@ -352,8 +352,8 @@ public:
 		}
 
 		// Sticks
-		inline const Math::Vec2 GetLeftStick() const { return m_currentState.m_thumbSticks.m_left; }
-		inline const Math::Vec2 GetLeftStick(float deadZone) const
+		inline Math::Vec2 GetLeftStick() const { return m_currentState.m_thumbSticks.m_left; }
+		inline Math::Vec2 GetLeftStick(float deadZone) const
 		{
 			Math::Vec2 ret = m_currentState.m_thumbSticks.m_left;
 			if (Math_Dot(ret, ret) < deadZone * deadZone) {
@@ -362,8 +362,8 @@ public:
 			return ret;
 		}
 
-		inline const Math::Vec2 GetRightStick() const { return m_currentState.m_thumbSticks.m_right; }
-		inline const Math::Vec2 GetRightStick(float deadZone) const
+		inline Math::Vec2 GetRightStick() const { return m_currentState.m_thumbSticks.m_right; }
+		inline Math::Vec2 GetRightStick(float deadZone) const
 		{
 			Math::Vec2 ret = m_currentState.m_thumbSticks.m_right;
 			if (Math_Dot(ret, ret) < deadZone * deadZone) {
@@ -542,7 +542,7 @@ public:
 					   ? 1.f
 					   : (m_currentState.m_dpad.m_down == ButtonState::Pressed ? -1.f : 0.f);
 		}
-		inline Math::Vec2 DPad() const { return Math::Vec2(DPadHorizontal(), DPadVertical()); }
+		inline Math::Vec2 DPad() const { return {DPadHorizontal(), DPadVertical()}; }
 
 		inline bool DPadLeftCheck() const { return m_currentState.m_dpad.m_left == ButtonState::Pressed; }
 		inline bool DPadLeftPressed() const
@@ -689,23 +689,21 @@ public:
 
 		int AxisCheck(Keys negative, Keys positive) const
 		{
-			if (Check(negative))
-				return Check(positive) ? 0 : -1;
-			else
-				return Check(positive) ? 1 : 0;
+			if (Check(negative)) return Check(positive) ? 0 : -1;
+
+			return Check(positive) ? 1 : 0;
 		}
 
 		Math::IVec2 GetAxis(Keys left, Keys right, Keys down, Keys up) const
 		{
-			return Math::IVec2(AxisCheck(left, right), AxisCheck(down, up));
+			return {AxisCheck(left, right), AxisCheck(down, up)};
 		}
 
 		int AxisCheck(Keys negative, Keys positive, int both) const
 		{
-			if (Check(negative))
-				return Check(positive) ? both : -1;
-			else
-				return Check(positive) ? 1 : 0;
+			if (Check(negative)) return Check(positive) ? both : -1;
+
+			return Check(positive) ? 1 : 0;
 		}
 
 		inline int GetHashCode() const { return m_currentState.GetHashCode(); }
@@ -807,18 +805,18 @@ public:
 		// int X() const { return Position().x; }
 		// int Y() const { return Position().y; }
 
-		inline const Math::IVec2 RawPosition() const { return Math::IVec2(m_currentState.m_x, m_currentState.m_y); }
-		void RawPosition(const Math::IVec2& pos) { SetMousePosition(pos); }
+		inline Math::IVec2 RawPosition() const { return {m_currentState.m_x, m_currentState.m_y}; }
+		static void RawPosition(const Math::IVec2& pos) { SetMousePosition(pos); }
 		Math::IVec2 Position() const;
 		static void Position(const Math::IVec2& pos);
 
-		inline const Math::IVec2 RawPositionDelta() const
+		inline Math::IVec2 RawPositionDelta() const
 		{
-			return Math::IVec2(m_currentState.m_x - m_previousState.m_x, m_currentState.m_y - m_previousState.m_y);
+			return {m_currentState.m_x - m_previousState.m_x, m_currentState.m_y - m_previousState.m_y};
 		}
-		inline const Math::IVec2 PositionDelta() const
+		inline Math::IVec2 PositionDelta() const
 		{
-			return Math::IVec2(m_currentState.m_x - m_previousState.m_x, m_previousState.m_y - m_currentState.m_y);
+			return {m_currentState.m_x - m_previousState.m_x, m_previousState.m_y - m_currentState.m_y};
 		}
 
 		int RawX() const { return RawPosition().x; }

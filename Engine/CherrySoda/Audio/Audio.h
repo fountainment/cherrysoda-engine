@@ -37,7 +37,7 @@ public:
 
 	struct EventDescription
 	{
-		String filename = "";
+		String filename;
 		// When set, the buffer is owned by Audio (LoadFileFromMemory copies it)
 		// and must stay alive as long as instances are created from it
 		type::UInt8* data = nullptr;

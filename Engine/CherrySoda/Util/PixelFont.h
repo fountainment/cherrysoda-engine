@@ -70,7 +70,7 @@ public:
 
 	PixelFontSize Get(float size) const;
 
-	const PixelFontSize FirstSize() const { return STL::Front(m_sizes); }
+	PixelFontSize FirstSize() const { return STL::Front(m_sizes); }
 
 	// Overrides the space width for every size of this face; zero restores
 	// the lineHeight / 3 heuristic

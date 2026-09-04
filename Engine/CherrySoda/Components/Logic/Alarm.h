@@ -43,11 +43,11 @@ private:
 
 	static STL::Stack<Alarm*> ms_cached;
 
-	AlarmMode m_mode;
+	AlarmMode m_mode = AlarmMode::Oneshot;
 	STL::Action<> m_onComplete;
 
-	float m_duration;
-	float m_timeLeft;
+	float m_duration{};
+	float m_timeLeft{};
 };
 
 } // namespace cherrysoda

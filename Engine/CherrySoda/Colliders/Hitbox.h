@@ -40,19 +40,24 @@ public:
 	void Width(float width) { m_width = width; }
 	void Height(float height) { m_height = height; }
 
-	inline float AbsoluteLeft() const
+	// These deliberately shadow Collider's non-virtual helpers: through a
+	// Hitbox they must use the justify-aware Internal* bounds
+	inline float AbsoluteLeft() const // NOLINT(bugprone-derived-method-shadowing-base-method)
 	{
 		return GetEntity() ? InternalLeft() + GetEntity()->PositionX() : InternalLeft();
 	}
-	inline float AbsoluteRight() const
+	inline float AbsoluteRight() const // NOLINT(bugprone-derived-method-shadowing-base-method)
 	{
 		return GetEntity() ? InternalRight() + GetEntity()->PositionX() : InternalRight();
 	}
-	inline float AbsoluteBottom() const
+	inline float AbsoluteBottom() const // NOLINT(bugprone-derived-method-shadowing-base-method)
 	{
 		return GetEntity() ? InternalBottom() + GetEntity()->PositionY() : InternalBottom();
 	}
-	inline float AbsoluteTop() const { return GetEntity() ? InternalTop() + GetEntity()->PositionY() : InternalTop(); }
+	inline float AbsoluteTop() const // NOLINT(bugprone-derived-method-shadowing-base-method)
+	{
+		return GetEntity() ? InternalTop() + GetEntity()->PositionY() : InternalTop();
+	}
 
 	void CenterOrigin()
 	{

@@ -36,7 +36,7 @@ public:
 										if (m_orthoProjection == v) return;
 										m_changed = true);
 
-	inline Math::Vec2 GetSize() const { return Math::Vec2(m_width, m_height); }
+	inline Math::Vec2 GetSize() const { return {m_width, m_height}; }
 	inline void SetSize(const Math::Vec2& size)
 	{
 		Width(size[0]);
@@ -71,14 +71,14 @@ public:
 		return &m_projMatrix;
 	}
 
-	inline const Math::Vec3 GetLeftVector() const { return Math_Normalize(Math_Cross(m_upVector, m_direction)); }
-	inline const Math::Vec3 GetRightVector() const { return Math_Normalize(Math_Cross(m_direction, m_upVector)); }
+	inline Math::Vec3 GetLeftVector() const { return Math_Normalize(Math_Cross(m_upVector, m_direction)); }
+	inline Math::Vec3 GetRightVector() const { return Math_Normalize(Math_Cross(m_direction, m_upVector)); }
 
-	inline const Math::Vec3 GetUpVector() const { return m_upVector; }
-	inline const Math::Vec3 GetDownVector() const { return -m_upVector; }
+	inline Math::Vec3 GetUpVector() const { return m_upVector; }
+	inline Math::Vec3 GetDownVector() const { return -m_upVector; }
 
-	inline const Math::Vec3 GetFrontVector() const { return m_direction; }
-	inline const Math::Vec3 GetBackVector() const { return -m_direction; }
+	inline Math::Vec3 GetFrontVector() const { return m_direction; }
+	inline Math::Vec3 GetBackVector() const { return -m_direction; }
 
 	inline float Left() const { return (m_inverseMatrix * Math::Vec4(-Vec3_XUp, 1.f)).x; }
 	inline float Right() const { return (m_inverseMatrix * Math::Vec4(Vec3_XUp, 1.f)).x; }
@@ -159,12 +159,12 @@ public:
 	inline void Left(float left)
 	{
 		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera::Left(value) is for ortho projection camera.\n");
-		X(left + Origin2D().x / Scale2D().x);
+		X(left + (Origin2D().x / Scale2D().x));
 	}
 	inline void Top(float top)
 	{
 		CHERRYSODA_ASSERT(UseOrthoProjection(), "Camera::Top(value) is for ortho projection camera.\n");
-		Y(top + Origin2D().y / Scale2D().y);
+		Y(top + (Origin2D().y / Scale2D().y));
 	}
 
 	void CopyFrom(const Camera& other)

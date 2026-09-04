@@ -63,39 +63,39 @@ public:
 	inline float TimeActive() const { return m_timeActive; }
 	inline float RawTimeActive() const { return m_rawTimeActive; }
 
-	inline bool OnInterval(float interval)
+	inline bool OnInterval(float interval) const
 	{
 		return (int)((TimeActive() - Engine::Instance()->DeltaTime()) / interval) < (int)(TimeActive() / interval);
 	}
 
-	inline bool OnInterval(float interval, float offset)
+	inline bool OnInterval(float interval, float offset) const
 	{
 		return Math_Floor((TimeActive() - offset - Engine::Instance()->DeltaTime()) / interval) <
 			   Math_Floor((TimeActive() - offset) / interval);
 	}
 
-	inline bool BetweenInterval(float interval) { return Math_Mod(TimeActive(), interval * 2) > interval; }
+	inline bool BetweenInterval(float interval) const { return Math_Mod(TimeActive(), interval * 2) > interval; }
 
-	inline bool BetweenInterval(float interval, float offset)
+	inline bool BetweenInterval(float interval, float offset) const
 	{
 		return Math_Mod(TimeActive() - offset, interval * 2) > interval;
 	}
 
-	inline bool OnRawInterval(float interval)
+	inline bool OnRawInterval(float interval) const
 	{
 		return (int)((RawTimeActive() - Engine::Instance()->RawDeltaTime()) / interval) <
 			   (int)(RawTimeActive() / interval);
 	}
 
-	inline bool OnRawInterval(float interval, float offset)
+	inline bool OnRawInterval(float interval, float offset) const
 	{
 		return Math_Floor((RawTimeActive() - offset - Engine::Instance()->RawDeltaTime()) / interval) <
 			   Math_Floor((RawTimeActive() - offset) / interval);
 	}
 
-	inline bool BetweenRawInterval(float interval) { return Math_Mod(RawTimeActive(), interval * 2) > interval; }
+	inline bool BetweenRawInterval(float interval) const { return Math_Mod(RawTimeActive(), interval * 2) > interval; }
 
-	inline bool BetweenRawInterval(float interval, float offset)
+	inline bool BetweenRawInterval(float interval, float offset) const
 	{
 		return Math_Mod(RawTimeActive() - offset, interval * 2) > interval;
 	}
@@ -117,7 +117,7 @@ public:
 	// untracked types simply report no hits
 	template<class T> const STL::List<Entity*>* GetTrackedEntities() const
 	{
-		static_assert(std::is_base_of<Entity, T>::value, "T must derive from Entity");
+		static_assert(std::is_base_of_v<Entity, T>, "T must derive from Entity");
 		return GetTracker()->GetEntitiesOfType(T::EntityTypeID());
 	}
 
@@ -125,7 +125,7 @@ public:
 	// (CHERRYSODA_TRACK_COMPONENT)
 	template<class T> const STL::List<Component*>* GetTrackedComponents() const
 	{
-		static_assert(std::is_base_of<CollidableComponent, T>::value, "T must derive from CollidableComponent");
+		static_assert(std::is_base_of_v<CollidableComponent, T>, "T must derive from CollidableComponent");
 		return GetTracker()->GetComponentsOfType(T::ComponentTypeID());
 	}
 
@@ -210,7 +210,7 @@ public:
 		return nullptr;
 	}
 
-	template<class T> const STL::List<T*> CollideAll(const Math::Vec2& point) const
+	template<class T> STL::List<T*> CollideAll(const Math::Vec2& point) const
 	{
 		STL::List<T*> hits;
 		auto list = GetTrackedEntities<T>();
@@ -224,7 +224,7 @@ public:
 		return hits;
 	}
 
-	template<class T> const STL::List<T*> CollideAll(const Math::Vec2& from, const Math::Vec2& to) const
+	template<class T> STL::List<T*> CollideAll(const Math::Vec2& from, const Math::Vec2& to) const
 	{
 		STL::List<T*> hits;
 		auto list = GetTrackedEntities<T>();
@@ -238,7 +238,7 @@ public:
 		return hits;
 	}
 
-	template<class T> const STL::List<T*> CollideAll(const Math::Rectangle& rect) const
+	template<class T> STL::List<T*> CollideAll(const Math::Rectangle& rect) const
 	{
 		STL::List<T*> hits;
 		auto list = GetTrackedEntities<T>();
@@ -333,7 +333,7 @@ public:
 		return nullptr;
 	}
 
-	template<class T> const STL::List<T*> CollideAllByComponent(const Math::Vec2& point) const
+	template<class T> STL::List<T*> CollideAllByComponent(const Math::Vec2& point) const
 	{
 		STL::List<T*> hits;
 		auto list = GetTrackedComponents<T>();
@@ -347,7 +347,7 @@ public:
 		return hits;
 	}
 
-	template<class T> const STL::List<T*> CollideAllByComponent(const Math::Vec2& from, const Math::Vec2& to) const
+	template<class T> STL::List<T*> CollideAllByComponent(const Math::Vec2& from, const Math::Vec2& to) const
 	{
 		STL::List<T*> hits;
 		auto list = GetTrackedComponents<T>();
@@ -361,7 +361,7 @@ public:
 		return hits;
 	}
 
-	template<class T> const STL::List<T*> CollideAllByComponent(const Math::Rectangle& rect) const
+	template<class T> STL::List<T*> CollideAllByComponent(const Math::Rectangle& rect) const
 	{
 		STL::List<T*> hits;
 		auto list = GetTrackedComponents<T>();
@@ -442,7 +442,7 @@ template<class T> inline T* Entity::CollideFirst() const
 	return nullptr;
 }
 
-template<class T> inline const STL::List<T*> Entity::CollideAll() const
+template<class T> inline STL::List<T*> Entity::CollideAll() const
 {
 	CHERRYSODA_ASSERT(m_scene != nullptr,
 					  "Can't collide check an Entity against a tracked type when it is not a member of a Scene\n");
@@ -481,12 +481,8 @@ template<class T> inline bool Entity::CollideCheckByComponent() const
 	if (list == nullptr) {
 		return false;
 	}
-	for (auto component : *list) {
-		if (CollideCheck(static_cast<T*>(component))) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(*list,
+							   [this](Component* component) { return CollideCheck(static_cast<T*>(component)); });
 }
 
 template<class T> inline bool Entity::CollideCheckByComponent(const Math::Vec2& at)
@@ -514,7 +510,7 @@ template<class T> inline T* Entity::CollideFirstByComponent() const
 	return nullptr;
 }
 
-template<class T> inline const STL::List<T*> Entity::CollideAllByComponent() const
+template<class T> inline STL::List<T*> Entity::CollideAllByComponent() const
 {
 	CHERRYSODA_ASSERT(
 		m_scene != nullptr,

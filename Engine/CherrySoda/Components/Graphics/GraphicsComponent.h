@@ -46,7 +46,7 @@ public:
 	void DrawOutline(int offset = 1) { DrawOutline(Color::Black, offset); }
 
 	inline void RenderPosition(Math::Vec3 pos3d) { Position(pos3d - EntityPos()); }
-	inline const Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
+	inline Math::Vec3 RenderPosition() const { return Position() + EntityPos(); }
 
 	inline Color GetColor() const { return m_color; }
 	inline void SetColor(const Color& color) { m_color = color; }
@@ -61,10 +61,7 @@ public:
 	virtual Math::Mat4 GetTransformMatrix() const;
 
 private:
-	inline const Math::Vec3 EntityPos() const
-	{
-		return GetEntity() != nullptr ? GetEntity()->Position() : Math::Vec3(0.f);
-	}
+	inline Math::Vec3 EntityPos() const { return GetEntity() != nullptr ? GetEntity()->Position() : Math::Vec3(0.f); }
 
 	Color m_color = Color::White;
 	Math::Vec3 m_position = Math::Vec3(0.f);

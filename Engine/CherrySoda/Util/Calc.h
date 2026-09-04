@@ -11,8 +11,10 @@ namespace cherrysoda {
 class Random
 {
 public:
-	Random() = default;
-	Random(type::UInt32 seed) { Seed(seed); }
+	// The default-constructed generator is deliberately deterministic so engine
+	// runs stay reproducible; seed explicitly for randomized runs
+	Random() = default;                       // NOLINT(bugprone-random-generator-seed,cert-msc32-c,cert-msc51-cpp)
+	Random(type::UInt32 seed) { Seed(seed); } // NOLINT(bugprone-random-generator-seed,cert-msc32-c,cert-msc51-cpp)
 
 	inline void Seed(type::UInt32 seed) { STL::RandomSeed(m_random, seed); }
 	inline type::UInt32 Next() { return STL::RandomNext(m_random); }
@@ -30,7 +32,7 @@ public:
 	inline Math::Vec2 ShakeVector()
 	{
 		constexpr float shakeVectorOffsets[5] = {-1.f, -1.f, 0.f, 1.f, 1.f};
-		return Math::Vec2(shakeVectorOffsets[Next(5)], shakeVectorOffsets[Next(5)]);
+		return {shakeVectorOffsets[Next(5)], shakeVectorOffsets[Next(5)]};
 	}
 
 	template<typename T> inline T Choose(const T& a, const T& b) { return Next(2) ? a : b; }
@@ -66,7 +68,7 @@ public:
 	static inline float Angle(const Math::Vec2& vec) { return Math_Atan2(vec.y, vec.x); }
 	static inline Math::Vec2 AngleToVector(float angleRadians, float length)
 	{
-		return Math::Vec2((float)Math_Cos(angleRadians) * length, (float)Math_Sin(angleRadians) * length);
+		return {Math_Cos(angleRadians) * length, Math_Sin(angleRadians) * length};
 	}
 
 	static inline float Approach(float val, float target, float maxMove)
@@ -78,16 +80,16 @@ public:
 	static Math::Vec3 Approach(const Math::Vec3& val, const Math::Vec3& target, float maxMove);
 
 	// Maps a value in [0, 1] onto a return trip 0 -> 1 -> 0
-	static inline float YoYo(float value) { return value <= .5f ? value * 2.f : 1.f - (value - .5f) * 2.f; }
+	static inline float YoYo(float value) { return value <= .5f ? value * 2.f : 1.f - ((value - .5f) * 2.f); }
 
 	static inline float Map(float val, float min, float max, float newMin = 0.f, float newMax = 1.f)
 	{
-		return (val - min) / (max - min) * (newMax - newMin) + newMin;
+		return ((val - min) / (max - min) * (newMax - newMin)) + newMin;
 	}
 
 	static inline float ClampedMap(float val, float min, float max, float newMin = 0.f, float newMax = 1.f)
 	{
-		return Math_Clamp((val - min) / (max - min), 0.f, 1.f) * (newMax - newMin) + newMin;
+		return (Math_Clamp((val - min) / (max - min), 0.f, 1.f) * (newMax - newMin)) + newMin;
 	}
 
 	static Math::Vec2 FourWayNormal(Math::Vec2 vec);
@@ -109,7 +111,7 @@ public:
 
 	static Math::Vec2 ClosestPointOnLine(const Math::Vec2& lineA, const Math::Vec2& lineB, const Math::Vec2& closestTo);
 
-	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return Math::Vec2(vec.y, -vec.x); }
+	static inline Math::Vec2 Perpendicular(const Math::Vec2& vec) { return {vec.y, -vec.x}; }
 
 	// Angles
 	static inline float ReflectAngle(float angle, float axis = 0.f) { return -(angle + axis) - axis; }
@@ -121,13 +123,13 @@ public:
 	static inline float WrapAngleDeg(float angleDegrees)
 	{
 		float sign = angleDegrees > 0.f ? 1.f : (angleDegrees < 0.f ? -1.f : 0.f);
-		return (std::fmod(angleDegrees * sign + 180.f, 360.f) - 180.f) * sign;
+		return (std::fmod((angleDegrees * sign) + 180.f, 360.f) - 180.f) * sign;
 	}
 
 	static inline float WrapAngle(float angleRadians)
 	{
 		float sign = angleRadians > 0.f ? 1.f : (angleRadians < 0.f ? -1.f : 0.f);
-		return (std::fmod(angleRadians * sign + Math::Pi, Math::Pi2) - Math::Pi) * sign;
+		return (std::fmod((angleRadians * sign) + Math::Pi, Math::Pi2) - Math::Pi) * sign;
 	}
 
 	static inline float AngleDiff(float radiansA, float radiansB)
@@ -161,7 +163,7 @@ public:
 
 	static inline float AngleLerp(float startAngle, float endAngle, float percent)
 	{
-		return startAngle + AngleDiff(startAngle, endAngle) * percent;
+		return startAngle + (AngleDiff(startAngle, endAngle) * percent);
 	}
 
 	static inline float ShorterAngleDifference(float currentAngle, float angleA, float angleB)
@@ -171,9 +173,12 @@ public:
 
 	static inline float ShorterAngleDifference(float currentAngle, float angleA, float angleB, float angleC)
 	{
+		// the recursive calls narrow the candidate set on purpose
+		// NOLINTBEGIN(readability-suspicious-call-argument)
 		return Math_Abs(AngleDiff(currentAngle, angleA)) < Math_Abs(AngleDiff(currentAngle, angleB))
 				   ? ShorterAngleDifference(currentAngle, angleA, angleC)
 				   : ShorterAngleDifference(currentAngle, angleB, angleC);
+		// NOLINTEND(readability-suspicious-call-argument)
 	}
 
 	static inline bool BetweenInterval(float val, float interval) { return Math_Mod(val, interval * 2.f) >= interval; }

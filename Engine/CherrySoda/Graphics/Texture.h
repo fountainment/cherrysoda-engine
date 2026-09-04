@@ -43,7 +43,7 @@ public:
 
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
-	inline const Math::IVec2 Size() const { return Math::IVec2(Width(), Height()); }
+	inline Math::IVec2 Size() const { return {Width(), Height()}; }
 	inline int TotalPixels() const { return Width() * Height(); }
 
 	inline bool operator==(const Texture2D& texture) const { return m_texture == texture.m_texture; }

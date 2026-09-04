@@ -5,6 +5,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 #define CHERRYSODA_CONSOLE_VARIABLE(VAR, TYPE, VALUE, HELP)                                            \
 	static TYPE VAR = VALUE;                                                                           \
 	static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##VAR(                 \
@@ -94,7 +96,7 @@ private:
 		bool hasReturnValue = false;
 		float floatValue = 0.f;
 		int intValue = 0;
-		String stringValue = "";
+		String stringValue;
 	};
 
 	static STL::HashMap<StringID, CommandInfo>& INTERNAL_GetCommands();
@@ -150,7 +152,7 @@ public:
 	inline CommandRegisterHelper(const String& command, STL::Action<const STL::Vector<String>&> action,
 								 const String& help)
 	{
-		Commands::Register(command, action, help);
+		Commands::Register(command, std::move(action), help);
 	}
 };
 

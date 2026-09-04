@@ -12,22 +12,22 @@ class ParticleType;
 
 struct Particle
 {
-	const Entity* m_track;
-	const ParticleType* m_type;
-	const MTexture* m_source;
+	const Entity* m_track{};
+	const ParticleType* m_type{};
+	const MTexture* m_source{};
 
-	bool m_active;
+	bool m_active{};
 	Color m_color;
 	Color m_startColor;
-	Math::Vec2 m_position;
-	Math::Vec2 m_speed;
-	float m_size;
-	float m_startSize;
-	float m_life;
-	float m_startLife;
-	float m_colorSwitch;
-	float m_rotation;
-	float m_spin;
+	Math::Vec2 m_position{};
+	Math::Vec2 m_speed{};
+	float m_size{};
+	float m_startSize{};
+	float m_life{};
+	float m_startLife{};
+	float m_colorSwitch{};
+	float m_rotation{};
+	float m_spin{};
 
 	void Update();
 	void Update(float dt);

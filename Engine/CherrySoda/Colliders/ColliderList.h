@@ -26,7 +26,7 @@ public:
 	ColliderList(const IterableColliders& colliders)
 	{
 #ifdef CHERRYSODA_ENABLE_DEBUG
-		for (auto c : colliders) {
+		for (auto* c : colliders) {
 			if (c == nullptr) {
 				CHERRYSODA_ASSERT(false, "Cannot add a null Collider to a ColliderList.\n");
 			}
@@ -35,10 +35,10 @@ public:
 		m_colliders = colliders;
 	}
 
-	~ColliderList()
+	~ColliderList() override
 	{
 		if (m_ownColliders) {
-			for (auto c : m_colliders) {
+			for (auto* c : m_colliders) {
 				delete c;
 			}
 		}

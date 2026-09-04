@@ -57,7 +57,7 @@ public:
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
 	inline Math::Vec2 Center() const { return m_center; }
-	inline Math::IVec2 Size() const { return Math::IVec2(m_width, m_height); }
+	inline Math::IVec2 Size() const { return {m_width, m_height}; }
 
 	void SetUtil();
 
@@ -87,7 +87,7 @@ private:
 	inline void Height(int height) { m_height = height; }
 
 	Texture2D m_texture;
-	Math::IRectangle m_clipRect = {IVec2_Zero, IVec2_Zero};
+	Math::IRectangle m_clipRect = {.m_coord = IVec2_Zero, .m_size = IVec2_Zero};
 	StringID m_atlasPath;
 	Math::Vec2 m_drawOffset = Vec2_Zero;
 	Math::Vec2 m_actualDrawOffset = Vec2_Zero;

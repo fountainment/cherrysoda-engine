@@ -4,13 +4,15 @@
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 class TileSet
 {
 public:
-	TileSet(const MTexture& texture, int tileWidth, int tileHeight)
-		: m_texture(texture), m_tileWidth(tileWidth), m_tileHeight(tileHeight)
+	TileSet(MTexture texture, int tileWidth, int tileHeight)
+		: m_texture(std::move(texture)), m_tileWidth(tileWidth), m_tileHeight(tileHeight)
 	{
 		m_tiles = STL::Vector<STL::Vector<MTexture>>(m_texture.Width() / tileWidth,
 													 STL::Vector<MTexture>(m_texture.Height() / tileHeight));

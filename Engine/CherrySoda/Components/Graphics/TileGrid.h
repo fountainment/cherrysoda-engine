@@ -25,7 +25,7 @@ public:
 		m_tiles = new VirtualMap<const MTexture*>(tilesX, tilesY);
 	}
 
-	~TileGrid()
+	~TileGrid() override
 	{
 		delete m_tiles;
 		m_tiles = nullptr;
@@ -55,7 +55,7 @@ public:
 
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(float, Alpha, m_alpha);
 	CHERRYSODA_GETTER_SETTER_OF_TYPE(int, VisualExtend, m_visualExtend);
-	inline const Color GetColor() const { return m_color; }
+	inline Color GetColor() const { return m_color; }
 	inline void SetColor(const Color& color) { m_color = color; }
 
 	inline void ClipCamera(Camera* camera) { m_clipCamera = camera; }

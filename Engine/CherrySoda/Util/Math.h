@@ -354,7 +354,7 @@ public:
 		inline void Size(const Vec2& size) { m_size = size; }
 		inline Vec2 Clamp(const Vec2& pos) const
 		{
-			return Vec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top()));
+			return {Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())};
 		}
 
 		inline bool Intersects(const Rectangle& rect) const
@@ -381,7 +381,7 @@ public:
 		inline void Move(const IVec2& delta) { m_coord += delta; }
 		inline IVec2 Clamp(const IVec2& pos) const
 		{
-			return IVec2(Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top()));
+			return {Math_Clamp(pos.x, Left(), Right()), Math_Clamp(pos.y, Bottom(), Top())};
 		}
 
 		inline bool operator==(const IRectangle& rect) const
@@ -396,10 +396,10 @@ public:
 
 	static inline Vec3 RotateVector_(const Vec3& v3, float angle, const Vec3& axis = Vec3_ZUp)
 	{
-		return Vec3(Math_Rotate(Math_Identity<Mat4>(), angle, axis) * Vec4(v3, 1.f));
+		return {Math_Rotate(Math_Identity<Mat4>(), angle, axis) * Vec4(v3, 1.f)};
 	}
 
-	static inline Vec2 RotateVector_(const Vec2& v2, float angle) { return Vec2(RotateVector_(Vec3(v2, 0.f), angle)); }
+	static inline Vec2 RotateVector_(const Vec2& v2, float angle) { return {RotateVector_(Vec3(v2, 0.f), angle)}; }
 
 	static Mat4 GetOrientationMatrix_(const Mat4& matrix);
 

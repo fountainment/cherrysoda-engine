@@ -23,17 +23,17 @@ public:
 
 	void RenderPrepare(Scene* scene) override;
 
-	inline type::UInt16 RenderPass() { return m_renderPass; };
+	inline type::UInt16 RenderPass() const { return m_renderPass; };
 	inline void RenderPass(type::UInt16 renderPass) { m_renderPass = renderPass; }
 
 	inline void FixedCameraSize(bool fixedCameraSize) { m_fixedCameraSize = fixedCameraSize; }
-	inline bool FixedCameraSize() { return m_fixedCameraSize; }
+	inline bool FixedCameraSize() const { return m_fixedCameraSize; }
 
 	inline void KeepCameraCenterOrigin(bool keepCameraCenterOrigin)
 	{
 		m_keepCameraCenterOrigin = keepCameraCenterOrigin;
 	}
-	inline bool DoKeepCameraCenterOrigin() { return m_keepCameraCenterOrigin; }
+	inline bool DoKeepCameraCenterOrigin() const { return m_keepCameraCenterOrigin; }
 
 protected:
 	Camera m_camera;

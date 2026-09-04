@@ -4,6 +4,8 @@
 #include <CherrySoda/Renderers/RendererBase.h>
 #include <CherrySoda/Util/BitTag.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 class Scene;
@@ -11,7 +13,7 @@ class Scene;
 class SingleTagRenderer : public RendererBase
 {
 public:
-	SingleTagRenderer(const BitTag& tag) : m_tag(tag) {}
+	SingleTagRenderer(BitTag tag) : m_tag(std::move(tag)) {}
 
 	void Render(Scene* scene) override;
 
