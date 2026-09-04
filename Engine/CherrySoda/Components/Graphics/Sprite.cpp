@@ -2,7 +2,9 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Graphics/MTexture.h>
+#include <CherrySoda/Graphics/SpriteBatch.h>
 #include <CherrySoda/Util/Calc.h>
+#include <CherrySoda/Util/Draw.h>
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
@@ -122,6 +124,69 @@ void Sprite::Play(const StringID& id, bool restart /* = false*/, bool randomizeF
 		}
 		SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
 	}
+}
+
+void Sprite::PlayOffset(const StringID& id, float offset, bool restart /* = false*/)
+{
+	if (m_currentAnimationID != id || restart) {
+		CHERRYSODA_ASSERT_FORMAT(Has(id), "No Animation defined for ID: %s\n", id.GetStr().c_str());
+
+		if (m_onChange) {
+			m_onChange(m_lastAnimationID, id);
+		}
+		m_lastAnimationID = m_currentAnimationID = id;
+		m_currentAnimation = &m_animations[id];
+
+		if (m_currentAnimation->m_delay > 0) {
+			m_animating = true;
+			float at = (m_currentAnimation->m_delay * STL::Count(m_currentAnimation->m_frames)) * offset;
+
+			m_currentAnimationFrame = 0;
+			while (at >= m_currentAnimation->m_delay) {
+				++m_currentAnimationFrame;
+				at -= m_currentAnimation->m_delay;
+			}
+
+			m_currentAnimationFrame %= STL::Count(m_currentAnimation->m_frames);
+			m_animationTimer = at;
+			SetFrame(m_currentAnimation->m_frames[m_currentAnimationFrame]);
+		}
+		else {
+			m_animationTimer = 0.f;
+			m_animating = false;
+			m_currentAnimationFrame = 0;
+			SetFrame(m_currentAnimation->m_frames[0]);
+		}
+	}
+}
+
+void Sprite::Reverse(const StringID& id, bool restart /* = false*/)
+{
+	Play(id, restart);
+	if (Rate() > 0) {
+		Rate(Rate() * -1.f);
+	}
+}
+
+void Sprite::DrawSubrect(const Math::Vec2& offset, const Math::IRectangle& rectangle)
+{
+	if (Texture().IsValid()) {
+		auto clip = Texture().GetRelativeRect(rectangle);
+		Math::Vec2 clipOffset(-Math_Min(rectangle.X() - Texture().DrawOffset().x, 0.f),
+							  -Math_Min(rectangle.Y() - Texture().DrawOffset().y, 0.f));
+		Draw::GetSpriteBatch()->Draw(Texture().Texture(), Math::Vec2(RenderPosition()) + offset, clip, GetColor(),
+									 ZRotation(), Origin2D() - clipOffset, Scale2D(), GetSpriteEffects(), 0.f);
+	}
+}
+
+void Sprite::LogAnimations() const
+{
+	String str;
+	for (auto& kv : m_animations) {
+		str += CHERRYSODA_FORMAT("%s: %d frames, %.3fs each\n", kv.first.GetStr().c_str(),
+								 static_cast<int>(STL::Count(kv.second.m_frames)), kv.second.m_delay);
+	}
+	CHERRYSODA_LOG(str.c_str());
 }
 
 Sprite* Sprite::CloneInto(Sprite* clone)

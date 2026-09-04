@@ -2,6 +2,7 @@
 #define _CHERRYSODA_COMPONENTS_GRAPHICS_SPRITE_H_
 
 #include <CherrySoda/Components/Graphics/Image.h>
+#include <CherrySoda/Components/Logic/Coroutine.h>
 #include <CherrySoda/Graphics/Atlas.h>
 #include <CherrySoda/Graphics/MTexture.h>
 #include <CherrySoda/Util/Chooser.h>
@@ -95,6 +96,33 @@ public:
 	}
 
 	void Play(const StringID& id, bool restart = false, bool randomizeFrame = false);
+	// Starts the animation partway through: offset 0.5 starts at the middle
+	// frame (with the remainder as frame timer)
+	void PlayOffset(const StringID& id, float offset, bool restart = false);
+	// Plays and flips Rate so the animation runs backwards; animating in
+	// reverse loops back from the last frame
+	void Reverse(const StringID& id, bool restart = false);
+
+	// Coroutine routines that finish when the current animation stops; the
+	// sprite must outlive them
+	STL::Func<bool> PlayRoutine(const StringID& id, bool restart = false)
+	{
+		Play(id, restart);
+		return WaitRoutine();
+	}
+	STL::Func<bool> ReverseRoutine(const StringID& id, bool restart = false)
+	{
+		Reverse(id, restart);
+		return WaitRoutine();
+	}
+	STL::Func<bool> WaitRoutine()
+	{
+		return Coroutines::WaitUntil([this]() { return !Animating(); });
+	}
+
+	// Draws the current frame clipped to a rectangle in texture coordinates
+	void DrawSubrect(const Math::Vec2& offset, const Math::IRectangle& rectangle);
+	void LogAnimations() const;
 
 	inline bool Has(const StringID& id) const { return STL::ContainsKey(m_animations, id); }
 
@@ -122,6 +150,9 @@ public:
 	}
 
 	inline float Rate() const { return m_rate; }
+	inline void Rate(float rate) { m_rate = rate; }
+
+	CHERRYSODA_GETTER_SETTER_OF_BOOL(UseRawDeltaTime, m_useRawDeltaTime);
 
 	inline void OnFinish(STL::Action<StringID> onFinish) { m_onFinish = onFinish; }
 	inline void OnLoop(STL::Action<StringID> onLoop) { m_onLoop = onLoop; }

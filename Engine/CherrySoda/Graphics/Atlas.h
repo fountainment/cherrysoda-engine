@@ -13,9 +13,12 @@ class Atlas
 public:
 	enum class AtlasDataFormat
 	{
+		TexturePacker_Sparrow,
 		CrunchJson,
+		CrunchXml,
 		CrunchBinary,
 		CrunchJsonOrBinary,
+		CrunchXmlOrBinary,
 		CrunchBinaryNoAtlas,
 		Packer,
 		PackerNoAtlas
@@ -40,6 +43,14 @@ public:
 		return atlas;
 	}
 	static void ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat format);
+
+	// Loads each of the data files (relative to rootPath) into one atlas
+	static Atlas* FromMultiAtlas(const String& rootPath, const STL::Vector<String>& dataPath, AtlasDataFormat format);
+	// Loads rootPath/filename0.xml, filename1.xml, ... until one is missing
+	static Atlas* FromMultiAtlas(const String& rootPath, const String& filename, AtlasDataFormat format);
+	// Loads every png under the directory; keys are the extension-less
+	// relative paths with '/' separators
+	static Atlas* FromDirectory(const String& path);
 
 private:
 	const MTexture& GetAtlasSubtextureFromCacheAt(const StringID& key, int index) const;

@@ -46,7 +46,7 @@ namespace Coroutines {
 // Wait for the given time in seconds
 inline STL::Func<bool> Wait(float seconds, bool useRawDeltaTime = false)
 {
-	return [seconds, useRawDeltaTime, timeLeft = seconds]() mutable {
+	return [useRawDeltaTime, timeLeft = seconds]() mutable {
 		timeLeft -= useRawDeltaTime ? Engine::Instance()->RawDeltaTime() : Engine::Instance()->DeltaTime();
 		return timeLeft <= 0.f;
 	};
@@ -55,7 +55,7 @@ inline STL::Func<bool> Wait(float seconds, bool useRawDeltaTime = false)
 // Wait a number of frames
 inline STL::Func<bool> WaitFrames(int frames)
 {
-	return [frames, framesLeft = frames]() mutable { return --framesLeft <= 0; };
+	return [framesLeft = frames]() mutable { return --framesLeft <= 0; };
 }
 
 // Wait until the condition returns true
