@@ -235,6 +235,7 @@ function(add_cherrysoda_executable executable_name)
                          COMMAND ${CMAKE_COMMAND} -E touch ${shader_compile_stamp}
                          COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders ${CMAKE_CURRENT_BINARY_DIR}/assets/shaders
                          DEPENDS ${shader_src} ${CHERRYSODA_SHADERC_EXECUTABLE}
+                                 ${CHERRYSODA_TOOL_PATH}/compile_shader.py ${CHERRYSODA_TOOL_PATH}/lib/cherrysoda.py
                          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
   endif()

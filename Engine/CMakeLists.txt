@@ -194,6 +194,7 @@ if(NOT "${EMBEDDED_SHADER_SRC}" STREQUAL "")
                        COMMAND ${Python_EXECUTABLE} ${CHERRYSODA_TOOL_PATH}/compile_shader.py "${CMAKE_CURRENT_SOURCE_DIR}/CherrySoda/Graphics/" --file-list \"${EMBEDDED_SHADER_SRC}\" -E
                        COMMAND ${CMAKE_COMMAND} -E touch ${SHADER_COMPILE_STAMP}
                        DEPENDS ${EMBEDDED_SHADER_SRC} ${CHERRYSODA_SHADERC_EXECUTABLE}
+                                ${CHERRYSODA_TOOL_PATH}/compile_shader.py ${CHERRYSODA_TOOL_PATH}/lib/cherrysoda.py
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endif()

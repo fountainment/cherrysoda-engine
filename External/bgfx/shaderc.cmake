@@ -257,3 +257,21 @@ else()
                      POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:shaderc>/shaderc.exe ${CHERRYSODA_TOOL_PATH}/bin/shaderc.local.exe)
 endif()
+
+# shaderc dlopens the DXC runtime for s_6_* (DXIL) profiles, so it must sit next to
+# shaderc.local as well, not only next to the build-tree binary
+set(DXC_RUNTIME_FOR_TOOLS)
+if(LINUX)
+  set(DXC_RUNTIME_FOR_TOOLS
+      ${BGFX_3RD_DIR}/../tools/bin/linux/libdxcompiler.so
+      ${BGFX_3RD_DIR}/../tools/bin/linux/libdxil.so)
+elseif(WINDOWS)
+  set(DXC_RUNTIME_FOR_TOOLS
+      ${BGFX_3RD_DIR}/../tools/bin/windows/dxcompiler.dll
+      ${BGFX_3RD_DIR}/../tools/bin/windows/dxil.dll)
+endif()
+foreach(dxc_runtime IN LISTS DXC_RUNTIME_FOR_TOOLS)
+  add_custom_command(TARGET shaderc
+                     POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dxc_runtime} ${CHERRYSODA_TOOL_PATH}/bin)
+endforeach()

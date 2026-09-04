@@ -26,7 +26,6 @@ def compile_shader_program(shader_dir, shader_name):
     compile_info = []
     if cherry.is_windows_system():
         compile_info += [
-            ['windows', 's_3_0', 3, 'dx9'],
             ['windows', 's_5_0', 3, 'dx11']
         ]
     compile_info += [
@@ -93,15 +92,15 @@ def compile_embedded_shader_program(shader_dir, shader_name):
     dx_compile_info = [
         {
             'platform': 'windows',
-            'profile': 's_3_0',
+            'profile': 's_5_0',
             'opt_level': 3,
-            'suffix': 'dx9'
+            'suffix': 'dxbc'
         },
         {
             'platform': 'windows',
-            'profile': 's_5_0',
+            'profile': 's_6_0',
             'opt_level': 3,
-            'suffix': 'dx11'
+            'suffix': 'dxil'
         }
     ]
     cherry.make_sure_folder_exist(vert_out)
