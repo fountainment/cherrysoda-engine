@@ -503,6 +503,13 @@ void GUI::UpdateConsole()
 		Engine::Instance()->ToggleConsole();
 	}
 	if (Engine::Instance()->ConsoleOpened()) {
+		// Function keys fire their registered console actions
+		for (int i = 0; i < Commands::FunctionKeyActionCount(); ++i) {
+			if (ImGui::IsKeyPressed(static_cast<ImGuiKey>(ImGuiKey_F1 + i), false)) {
+				Commands::ExecuteFunctionKeyAction(i);
+			}
+		}
+
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
 		{

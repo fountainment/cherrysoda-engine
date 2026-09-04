@@ -67,6 +67,22 @@ static STL::Vector<String> CommandTrieFindPrefix(const String& prefix)
 
 Commands::ReturnValue Commands::ms_returnValue;
 
+STL::Action<> Commands::ms_functionKeyActions[12];
+
+void Commands::SetFunctionKeyAction(int index, STL::Action<> action)
+{
+	CHERRYSODA_ASSERT(index >= 0 && index < FunctionKeyActionCount(), "Function key index out of range (F1-F12)\n");
+	ms_functionKeyActions[index] = std::move(action);
+}
+
+void Commands::ExecuteFunctionKeyAction(int index)
+{
+	CHERRYSODA_ASSERT(index >= 0 && index < FunctionKeyActionCount(), "Function key index out of range (F1-F12)\n");
+	if (ms_functionKeyActions[index] != nullptr) {
+		ms_functionKeyActions[index]();
+	}
+}
+
 char Commands::ms_currentText[512] = "";
 STL::Vector<STL::Pair<Color, String>> Commands::ms_drawCommands;
 bool Commands::ms_consoleTextScrollNeeded = false;

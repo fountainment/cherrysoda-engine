@@ -50,15 +50,6 @@ entry has a stable ID, the location(s), the impact, and a fix sketch.
   scripts cannot be authored as files.
 - Fix sketch: read a text file of one-command-per-line into a batch.
 
-### F6: PixelFont kerning not read; space-width heuristic
-
-- Location: `Engine/CherrySoda/Util/PixelFont.cpp:61`,
-  `Engine/CherrySoda/Util/PixelFont.h:43`
-- Impact: kerning pairs from font data are ignored; space width is a fixed
-  1/3 line height which can look wrong for some fonts.
-- Fix sketch: parse kerning into the lookup; make space width configurable
-  per font.
-
 ### F8: MeshGraphicsComponent template name workaround
 
 - Location: `Engine/CherrySoda/Components/Graphics/MeshGraphicsComponent.h:15,23`

@@ -62,6 +62,12 @@ public:
 
 	static void AddParamSlider(const String& param, float minValue, float maxValue, float defaultValue);
 
+	// Binds an action to a function key while the console is open
+	// (index 0 is F1, 11 is F12)
+	static inline int FunctionKeyActionCount() { return 12; }
+	static void SetFunctionKeyAction(int index, STL::Action<> action);
+	static void ExecuteFunctionKeyAction(int index);
+
 	static void Initialize();
 	static void Terminate();
 
@@ -92,6 +98,8 @@ private:
 	static STL::HashMap<StringID, CommandInfo>& INTERNAL_GetCommands();
 
 	static ReturnValue ms_returnValue;
+
+	static STL::Action<> ms_functionKeyActions[12];
 
 	static char ms_currentText[512];
 	static STL::Vector<STL::Pair<Color, String>> ms_drawCommands;

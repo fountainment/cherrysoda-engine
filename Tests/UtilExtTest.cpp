@@ -1,6 +1,7 @@
 #include "Test.h"
 
 #include <CherrySoda/Util/CheatListener.h>
+#include <CherrySoda/Util/Commands.h>
 #include <CherrySoda/Util/ErrorLog.h>
 #include <CherrySoda/Util/SimpleCurve.h>
 
@@ -76,6 +77,25 @@ TEST(CheatListenerTest, FiresOnceOnCodeAndTrimsBuffer)
 	type(1);
 	EXPECT_EQ(1, fired);
 	EXPECT_EQ("UUDD", listener.CurrentInput());
+}
+
+TEST(CommandsTest, FunctionKeyActionsRegisterAndFire)
+{
+	int fired = 0;
+	Commands::SetFunctionKeyAction(0, [&fired]() { ++fired; });
+	Commands::SetFunctionKeyAction(11, [&fired]() { fired += 10; });
+
+	Commands::ExecuteFunctionKeyAction(0);
+	EXPECT_EQ(1, fired);
+	Commands::ExecuteFunctionKeyAction(11);
+	EXPECT_EQ(11, fired);
+
+	// Unbound and rebound keys
+	Commands::SetFunctionKeyAction(0, nullptr);
+	Commands::ExecuteFunctionKeyAction(0);
+	EXPECT_EQ(11, fired);
+
+	Commands::SetFunctionKeyAction(11, nullptr);
 }
 
 TEST(ErrorLogTest, WritesHeaderAndPreservesOldErrors)

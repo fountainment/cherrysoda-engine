@@ -26,6 +26,7 @@ public:
 	}
 
 private:
+	friend class PixelFont;
 	friend class PixelText;
 
 	type::UInt32 m_character = 0;
@@ -33,15 +34,16 @@ private:
 	int m_xOffset = 0;
 	int m_yOffset = 0;
 	int m_xAdvance = 0;
-	STL::HashMap<type::UInt32, type::UInt32> m_kerning;
+	// Kerning amounts are signed (negative pulls pairs together)
+	STL::HashMap<type::UInt32, type::Int32> m_kerning;
 };
 
 class PixelFontSize
 {
 public:
 	inline int LineHeight() const { return m_lineHeight; }
-	inline int SpaceWidth() const { return m_lineHeight / 3; }
-	// TODO: 1/3 line height for space width could be inappropriate in some cases?
+	// Zero means the lineHeight / 3 heuristic applies
+	inline int SpaceWidth() const { return m_spaceWidth > 0 ? m_spaceWidth : m_lineHeight / 3; }
 	inline float Size() const { return m_size; }
 
 	const PixelFontCharacter* Get(type::UInt32 id) const { return STL::GetValueAddress(m_characters, id); }
@@ -52,6 +54,7 @@ private:
 	STL::Vector<MTexture> m_textures;
 	STL::HashMap<type::UInt32, PixelFontCharacter> m_characters;
 	int m_lineHeight = 0;
+	int m_spaceWidth = 0;
 	float m_size = 0.f;
 	bool m_outline = false;
 };
@@ -69,8 +72,19 @@ public:
 
 	const PixelFontSize FirstSize() const { return STL::Front(m_sizes); }
 
+	// Overrides the space width for every size of this face; zero restores
+	// the lineHeight / 3 heuristic
+	void SetSpaceWidth(int spaceWidth)
+	{
+		m_spaceWidth = spaceWidth;
+		for (auto& fontSize : m_sizes) {
+			fontSize.m_spaceWidth = spaceWidth;
+		}
+	}
+
 private:
 	String m_face;
+	int m_spaceWidth = 0;
 	STL::List<PixelFontSize> m_sizes;
 };
 

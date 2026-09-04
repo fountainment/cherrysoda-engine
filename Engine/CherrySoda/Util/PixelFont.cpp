@@ -48,6 +48,7 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value
 	fontSize.m_lineHeight = data["common"].GetObject()["lineHeight"].GetInt();
 	fontSize.m_size = size;
 	fontSize.m_outline = outline;
+	fontSize.m_spaceWidth = m_spaceWidth;
 
 	// get characters
 	const auto& chars = data["chars"].GetArray();
@@ -57,10 +58,24 @@ const PixelFontSize PixelFont::AddFontSize(const String& path, const json::Value
 		STL::Add(fontSize.m_characters, STL::MakePair(id, PixelFontCharacter(id, textures[page], &character)));
 	}
 
-	// get kerning
-	if (data.HasMember("kerning") && data["kerning"].IsArray()) {
-		// TODO: add kerning reading
-	}
+	// get kerning (BMFont exports "kernings"; accept either key)
+	auto readKernings = [&data, &fontSize](const char* key) {
+		if (!data.HasMember(key) || !data[key].IsArray()) {
+			return;
+		}
+		for (const auto& kerning : data[key].GetArray()) {
+			if (!kerning.IsObject() || !kerning.HasMember("first") || !kerning.HasMember("second") ||
+				!kerning.HasMember("amount")) {
+				continue;
+			}
+			auto it = fontSize.m_characters.find(kerning["first"].GetInt());
+			if (it != fontSize.m_characters.end()) {
+				it->second.m_kerning[kerning["second"].GetInt()] = kerning["amount"].GetInt();
+			}
+		}
+	};
+	readKernings("kernings");
+	readKernings("kerning");
 
 	// add font size
 	STL::Add(m_sizes, fontSize);

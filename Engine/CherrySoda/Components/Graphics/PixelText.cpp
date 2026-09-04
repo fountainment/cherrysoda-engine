@@ -27,7 +27,9 @@ void PixelText::Refresh()
 	int lines = 1;
 	Math::Vec2 offset = Vec2_Zero;
 
-	for (auto c : m_convertedText) {
+	for (size_t i = 0; i < m_convertedText.size(); ++i) {
+		type::UInt32 c = m_convertedText[i];
+
 		// new line
 		if (c == '\n') {
 			offset.x = 0.f;
@@ -53,6 +55,14 @@ void PixelText::Refresh()
 				widest = static_cast<int>(offset.x);
 			}
 			offset.x += fontChar->m_xAdvance;
+
+			// kerning against the next character
+			if (i + 1 < m_convertedText.size()) {
+				auto kerning = fontChar->m_kerning.find(m_convertedText[i + 1]);
+				if (kerning != fontChar->m_kerning.end()) {
+					offset.x += kerning->second;
+				}
+			}
 		}
 	}
 
