@@ -189,6 +189,38 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 		}
 		break;
 	}
+	case AtlasDataFormat::CrunchJson: {
+		json::Document doc;
+		JsonUtil::ReadJsonFile(doc, path);
+		const auto& at = doc["textures"];
+		CHERRYSODA_ASSERT_FORMAT(
+			at.IsArray(), "Atlas json parse failed: \"textures\" scope is not an array in \"%s\"!\n", path.c_str());
+		for (const auto& tex : at.GetArray()) {
+			String texturePath = StringUtil::Path_GetDirectoryName(path) + tex["name"].GetString() + ".png";
+			auto texture = Texture2D::FromFile(texturePath);
+			auto mTexture = MTexture(texture);
+			STL::Add(atlas->m_sources, texture);
+			const auto& img = tex["images"];
+			CHERRYSODA_ASSERT_FORMAT(
+				img.IsArray(), "Atlas json parse failed: \"images\" scope is not an array in \"%s\"!\n", path.c_str());
+			for (const auto& sub : img.GetArray()) {
+				const char* name = sub["n"].GetString();
+				auto clipRect = Math::IRectangle{
+					Math::IVec2(sub["x"].GetInt(), sub["y"].GetInt()),
+					Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
+				};
+				if (sub.HasMember("fx")) {
+					atlas->m_textures[name] =
+						MTexture(mTexture, name, clipRect, Math::Vec2(-sub["fx"].GetInt(), -sub["fy"].GetInt()),
+								 sub["fw"].GetInt(), sub["fh"].GetInt());
+				}
+				else {
+					atlas->m_textures[name] = MTexture(mTexture, name, clipRect);
+				}
+			}
+		}
+		break;
+	}
 	case AtlasDataFormat::CrunchXml: {
 		xml::xml_document doc;
 		XMLUtil::ReadXMLFile(doc, path);
