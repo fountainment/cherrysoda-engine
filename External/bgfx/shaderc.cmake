@@ -217,9 +217,13 @@ target_include_directories(shaderc PRIVATE ${SPIRV_CROSS})
 target_include_directories(shaderc PRIVATE ${SPIRV_TOOLS}/include)
 target_include_directories(shaderc PRIVATE ${TINT} ${TINT}/src)
 if(NOT WINDOWS)
-  # d3d4linux + directx-headers for legacy HLSL (SM 5.0) on linux/macos
+  # d3d4linux + directx-headers for legacy HLSL (SM 5.0) on linux/macos.
+  # include/directx itself is needed for <dxcapi.h>/<d3d12shader.h> pulled in by
+  # the DXIL path (SHADERC_CONFIG_HAS_DXC is on for linux; windows gets dxcapi.h
+  # from the Windows SDK instead).
   target_include_directories(shaderc PRIVATE ${BGFX_3RD_DIR}/d3d4linux/include
                                              ${BGFX_3RD_DIR}/directx-headers/include
+                                             ${BGFX_3RD_DIR}/directx-headers/include/directx
                                              ${BGFX_3RD_DIR}/directx-headers/include/wsl/stubs)
 endif()
 target_link_libraries(shaderc PRIVATE bx glslang spirv-opt spirv-cross tint)

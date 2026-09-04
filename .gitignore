@@ -39,6 +39,10 @@ build/
 Projects/
 Tools/bin/shaderc.local*
 Tools/bin/crunch*
+# shaderc dlopens the DXC runtime (dxcompiler.dll/dxil.dll, libdxcompiler.so/libdxil.so)
+# from its own dir for s_6_0
+!Tools/bin/*.dll
+!Tools/bin/*.so
 .vs
 
 # Temp
