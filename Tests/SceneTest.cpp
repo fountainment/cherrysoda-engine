@@ -30,9 +30,9 @@ public:
 		base::Removed(entity);
 	}
 
-	void EntityAdded(Scene* scene) override { ++entityAddedCount; }
+	void EntityAdded(Scene* /*scene*/) override { ++entityAddedCount; }
 
-	void EntityRemoved(Scene* scene) override { ++entityRemovedCount; }
+	void EntityRemoved(Scene* /*scene*/) override { ++entityRemovedCount; }
 
 	void EntityAwake() override { ++awakeCount; }
 

@@ -76,9 +76,9 @@ public:
 
 	InventoryComponent() : base(false, false) {}
 
-	void AddItem(const StringID& id, int amount = 1) { ++m_items[id]; }
+	void AddItem(const StringID& id, int /*amount*/ = 1) { ++m_items[id]; }
 
-	bool RemoveItem(const StringID& id, int amount = 1)
+	bool RemoveItem(const StringID& id, int /*amount*/ = 1)
 	{
 		if (STL::ContainsKey(m_items, id)) {
 			if (m_items[id] > 0) {

@@ -264,6 +264,11 @@ function(add_cherrysoda_executable executable_name)
 endfunction(add_cherrysoda_executable)
 
 add_subdirectory(External)
+
+# Stricter warnings for first-party C++ (vendored code under External keeps -Wall;
+# C sources and MSVC stay as-is)
+add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wextra>)
+
 add_subdirectory(Engine)
 
 if(CHERRYSODA_BUILD_TOOLS)
