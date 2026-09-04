@@ -14,3 +14,8 @@ Consumed by: Graphics/ (renderer, textures, effects, embedded shaders),
              Tools/compile_shader.py via shaderc (prebuilt Tools/bin/shaderc
              on Windows/Linux x64, or Tools/bin/shaderc.local built with the
              unix-shaderc / windows-shaderc presets)
+Note:        bgfx's own tools/bin/*/.gitignore (`*`) hides the runtime
+             binaries upstream force-adds (dxcompiler/dxil/d3dcompiler_47 and
+             the Linux .so twins); shaderc's POST_BUILD copy needs them, so
+             they are force-tracked here too — after re-running
+             update_bgfx.py, restore them with `git add -f`.
