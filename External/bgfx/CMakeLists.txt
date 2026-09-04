@@ -105,11 +105,19 @@ endif()
 if(MSVC OR MINGW)
   target_include_directories(bgfx PRIVATE bgfx/3rdparty/directx-headers/include/directx)
 endif()
+# Each desktop platform compiles its native renderer alongside WebGPU — defining any
+# BGFX_CONFIG_RENDERER_* switches config.h to the "explicit" preset where every other
+# renderer defaults to 0, so without this Windows/Linux x64 were left WebGPU-only and
+# went black when the dawn library is not shipped next to the app.
 if(MACOSX)
   target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_RENDERER_METAL=1)
 elseif(ANDROID OR NOT CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)|(mips64)|(MIPS64)")
   target_link_libraries(bgfx PUBLIC GLESv2 EGL)
   target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_RENDERER_OPENGLES=1)
+elseif(WINDOWS)
+  target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_RENDERER_DIRECT3D11=1)
+elseif(LINUX)
+  target_compile_definitions(bgfx PUBLIC BGFX_CONFIG_RENDERER_VULKAN=1)
 endif()
 # Defining any BGFX_CONFIG_RENDERER_* switches config.h to the "explicit" preset where
 # every other renderer defaults to 0, so WebGPU must be requested explicitly.

@@ -9,7 +9,10 @@ Vendored:    updated via Tools/update_bgfx.py — clone the three repos as
              breaks and regenerate embedded shaders
 Build:       External/bgfx/CMakeLists.txt + shaderc.cmake are engine-authored
              build scripts modeled after bkaradzic/bgfx.cmake; shaderc links
-             Dawn's Tint for WGSL — do not strip the tint target
+             Dawn's Tint for WGSL — do not strip the tint target. Every
+             desktop platform compiles its native renderer (Metal / D3D11 /
+             Vulkan) alongside WebGPU so apps still run without the dawn
+             library; keep that fallback when touching the renderer defines
 Consumed by: Graphics/ (renderer, textures, effects, embedded shaders),
              Tools/compile_shader.py via shaderc (prebuilt Tools/bin/shaderc
              on Windows/Linux x64, or Tools/bin/shaderc.local built with the
