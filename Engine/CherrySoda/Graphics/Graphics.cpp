@@ -608,9 +608,9 @@ void Graphics::UpdateView()
 #else
 	constexpr uint32_t vsyncFlag = BGFX_RESET_VSYNC | BGFX_RESET_FLIP_AFTER_RENDER;
 #endif
-	// the swap chain is sized by the physical window; the view size stays in
+	// the swap chain is sized by the drawable pixels; the view size stays in
 	// logical points and is only used for cameras/render targets
-	bgfx::reset(Engine::Instance()->GetWindowWidth(), Engine::Instance()->GetWindowHeight(),
+	bgfx::reset(Engine::Instance()->GetPixelWidth(), Engine::Instance()->GetPixelHeight(),
 				ms_vsyncEnabled ? vsyncFlag : BGFX_RESET_NONE);
 }
 

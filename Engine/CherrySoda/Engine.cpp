@@ -40,14 +40,20 @@ Engine::Engine(int width, int height, int windowWidth, int windowHeight, const S
 	m_height = m_windowHeight = 274;
 	// Intentionally give two more pixels on height
 	// to avoid graphics stuck issue on PocketCHIP
+	m_pixelWidth = m_windowWidth;
+	m_pixelHeight = m_windowHeight;
 #elif defined(CLOCKWORK_PI)
 	m_width = m_windowWidth = 320;
 	m_height = m_windowHeight = 240;
+	m_pixelWidth = m_windowWidth;
+	m_pixelHeight = m_windowHeight;
 #else
 	m_width = width;
 	m_height = height;
 	m_windowWidth = windowWidth;
 	m_windowHeight = windowHeight;
+	m_pixelWidth = windowWidth;
+	m_pixelHeight = windowHeight;
 #endif
 	m_title = title;
 	m_fullscreen = fullscreen;
@@ -213,14 +219,58 @@ void Engine::SetScene(Scene* scene)
 void Engine::OnClientSizeChanged(int width, int height)
 {
 	CHERRYSODA_DEBUG_FORMAT("cherrysoda::Engine::OnClientSizeChanged(%d, %d)\n", width, height);
-	if (width > 0 && height > 0 && !m_resizing) {
-		m_resizing = true;
-		SetWindowSize(width, height);
-		// keep the view in logical points: view = window / content scale
-		SetViewSize((int)(width / m_contentScale), (int)(height / m_contentScale));
-		Graphics::UpdateView();
-		m_resizing = false;
+	if (width <= 0 || height <= 0) {
+		return;
 	}
+	// Logical window size in SDL window coordinates (the mouse-coordinate space):
+	// store it and re-derive the logical view size. The drawable pixel size is
+	// tracked separately by OnPixelSizeChanged, which also drives the swapchain.
+	SetWindowSize(width, height);
+	SetViewSize((int)SDL_max(1, SDL_lroundf(width / m_contentScale)),
+				(int)SDL_max(1, SDL_lroundf(height / m_contentScale)));
+}
+
+void Engine::OnPixelSizeChanged(int width, int height)
+{
+	CHERRYSODA_DEBUG_FORMAT("cherrysoda::Engine::OnPixelSizeChanged(%d, %d)\n", width, height);
+	if (width <= 0 || height <= 0) {
+		return;
+	}
+	// Drawable pixels: the swapchain/viewport axis. On macOS with
+	// SDL_WINDOW_HIGH_PIXEL_DENSITY this is denser than the window size.
+	SetPixelSize(width, height);
+	Graphics::UpdateView();
+}
+
+void Engine::OnDisplayScaleChanged()
+{
+	// The window moved to a display with a different content scale / pixel
+	// density, or the OS scale changed: refresh both factors and re-derive
+	// everything that depends on them.
+	RefreshDisplayScale();
+	SetViewSize((int)SDL_max(1, SDL_lroundf(GetWindowWidth() / m_contentScale)),
+				(int)SDL_max(1, SDL_lroundf(GetWindowHeight() / m_contentScale)));
+	Graphics::UpdateView();
+	GUI::RefreshDpiScale();
+}
+
+void Engine::RefreshDisplayScale()
+{
+	if (m_window == nullptr || m_window->m_mainWindow == nullptr) {
+		return;
+	}
+	float contentScale = SDL_GetDisplayContentScale(SDL_GetDisplayForWindow(m_window->m_mainWindow));
+	if (contentScale <= 0.0f) {
+		contentScale = 1.0f;
+	}
+	m_contentScale = contentScale;
+	float pixelDensity = SDL_GetWindowPixelDensity(m_window->m_mainWindow);
+	if (pixelDensity <= 0.0f) {
+		pixelDensity = 1.0f;
+	}
+	m_pixelDensity = pixelDensity;
+	CHERRYSODA_DEBUG_FORMAT("cherrysoda::Engine::RefreshDisplayScale(contentScale = %g, pixelDensity = %g)\n",
+							m_contentScale, m_pixelDensity);
 }
 
 void Engine::OnTextInput(const char* text)
@@ -318,9 +368,9 @@ void Engine::RenderCore()
 
 	cherrysoda::Graphics::BeginRenderPass(0);
 	m_graphicsDevice->SetRenderTarget(nullptr);
-	// the viewport covers the physical window; camera/view sizes stay in logical
+	// the viewport covers the drawable pixels; camera/view sizes stay in logical
 	// points so content is scaled up on high-DPI displays
-	m_graphicsDevice->SetViewport(0, 0, GetWindowWidth(), GetWindowHeight());
+	m_graphicsDevice->SetViewport(0, 0, GetPixelWidth(), GetPixelHeight());
 	m_graphicsDevice->SetClearColor(m_clearColor);
 	m_graphicsDevice->Touch();
 

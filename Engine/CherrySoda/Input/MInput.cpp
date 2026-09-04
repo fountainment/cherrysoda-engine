@@ -129,8 +129,9 @@ void MInput::KeyboardState::InternalSetKey(Keys key)
 
 Math::IVec2 MInput::MouseData::Position() const
 {
-	// mouse coords are physical window pixels; convert to the logical view space
-	// games work in (same space as camera/GetWidth/GetHeight)
+	// mouse coords are in SDL window-coordinate space (logical points on macOS,
+	// physical pixels on Windows); divide by the content scale to get the logical
+	// view space games work in (same space as camera/GetWidth/GetHeight)
 	float contentScale = Engine::Instance()->GetContentScale();
 	return {(int)(m_currentState.m_x / contentScale),
 			Engine::Instance()->GetHeight() - (int)(m_currentState.m_y / contentScale)};

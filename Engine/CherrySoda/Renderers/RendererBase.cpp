@@ -18,9 +18,9 @@ void RendererBase::RenderPrepare(Scene* /*scene*/)
 			GetCamera()->CenterOrigin();
 		}
 	}
-	// the screen render pass covers the physical window while the camera keeps
+	// the screen render pass covers the drawable pixels while the camera keeps
 	// the logical view size, scaling content up on high-DPI displays
-	Math::IVec2 viewportSize = GetRenderTarget() != nullptr ? renderTargetSize : Engine::Instance()->GetWindowSize();
+	Math::IVec2 viewportSize = GetRenderTarget() != nullptr ? renderTargetSize : Engine::Instance()->GetPixelSize();
 	Graphics::UseRenderPass(RenderPass())->SetRenderTarget(GetRenderTarget());
 	Graphics::UseRenderPass(RenderPass())->SetViewport(0, 0, viewportSize.x, viewportSize.y);
 	Graphics::UseRenderPass(RenderPass())->Touch();

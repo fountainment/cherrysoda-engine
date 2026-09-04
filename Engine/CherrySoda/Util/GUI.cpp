@@ -22,6 +22,7 @@ bool GUI::ms_frameStarted = false;
 bool GUI::ms_consoleFocused = false;
 bool GUI::ms_sliderFocused = false;
 bool GUI::ms_internalConsoleEnabled = true;
+GUI::FontBuilder GUI::ms_fontBuilder = nullptr;
 
 static const char* GetClipboardText_CherrySodaImplForImGui(void* /*unused*/)
 {
@@ -331,22 +332,78 @@ void GUI::Initialize()
 	io.SetClipboardTextFn = SetClipboardText_CherrySodaImplForImGui;
 	io.ClipboardUserData = nullptr;
 
-	// Style (before building the font atlas so FontScaleDpi affects rasterization)
+	// High-DPI style + fonts (fountain2-style, two independent axes):
+	// - Content scale (visual compensation): only Windows reports > 1 — io.DisplaySize
+	//   is in physical pixels there, so FontScaleDpi + ScaleAllSizes restore the
+	//   intended physical size of the UI. macOS is unaffected (always 1.0).
+	// - Window display scale = pixel density x content scale (rasterization
+	//   density): > 1 on macOS Retina and Windows high-DPI alike — bake fonts at
+	//   that density so glyphs render crisply instead of being blur-upscaled.
+	// Never touch io.DisplaySize/MousePos — they share the window-coordinate
+	// space with mouse coords and must stay consistent.
+	SetupStyleAndFonts();
+
+	// Shader
+	ms_guiEffect = Graphics::GetEmbeddedEffect("sprite");
+}
+
+void GUI::SetupStyleAndFonts()
+{
+	// Reset from the base palette first: ScaleAllSizes is not idempotent
 	auto& style = ImGui::GetStyle();
 	ImGuiStyleCherrySoda(&style);
-	// High-DPI: scale style metrics and fonts with the display content scale.
-	// Never touch io.DisplaySize/MousePos here — they share the window pixel
-	// space with mouse coords and must stay consistent.
 	if (float contentScale = Engine::Instance()->GetContentScale(); contentScale > 1.0f) {
 		style.FontScaleDpi = contentScale;
 		style.ScaleAllSizes(contentScale);
 	}
 
-	// Font texture
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->Clear();
+	if (ms_fontBuilder != nullptr) {
+		ms_fontBuilder();
+	}
+	else {
+		AddDefaultFonts();
+	}
 	BuildFontTexture();
+}
 
-	// Shader
-	ms_guiEffect = Graphics::GetEmbeddedEffect("sprite");
+void GUI::AddDefaultFonts()
+{
+	// Add fonts AFTER FontScaleDpi is set: the legacy atlas bakes at the
+	// effective size, so the draw size (13 x contentScale on Windows) exactly
+	// matches the bake (13 x density) and never samples a blurry upscale.
+	ImGuiIO& io = ImGui::GetIO();
+	float density = FontDensity();
+	ImFontConfig fontConfig;
+	fontConfig.RasterizerDensity = density;
+	if (density > 1.0f) {
+		io.Fonts->AddFontDefaultVector(&fontConfig);
+	}
+	else {
+		io.Fonts->AddFontDefaultBitmap();
+	}
+}
+
+float GUI::FontDensity()
+{
+	return Engine::Instance()->GetWindowDisplayScale();
+}
+
+void GUI::SetFontBuilder(FontBuilder builder)
+{
+	ms_fontBuilder = builder;
+}
+
+void GUI::RefreshDpiScale()
+{
+	if (ImGui::GetCurrentContext() == nullptr) {
+		return;
+	}
+	// The window moved to a display with a different scale (or the OS scale
+	// changed): re-apply the DPI style and rebuild the font atlas at the new
+	// density. Runs between frames, from the event pump.
+	SetupStyleAndFonts();
 }
 
 void GUI::Terminate()
@@ -365,6 +422,11 @@ void GUI::Update()
 	auto winSize = Engine::Instance()->GetWindowSize();
 	io.DisplaySize.x = winSize.x;
 	io.DisplaySize.y = winSize.y;
+	// Drawable pixels per DisplaySize unit (2 on Retina): GUI::Render uses it to
+	// size the viewport and scale clip rects while vertex coordinates stay in
+	// DisplaySize units
+	float pixelDensity = Engine::Instance()->GetPixelDensity();
+	io.DisplayFramebufferScale = ImVec2(pixelDensity, pixelDensity);
 
 	if (Engine::Instance()->IsActive()) {
 		// Keyboard
@@ -517,11 +579,15 @@ void GUI::UpdateConsole()
 			}
 		}
 
-		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
+		// Scale hard-coded pixel sizes with the UI so the console keeps its
+		// proportions at any DPI (content scale: 1 on macOS, OS scale on Windows)
+		const float scale = Engine::Instance()->GetContentScale();
+
+		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f * scale, 180.f * scale), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
 		{
 			bool isLogOutputFocused = false;
-			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 10.f), true);
+			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 10.f * scale), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
 				for (const auto& c : Commands::ms_drawCommands) {
@@ -571,7 +637,7 @@ void GUI::UpdateConsole()
 					return 0;
 				}
 			};
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - (ImGui::GetTextLineHeight() * 2.f) - 21.f);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - (ImGui::GetTextLineHeight() * 2.f) - 21.f * scale);
 			const ImGuiInputTextFlags inputTextFlag =
 				ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion |
 				ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackCharFilter;
@@ -587,7 +653,7 @@ void GUI::UpdateConsole()
 		}
 		ImGui::End();
 		if (STL::IsNotEmpty(Commands::ms_sliderInfo)) {
-			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f, 170.f), ImVec2(FLT_MAX, FLT_MAX));
+			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f * scale, 170.f * scale), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Sliders", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
 			{
 				ms_sliderFocused = ImGui::IsWindowFocused();

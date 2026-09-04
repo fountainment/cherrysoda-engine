@@ -460,12 +460,19 @@ void Window::CreateWindow()
 	}
 	m_mainWindow = SDL_CreateWindow(title.c_str(), windowWidth, windowHeight, SDL_WINDOW_FULLSCREEN);
 	Engine::Instance()->SetWindowSize(windowWidth, windowHeight);
+	Engine::Instance()->SetPixelSize(windowWidth, windowHeight);
 #else
 	bool resizable = Engine::Instance()->m_windowResizable;
 	bool fullscreen = Engine::Instance()->m_fullscreen;
 	SDL_WindowFlags windowFlag = SDL_WINDOW_HIDDEN;
 	if (resizable) windowFlag |= SDL_WINDOW_RESIZABLE;
 	if (fullscreen) windowFlag |= SDL_WINDOW_FULLSCREEN;
+#ifndef __EMSCRIPTEN__
+	// High pixel density keeps the SDL window size in logical coordinates while
+	// the drawable (SDL_GetWindowSizeInPixels) gets the display's density, e.g.
+	// 2x on macOS Retina. Window coords stay the mouse-coordinate space.
+	windowFlag |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
+#endif
 	int viewWidth = Engine::Instance()->GetWidth();
 	int viewHeight = Engine::Instance()->GetHeight();
 #ifndef __EMSCRIPTEN__
@@ -486,7 +493,18 @@ void Window::CreateWindow()
 	Engine::Instance()->m_contentScale = contentScale;
 #endif
 	m_mainWindow = SDL_CreateWindow(title.c_str(), windowWidth, windowHeight, windowFlag);
+	// Query the real sizes back: the window size (logical window coordinates)
+	// and the drawable pixel size differ whenever the pixel density is not 1.
+	SDL_GetWindowSize(m_mainWindow, &windowWidth, &windowHeight);
 	Engine::Instance()->SetWindowSize(windowWidth, windowHeight);
+	Engine::Instance()->RefreshDisplayScale();
+#ifndef __EMSCRIPTEN__
+	SDL_GetWindowSizeInPixels(m_mainWindow, &windowWidth, &windowHeight);
+#else
+	windowWidth = Engine::Instance()->GetWindowWidth();
+	windowHeight = Engine::Instance()->GetWindowHeight();
+#endif
+	Engine::Instance()->SetPixelSize(windowWidth, windowHeight);
 	Engine::Instance()->SetViewSize(viewWidth, viewHeight);
 #endif
 
@@ -507,7 +525,10 @@ void Window::DestroyWindow()
 
 void Window::SetSize(int width, int height)
 {
-	SDL_SetWindowSize(m_mainWindow, width, height);
+	// Sizes are logical points like the engine ctor's; SDL takes physical pixels
+	// on Windows, so multiply by the content scale the same way CreateWindow does
+	float contentScale = Engine::Instance()->GetContentScale();
+	SDL_SetWindowSize(m_mainWindow, (int)SDL_ceilf(width * contentScale), (int)SDL_ceilf(height * contentScale));
 }
 
 void Window::SetTitle(const String& title)
@@ -718,8 +739,19 @@ void Window::PollEvents()
 			Engine::Instance()->IsActive(false);
 			break;
 
-		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+		case SDL_EVENT_WINDOW_RESIZED:
+			// window-coordinate (logical) size: game logic reacts to this
 			Engine::Instance()->OnClientSizeChanged(event.window.data1, event.window.data2);
+			break;
+
+		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			// drawable pixels: feeds the swapchain/viewport axis
+			Engine::Instance()->OnPixelSizeChanged(event.window.data1, event.window.data2);
+			break;
+
+		case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+			// window moved to another display or the OS scale changed
+			Engine::Instance()->OnDisplayScaleChanged();
 			break;
 
 		case SDL_EVENT_TEXT_INPUT: {

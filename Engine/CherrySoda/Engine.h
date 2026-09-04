@@ -36,6 +36,16 @@ public:
 	inline int GetWindowHeight() const { return m_windowHeight; }
 	inline Math::IVec2 GetWindowSize() const { return {GetWindowWidth(), GetWindowHeight()}; }
 	inline float GetContentScale() const { return m_contentScale; }
+	// Drawable pixels — the swapchain/viewport axis. Equals the window size unless
+	// SDL_WINDOW_HIGH_PIXEL_DENSITY makes the drawable denser (macOS Retina).
+	inline int GetPixelWidth() const { return m_pixelWidth; }
+	inline int GetPixelHeight() const { return m_pixelHeight; }
+	inline Math::IVec2 GetPixelSize() const { return {GetPixelWidth(), GetPixelHeight()}; }
+	// Drawable pixels per window-coordinate unit (2.0 on a Retina display, else 1.0)
+	inline float GetPixelDensity() const { return m_pixelDensity; }
+	// Pixel density x content scale — the font rasterization axis, matching
+	// SDL_GetWindowDisplayScale (2.0 on Retina and on Windows at 200% OS scaling)
+	inline float GetWindowDisplayScale() const { return m_pixelDensity * m_contentScale; }
 	inline String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
 	inline Color GetClearColor() { return m_clearColor; }
@@ -113,11 +123,20 @@ private:
 		m_windowWidth = width;
 		m_windowHeight = height;
 	}
+	inline void SetPixelSize(int width, int height)
+	{
+		m_pixelWidth = width;
+		m_pixelHeight = height;
+	}
 	inline void SetViewSize(int width, int height)
 	{
 		m_width = width;
 		m_height = height;
 	}
+
+	void OnPixelSizeChanged(int width, int height);
+	void OnDisplayScaleChanged();
+	void RefreshDisplayScale();
 
 	void IsActive(bool active);
 
@@ -125,14 +144,16 @@ private:
 	int m_height;
 	int m_windowWidth;
 	int m_windowHeight;
+	int m_pixelWidth;
+	int m_pixelHeight;
 	float m_contentScale = 1.0f;
+	float m_pixelDensity = 1.0f;
 	String m_title;
 	Color m_clearColor = Color::Black;
 	Window* m_window = nullptr;
 	bool m_fullscreen = false;
 	bool m_shouldExit = false;
 	bool m_initialized = false;
-	bool m_resizing = false;
 	bool m_active = false;
 	bool m_consoleOpened = false;
 	bool m_enableInternalAudio = true;
