@@ -23,7 +23,7 @@ jobs:
     - name: Configure Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install build-essential libgl1-mesa-dev x11proto-core-dev libx11-dev libxext-dev libxcursor-dev libxrandr-dev libxfixes-dev libxi-dev
+        sudo apt-get install build-essential libgl1-mesa-dev x11proto-core-dev libx11-dev libxext-dev libxcursor-dev libxrandr-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev
 
     - name: Configure CMake
       shell: bash
