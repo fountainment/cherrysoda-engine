@@ -342,6 +342,23 @@ void GUI::Initialize()
 		style.ScaleAllSizes(contentScale);
 	}
 
+	// Our custom backend has no ImGuiBackendFlags_RendererHasTextures, so the
+	// atlas takes the legacy path: it bakes every glyph once at
+	// cfg.SizePixels and, once locked, serves the closest baked size — with
+	// FontScaleDpi alone the draw size (13*scale) would sample the 13px
+	// rasterization, i.e. a blurry upscale. Bake the DPI-scaled size instead:
+	// the vector default rasterizes crisply at it, the bitmap default stays
+	// pixel-perfect at 1x.
+	float contentScale = Engine::Instance()->GetContentScale();
+	ImFontConfig fontConfig;
+	fontConfig.SizePixels = 13.0f * contentScale;
+	if (contentScale > 1.0f) {
+		io.Fonts->AddFontDefaultVector(&fontConfig);
+	}
+	else {
+		io.Fonts->AddFontDefaultBitmap();
+	}
+
 	// Font texture
 	BuildFontTexture();
 
@@ -517,11 +534,16 @@ void GUI::UpdateConsole()
 			}
 		}
 
-		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 180.f), ImVec2(FLT_MAX, FLT_MAX));
+		// Scale hard-coded pixel sizes so the windows and their inner layout keep
+		// the same proportions relative to the game window at any DPI.
+		const float scale = Engine::Instance()->GetContentScale();
+
+		ImGui::SetNextWindowPos(ImVec2(60.f * scale, 60.f * scale), ImGuiCond_Once);
+		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f * scale, 180.f * scale), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");
 		{
 			bool isLogOutputFocused = false;
-			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 10.f), true);
+			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 10.f * scale), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
 				for (const auto& c : Commands::ms_drawCommands) {
@@ -571,7 +593,7 @@ void GUI::UpdateConsole()
 					return 0;
 				}
 			};
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - (ImGui::GetTextLineHeight() * 2.f) - 21.f);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - (ImGui::GetTextLineHeight() * 2.f) - 21.f * scale);
 			const ImGuiInputTextFlags inputTextFlag =
 				ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion |
 				ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackCharFilter;
@@ -587,7 +609,8 @@ void GUI::UpdateConsole()
 		}
 		ImGui::End();
 		if (STL::IsNotEmpty(Commands::ms_sliderInfo)) {
-			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f, 170.f), ImVec2(FLT_MAX, FLT_MAX));
+			ImGui::SetNextWindowPos(ImVec2(80.f * scale, 80.f * scale), ImGuiCond_Once);
+			ImGui::SetNextWindowSizeConstraints(ImVec2(280.f * scale, 170.f * scale), ImVec2(FLT_MAX, FLT_MAX));
 			ImGui::Begin("Sliders", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
 			{
 				ms_sliderFocused = ImGui::IsWindowFocused();
