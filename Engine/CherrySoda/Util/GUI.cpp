@@ -23,6 +23,8 @@ bool GUI::ms_consoleFocused = false;
 bool GUI::ms_sliderFocused = false;
 bool GUI::ms_internalConsoleEnabled = true;
 GUI::FontBuilder GUI::ms_fontBuilder = nullptr;
+float GUI::ms_appliedContentScale = -1.0f;
+float GUI::ms_appliedPixelDensity = -1.0f;
 
 static const char* GetClipboardText_CherrySodaImplForImGui(void* /*unused*/)
 {
@@ -349,13 +351,19 @@ void GUI::Initialize()
 
 void GUI::SetupStyleAndFonts()
 {
-	// Reset from the base palette first: ScaleAllSizes is not idempotent
+	// Reset to a full default style first: ScaleAllSizes is not idempotent and
+	// ImGuiStyleCherrySoda overrides only part of the fields (FramePadding,
+	// ItemInnerSpacing, GrabMinSize, ... are not reset), so re-applying on a
+	// previously scaled style would double them up
 	auto& style = ImGui::GetStyle();
+	style = ImGuiStyle();
 	ImGuiStyleCherrySoda(&style);
 	if (float contentScale = Engine::Instance()->GetContentScale(); contentScale > 1.0f) {
 		style.FontScaleDpi = contentScale;
 		style.ScaleAllSizes(contentScale);
 	}
+	ms_appliedContentScale = Engine::Instance()->GetContentScale();
+	ms_appliedPixelDensity = Engine::Instance()->GetPixelDensity();
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->Clear();
@@ -405,6 +413,12 @@ void GUI::SetFontBuilder(FontBuilder builder)
 void GUI::RefreshDpiScale()
 {
 	if (ImGui::GetCurrentContext() == nullptr) {
+		return;
+	}
+	// SDL re-sends WINDOW_DISPLAY_SCALE_CHANGED at startup with unchanged
+	// values — skip the (style + font atlas) rebuild when nothing moved
+	if (Engine::Instance()->GetContentScale() == ms_appliedContentScale &&
+		Engine::Instance()->GetPixelDensity() == ms_appliedPixelDensity) {
 		return;
 	}
 	// The window moved to a display with a different scale (or the OS scale

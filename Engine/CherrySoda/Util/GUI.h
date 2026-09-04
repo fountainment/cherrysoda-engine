@@ -74,6 +74,8 @@ private:
 	static bool ms_sliderFocused;
 	static bool ms_internalConsoleEnabled;
 	static FontBuilder ms_fontBuilder;
+	static float ms_appliedContentScale;
+	static float ms_appliedPixelDensity;
 };
 
 } // namespace cherrysoda
