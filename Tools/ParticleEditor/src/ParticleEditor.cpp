@@ -312,19 +312,37 @@ void ParticleEditor::Update()
 	}
 }
 
-void ParticleEditor::Initialize()
+// Custom ImGui fonts (vector default + merged Chinese glyphs), baked at the
+// display density so they stay crisp on high-DPI displays. Registered as the
+// GUI font builder so the engine re-bakes them when the display scale changes.
+static void BuildFonts()
 {
-	base::Initialize();
-
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->Clear();
-	io.Fonts->AddFontDefault();
+	const float density = GUI::FontDensity();
+	ImFontConfig fontConfig;
+	fontConfig.RasterizerDensity = density;
+	if (density > 1.0f) {
+		io.Fonts->AddFontDefaultVector(&fontConfig);
+	}
+	else {
+		io.Fonts->AddFontDefaultBitmap();
+	}
 	ImFontConfig config;
 	config.MergeMode = true;
+	config.RasterizerDensity = density;
 	// 0.0f = implicit font size, required by imgui 1.92+ when merging into the implicit-sized default font
 	io.Fonts->AddFontFromMemoryCompressedTTF(vowaon_compressed_data, vowaon_compressed_size, 0.f, &config,
 											 io.Fonts->GetGlyphRangesChineseFull());
 	GUI::BuildFontTexture();
+}
+
+void ParticleEditor::Initialize()
+{
+	base::Initialize();
+
+	GUI::SetFontBuilder(BuildFonts);
+	BuildFonts();
 
 	auto* scene = new Scene();
 	auto* renderer = new EverythingRenderer();

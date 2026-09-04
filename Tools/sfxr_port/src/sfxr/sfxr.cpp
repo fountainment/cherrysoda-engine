@@ -1058,7 +1058,9 @@ void SfxrInit()
 	// gBuilder.BuildRanges(&gRanges);
 
 	io.Fonts->Clear();
-	io.Fonts->AddFontFromFileTTF("assets/wqy.ttf", 26.f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
+	ImFontConfig fontConfig;
+	fontConfig.RasterizerDensity = GUI::FontDensity();
+	io.Fonts->AddFontFromFileTTF("assets/wqy.ttf", 26.f, &fontConfig, io.Fonts->GetGlyphRangesChineseFull());
 	GUI::BuildFontTexture();
 
 	ResetParams();
