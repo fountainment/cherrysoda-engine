@@ -43,8 +43,8 @@ public:
 	void Add(Entity* entity);
 	void Remove(Entity* entity);
 
-	const STL::List<Entity*> GetEntitiesByTagMask(BitTagValueType mask) const;
-	const STL::List<Entity*> GetEntitiesExcludingTagMask(BitTagValueType mask) const;
+	STL::List<Entity*> GetEntitiesByTagMask(BitTagValueType mask) const;
+	STL::List<Entity*> GetEntitiesExcludingTagMask(BitTagValueType mask) const;
 
 	void Add(Renderer* renderer);
 	void Remove(Renderer* renderer);
@@ -109,9 +109,9 @@ public:
 	Entity* CollideFirst(const Math::Vec2& from, const Math::Vec2& to, int tag) const;
 	Entity* CollideFirst(const Math::Rectangle& rect, int tag) const;
 
-	const STL::List<Entity*> CollideAll(const Math::Vec2& point, int tag) const;
-	const STL::List<Entity*> CollideAll(const Math::Vec2& from, const Math::Vec2& to, int tag) const;
-	const STL::List<Entity*> CollideAll(const Math::Rectangle& rect, int tag) const;
+	STL::List<Entity*> CollideAll(const Math::Vec2& point, int tag) const;
+	STL::List<Entity*> CollideAll(const Math::Vec2& from, const Math::Vec2& to, int tag) const;
+	STL::List<Entity*> CollideAll(const Math::Rectangle& rect, int tag) const;
 
 	// Typed queries over tracked entity types (CHERRYSODA_TRACK_ENTITY);
 	// untracked types simply report no hits
@@ -378,7 +378,7 @@ public:
 	const STL::List<Entity*>& operator[](const BitTag& tag) const;
 	const STL::List<Entity*>& Get(const BitTag& tag) const;
 
-	void AddActionOnEndOfFrame(STL::Action<> func);
+	void AddActionOnEndOfFrame(const STL::Action<>& func);
 
 private:
 	static bool ComponentCanCollide(const Component* component);

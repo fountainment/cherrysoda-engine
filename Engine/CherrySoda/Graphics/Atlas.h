@@ -34,7 +34,7 @@ public:
 	const MTexture& GetOrDefault(const StringID& id, const MTexture& defaultTexture) const;
 
 	const STL::Vector<MTexture>& GetAtlasSubtextures(const String& key) const;
-	const MTexture GetAtlasSubtextureAt(const String& key, int index) const;
+	MTexture GetAtlasSubtextureAt(const String& key, int index) const;
 
 	static Atlas* FromAtlas(const String& path, AtlasDataFormat format = AtlasDataFormat::CrunchJson)
 	{
@@ -54,7 +54,7 @@ public:
 
 private:
 	const MTexture& GetAtlasSubtextureFromCacheAt(const StringID& key, int index) const;
-	const MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index) const;
+	MTexture GetAtlasSubtextureFromAtlasAt(const String& key, int index) const;
 
 	STL::List<Texture2D> m_sources;
 

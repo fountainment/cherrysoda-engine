@@ -30,7 +30,7 @@ void VirtualInput::Deregister()
 
 void VirtualInput::UpdateVirtualInputs()
 {
-	for (auto input : GetVirtualInputs()) {
+	for (auto* input : GetVirtualInputs()) {
 		input->Update();
 	}
 }

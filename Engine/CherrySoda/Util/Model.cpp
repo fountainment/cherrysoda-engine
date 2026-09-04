@@ -9,6 +9,7 @@
 #include <cgltf.h>
 
 #include <cstring>
+#include <utility>
 
 namespace cherrysoda {
 
@@ -41,18 +42,18 @@ Model Model::FromGltf(const String& gltfFile)
 			CHERRYSODA_DEBUG_FORMAT("    Meshes: %u\n", (unsigned)data->meshes_count);
 			CHERRYSODA_DEBUG_FORMAT("    Textures: %u\n", (unsigned)data->textures_count);
 			STL::Reserve(ret.m_textures, data->textures_count);
-			for (int i = 0; i < static_cast<int>(data->textures_count); ++i) {
+			for (int i = 0; std::cmp_less(i, data->textures_count); ++i) {
 				CHERRYSODA_DEBUG_FORMAT("        uri %d: %s\n", i, data->textures[i].image->uri);
 				STL::Add(ret.m_textures, Texture2D::FromFile(gltfDir + String(data->textures[i].image->uri)));
 			}
 
-			for (int m = 0; m < static_cast<int>(data->meshes_count); ++m) {
-				for (int n = 0; n < static_cast<int>(data->meshes[m].primitives_count); ++n) {
+			for (int m = 0; std::cmp_less(m, data->meshes_count); ++m) {
+				for (int n = 0; std::cmp_less(n, data->meshes[m].primitives_count); ++n) {
 					auto& primitive = data->meshes[m].primitives[n];
 					Graphics::MeshInfo mesh;
 					if (primitive.material->has_pbr_metallic_roughness) {
-						auto baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
-						auto metallicRoughnessTexture =
+						auto* baseColorTexture = primitive.material->pbr_metallic_roughness.base_color_texture.texture;
+						auto* metallicRoughnessTexture =
 							primitive.material->pbr_metallic_roughness.metallic_roughness_texture.texture;
 						if (baseColorTexture) {
 							mesh.baseColorTexture = ret.m_textures[baseColorTexture - data->textures].GetHandle();
@@ -62,7 +63,7 @@ Model Model::FromGltf(const String& gltfFile)
 								ret.m_textures[metallicRoughnessTexture - data->textures].GetHandle();
 						}
 					}
-					auto normalTexture = primitive.material->normal_texture.texture;
+					auto* normalTexture = primitive.material->normal_texture.texture;
 					if (normalTexture) {
 						mesh.normalTexture = ret.m_textures[normalTexture - data->textures].GetHandle();
 					}
@@ -92,39 +93,42 @@ Model Model::FromGltf(const String& gltfFile)
 						}
 					}
 					if (positionAccessor) {
-						for (int i = 0; i < static_cast<int>(positionAccessor->count); ++i) {
+						for (int i = 0; std::cmp_less(i, positionAccessor->count); ++i) {
 							Math::Vec3 position;
 							cgltf_accessor_read_float(positionAccessor, i, reinterpret_cast<float*>(&position), 3);
-							STL::Add(mesh.vertices, Graphics::VertexInfo{position, Vec4_One, Vec3_ZUp, Vec2_Zero});
+							STL::Add(mesh.vertices, Graphics::VertexInfo{.position = position,
+																		 .color = Vec4_One,
+																		 .normal = Vec3_ZUp,
+																		 .texcoord0 = Vec2_Zero});
 						}
 					}
 					if (colorAccessor) {
 						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == colorAccessor->count,
 										  "Color attribute count incorrect!\n");
-						for (int i = 0; i < static_cast<int>(colorAccessor->count); ++i) {
+						for (int i = 0; std::cmp_less(i, colorAccessor->count); ++i) {
 							cgltf_accessor_read_float(colorAccessor, i,
-													  reinterpret_cast<float*>(&(mesh.vertices[i].color)), 4);
+													  reinterpret_cast<float*>(&mesh.vertices[i].color), 4);
 						}
 					}
 					if (normalAccessor) {
 						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == normalAccessor->count,
 										  "Normal attribute count incorrect!\n");
-						for (int i = 0; i < static_cast<int>(normalAccessor->count); ++i) {
+						for (int i = 0; std::cmp_less(i, normalAccessor->count); ++i) {
 							cgltf_accessor_read_float(normalAccessor, i,
-													  reinterpret_cast<float*>(&(mesh.vertices[i].normal)), 3);
+													  reinterpret_cast<float*>(&mesh.vertices[i].normal), 3);
 						}
 					}
 					if (texcoord0Accessor) {
 						CHERRYSODA_ASSERT(STL::Count(mesh.vertices) == texcoord0Accessor->count,
 										  "Texcoord0 attribute count incorrect!\n");
-						for (int i = 0; i < static_cast<int>(texcoord0Accessor->count); ++i) {
+						for (int i = 0; std::cmp_less(i, texcoord0Accessor->count); ++i) {
 							cgltf_accessor_read_float(texcoord0Accessor, i,
-													  reinterpret_cast<float*>(&(mesh.vertices[i].texcoord0)), 2);
+													  reinterpret_cast<float*>(&mesh.vertices[i].texcoord0), 2);
 						}
 					}
 					cgltf_accessor* indexAccessor = primitive.indices;
 					if (indexAccessor) {
-						for (int i = 0; i < static_cast<int>(indexAccessor->count); ++i) {
+						for (int i = 0; std::cmp_less(i, indexAccessor->count); ++i) {
 							cgltf_size index = cgltf_accessor_read_index(indexAccessor, i);
 							CHERRYSODA_ASSERT(index == static_cast<cgltf_size>(static_cast<type::UInt16>(index)),
 											  "Index out of UInt16 range!\n");

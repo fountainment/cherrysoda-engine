@@ -19,7 +19,7 @@ void SpriteBatch::Draw(const Texture2D& tex, const Math::Vec2& pos, const Math::
 			Begin();
 		}
 		else {
-			type::UInt16 vn = static_cast<type::UInt16>(VertexAmount());
+			auto vn = static_cast<type::UInt16>(VertexAmount());
 			if (static_cast<type::UInt16>(vn + 4) < vn) {
 				End();
 				Begin();

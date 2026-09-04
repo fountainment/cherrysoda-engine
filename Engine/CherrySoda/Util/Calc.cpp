@@ -27,10 +27,9 @@ Math::Vec2 Calc::Approach(const Math::Vec2& val, const Math::Vec2& target, float
 	if (lengthSq < maxMove * maxMove) {
 		return target;
 	}
-	else {
-		diff = Math_Normalize(diff);
-		return val + diff * maxMove;
-	}
+
+	diff = Math_Normalize(diff);
+	return val + diff * maxMove;
 }
 
 Math::Vec3 Calc::Approach(const Math::Vec3& val, const Math::Vec3& target, float maxMove)
@@ -43,17 +42,16 @@ Math::Vec3 Calc::Approach(const Math::Vec3& val, const Math::Vec3& target, float
 	if (lengthSq < maxMove * maxMove) {
 		return target;
 	}
-	else {
-		diff = Math_Normalize(diff);
-		return val + diff * maxMove;
-	}
+
+	diff = Math_Normalize(diff);
+	return val + diff * maxMove;
 }
 
 Math::Vec2 Calc::FourWayNormal(Math::Vec2 vec)
 {
 	if (vec == Vec2_Zero) return Vec2_Zero;
 
-	float angle = (float)Math_Floor((Calc::Angle(vec) + (float)Math::PiHalf * .5f) / Math::PiHalf) * Math::PiHalf;
+	float angle = Math_Floor((Calc::Angle(vec) + ((float)Math::PiHalf * .5f)) / Math::PiHalf) * Math::PiHalf;
 
 	vec = AngleToVector(angle, 1.f);
 	if (Math_Abs(vec.x) < .5f)
@@ -73,7 +71,7 @@ Math::Vec2 Calc::EightWayNormal(Math::Vec2 vec)
 {
 	if (vec == Vec2_Zero) return Vec2_Zero;
 
-	vec = AngleToVector((float)Math_Floor((Angle(vec) + (float)Math::PiQuarter * .5f) / ((float)Math::PiQuarter)) *
+	vec = AngleToVector(Math_Floor((Angle(vec) + ((float)Math::PiQuarter * .5f)) / ((float)Math::PiQuarter)) *
 							((float)Math::PiQuarter),
 						1.f);
 	if (Math_Abs(vec.x) < .5f)
@@ -87,7 +85,7 @@ Math::Vec2 Calc::SnapedNormal(Math::Vec2 vec, float slices)
 {
 	float divider = Math::Pi2 / slices;
 
-	float angle = (float)Math_Floor((Calc::Angle(vec) + divider * .5f) / divider) * divider;
+	float angle = Math_Floor((Calc::Angle(vec) + (divider * .5f)) / divider) * divider;
 	return AngleToVector(angle, 1.f);
 }
 
@@ -95,7 +93,7 @@ Math::Vec2 Calc::Snapped(Math::Vec2 vec, float slices)
 {
 	float divider = Math::Pi2 / slices;
 
-	float angle = (float)Math_Floor((Calc::Angle(vec) + divider * .5f) / divider) * divider;
+	float angle = Math_Floor((Calc::Angle(vec) + (divider * .5f)) / divider) * divider;
 	return AngleToVector(angle, Math_Length(vec));
 }
 
@@ -117,9 +115,8 @@ bool Calc::FileExists(const String& filename)
 		file.close();
 		return true;
 	}
-	else {
-		return false;
-	}
+
+	return false;
 }
 
 } // namespace cherrysoda

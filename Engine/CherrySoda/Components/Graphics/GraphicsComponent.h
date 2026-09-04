@@ -58,7 +58,7 @@ public:
 	inline void SetColorG(int g) { m_color.G(g); }
 	inline void SetColorB(int b) { m_color.B(b); }
 	inline void SetColorA(int a) { m_color.A(a); }
-	virtual const Math::Mat4 GetTransformMatrix() const;
+	virtual Math::Mat4 GetTransformMatrix() const;
 
 private:
 	inline const Math::Vec3 EntityPos() const

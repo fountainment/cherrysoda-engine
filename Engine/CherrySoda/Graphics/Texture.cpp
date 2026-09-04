@@ -17,7 +17,7 @@ Texture Texture::FromFile(const String& filename)
 Texture2D Texture2D::FromFile(const String& filename)
 {
 	Texture2D result;
-	Graphics::TextureInfo info;
+	Graphics::TextureInfo info{};
 	result.m_texture = Graphics::CreateTexture(filename, &info);
 	result.m_width = info.m_width;
 	result.m_height = info.m_height;
@@ -54,7 +54,7 @@ Texture2D Texture2D::ForDepthBuffer(int width, int height)
 TextureCube TextureCube::FromFile(const String& filename)
 {
 	TextureCube result;
-	Graphics::TextureInfo info;
+	Graphics::TextureInfo info{};
 	result.m_texture = Graphics::CreateTexture(filename, &info);
 	CHERRYSODA_ASSERT(info.m_cubeMap,
 					  CHERRYSODA_FORMAT("Loading texture \"%s\" is not a cubemap!\n", filename.c_str()));

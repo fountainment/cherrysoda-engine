@@ -64,10 +64,10 @@ public:
 		return ans;
 	}
 
-	static const String Format(const char* format, ...);
-	static const STL::Vector<String> Split(const String& s, char delim = ' ');
+	static String Format(const char* format, ...);
+	static STL::Vector<String> Split(const String& s, char delim = ' ');
 	static inline int IndexOf(const String& s, char c) { return s.find(c, 0); }
-	static const String Trim(const String& s, char trim = ' ');
+	static String Trim(const String& s, char trim = ' ');
 
 	static float ToFloat(const String& s) { return std::stof(s); }
 	static int ToInt(const String& s) { return std::stoi(s); }
@@ -87,16 +87,16 @@ public:
 		return true;
 	}
 
-	static const String ToLower(const String& s);
-	static const String ToUpper(const String& s);
+	static String ToLower(const String& s);
+	static String ToUpper(const String& s);
 
 	// path utils
-	static const String Path_GetDirectoryName(const String& path);
-	static const String Path_GetFileName(const String& path);
-	static const String Path_GetFileNameWithoutExtension(const String& path);
+	static String Path_GetDirectoryName(const String& path);
+	static String Path_GetFileName(const String& path);
+	static String Path_GetFileNameWithoutExtension(const String& path);
 
 	// converter utils
-	static const STL::Vector<type::UInt32> Utf8ToUnicode32(const String& text);
+	static STL::Vector<type::UInt32> Utf8ToUnicode32(const String& text);
 };
 
 class StringID

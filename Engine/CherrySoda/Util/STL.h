@@ -304,7 +304,7 @@ public:
 	using TrueRandom = std::random_device;
 	template<typename T> static inline auto RandomNext(T& random) { return random() - random.min(); }
 	template<typename T> static inline auto RandomMax(T& random) { return random.max() - random.min(); }
-	template<typename T> static inline auto RandomMin(T& random) { return 0; }
+	template<typename T> static inline auto RandomMin(T& /*random*/) { return 0; }
 	template<typename T> static inline void RandomSeed(T& random, Random::result_type seed)
 	{
 		return random.seed(seed);

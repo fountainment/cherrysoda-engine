@@ -19,17 +19,19 @@ STL::Map<type::Int32, String>& StringID::INTERNAL_GetHashCollisionCheckMap()
 }
 #endif // CHERRYSODA_ENABLE_DEBUG
 
-const String StringUtil::Format(const char* format, ...)
+String StringUtil::Format(const char* format,
+						  ...) // NOLINT(cert-dcl50-cpp,modernize-avoid-variadic-functions) — printf-style house API
 {
 	char buffer[256];
-	va_list args;
+	va_list args; // NOLINT(cppcoreguidelines-init-variables) — va_start initializes it; initializing va_list is not
+				  // portable
 	va_start(args, format);
-	std::vsnprintf(buffer, 256, format, args);
+	(void)std::vsnprintf(buffer, 256, format, args);
 	va_end(args);
-	return String(buffer);
+	return buffer;
 }
 
-const STL::Vector<String> StringUtil::Split(const String& s, char delim /* = ' '*/)
+STL::Vector<String> StringUtil::Split(const String& s, char delim /* = ' '*/)
 {
 	std::stringstream ss(s);
 	std::string item;
@@ -40,7 +42,7 @@ const STL::Vector<String> StringUtil::Split(const String& s, char delim /* = ' '
 	return elems;
 }
 
-const String StringUtil::Trim(const String& s, char trim /* = ' '*/)
+String StringUtil::Trim(const String& s, char trim /* = ' '*/)
 {
 	int li = 0, ri = s.length() - 1;
 	while (s[li] == trim)
@@ -50,51 +52,51 @@ const String StringUtil::Trim(const String& s, char trim /* = ' '*/)
 	return s.substr(li, ri - li + 1);
 }
 
-const String StringUtil::ToLower(const String& s)
+String StringUtil::ToLower(const String& s)
 {
 	String ret = s;
-	std::transform(s.begin(), s.end(), ret.begin(), [](unsigned char c) { return std::tolower(c); });
+	std::ranges::transform(s, ret.begin(), [](unsigned char c) { return std::tolower(c); });
 	return ret;
 }
 
-const String StringUtil::ToUpper(const String& s)
+String StringUtil::ToUpper(const String& s)
 {
 	String ret = s;
-	std::transform(s.begin(), s.end(), ret.begin(), [](unsigned char c) { return std::toupper(c); });
+	std::ranges::transform(s, ret.begin(), [](unsigned char c) { return std::toupper(c); });
 	return ret;
 }
 
-const String StringUtil::Path_GetDirectoryName(const String& path)
+String StringUtil::Path_GetDirectoryName(const String& path)
 {
 	return path.substr(0, path.find_last_of("/\\") + 1);
 }
 
-const String StringUtil::Path_GetFileName(const String& path)
+String StringUtil::Path_GetFileName(const String& path)
 {
 	int len = path.length();
 	int filenameLoc = path.find_last_of("/\\") + 1;
 	return path.substr(filenameLoc, len - filenameLoc);
 }
 
-const String StringUtil::Path_GetFileNameWithoutExtension(const String& path)
+String StringUtil::Path_GetFileNameWithoutExtension(const String& path)
 {
 	String filename = Path_GetFileName(path);
-	int dotLoc = path.find_last_of(".");
+	int dotLoc = path.find_last_of('.');
 	if (dotLoc == -1) {
 		dotLoc = filename.length();
 	}
 	return path.substr(0, dotLoc);
 }
 
-const STL::Vector<type::UInt32> StringUtil::Utf8ToUnicode32(const String& text)
+STL::Vector<type::UInt32> StringUtil::Utf8ToUnicode32(const String& text)
 {
 	const type::UInt8 rOne[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
 	int length = text.length();
 	int index = 0;
 	STL::Vector<type::UInt32> result;
 	while (index < length) {
-		type::UInt8 u8Tmp = static_cast<type::UInt8>(text[index]);
-		type::UInt32 u32Tmp;
+		auto u8Tmp = static_cast<type::UInt8>(text[index]);
+		type::UInt32 u32Tmp = 0;
 		int fz = 0;
 		while (u8Tmp & (1 << (7 - fz)))
 			fz++;

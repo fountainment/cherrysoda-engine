@@ -11,6 +11,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
+#include <algorithm>
 
 namespace cherrysoda {
 
@@ -38,7 +39,7 @@ Scene::~Scene()
 void Scene::Begin()
 {
 	m_focused = true;
-	for (auto entity : *m_entities) {
+	for (auto* entity : *m_entities) {
 		entity->SceneBegin(this);
 	}
 }
@@ -46,7 +47,7 @@ void Scene::Begin()
 void Scene::End()
 {
 	m_focused = false;
-	for (auto entity : *m_entities) {
+	for (auto* entity : *m_entities) {
 		entity->SceneEnd(this);
 	}
 }
@@ -80,7 +81,7 @@ void Scene::AfterUpdate()
 	CHERRYSODA_PROFILE_FUNCTION();
 
 	if (STL::IsNotEmpty(m_onEndOfFrame)) {
-		for (auto func : m_onEndOfFrame) {
+		for (const auto& func : m_onEndOfFrame) {
 			func();
 		}
 		STL::Clear(m_onEndOfFrame);
@@ -123,7 +124,7 @@ const STL::List<Entity*>& Scene::Get(const BitTag& tag) const
 	return (*m_tagLists)[tag.ID()];
 }
 
-void Scene::AddActionOnEndOfFrame(STL::Action<> func)
+void Scene::AddActionOnEndOfFrame(const STL::Action<>& func)
 {
 	STL::Add(m_onEndOfFrame, func);
 }
@@ -156,7 +157,7 @@ void Scene::Remove(Entity* entity)
 	m_entities->Remove(entity);
 }
 
-const STL::List<Entity*> Scene::GetEntitiesByTagMask(BitTagValueType mask) const
+STL::List<Entity*> Scene::GetEntitiesByTagMask(BitTagValueType mask) const
 {
 	STL::List<Entity*> list;
 	for (Entity* entity : *m_entities) {
@@ -167,7 +168,7 @@ const STL::List<Entity*> Scene::GetEntitiesByTagMask(BitTagValueType mask) const
 	return list;
 }
 
-const STL::List<Entity*> Scene::GetEntitiesExcludingTagMask(BitTagValueType mask) const
+STL::List<Entity*> Scene::GetEntitiesExcludingTagMask(BitTagValueType mask) const
 {
 	STL::List<Entity*> list;
 	for (Entity* entity : *m_entities) {
@@ -211,23 +212,14 @@ void Scene::INTERNAL_SetActualDepth(Entity* entity)
 bool Scene::CollideCheck(const Math::Vec2& point, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
-		if (item->Collidable() && item->CollidePoint(point)) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(list, [&](const auto* item) { return item->Collidable() && item->CollidePoint(point); });
 }
 
 bool Scene::CollideCheck(const Math::Vec2& from, const Math::Vec2& to, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
-		if (item->Collidable() && item->CollideLine(from, to)) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(list,
+							   [&](const auto* item) { return item->Collidable() && item->CollideLine(from, to); });
 }
 
 Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, int tag, float precision) const
@@ -252,18 +244,14 @@ Math::Vec2 Scene::LineWalkCheck(const Math::Vec2& from, const Math::Vec2& to, in
 bool Scene::CollideCheck(const Math::Rectangle& rect, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
-		if (item->Collidable() && Collide::CheckRect(item, rect)) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(list,
+							   [&](const auto* item) { return item->Collidable() && Collide::CheckRect(item, rect); });
 }
 
 Entity* Scene::CollideFirst(const Math::Vec2& point, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
+	for (auto* item : list) {
 		if (item->Collidable() && item->CollidePoint(point)) {
 			return item;
 		}
@@ -274,7 +262,7 @@ Entity* Scene::CollideFirst(const Math::Vec2& point, int tag) const
 Entity* Scene::CollideFirst(const Math::Vec2& from, const Math::Vec2& to, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
+	for (auto* item : list) {
 		if (item->Collidable() && item->CollideLine(from, to)) {
 			return item;
 		}
@@ -285,7 +273,7 @@ Entity* Scene::CollideFirst(const Math::Vec2& from, const Math::Vec2& to, int ta
 Entity* Scene::CollideFirst(const Math::Rectangle& rect, int tag) const
 {
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
+	for (auto* item : list) {
 		if (item->Collidable() && Collide::CheckRect(item, rect)) {
 			return item;
 		}
@@ -293,11 +281,11 @@ Entity* Scene::CollideFirst(const Math::Rectangle& rect, int tag) const
 	return nullptr;
 }
 
-const STL::List<Entity*> Scene::CollideAll(const Math::Vec2& point, int tag) const
+STL::List<Entity*> Scene::CollideAll(const Math::Vec2& point, int tag) const
 {
 	STL::List<Entity*> hits;
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
+	for (auto* item : list) {
 		if (item->Collidable() && item->CollidePoint(point)) {
 			STL::Add(hits, item);
 		}
@@ -305,11 +293,11 @@ const STL::List<Entity*> Scene::CollideAll(const Math::Vec2& point, int tag) con
 	return hits;
 }
 
-const STL::List<Entity*> Scene::CollideAll(const Math::Vec2& from, const Math::Vec2& to, int tag) const
+STL::List<Entity*> Scene::CollideAll(const Math::Vec2& from, const Math::Vec2& to, int tag) const
 {
 	STL::List<Entity*> hits;
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
+	for (auto* item : list) {
 		if (item->Collidable() && item->CollideLine(from, to)) {
 			STL::Add(hits, item);
 		}
@@ -317,11 +305,11 @@ const STL::List<Entity*> Scene::CollideAll(const Math::Vec2& from, const Math::V
 	return hits;
 }
 
-const STL::List<Entity*> Scene::CollideAll(const Math::Rectangle& rect, int tag) const
+STL::List<Entity*> Scene::CollideAll(const Math::Rectangle& rect, int tag) const
 {
 	STL::List<Entity*> hits;
 	auto& list = (*m_tagLists)[tag];
-	for (auto item : list) {
+	for (auto* item : list) {
 		if (item->Collidable() && Collide::CheckRect(item, rect)) {
 			STL::Add(hits, item);
 		}
@@ -331,7 +319,7 @@ const STL::List<Entity*> Scene::CollideAll(const Math::Rectangle& rect, int tag)
 
 bool Scene::ComponentCanCollide(const Component* component)
 {
-	auto collidable = static_cast<const CollidableComponent*>(component);
+	const auto* collidable = static_cast<const CollidableComponent*>(component);
 	return collidable->Collidable() && collidable->GetEntity() != nullptr && collidable->GetEntity()->Collidable() &&
 		   collidable->GetCollider() != nullptr;
 }

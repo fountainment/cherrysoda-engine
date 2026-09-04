@@ -809,8 +809,8 @@ public:
 
 		inline const Math::IVec2 RawPosition() const { return Math::IVec2(m_currentState.m_x, m_currentState.m_y); }
 		void RawPosition(const Math::IVec2& pos) { SetMousePosition(pos); }
-		const Math::IVec2 Position() const;
-		void Position(const Math::IVec2& pos);
+		Math::IVec2 Position() const;
+		static void Position(const Math::IVec2& pos);
 
 		inline const Math::IVec2 RawPositionDelta() const
 		{
@@ -855,16 +855,16 @@ private:
 
 	static void SetKeyboardKeys(const STL::List<Keys>& keys) { ms_keyboardKeys = keys; }
 
-	static const KeyboardState GetKeyboardState();
-	static const MouseState GetMouseState();
-	static const GamePadState GetGamePadState(int index);
+	static KeyboardState GetKeyboardState();
+	static MouseState GetMouseState();
+	static GamePadState GetGamePadState(int index);
 
 	static bool GetRelativeMouseMode();
 	static void SetMousePosition(const Math::IVec2& pos);
 	static bool SetGamePadVibration(int index, float leftMotor, float rightMotor);
 
-	static void AddControllerInstance(int dev);
-	static void RemoveControllerInstance(int dev);
+	static void AddControllerInstance(int instanceID);
+	static void RemoveControllerInstance(int instanceID);
 
 	static STL::List<Keys> ms_keyboardKeys;
 	static KeyboardData* ms_keyboard;

@@ -25,7 +25,7 @@ void PixelText::Refresh()
 
 	int widest = 0;
 	int lines = 1;
-	Math::Vec2 offset = Vec2_Zero;
+	auto offset = Vec2_Zero;
 
 	for (size_t i = 0; i < m_convertedText.size(); ++i) {
 		type::UInt32 c = m_convertedText[i];
@@ -45,12 +45,16 @@ void PixelText::Refresh()
 		}
 
 		// add char
-		auto fontChar = m_size.Get(c);
+		const auto* fontChar = m_size.Get(c);
 		if (fontChar != nullptr) {
 			STL::Add(m_characters,
-					 Char{offset + Math::Vec2(fontChar->m_xOffset,
-											  m_size.LineHeight() - fontChar->m_texture.Height() - fontChar->m_yOffset),
-						  fontChar, fontChar->m_texture.ClipRect()});
+					 Char{
+						 .m_offset = offset + Math::Vec2(fontChar->m_xOffset, m_size.LineHeight() -
+																				  fontChar->m_texture.Height() -
+																				  fontChar->m_yOffset),
+						 .m_charData = fontChar,
+						 .m_bounds = fontChar->m_texture.ClipRect(),
+					 });
 			if (offset.x > widest) {
 				widest = static_cast<int>(offset.x);
 			}

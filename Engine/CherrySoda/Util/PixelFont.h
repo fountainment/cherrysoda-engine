@@ -64,11 +64,11 @@ class PixelFont
 public:
 	PixelFont(const String& face) { m_face = face; }
 
-	const PixelFontSize AddFontSize(const String& path, Atlas* atlas = nullptr, bool outline = false);
-	const PixelFontSize AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas = nullptr,
-									bool outline = false);
+	PixelFontSize AddFontSize(const String& path, Atlas* atlas = nullptr, bool outline = false);
+	PixelFontSize AddFontSize(const String& path, const json::Value* jsonValue, Atlas* atlas = nullptr,
+							  bool outline = false);
 
-	const PixelFontSize Get(float size) const;
+	PixelFontSize Get(float size) const;
 
 	const PixelFontSize FirstSize() const { return STL::Front(m_sizes); }
 

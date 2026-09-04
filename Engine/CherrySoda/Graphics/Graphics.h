@@ -229,10 +229,11 @@ public:
 	static void Initialize();
 	static void Terminate();
 
-	void RenderFrame();
+	static void RenderFrame();
 
 	static inline void BeginRenderPass(type::UInt16 renderPassId) { Instance()->RenderPass(renderPassId); }
-	static inline void EndRenderPass(type::UInt16 renderPassId)
+	// renderPassId is only read by the debug assert, hence [[maybe_unused]]
+	static inline void EndRenderPass([[maybe_unused]] type::UInt16 renderPassId)
 	{
 		CHERRYSODA_ASSERT_FORMAT(Instance()->RenderPass() == renderPassId, "Current RenderPass %u != %u!\n",
 								 Instance()->RenderPass(), renderPassId);
@@ -296,7 +297,7 @@ public:
 	static ShaderHandle CreateShaderProgramFromFile(const String& vs, const String& fs);
 	static ShaderHandle CreateShaderProgramFromEmbedded(const String& vs, const String& fs);
 
-	static const Effect GetEmbeddedEffect(StringID name);
+	static Effect GetEmbeddedEffect(const StringID& name);
 
 	static TextureHandle CreateTexture(const String& texture, Graphics::TextureInfo* info = nullptr);
 	static TextureHandle CreateTexture2DFromRGBA(void* data, int width, int height);
@@ -312,13 +313,13 @@ public:
 	static void UpdateDynamicIndexBuffer(DynamicIndexBufferHandle handle, int index,
 										 const STL::Vector<type::UInt16>& indices);
 
-	static void DestroyVertexBuffer(VertexBufferHandle vertexBuffer);
-	static void DestroyDynamicVertexBuffer(DynamicVertexBufferHandle vertexBuffer);
-	static void DestroyIndexBuffer(IndexBufferHandle indexBuffer);
-	static void DestroyDynamicIndexBuffer(DynamicIndexBufferHandle indexBuffer);
-	static void DestroyShader(ShaderHandle shader);
-	static void DestroyTexture(TextureHandle texture);
-	static void DestroyFrameBuffer(FrameBufferHandle frameBuffer);
+	static void DestroyVertexBuffer(VertexBufferHandle handle);
+	static void DestroyDynamicVertexBuffer(DynamicVertexBufferHandle handle);
+	static void DestroyIndexBuffer(IndexBufferHandle handle);
+	static void DestroyDynamicIndexBuffer(DynamicIndexBufferHandle handle);
+	static void DestroyShader(ShaderHandle handle);
+	static void DestroyTexture(TextureHandle handle);
+	static void DestroyFrameBuffer(FrameBufferHandle handle);
 
 	static void SetScissor(int x, int y, int w, int h);
 	static void SetShader(ShaderHandle shader) { ms_defaultShaderOverride = shader; }
@@ -330,7 +331,7 @@ public:
 	static void SetTexture(TextureHandle texture);
 
 	static void SetUniform(UniformHandle uniform, const void* value, type::UInt16 size = 1U);
-	static void SetUniform(StringID uniformName, const void* value, type::UInt16 size = 1U);
+	static void SetUniform(const StringID& uniformName, const void* value, type::UInt16 size = 1U);
 
 	static void SetupEngineUniforms();
 

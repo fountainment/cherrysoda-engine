@@ -43,7 +43,7 @@ public:
 		type::UInt8* data = nullptr;
 		int size = 0;
 
-		EventInstance CreateInstance();
+		EventInstance CreateInstance() const;
 	};
 
 	static void Initialize();

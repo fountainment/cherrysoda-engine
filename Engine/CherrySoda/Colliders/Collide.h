@@ -44,7 +44,7 @@ public:
 
 	static Entity* First(const Entity* a, const STL::List<Entity*>& b);
 
-	static const STL::List<Entity*> All(const Entity* a, const STL::List<Entity*>& b);
+	static STL::List<Entity*> All(const Entity* a, const STL::List<Entity*>& b);
 
 	// Line
 	static bool LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2);

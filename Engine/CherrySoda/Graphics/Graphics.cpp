@@ -24,6 +24,7 @@
 #include <bx/debug.h>
 #include <bx/file.h>
 
+#include <cstddef>
 #include <fstream>
 #include <sstream>
 
@@ -53,6 +54,7 @@ static bgfx::TextureFormat::Enum s_defaultDepthFormat = bgfx::TextureFormat::Enu
 
 static STL::HashMap<StringID, Effect> s_embeddedEffects;
 
+namespace {
 class PosColorDefinition
 {
 public:
@@ -104,6 +106,7 @@ bgfx::VertexLayout ImGuiVertexDefinition::s_layout;
 
 STL::Vector<bgfx::TransientIndexBuffer> s_transientIndexBufferStack;
 STL::Vector<bgfx::TransientVertexBuffer> s_transientVertexBufferStack;
+} // namespace
 
 namespace entry {
 
@@ -113,18 +116,19 @@ static bx::DefaultAllocator s_allocator;
 static bx::FileReaderI* s_fileReader;
 static bx::FileWriterI* s_fileWriter;
 
-bx::AllocatorI* g_allocator = &s_allocator;
+static bx::AllocatorI* g_allocator = &s_allocator;
 
 typedef bx::StringT<&g_allocator> bxString;
 
 static bxString s_currentDir;
 
+namespace {
 class FileReader : public bx::FileReader
 {
 	typedef bx::FileReader super;
 
 public:
-	virtual bool open(const bx::FilePath& _filePath, bx::Error* _err) override
+	bool open(const bx::FilePath& _filePath, bx::Error* _err) override
 	{
 		bxString filePath(s_currentDir);
 		filePath.append(_filePath);
@@ -137,7 +141,7 @@ class FileWriter : public bx::FileWriter
 	typedef bx::FileWriter super;
 
 public:
-	virtual bool open(const bx::FilePath& _filePath, bool _append, bx::Error* _err) override
+	bool open(const bx::FilePath& _filePath, bool _append, bx::Error* _err) override
 	{
 		bxString filePath(s_currentDir);
 		filePath.append(_filePath);
@@ -145,18 +149,15 @@ public:
 	}
 };
 
-void setCurrentDir(const char* _dir)
-{
-	s_currentDir.set(_dir);
-}
+} // namespace
 
-void init()
+static void init()
 {
 	s_fileReader = BX_NEW(g_allocator, FileReader);
 	s_fileWriter = BX_NEW(g_allocator, FileWriter);
 }
 
-void termiate()
+static void termiate()
 {
 	bx::deleteObject(g_allocator, s_fileReader);
 	s_fileReader = nullptr;
@@ -164,17 +165,12 @@ void termiate()
 	s_fileWriter = nullptr;
 }
 
-bx::FileReaderI* getFileReader()
+static bx::FileReaderI* getFileReader()
 {
 	return s_fileReader;
 }
 
-bx::FileWriterI* getFileWriter()
-{
-	return s_fileWriter;
-}
-
-bx::AllocatorI* getAllocator()
+static bx::AllocatorI* getAllocator()
 {
 	return g_allocator;
 }
@@ -235,7 +231,7 @@ void Graphics::ImGuiVertex::Init()
 		.end();
 }
 
-bgfx::ShaderHandle loadShader(const String& name)
+static bgfx::ShaderHandle loadShader(const String& name)
 {
 	char* data = nullptr;
 	std::ifstream file;
@@ -249,7 +245,7 @@ bgfx::ShaderHandle loadShader(const String& name)
 		file.read(data, fileSize);
 		file.close();
 
-		auto dataRelease = [](void* ptr, void* userdata) {
+		auto dataRelease = [](void* /*ptr*/, void* userdata) {
 			char* data = (char*)userdata;
 			delete[] data;
 		};
@@ -262,7 +258,7 @@ bgfx::ShaderHandle loadShader(const String& name)
 	return {bgfx::kInvalidHandle};
 }
 
-bgfx::ShaderHandle loadEmbeddedShader(const String& name)
+static bgfx::ShaderHandle loadEmbeddedShader(const String& name)
 {
 	bgfx::RendererType::Enum type = bgfx::getRendererType();
 	bgfx::ShaderHandle handle = bgfx::createEmbeddedShader(s_embeddedShaders, type, name.c_str());
@@ -270,7 +266,7 @@ bgfx::ShaderHandle loadEmbeddedShader(const String& name)
 	return handle;
 }
 
-bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
+static bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 {
 	String shaderPath = "???";
 	switch (bgfx::getRendererType()) {
@@ -292,7 +288,7 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 	case bgfx::RendererType::OpenGL:
 		shaderPath = "shaders/glsl/";
 		break;
-#if defined(__ANDROID__)
+#ifdef __ANDROID__
 	case bgfx::RendererType::OpenGLES:
 		shaderPath = "shaders/essl_a/";
 		break;
@@ -329,7 +325,7 @@ bgfx::ProgramHandle loadProgram(const String& vs, const String& fs)
 	return bgfx::createProgram(vsh, fsh, true);
 }
 
-bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
+static bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
 {
 	bgfx::ShaderHandle vsh = loadEmbeddedShader(vs);
 	bgfx::ShaderHandle fsh = loadEmbeddedShader(fs);
@@ -348,35 +344,29 @@ bgfx::ProgramHandle loadEmbeddedProgram(const String& vs, const String& fs)
 	return bgfx::createProgram(vsh, fsh, true);
 }
 
-void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
+static void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
 {
 	if (bx::open(_reader, _filePath)) {
-		uint32_t size = (uint32_t)bx::getSize(_reader);
+		auto size = (uint32_t)bx::getSize(_reader);
 		void* data = bx::alloc(_allocator, size);
 		bx::read(_reader, data, size, bx::ErrorAssert{});
 		bx::close(_reader);
-		if (NULL != _size) {
+		if (nullptr != _size) {
 			*_size = size;
 		}
 		return data;
 	}
-	else {
-		DBG("Failed to open: %s.", _filePath);
-	}
 
-	if (NULL != _size) {
+	DBG("Failed to open: %s.", _filePath);
+
+	if (nullptr != _size) {
 		*_size = 0;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-void* load(const char* _filePath, uint32_t* _size)
-{
-	return load(entry::getFileReader(), entry::getAllocator(), _filePath, _size);
-}
-
-void unload(void* _ptr)
+static void unload(void* _ptr)
 {
 	bx::free(entry::getAllocator(), _ptr);
 }
@@ -384,23 +374,23 @@ void unload(void* _ptr)
 static void imageReleaseCb(void* _ptr, void* _userData)
 {
 	BX_UNUSED(_ptr);
-	bimg::ImageContainer* imageContainer = (bimg::ImageContainer*)_userData;
+	auto* imageContainer = (bimg::ImageContainer*)_userData;
 	bimg::imageFree(imageContainer);
 }
 
-bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip,
-								bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
+static bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath, uint64_t _flags, uint8_t _skip,
+									   bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
 {
 	BX_UNUSED(_skip);
 	bgfx::TextureHandle handle = BGFX_INVALID_HANDLE;
 
-	uint32_t size;
+	uint32_t size = 0;
 	void* data = load(_reader, entry::getAllocator(), _filePath, &size);
-	if (NULL != data) {
+	if (nullptr != data) {
 		bimg::ImageContainer* imageContainer = bimg::imageParse(entry::getAllocator(), data, size);
 
-		if (NULL != imageContainer) {
-			if (NULL != _orientation) {
+		if (nullptr != imageContainer) {
+			if (nullptr != _orientation) {
 				*_orientation = imageContainer->m_orientation;
 			}
 
@@ -429,7 +419,7 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 				bgfx::setName(handle, _filePath);
 			}
 
-			if (NULL != _info) {
+			if (nullptr != _info) {
 				bgfx::calcTextureSize(*_info, uint16_t(imageContainer->m_width), uint16_t(imageContainer->m_height),
 									  uint16_t(imageContainer->m_depth), imageContainer->m_cubeMap,
 									  1 < imageContainer->m_numMips, imageContainer->m_numLayers,
@@ -441,9 +431,9 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 	return handle;
 }
 
-inline bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = s_defaultTextureSamplerFlags,
-									   uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL,
-									   bimg::Orientation::Enum* _orientation = NULL)
+static inline bgfx::TextureHandle loadTexture(const char* _name, uint64_t _flags = s_defaultTextureSamplerFlags,
+											  uint8_t _skip = 0, bgfx::TextureInfo* _info = nullptr,
+											  bimg::Orientation::Enum* _orientation = nullptr)
 {
 	return loadTexture(entry::getFileReader(), _name, _flags, _skip, _info, _orientation);
 }
@@ -506,7 +496,7 @@ void Graphics::Initialize()
 	// TODO: Move it to GUI::Initialize
 	bgfx::setViewMode(MaxRenderPassCount() - 1, bgfx::ViewMode::Sequential);
 
-	for (auto shaderName : s_embeddedShaderNameList) {
+	for (const auto& shaderName : s_embeddedShaderNameList) {
 		s_embeddedEffects[shaderName] = Effect::LoadEffectFromEmbedded(shaderName);
 	}
 	ms_defaultShader = s_embeddedEffects["basic"].GetShader();
@@ -527,7 +517,7 @@ void Graphics::Initialize()
 	ms_renderPassHelperInstance = new Graphics();
 }
 
-inline void DestroyUniform(Graphics::UniformHandle handle)
+static inline void DestroyUniform(Graphics::UniformHandle handle)
 {
 	bgfx::UniformHandle hdl = {handle};
 	bgfx::destroy(hdl);
@@ -605,10 +595,10 @@ void Graphics::SetPointTextureSampling()
 Math::IVec2 Graphics::GetRenderTargetSize(RenderTarget2D* renderTarget)
 {
 	if (renderTarget) {
-		return Math::IVec2(renderTarget->Width(), renderTarget->Height());
+		return {renderTarget->Width(), renderTarget->Height()};
 	}
-	else
-		return Engine::Instance()->GetViewSize();
+
+	return Engine::Instance()->GetViewSize();
 }
 
 void Graphics::UpdateView()
@@ -798,9 +788,9 @@ void Graphics::Discard()
 void Graphics::ScreenSpaceQuad(float _width /* = 1.0f*/, float _height /* = 1.0f*/, bool _originBottomLeft /* = false*/)
 {
 	if (3 == bgfx::getAvailTransientVertexBuffer(3, PosColorTexCoord0Definition::s_layout)) {
-		bgfx::TransientVertexBuffer vb;
+		bgfx::TransientVertexBuffer vb{};
 		bgfx::allocTransientVertexBuffer(&vb, 3, PosColorTexCoord0Definition::s_layout);
-		Graphics::PosColorTexCoord0Vertex* vertex = (Graphics::PosColorTexCoord0Vertex*)vb.data;
+		auto* vertex = (Graphics::PosColorTexCoord0Vertex*)vb.data;
 
 		const float zz = 0.0f;
 
@@ -859,9 +849,9 @@ Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const 
 	auto indexAmount = static_cast<type::UInt32>(STL::Count(indices));
 	if (!indexAmount) return Graphics::InvalidHandle;
 	if (indexAmount == bgfx::getAvailTransientIndexBuffer(indexAmount)) {
-		bgfx::TransientIndexBuffer ib;
+		bgfx::TransientIndexBuffer ib{};
 		bgfx::allocTransientIndexBuffer(&ib, indexAmount);
-		auto index = (type::UInt16*)ib.data;
+		auto* index = (type::UInt16*)ib.data;
 		bx::memCopy((void*)index, (void*)STL::Data(indices), STL::ByteSize(indices));
 		STL::Add(s_transientIndexBufferStack, ib);
 		return Graphics::TransientIndexBufferHandle(STL::Count(s_transientIndexBufferStack) - 1);
@@ -874,9 +864,9 @@ Graphics::TransientIndexBufferHandle Graphics::CreateTransientIndexBuffer(const 
 {
 	if (!indexAmount) return Graphics::InvalidHandle;
 	if (indexAmount == bgfx::getAvailTransientIndexBuffer(indexAmount)) {
-		bgfx::TransientIndexBuffer ib;
+		bgfx::TransientIndexBuffer ib{};
 		bgfx::allocTransientIndexBuffer(&ib, indexAmount);
-		auto index = (type::UInt16*)ib.data;
+		auto* index = (type::UInt16*)ib.data;
 		bx::memCopy((void*)index, (void*)indices, (size_t)indexAmount << 1);
 		STL::Add(s_transientIndexBufferStack, ib);
 		return Graphics::TransientIndexBufferHandle(STL::Count(s_transientIndexBufferStack) - 1);
@@ -901,7 +891,7 @@ Graphics::ShaderHandle Graphics::CreateShaderProgramFromFile(const String& vs, c
 	return loadProgram(vs, fs).idx;
 }
 
-const Effect Graphics::GetEmbeddedEffect(const StringID name)
+Effect Graphics::GetEmbeddedEffect(const StringID& name)
 {
 	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(s_embeddedEffects, name), "Didn't find \"%s\" in embedded shaders\n",
 							 name.GetStr().c_str());
@@ -910,10 +900,10 @@ const Effect Graphics::GetEmbeddedEffect(const StringID name)
 
 Graphics::TextureHandle Graphics::CreateTexture(const String& texture, Graphics::TextureInfo* info /* = nullptr */)
 {
-	bgfx::TextureInfo bInfo;
+	bgfx::TextureInfo bInfo{};
 	Graphics::TextureHandle tex = loadTexture(texture.c_str(), GetTextureSamplerFlags(), 0, &bInfo).idx;
 	if (info != nullptr) {
-		*info = {bInfo.width, bInfo.height, bInfo.cubeMap};
+		*info = {.m_width = bInfo.width, .m_height = bInfo.height, .m_cubeMap = bInfo.cubeMap};
 	}
 	CHERRYSODA_ASSERT_FORMAT(tex != Graphics::InvalidHandle, "Texture: \"%s\" loading failed!\n", texture.c_str());
 	return tex;
@@ -1060,7 +1050,7 @@ void Graphics::SetUniform(Graphics::UniformHandle uniform, const void* value, ty
 	bgfx::setFrameUniform({uniform}, value, size);
 }
 
-void Graphics::SetUniform(StringID uniformName, const void* value, type::UInt16 size /* = 1U*/)
+void Graphics::SetUniform(const StringID& uniformName, const void* value, type::UInt16 size /* = 1U*/)
 {
 	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(ms_uniformHashMap, uniformName), "Uniform '%s' doesn't exist.\n",
 							 uniformName.GetStr().c_str());
@@ -1069,8 +1059,8 @@ void Graphics::SetUniform(StringID uniformName, const void* value, type::UInt16 
 
 void Graphics::SetupEngineUniforms()
 {
-	auto inst = Engine::Instance();
-	auto renderer = Draw::GetRenderer();
+	auto* inst = Engine::Instance();
+	auto* renderer = Draw::GetRenderer();
 	Math::Vec2 resolution = Math::Vec2(Graphics::GetRenderTargetSize(renderer->GetRenderTarget()));
 	Math::Vec2 surfaceSize = Math::Vec2(resolution.x / resolution.y, 1.f);
 	Math::Vec4 timeVec4 = Math::Vec4(inst->GameTime(), inst->DeltaTime(), inst->RawGameTime(), inst->RawDeltaTime());
@@ -1096,8 +1086,8 @@ static Math::Vec4 s_lightVec4[8];
 void Graphics::SetUniformLight(int index, const Math::Vec3& lightPos, const Math::Vec3& lightColor,
 							   bool submit /* = true*/)
 {
-	s_lightVec4[index * 2] = Math::Vec4(lightPos, 1.0f);
-	s_lightVec4[index * 2 + 1] = Math::Vec4(lightColor, 1.0f);
+	s_lightVec4[static_cast<ptrdiff_t>(index * 2)] = Math::Vec4(lightPos, 1.0f);
+	s_lightVec4[(index * 2) + 1] = Math::Vec4(lightColor, 1.0f);
 	if (submit) {
 		bgfx::setFrameUniform({ms_uniformLights}, s_lightVec4, 8U);
 	}
@@ -1212,7 +1202,7 @@ Graphics* Graphics::ms_renderPassHelperInstance = nullptr;
 		auto vertexAmount = static_cast<type::UInt32>(STL::Count(vertices));                                          \
 		if (!vertexAmount) return Graphics::InvalidHandle;                                                            \
 		if (vertexAmount == bgfx::getAvailTransientVertexBuffer(vertexAmount, VERTEX_D::s_layout)) {                  \
-			bgfx::TransientVertexBuffer vb;                                                                           \
+			bgfx::TransientVertexBuffer vb{};                                                                         \
 			bgfx::allocTransientVertexBuffer(&vb, vertexAmount, VERTEX_D::s_layout);                                  \
 			auto vertex = (VERTEX_D::VertexType*)vb.data;                                                             \
 			bx::memCopy((void*)vertex, (void*)STL::Data(vertices), STL::ByteSize(vertices));                          \
@@ -1226,7 +1216,7 @@ Graphics* Graphics::ms_renderPassHelperInstance = nullptr;
 	{                                                                                                                 \
 		if (!vertexAmount) return Graphics::InvalidHandle;                                                            \
 		if (vertexAmount == bgfx::getAvailTransientVertexBuffer(vertexAmount, VERTEX_D::s_layout)) {                  \
-			bgfx::TransientVertexBuffer vb;                                                                           \
+			bgfx::TransientVertexBuffer vb{};                                                                         \
 			bgfx::allocTransientVertexBuffer(&vb, vertexAmount, VERTEX_D::s_layout);                                  \
 			auto vertex = (VERTEX_D::VertexType*)vb.data;                                                             \
 			bx::memCopy((void*)vertex, (void*)vertices, sizeof(VERTEX_D::VertexType) * vertexAmount);                 \

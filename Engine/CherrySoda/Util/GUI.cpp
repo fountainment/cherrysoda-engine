@@ -23,17 +23,17 @@ bool GUI::ms_consoleFocused = false;
 bool GUI::ms_sliderFocused = false;
 bool GUI::ms_internalConsoleEnabled = true;
 
-const char* GetClipboardText_CherrySodaImplForImGui(void*)
+static const char* GetClipboardText_CherrySodaImplForImGui(void* /*unused*/)
 {
 	return Engine::GetClipboardText();
 }
 
-void SetClipboardText_CherrySodaImplForImGui(void*, const char* text)
+static void SetClipboardText_CherrySodaImplForImGui(void* /*unused*/, const char* text)
 {
-	return Engine::SetClipboardText(text);
+	Engine::SetClipboardText(text);
 }
 
-ImGuiKey CherrySodaKeyToImGuiKey(Keys key)
+static ImGuiKey CherrySodaKeyToImGuiKey(Keys key)
 {
 	switch (key) {
 	case Keys::Tab:
@@ -432,7 +432,7 @@ void GUI::Update()
 
 		// GamePad
 		if ((io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) != 0) {
-			auto gamepad = MInput::GamePads(0);
+			auto* gamepad = MInput::GamePads(0);
 			if (gamepad->Attached()) {
 				io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 
@@ -517,7 +517,7 @@ void GUI::UpdateConsole()
 			ImGui::BeginChild("LogOutput", ImVec2(0.f, -ImGui::GetTextLineHeight() - 10.f), true);
 			{
 				isLogOutputFocused = ImGui::IsWindowFocused();
-				for (auto c : Commands::ms_drawCommands) {
+				for (const auto& c : Commands::ms_drawCommands) {
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(c.first.R(), c.first.G(), c.first.B(), c.first.A()));
 					ImGui::TextUnformatted(c.second.c_str());
 					ImGui::PopStyleColor();
@@ -556,15 +556,15 @@ void GUI::UpdateConsole()
 							data->SelectAll();
 						}
 					}
-					else if (data->EventFlag == ImGuiInputTextFlags_CallbackCharFilter) {
-						if (data->EventChar == '`' || data->EventChar == '~') {
-							return 1;
-						}
+					else if (data->EventFlag == ImGuiInputTextFlags_CallbackCharFilter &&
+							 (data->EventChar == '`' || data->EventChar == '~')) {
+						return 1;
 					}
+
 					return 0;
 				}
 			};
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() * 2.f - 21.f);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - (ImGui::GetTextLineHeight() * 2.f) - 21.f);
 			const ImGuiInputTextFlags inputTextFlag =
 				ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion |
 				ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackCharFilter;
@@ -600,13 +600,14 @@ void GUI::Render()
 	if (ms_frameStarted) {
 		ms_frameStarted = false;
 	}
-	else
+	else {
 		return;
+	}
 
 	ImGui::Render();
 
 	ImGuiIO& io = ImGui::GetIO();
-	auto drawData = ImGui::GetDrawData();
+	auto* drawData = ImGui::GetDrawData();
 
 	int fbWidth = (int)(drawData->DisplaySize.x * drawData->FramebufferScale.x);
 	int fbHeight = (int)(drawData->DisplaySize.y * drawData->FramebufferScale.y);
@@ -639,9 +640,10 @@ void GUI::Render()
 				clipRect.y = (cmd->ClipRect.y - clipOff.y) * clipScale.y;
 				clipRect.z = (cmd->ClipRect.z - clipOff.x) * clipScale.x;
 				clipRect.w = (cmd->ClipRect.w - clipOff.y) * clipScale.y;
-				Graphics::SetScissor((int)clipRect.x, (int)(clipRect.y), (int)(clipRect.z - clipRect.x),
+				Graphics::SetScissor((int)clipRect.x, (int)clipRect.y, (int)(clipRect.z - clipRect.x),
 									 (int)(clipRect.w - clipRect.y));
-				Graphics::SetTexture((Texture*)cmd->GetTexID());
+				Graphics::SetTexture(reinterpret_cast<Texture*>(static_cast<intptr_t>(
+					cmd->GetTexID()))); // NOLINT(performance-no-int-to-ptr) — ImGui ImTextureID is ImU64
 				Graphics::SetTransientVertexBuffer(vb);
 				Graphics::SetTransientIndexBuffer(ib, cmd->IdxOffset, cmd->ElemCount);
 				Graphics::SetStateNoDepth(Graphics::BlendFunction::Alpha);
@@ -655,8 +657,8 @@ void GUI::Render()
 void GUI::BuildFontTexture()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	unsigned char* data;
-	int width, height;
+	unsigned char* data = nullptr;
+	int width = 0, height = 0;
 	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
 	ms_fontTexture.Dispose();
 	ms_fontTexture = Texture2D::FromRGBA(data, width, height);

@@ -12,8 +12,11 @@
 # resolve Apple-clang sysroots by itself):
 #
 #   cmake --preset unix-debug
-#   /opt/homebrew/opt/llvm/bin/run-clang-tidy -p out/build/unix-debug \
-#     --extra-arg="-isysroot$(xcrun --show-sdk-path)" \
+#   /opt/homebrew/opt/llvm/bin/run-clang-tidy \
+#     -clang-tidy-binary /opt/homebrew/opt/llvm/bin/clang-tidy \
+#     -clang-apply-replacements-binary /opt/homebrew/opt/llvm/bin/clang-apply-replacements \
+#     -p out/build/unix-debug \
+#     -extra-arg="-isysroot$(xcrun --show-sdk-path)" \
 #     'Engine/CherrySoda/.*\.cpp'
 #
 # The engine builds without PCH or unity files, so no extra flags are needed
@@ -51,6 +54,43 @@
 #   misc-include-cleaner                    include churn too large for now
 #   bugprone-narrowing-conversions,         fired from inside SDL3 macros;
 #   cert-err34-c, cert-err58-cpp            not actionable from engine code
+#   readability-uppercase-literal-suffix     house style is lowercase literal
+#                                           suffixes (`1.f`, `10u`) everywhere;
+#                                           converting them is pure churn
+#   readability-implicit-bool-conversion     pointer/float truthiness (`if (ptr)`,
+#                                           `if (Get(x, y))`) is the Monocle
+#                                           heritage idiom
+#   modernize-use-using                      C-style `typedef` aliases are the
+#                                           documented engine convention
+#   readability-avoid-nested-conditional-operator  chained sign/step ternaries
+#                                           in grid traversal math are house
+#                                           style
+#   misc-no-recursion                        the recursive command trie and
+#                                           atlas-data walkers are intentional
+#   misc-use-anonymous-namespace                engine style spells file-local
+#                                           linkage as `static` (the companion
+#                                           misc-use-internal-linkage check is
+#                                           kept enabled and clean); wrapping
+#                                           the same declarations in anonymous
+#                                           namespaces is pure re-spelling
+#   misc-const-correctness                   auto-fix emits east-const
+#                                           (`int const x`), clashing with the
+#                                           west-const style used everywhere;
+#                                           a hand-written west-const pass would
+#                                           be welcome before re-enabling
+#   bugprone-reserved-identifier              `_CHERRYSODA_…_H_` include guards
+#                                           are the documented engine convention
+#                                           (and embedded_shaders.h is generated
+#                                           by Tools/compile_shader.py with the
+#                                           same guard spelling)
+#   modernize-avoid-c-arrays                  fixed C buffers interop with SDL/
+#                                           bgfx/cmixer APIs and use sizeof/
+#                                           decay semantics; a std::array sweep
+#                                           is welcome before re-enabling
+#   cert-dcl03-c, misc-static-assert          fires on runtime conditions passed
+#                                           through the CHERRYSODA_ASSERT macro
+#                                           (suggesting static_assert(false)
+#                                           on deliberate runtime guards)
 
 Checks:
   '-*,
@@ -78,9 +118,29 @@ Checks:
    -misc-include-cleaner,
    -bugprone-narrowing-conversions,
    -cert-err34-c,
-   -cert-err58-cpp'
+   -cert-err58-cpp,
+   -readability-uppercase-literal-suffix,
+   -readability-implicit-bool-conversion,
+   -modernize-use-using,
+   -readability-avoid-nested-conditional-operator,
+   -misc-no-recursion,
+   -misc-const-correctness,
+   -misc-use-anonymous-namespace,
+   -bugprone-reserved-identifier,
+   -modernize-avoid-c-arrays,
+   -cert-dcl03-c,
+   -misc-static-assert'
 
 WarningsAsErrors: ''
-HeaderFilterRegex: '(Engine/CherrySoda|Examples|Playground|Bench|Tests|Tools)/.*\.h$'
+
+# DeMorgan simplification is turned off inside simplify-boolean-expr: the
+# negation lives in the CHERRYSODA_ASSERT macro body (`if (!(condition))`), so
+# every assert whose condition is a conjunction gets flagged at its call site.
+CheckOptions:
+  - key: readability-simplify-boolean-expr.SimplifyDeMorgan
+    value: false
+# Generated headers (shaderc output) live under embedded_shaders/ and are
+# excluded from the header filter — never hand-edit or "clean" them.
+HeaderFilterRegex: '(Engine/CherrySoda|Examples|Playground|Bench|Tests|Tools)/(?!.*embedded_shaders).*\.h$'
 
 FormatStyle: file

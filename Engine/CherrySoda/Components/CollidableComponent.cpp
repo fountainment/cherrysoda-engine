@@ -13,7 +13,7 @@ void CollidableComponent::Added(Entity* entity)
 	if (m_collider != nullptr) {
 		m_collider->m_entity = entity;
 		if (m_collider->TypeID() == ColliderList::ColliderTypeID()) {
-			for (auto c : *static_cast<ColliderList*>(m_collider)) {
+			for (auto* c : *static_cast<ColliderList*>(m_collider)) {
 				c->m_entity = entity;
 			}
 		}
@@ -28,7 +28,7 @@ void CollidableComponent::Removed(Entity* entity)
 	if (m_collider != nullptr) {
 		m_collider->m_entity = nullptr;
 		if (m_collider->TypeID() == ColliderList::ColliderTypeID()) {
-			for (auto c : *static_cast<ColliderList*>(m_collider)) {
+			for (auto* c : *static_cast<ColliderList*>(m_collider)) {
 				c->m_entity = nullptr;
 			}
 		}
@@ -63,9 +63,8 @@ Collider* CollidableComponent::GetCollider() const
 	if (m_collider == nullptr) {
 		return GetEntity()->GetCollider();
 	}
-	else {
-		return m_collider;
-	}
+
+	return m_collider;
 }
 
 } // namespace cherrysoda

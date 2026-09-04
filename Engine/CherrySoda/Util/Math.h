@@ -26,7 +26,7 @@
 	CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(TYPE, NAME, VALUE, CHERRYSODA_NONE_OP, CHERRYSODA_NONE_OP)
 
 #define CHERRYSODA_GETTER_SETTER_EX(NAME, VALUE, EXTRA_GET_OP, EXTRA_SET_OP) \
-	inline const decltype(VALUE) NAME() const                                \
+	inline decltype(VALUE) NAME() const                                      \
 	{                                                                        \
 		EXTRA_GET_OP;                                                        \
 		return VALUE;                                                        \
@@ -38,7 +38,7 @@
 	}
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_TYPE(TYPE, NAME, VALUE, EXTRA_GET_OP, EXTRA_SET_OP) \
-	inline const TYPE NAME() const                                                         \
+	inline TYPE NAME() const                                                               \
 	{                                                                                      \
 		EXTRA_GET_OP;                                                                      \
 		return VALUE;                                                                      \
@@ -53,7 +53,7 @@
 	CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(NAME, VALUE, CHERRYSODA_NONE_OP, CHERRYSODA_NONE_OP)
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_VEC3(NAME, VALUE, EXTRA_GET_OP, EXTRA_SET_OP) \
-	inline const cherrysoda::Math::Vec3 NAME() const                                 \
+	inline cherrysoda::Math::Vec3 NAME() const                                       \
 	{                                                                                \
 		EXTRA_GET_OP;                                                                \
 		return VALUE;                                                                \
@@ -135,7 +135,7 @@
 	CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(NAME, VALUE, CHERRYSODA_NONE_OP, CHERRYSODA_NONE_OP)
 
 #define CHERRYSODA_GETTER_SETTER_EX_OF_VEC2(NAME, VALUE, EXTRA_GET_OP, EXTRA_SET_OP) \
-	inline const cherrysoda::Math::Vec2 NAME() const                                 \
+	inline cherrysoda::Math::Vec2 NAME() const                                       \
 	{                                                                                \
 		EXTRA_GET_OP;                                                                \
 		return VALUE;                                                                \
@@ -307,13 +307,13 @@ public:
 	static constexpr int IntMin = std::numeric_limits<int>::min();
 	static constexpr int IntMax = std::numeric_limits<int>::max();
 
-	static const double NaN()
+	static double NaN()
 	{
 		static double nan = std::nan("");
 		return nan;
 	}
 
-	static const float NaNf()
+	static float NaNf()
 	{
 		static float nanf = std::nanf("");
 		return nanf;
@@ -401,7 +401,7 @@ public:
 
 	static inline Vec2 RotateVector_(const Vec2& v2, float angle) { return Vec2(RotateVector_(Vec3(v2, 0.f), angle)); }
 
-	static const Mat4 GetOrientationMatrix_(const Mat4& matrix);
+	static Mat4 GetOrientationMatrix_(const Mat4& matrix);
 
 	static bool RaycastAABB_(const Vec3& start, const Vec3& direction, const AABB& aabb, float* t1 = nullptr,
 							 float* t2 = nullptr);

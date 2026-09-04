@@ -2,12 +2,13 @@
 
 #include <CherrySoda/Engine.h>
 #include <CherrySoda/Util/STL.h>
+#include <algorithm>
 
 namespace cherrysoda {
 
 VirtualButton::~VirtualButton()
 {
-	for (auto node : m_nodes) {
+	for (auto* node : m_nodes) {
 		delete node;
 	}
 }
@@ -18,7 +19,7 @@ void VirtualButton::Update()
 	m_bufferCounter -= Engine::Instance()->DeltaTime();
 
 	bool check = false;
-	for (auto node : m_nodes) {
+	for (auto* node : m_nodes) {
 		node->Update();
 		if (node->Pressed()) {
 			m_bufferCounter = m_bufferTime;
@@ -55,12 +56,7 @@ bool VirtualButton::Check() const
 		return false;
 	}
 
-	for (auto node : m_nodes) {
-		if (node->Check()) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(m_nodes, [&](const auto* node) { return node->Check(); });
 }
 
 bool VirtualButton::Pressed() const
@@ -77,12 +73,7 @@ bool VirtualButton::Pressed() const
 		return true;
 	}
 
-	for (auto node : m_nodes) {
-		if (node->Pressed()) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(m_nodes, [&](const auto* node) { return node->Pressed(); });
 }
 
 bool VirtualButton::Released() const
@@ -91,12 +82,7 @@ bool VirtualButton::Released() const
 		return false;
 	}
 
-	for (auto node : m_nodes) {
-		if (node->Released()) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(m_nodes, [&](const auto* node) { return node->Released(); });
 }
 
 void VirtualButton::SetRepeat(float repeatTime)

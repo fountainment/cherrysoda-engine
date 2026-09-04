@@ -19,10 +19,12 @@
 #define CHERRYSODA_REGISTER_COMMAND(COMMAND, FUNC, HELP) \
 	static cherrysoda::CommandRegisterHelper CHERRYSODA_COMMAND_REGISTER_HELPER_##COMMAND(#COMMAND, FUNC, HELP)
 
-#define CHERRYSODA_COMMAND(COMMAND, HELP)                                                      \
-	void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \
-	CHERRYSODA_REGISTER_COMMAND(COMMAND, CherrySodaCommand_##COMMAND, HELP);                   \
-	void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args)
+// The generated command function marks args [[maybe_unused]] so commands that
+// ignore it stay -Wextra clean without naming gymnastics in every body
+#define CHERRYSODA_COMMAND(COMMAND, HELP)                                                             \
+	static void CherrySodaCommand_##COMMAND(const cherrysoda::STL::Vector<cherrysoda::String>& args); \
+	CHERRYSODA_REGISTER_COMMAND(COMMAND, CherrySodaCommand_##COMMAND, HELP);                          \
+	static void CherrySodaCommand_##COMMAND([[maybe_unused]] const cherrysoda::STL::Vector<cherrysoda::String>& args)
 
 namespace cherrysoda {
 

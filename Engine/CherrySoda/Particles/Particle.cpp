@@ -38,7 +38,7 @@ void Particle::Update(float dt)
 	}
 
 	// fade
-	float alpha;
+	float alpha = 0.f;
 	switch (m_type->m_fadeMode) {
 	case ParticleType::FadeModes::Linear:
 		alpha = ease;
@@ -90,7 +90,7 @@ void Particle::Update(float dt)
 	m_speed += m_type->m_acceleration * dt;
 	m_speed = Calc::Approach(m_speed, Vec2_Zero, m_type->m_friction * dt);
 	if (m_type->m_speedMultiplier != 1.f) {
-		m_speed *= (float)Math_Pow(m_type->m_speedMultiplier, dt);
+		m_speed *= Math_Pow(m_type->m_speedMultiplier, dt);
 	}
 
 	// scale out
@@ -99,7 +99,7 @@ void Particle::Update(float dt)
 	}
 }
 
-void Particle::Render()
+void Particle::Render() const
 {
 	Math::Vec2 renderAt = m_position;
 	if (m_track != nullptr) {

@@ -14,13 +14,13 @@ void SingleTagRenderer::Render(Scene* scene)
 	Graphics::SetEffect(GetEffect());
 	Graphics::UseCurrentRenderPass()->SetCamera(GetCamera());
 	Draw::GetSpriteBatch()->Begin();
-	for (auto entity : (*scene)[m_tag]) {
+	for (auto* entity : (*scene)[m_tag]) {
 		if (entity->Visible()) {
 			entity->Render();
 		}
 	}
 	if (Engine::Instance()->ConsoleOpened()) {
-		for (auto entity : (*scene)[m_tag]) {
+		for (auto* entity : (*scene)[m_tag]) {
 			entity->DebugRender(GetCamera());
 		}
 	}

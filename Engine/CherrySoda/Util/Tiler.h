@@ -49,7 +49,7 @@ public:
 	STL::Vector<int> m_insideBottomRight;
 
 private:
-	int GetTileID(const STL::Vector<int>& choices) const;
+	static int GetTileID(const STL::Vector<int>& choices);
 };
 
 // Autotiler over a boolean tile map, port of Monocle's Tiler. The neighbor
@@ -58,17 +58,17 @@ private:
 class Tiler
 {
 public:
-	static STL::Vector<STL::Vector<int>> Tile(const VirtualMap<bool>& bits, STL::Func<int> tileDecider,
-											  STL::Action<int> tileOutput, EdgeBehavior edges);
+	static STL::Vector<STL::Vector<int>> Tile(const VirtualMap<bool>& bits, const STL::Func<int>& tileDecider,
+											  const STL::Action<int>& tileOutput, EdgeBehavior edges);
 	// The mask also counts as solid for neighbor checks (same dimensions as
 	// bits), but only bits cells produce tiles
 	static STL::Vector<STL::Vector<int>> Tile(const VirtualMap<bool>& bits, const VirtualMap<bool>& mask,
-											  STL::Func<int> tileDecider, STL::Action<int> tileOutput,
+											  const STL::Func<int>& tileDecider, const STL::Action<int>& tileOutput,
 											  EdgeBehavior edges);
 	static STL::Vector<STL::Vector<int>> Tile(const VirtualMap<bool>& bits, const AutotileData& autotileData,
-											  STL::Action<int> tileOutput, EdgeBehavior edges);
+											  const STL::Action<int>& tileOutput, EdgeBehavior edges);
 	static STL::Vector<STL::Vector<int>> Tile(const VirtualMap<bool>& bits, const VirtualMap<bool>& mask,
-											  const AutotileData& autotileData, STL::Action<int> tileOutput,
+											  const AutotileData& autotileData, const STL::Action<int>& tileOutput,
 											  EdgeBehavior edges);
 
 	// Neighbor state of the tile currently being decided; read these from a
@@ -86,7 +86,7 @@ public:
 
 private:
 	static STL::Vector<STL::Vector<int>> TileImpl(const VirtualMap<bool>& bits, const VirtualMap<bool>* mask,
-												  STL::Func<int> tileDecider, STL::Action<int> tileOutput,
+												  const STL::Func<int>& tileDecider, const STL::Action<int>& tileOutput,
 												  EdgeBehavior edges);
 	static void FillNeighbors(const VirtualMap<bool>& bits, const VirtualMap<bool>* mask, int tileX, int tileY,
 							  EdgeBehavior edges);

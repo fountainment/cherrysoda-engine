@@ -31,25 +31,25 @@ void RendererList::Remove(Renderer* renderer)
 void RendererList::UpdateLists()
 {
 	if (STL::IsNotEmpty(m_adding))
-		for (auto renderer : m_adding)
+		for (auto* renderer : m_adding)
 			STL::Add(m_renderers, renderer);
 	m_adding.clear();
 	if (STL::IsNotEmpty(m_removing))
-		for (auto renderer : m_removing)
+		for (auto* renderer : m_removing)
 			STL::Remove(m_renderers, renderer);
 	m_removing.clear();
 }
 
 void RendererList::Update()
 {
-	for (auto renderer : m_renderers) {
+	for (auto* renderer : m_renderers) {
 		renderer->Update(m_scene);
 	}
 }
 
 void RendererList::BeforeRender()
 {
-	for (auto renderer : m_renderers) {
+	for (auto* renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
 		Draw::SetRenderer(renderer);
 		renderer->BeforeRender(m_scene);
@@ -58,7 +58,7 @@ void RendererList::BeforeRender()
 
 void RendererList::Render()
 {
-	for (auto renderer : m_renderers) {
+	for (auto* renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
 		Draw::SetRenderer(renderer);
 		renderer->RenderPrepare(m_scene);
@@ -68,7 +68,7 @@ void RendererList::Render()
 
 void RendererList::AfterRender()
 {
-	for (auto renderer : m_renderers) {
+	for (auto* renderer : m_renderers) {
 		if (!renderer->Visible()) continue;
 		Draw::SetRenderer(renderer);
 		renderer->AfterRender(m_scene);

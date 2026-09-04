@@ -5,6 +5,8 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 STL::Stack<Tween*> Tween::ms_cached;
@@ -19,7 +21,7 @@ Tween* Tween::Create(TweenMode mode, Easer easer /* = nullptr*/, float duration 
 		tween = STL::Pop(ms_cached);
 	}
 	tween->m_onUpdate = (tween->m_onComplete = (tween->m_onStart = nullptr));
-	tween->Init(mode, easer, duration, start);
+	tween->Init(mode, std::move(easer), duration, start);
 	return tween;
 }
 
@@ -30,7 +32,7 @@ void Tween::Init(TweenMode mode, Easer easer, float duration, bool start)
 	}
 	m_useRawDeltaTime = false;
 	m_mode = mode;
-	m_easer = easer;
+	m_easer = std::move(easer);
 	m_duration = duration;
 	m_timeLeft = 0;
 	m_percent = 0;

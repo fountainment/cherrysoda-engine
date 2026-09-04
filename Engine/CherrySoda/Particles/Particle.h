@@ -31,7 +31,7 @@ struct Particle
 
 	void Update();
 	void Update(float dt);
-	void Render();
+	void Render() const;
 };
 
 } // namespace cherrysoda

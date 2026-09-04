@@ -26,13 +26,13 @@ bool Collider::Collide(const Collider* collider) const
 	if (typeID == Hitbox::ColliderTypeID()) {
 		return Collide(static_cast<const Hitbox*>(collider));
 	}
-	else if (typeID == Grid::ColliderTypeID()) {
+	if (typeID == Grid::ColliderTypeID()) {
 		return Collide(static_cast<const Grid*>(collider));
 	}
-	else if (typeID == ColliderList::ColliderTypeID()) {
+	if (typeID == ColliderList::ColliderTypeID()) {
 		return Collide(static_cast<const ColliderList*>(collider));
 	}
-	else if (typeID == Circle::ColliderTypeID()) {
+	if (typeID == Circle::ColliderTypeID()) {
 		return Collide(static_cast<const Circle*>(collider));
 	}
 	CHERRYSODA_DEBUG("Collisions against the collider type are not implemented!\n");
@@ -69,13 +69,13 @@ void Collider::AutoDeleteWhenRemoved(PoolInterface* pool)
 {
 	m_onRemoved = [pool](Collider* collider, Entity* entity) {
 		pool->INTERNAL_Hide(collider);
-		entity->GetScene()->AddActionOnEndOfFrame([collider, pool]() { pool->INTERNAL_Destroy(collider); });
+		entity->GetScene()->AddActionOnEndOfFrame([collider, pool] { pool->INTERNAL_Destroy(collider); });
 	};
 }
 
 void Collider::DeleteCollider(Collider* collider, Entity* entity)
 {
-	entity->GetScene()->AddActionOnEndOfFrame([collider]() { delete collider; });
+	entity->GetScene()->AddActionOnEndOfFrame([collider] { delete collider; });
 }
 
 } // namespace cherrysoda

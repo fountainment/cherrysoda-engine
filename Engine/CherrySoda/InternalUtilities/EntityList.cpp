@@ -17,7 +17,7 @@ EntityList::EntityList(Scene* scene)
 void EntityList::UpdateLists()
 {
 	if (STL::IsNotEmpty(m_toAdd)) {
-		for (auto entity : m_toAdd) {
+		for (auto* entity : m_toAdd) {
 			if (!STL::Contains(m_current, entity)) {
 				STL::Add(m_current, entity);
 				STL::Add(m_entities, entity);
@@ -34,7 +34,7 @@ void EntityList::UpdateLists()
 	}
 
 	if (STL::IsNotEmpty(m_toRemove)) {
-		for (auto entity : m_toRemove) {
+		for (auto* entity : m_toRemove) {
 			if (STL::Contains(m_entities, entity)) {
 				STL::Remove(m_current, entity);
 				STL::Remove(m_entities, entity);
@@ -61,7 +61,7 @@ void EntityList::UpdateLists()
 		m_toAdd.clear();
 		m_adding.clear();
 
-		for (auto entity : m_toAwake) {
+		for (auto* entity : m_toAwake) {
 			if (entity->GetScene() == m_scene) {
 				entity->Awake(m_scene);
 			}
@@ -88,21 +88,21 @@ void EntityList::Remove(Entity* entity)
 
 void EntityList::Update()
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		if (entity->m_active) entity->Update();
 	}
 }
 
 void EntityList::Render()
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		if (entity->m_visible) entity->Render();
 	}
 }
 
 void EntityList::RenderOnly(BitTagValueType matchTags)
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		if (entity->m_visible && entity->TagCheck(matchTags)) {
 			entity->Render();
 		}
@@ -111,7 +111,7 @@ void EntityList::RenderOnly(BitTagValueType matchTags)
 
 void EntityList::RenderOnlyFullMatch(BitTagValueType matchTags)
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		if (entity->m_visible && entity->TagFullCheck(matchTags)) {
 			entity->Render();
 		}
@@ -120,7 +120,7 @@ void EntityList::RenderOnlyFullMatch(BitTagValueType matchTags)
 
 void EntityList::RenderExcept(BitTagValueType excludeTags)
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		if (entity->m_visible && !entity->TagCheck(excludeTags)) {
 			entity->Render();
 		}
@@ -129,21 +129,21 @@ void EntityList::RenderExcept(BitTagValueType excludeTags)
 
 void EntityList::DebugRender(Camera* camera)
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		entity->DebugRender(camera);
 	}
 }
 
 void EntityList::HandleGraphicsReset()
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		entity->HandleGraphicsReset();
 	}
 }
 
 void EntityList::HandleGraphicsCreate()
 {
-	for (auto entity : m_entities) {
+	for (auto* entity : m_entities) {
 		entity->HandleGraphicsCreate();
 	}
 }

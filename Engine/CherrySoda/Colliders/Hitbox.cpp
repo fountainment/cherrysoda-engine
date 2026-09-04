@@ -48,7 +48,7 @@ bool Hitbox::Collide(const Math::Vec2& from, const Math::Vec2& to) const
 	return Collide::RectToLine(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, from, to);
 }
 
-void Hitbox::Render(const Camera* camera, const Color& color) const
+void Hitbox::Render(const Camera* /*camera*/, const Color& color) const
 {
 	Draw::HollowRect(AbsoluteLeft(), AbsoluteBottom(), m_width, m_height, color);
 }

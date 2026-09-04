@@ -32,13 +32,13 @@ private:
 	ParticleSystem* m_system;
 	const ParticleType* m_type;
 
-	const Entity* m_track;
+	const Entity* m_track{};
 	float m_interval;
-	Math::Vec2 m_position;
-	Math::Vec2 m_range;
+	Math::Vec2 m_position{};
+	Math::Vec2 m_range{};
 	int m_amount;
 	bool m_hasDirection = false;
-	float m_direction;
+	float m_direction{};
 	float m_timer = 0.f;
 };
 

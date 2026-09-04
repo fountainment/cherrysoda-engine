@@ -29,7 +29,7 @@ Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::V
 	// size
 	if (m_sizeRange != 0.f) {
 		particle->m_startSize = particle->m_size =
-			m_size - m_sizeRange * .5f + Calc::GetRandom()->NextFloat(m_sizeRange);
+			m_size - (m_sizeRange * .5f) + Calc::GetRandom()->NextFloat(m_sizeRange);
 	}
 	else {
 		particle->m_startSize = particle->m_size = m_size;
@@ -44,7 +44,7 @@ Particle* ParticleType::Create(Particle* particle, Entity* entity, const Math::V
 	}
 
 	// speed / direction
-	float moveDirection = direction - m_directionRange * .5f + Calc::GetRandom()->NextFloat(m_directionRange);
+	float moveDirection = direction - (m_directionRange * .5f) + Calc::GetRandom()->NextFloat(m_directionRange);
 	particle->m_speed = Calc::AngleToVector(moveDirection, Calc::GetRandom()->NextFloat(m_speedMin, m_speedMax));
 
 	// life

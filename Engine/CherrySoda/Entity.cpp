@@ -28,20 +28,20 @@ Entity::~Entity()
 	m_components = nullptr;
 }
 
-void Entity::SceneBegin(Scene* scene)
+void Entity::SceneBegin(Scene* /*scene*/)
 {
 }
 
 void Entity::SceneEnd(Scene* scene)
 {
-	for (auto component : *m_components) {
+	for (auto* component : *m_components) {
 		component->SceneEnd(scene);
 	}
 }
 
-void Entity::Awake(Scene* scene)
+void Entity::Awake(Scene* /*scene*/)
 {
-	for (auto component : *m_components) {
+	for (auto* component : *m_components) {
 		component->EntityAwake();
 	}
 }
@@ -83,7 +83,7 @@ void Entity::Tag(BitTagValueType tag)
 	m_tag = tag;
 }
 
-const STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
+STL::List<Entity*> Entity::CollideAll(const BitTag& tag) const
 {
 	CHERRYSODA_ASSERT(m_scene != nullptr,
 					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
@@ -180,7 +180,7 @@ Entity* Entity::CollideFirstOutside(const BitTag& tag) const
 	CHERRYSODA_ASSERT(m_scene != nullptr,
 					  "Can't collide check an Entity against a tag list when it is not a member of a Scene\n");
 
-	for (auto entity : (*m_scene)[tag]) {
+	for (auto* entity : (*m_scene)[tag]) {
 		if (!CollideCheck(entity)) {
 			return entity;
 		}
@@ -194,7 +194,7 @@ Entity* Entity::Closest(const BitTag& tag) const
 
 	Entity* closest = nullptr;
 	float closestDistanceSq = 0.f;
-	for (auto entity : (*m_scene)[tag]) {
+	for (auto* entity : (*m_scene)[tag]) {
 		if (entity == this) {
 			continue;
 		}
@@ -296,7 +296,7 @@ void Entity::AutoDeleteWhenRemoved(PoolInterface* pool)
 		pool->INTERNAL_Hide(entity);
 		entity->SetCollider(nullptr);
 		entity->RemoveAllComponents();
-		scene->AddActionOnEndOfFrame([pool, entity]() { pool->INTERNAL_Destroy(entity); });
+		scene->AddActionOnEndOfFrame([pool, entity] { pool->INTERNAL_Destroy(entity); });
 	};
 }
 
@@ -336,7 +336,7 @@ void Entity::RemoveSelf()
 void Entity::Added(Scene* scene)
 {
 	m_scene = scene;
-	for (auto component : *m_components) {
+	for (auto* component : *m_components) {
 		component->EntityAdded(scene);
 	}
 	m_scene->INTERNAL_SetActualDepth(this);
@@ -344,7 +344,7 @@ void Entity::Added(Scene* scene)
 
 void Entity::Removed(Scene* scene)
 {
-	for (auto component : *m_components) {
+	for (auto* component : *m_components) {
 		component->EntityRemoved(scene);
 	}
 	if (m_onRemoved) {
@@ -376,7 +376,7 @@ void Entity::AutoDeleteAllInsideWhenRemoved()
 	if (m_collider != nullptr) {
 		m_collider->AutoDeleteWhenRemoved();
 	}
-	for (auto component : *m_components) {
+	for (auto* component : *m_components) {
 		component->AutoDeleteWhenRemoved();
 	}
 }
@@ -385,7 +385,7 @@ void Entity::CleanAndDeleteEntity(Entity* entity, Scene* scene)
 {
 	entity->SetCollider(nullptr);
 	entity->RemoveAllComponents();
-	scene->AddActionOnEndOfFrame([entity]() { delete entity; });
+	scene->AddActionOnEndOfFrame([entity] { delete entity; });
 }
 
 } // namespace cherrysoda

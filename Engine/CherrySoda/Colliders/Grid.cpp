@@ -10,6 +10,8 @@
 #include <CherrySoda/Util/Log.h>
 #include <CherrySoda/Util/Math.h>
 
+#include <algorithm>
+
 namespace cherrysoda {
 
 void Grid::SetRect(int x, int y, int width, int height, bool to /* = true*/)
@@ -80,7 +82,7 @@ void Grid::Extend(int left, int right, int up, int down)
 		return;
 	}
 
-	auto newData = new VirtualMap<bool>(newWidth, newHeight);
+	auto* newData = new VirtualMap<bool>(newWidth, newHeight);
 
 	// Center
 	for (int x = 0; x < CellsX(); ++x) {
@@ -211,15 +213,10 @@ bool Grid::IsEmpty() const
 
 bool Grid::IsBitstringEmpty(const String& bitstring)
 {
-	for (char c : bitstring) {
-		if (c == '1') {
-			return false;
-		}
-	}
-	return true;
+	return std::ranges::all_of(bitstring, [](char c) { return c != '1'; });
 }
 
-bool Grid::Collide(const Circle* circle) const
+bool Grid::Collide(const Circle* /*circle*/) const
 {
 	CHERRYSODA_DEBUG("Grid-Circle collision is not implemented!\n");
 	return false;
@@ -235,7 +232,7 @@ bool Grid::Collide(const Hitbox* hitbox) const
 	return Collide(hitbox->Bounds());
 }
 
-bool Grid::Collide(const Grid* grid) const
+bool Grid::Collide(const Grid* /*grid*/) const
 {
 	CHERRYSODA_DEBUG("Grid-Grid collision is not implemented!\n");
 	return false;
@@ -247,8 +244,8 @@ bool Grid::Collide(const Math::Vec2& point) const
 		point.y < AbsoluteTop())
 		return m_data->Get((int)((point.x - AbsoluteLeft()) / CellWidth()),
 						   (int)((point.y - AbsoluteBottom()) / CellHeight()));
-	else
-		return false;
+
+	return false;
 }
 
 bool Grid::Collide(const Math::Rectangle& rect) const
@@ -261,9 +258,8 @@ bool Grid::Collide(const Math::Rectangle& rect) const
 
 		return CheckRect(x, y, w, h);
 	}
-	else {
-		return false;
-	}
+
+	return false;
 }
 
 // Liang-Barsky clip of segment [from, to] against rect; returns false if the segment misses the rect
@@ -290,11 +286,11 @@ static bool ClipSegmentToRect(const Math::Rectangle& rect, const Math::Vec2& fro
 			float r = q[i] / p[i];
 			if (p[i] < 0.f) {
 				if (r > t1) return false;
-				if (r > t0) t0 = r;
+				t0 = std::max(r, t0);
 			}
 			else {
 				if (r < t0) return false;
-				if (r < t1) t1 = r;
+				t1 = std::min(r, t1);
 			}
 		}
 	}
@@ -362,8 +358,8 @@ void Grid::Render(const Camera* camera, const Color& color) const
 		for (int i = 0; i < CellsX(); ++i)
 			for (int j = 0; j < CellsY(); ++j)
 				if (m_data->Get(i, j))
-					Draw::HollowRect(AbsoluteLeft() + i * CellWidth(), AbsoluteBottom() + j * CellHeight(), CellWidth(),
-									 CellHeight(), color);
+					Draw::HollowRect(AbsoluteLeft() + (i * CellWidth()), AbsoluteBottom() + (j * CellHeight()),
+									 CellWidth(), CellHeight(), color);
 	}
 	else {
 		int left = (int)Math_Max(0.f, ((camera->Left() - AbsoluteLeft()) / CellWidth()));
@@ -374,7 +370,7 @@ void Grid::Render(const Camera* camera, const Color& color) const
 		for (int tx = left; tx <= right; ++tx)
 			for (int ty = bottom; ty <= top; ++ty)
 				if (m_data->Get(tx, ty))
-					Draw::HollowRect(AbsoluteLeft() + tx * CellWidth(), AbsoluteBottom() + ty * CellHeight(),
+					Draw::HollowRect(AbsoluteLeft() + (tx * CellWidth()), AbsoluteBottom() + (ty * CellHeight()),
 									 CellWidth(), CellHeight(), color);
 	}
 }

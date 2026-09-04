@@ -65,115 +65,103 @@ int AutotileData::TileHandler() const
 		return GetTileID(m_center);
 	}
 
-	else if (!Tiler::Up() && !Tiler::Down()) {
+	if (!Tiler::Up() && !Tiler::Down()) {
 		if (Tiler::Left() && Tiler::Right()) {
 			return GetTileID(m_singleHorizontalCenter);
 		}
-		else if (!Tiler::Left() && !Tiler::Right()) {
+		if (!Tiler::Left() && !Tiler::Right()) {
 			return GetTileID(m_single);
 		}
-		else if (Tiler::Left()) {
+		if (Tiler::Left()) {
 			return GetTileID(m_singleHorizontalRight);
 		}
-		else {
-			return GetTileID(m_singleHorizontalLeft);
-		}
+		return GetTileID(m_singleHorizontalLeft);
 	}
-	else if (!Tiler::Left() && !Tiler::Right()) {
+	if (!Tiler::Left() && !Tiler::Right()) {
 		if (Tiler::Up() && Tiler::Down()) {
 			return GetTileID(m_singleVerticalCenter);
 		}
-		else if (Tiler::Down()) {
+		if (Tiler::Down()) {
 			return GetTileID(m_singleVerticalTop);
 		}
-		else {
-			return GetTileID(m_singleVerticalBottom);
-		}
+		return GetTileID(m_singleVerticalBottom);
 	}
 
-	else if (Tiler::Up() && Tiler::Down() && Tiler::Left() && !Tiler::Right()) {
+	if (Tiler::Up() && Tiler::Down() && Tiler::Left() && !Tiler::Right()) {
 		return GetTileID(m_right);
 	}
-	else if (Tiler::Up() && Tiler::Down() && !Tiler::Left() && Tiler::Right()) {
+	if (Tiler::Up() && Tiler::Down() && !Tiler::Left() && Tiler::Right()) {
 		return GetTileID(m_left);
 	}
-
-	else if (Tiler::Up() && !Tiler::Left() && Tiler::Right() && !Tiler::Down()) {
+	if (Tiler::Up() && !Tiler::Left() && Tiler::Right() && !Tiler::Down()) {
 		return GetTileID(m_bottomLeft);
 	}
-	else if (Tiler::Up() && Tiler::Left() && !Tiler::Right() && !Tiler::Down()) {
+	if (Tiler::Up() && Tiler::Left() && !Tiler::Right() && !Tiler::Down()) {
 		return GetTileID(m_bottomRight);
 	}
-	else if (Tiler::Down() && Tiler::Right() && !Tiler::Left() && !Tiler::Up()) {
+	if (Tiler::Down() && Tiler::Right() && !Tiler::Left() && !Tiler::Up()) {
 		return GetTileID(m_topLeft);
 	}
-	else if (Tiler::Down() && !Tiler::Right() && Tiler::Left() && !Tiler::Up()) {
+	if (Tiler::Down() && !Tiler::Right() && Tiler::Left() && !Tiler::Up()) {
 		return GetTileID(m_topRight);
 	}
-
-	else if (Tiler::Up() && Tiler::Down() && !Tiler::DownRight() && Tiler::DownLeft()) {
+	if (Tiler::Up() && Tiler::Down() && !Tiler::DownRight() && Tiler::DownLeft()) {
 		return GetTileID(m_insideTopLeft);
 	}
-	else if (Tiler::Up() && Tiler::Down() && Tiler::DownRight() && !Tiler::DownLeft()) {
+	if (Tiler::Up() && Tiler::Down() && Tiler::DownRight() && !Tiler::DownLeft()) {
 		return GetTileID(m_insideTopRight);
 	}
-	else if (Tiler::Up() && Tiler::Down() && Tiler::UpLeft() && !Tiler::UpRight()) {
+	if (Tiler::Up() && Tiler::Down() && Tiler::UpLeft() && !Tiler::UpRight()) {
 		return GetTileID(m_insideBottomLeft);
 	}
-	else if (Tiler::Up() && Tiler::Down() && !Tiler::UpLeft() && Tiler::UpRight()) {
+	if (Tiler::Up() && Tiler::Down() && !Tiler::UpLeft() && Tiler::UpRight()) {
 		return GetTileID(m_insideBottomRight);
 	}
-
-	else if (!Tiler::Down()) {
+	if (!Tiler::Down()) {
 		return GetTileID(m_bottom);
 	}
-	else {
-		return GetTileID(m_top);
-	}
+	return GetTileID(m_top);
 }
 
-int AutotileData::GetTileID(const STL::Vector<int>& choices) const
+int AutotileData::GetTileID(const STL::Vector<int>& choices)
 {
 	if (STL::IsEmpty(choices)) {
 		return -1;
 	}
-	else if (STL::Count(choices) == 1) {
+	if (STL::Count(choices) == 1) {
 		return STL::Front(choices);
 	}
-	else {
-		return Calc::GetRandom()->Choose(choices);
-	}
+	return Calc::GetRandom()->Choose(choices);
 }
 
-STL::Vector<STL::Vector<int>> Tiler::Tile(const VirtualMap<bool>& bits, STL::Func<int> tileDecider,
-										  STL::Action<int> tileOutput, EdgeBehavior edges)
+STL::Vector<STL::Vector<int>> Tiler::Tile(const VirtualMap<bool>& bits, const STL::Func<int>& tileDecider,
+										  const STL::Action<int>& tileOutput, EdgeBehavior edges)
 {
-	return TileImpl(bits, nullptr, std::move(tileDecider), std::move(tileOutput), edges);
+	return TileImpl(bits, nullptr, tileDecider, tileOutput, edges);
 }
 
 STL::Vector<STL::Vector<int>> Tiler::Tile(const VirtualMap<bool>& bits, const VirtualMap<bool>& mask,
-										  STL::Func<int> tileDecider, STL::Action<int> tileOutput, EdgeBehavior edges)
+										  const STL::Func<int>& tileDecider, const STL::Action<int>& tileOutput,
+										  EdgeBehavior edges)
 {
-	return TileImpl(bits, &mask, std::move(tileDecider), std::move(tileOutput), edges);
+	return TileImpl(bits, &mask, tileDecider, tileOutput, edges);
 }
 
 STL::Vector<STL::Vector<int>> Tiler::Tile(const VirtualMap<bool>& bits, const AutotileData& autotileData,
-										  STL::Action<int> tileOutput, EdgeBehavior edges)
+										  const STL::Action<int>& tileOutput, EdgeBehavior edges)
 {
-	return TileImpl(
-		bits, nullptr, [&autotileData]() { return autotileData.TileHandler(); }, std::move(tileOutput), edges);
+	return TileImpl(bits, nullptr, [&autotileData] { return autotileData.TileHandler(); }, tileOutput, edges);
 }
 
 STL::Vector<STL::Vector<int>> Tiler::Tile(const VirtualMap<bool>& bits, const VirtualMap<bool>& mask,
-										  const AutotileData& autotileData, STL::Action<int> tileOutput,
+										  const AutotileData& autotileData, const STL::Action<int>& tileOutput,
 										  EdgeBehavior edges)
 {
-	return TileImpl(
-		bits, &mask, [&autotileData]() { return autotileData.TileHandler(); }, std::move(tileOutput), edges);
+	return TileImpl(bits, &mask, [&autotileData] { return autotileData.TileHandler(); }, tileOutput, edges);
 }
 
 STL::Vector<STL::Vector<int>> Tiler::TileImpl(const VirtualMap<bool>& bits, const VirtualMap<bool>* mask,
-											  STL::Func<int> tileDecider, STL::Action<int> tileOutput,
+											  const STL::Func<int>& tileDecider, const STL::Action<int>& tileOutput,
 											  EdgeBehavior edges)
 {
 	int boundsX = bits.Columns();

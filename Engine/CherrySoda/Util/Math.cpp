@@ -2,7 +2,7 @@
 
 namespace cherrysoda {
 
-const Math::Mat4 Math::GetOrientationMatrix_(const Math::Mat4& matrix)
+Math::Mat4 Math::GetOrientationMatrix_(const Math::Mat4& matrix)
 {
 	Vec3 scale, translation, skew;
 	Quat rotation;

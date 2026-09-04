@@ -20,6 +20,8 @@
 
 #include <SDL3/SDL.h>
 
+#include <algorithm>
+
 namespace cherrysoda {
 
 #ifdef __EMSCRIPTEN__
@@ -33,7 +35,7 @@ void Engine::MainLoop()
 Engine::Engine(int width, int height, int windowWidth, int windowHeight, const String& title, bool fullscreen)
 {
 	ms_instance = this;
-#if defined(CHIP)
+#ifdef CHIP
 	m_width = m_windowWidth = 480;
 	m_height = m_windowHeight = 274;
 	// Intentionally give two more pixels on height
@@ -67,7 +69,7 @@ void Engine::SetTitle(const String& title)
 void Engine::SetClearColor(const Color& color)
 {
 	m_clearColor = color;
-	if (auto gfxInstance = Graphics::Instance()) {
+	if (auto* gfxInstance = Graphics::Instance()) {
 		gfxInstance->SetClearColor(color);
 	}
 }
@@ -78,7 +80,7 @@ Math::IVec2 Engine::GetWindowPosition()
 	if (m_window) {
 		m_window->GetPosition(&x, &y);
 	}
-	return Math::IVec2(x, y);
+	return {x, y};
 }
 
 void Engine::SetMousePosition(const Math::IVec2& pos)
@@ -108,7 +110,7 @@ void Engine::ToggleFullscreen()
 {
 	m_fullscreen = !m_fullscreen;
 	if (m_window) {
-		m_fullscreen = !(m_window->IsFullscreen());
+		m_fullscreen = !m_window->IsFullscreen();
 		m_window->SetFullscreen(m_fullscreen);
 	}
 }
@@ -117,7 +119,7 @@ void Engine::ShowCursor(bool show)
 {
 	m_showCursor = show;
 	if (m_window) {
-		m_window->ShowCursor(show);
+		cherrysoda::Window::ShowCursor(show);
 	}
 }
 
@@ -250,7 +252,7 @@ void Engine::OnDeactivated()
 	}
 }
 
-void Engine::ParseArgs(int argc, char* argv[])
+void Engine::ParseArgs(int /*argc*/, char* /*argv*/[])
 {
 }
 
@@ -313,7 +315,7 @@ void Engine::RenderCore()
 		m_scene->BeforeRender();
 	}
 
-	m_graphicsDevice->BeginRenderPass(0);
+	cherrysoda::Graphics::BeginRenderPass(0);
 	m_graphicsDevice->SetRenderTarget(nullptr);
 	m_graphicsDevice->SetViewport(0, 0, GetWidth(), GetHeight());
 	m_graphicsDevice->SetClearColor(m_clearColor);
@@ -327,7 +329,7 @@ void Engine::RenderCore()
 	GUI::Render();
 }
 
-void Engine::OnSceneTransition(Scene* from, Scene* to)
+void Engine::OnSceneTransition(Scene* /*from*/, Scene* /*to*/)
 {
 	m_timeRate = 1.0;
 }
@@ -336,12 +338,12 @@ void Engine::Update()
 {
 	CHERRYSODA_PROFILE_FUNCTION();
 
-	m_window->PollEvents();
+	Window::PollEvents();
 
 	m_currentTime = Time::GetSystemTime();
 	m_rawDeltaTime = m_currentTime - m_lastFrameTime;
 	// Avoid big deltatime
-	if (m_rawDeltaTime > 0.1) m_rawDeltaTime = 0.1;
+	m_rawDeltaTime = std::min(m_rawDeltaTime, 0.1);
 	m_deltaTime = m_rawDeltaTime * m_timeRate;
 	m_rawGameTime += m_rawDeltaTime;
 	m_gameTime += m_deltaTime;
@@ -378,7 +380,7 @@ void Engine::Update()
 
 	// Changing scenes
 	if (m_scene != m_nextScene) {
-		auto lastScene = m_scene;
+		auto* lastScene = m_scene;
 		if (m_scene != nullptr) {
 			m_scene->End();
 		}
@@ -395,7 +397,7 @@ void Engine::Draw()
 	CHERRYSODA_PROFILE_FUNCTION();
 
 	RenderCore();
-	m_graphicsDevice->RenderFrame();
+	Graphics::RenderFrame();
 
 	// Frame counter
 	m_fpsCounter++;

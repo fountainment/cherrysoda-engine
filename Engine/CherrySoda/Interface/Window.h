@@ -32,7 +32,7 @@ private:
 	Window() = default;
 
 	void SetSize(int width, int height);
-	void SetTitle(const String& string);
+	void SetTitle(const String& title);
 	void SetFullscreen(bool fullscreen);
 	bool IsFullscreen();
 
@@ -57,7 +57,7 @@ private:
 
 	void SetTextInputEnabled(bool enable);
 
-	void PollEvents();
+	static void PollEvents();
 
 	static bool Initialize();
 	static void Terminate();

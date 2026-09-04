@@ -15,13 +15,13 @@ namespace cherrysoda {
 MTexture MTexture::FromFile(const String& filename)
 {
 	Texture2D result = Texture2D::FromFile(filename);
-	return MTexture(result);
+	return {result};
 }
 
 MTexture::MTexture(const Texture2D& texture)
 {
 	m_texture = texture;
-	ClipRect({IVec2_Zero, Math::IVec2(texture.Width(), texture.Height())});
+	ClipRect({.m_coord = IVec2_Zero, .m_size = Math::IVec2(texture.Width(), texture.Height())});
 	DrawOffset(IVec2_Zero);
 	ActualDrawOffset(IVec2_Zero);
 	Width(ClipRect().Width());
@@ -68,14 +68,14 @@ MTexture::MTexture(const MTexture& parent, const StringID& atlasPath, const Math
 MTexture::MTexture(int width, int height, const Color& color)
 {
 	const size_t pixelCount = static_cast<size_t>(width) * static_cast<size_t>(height);
-	unsigned char* data = new unsigned char[pixelCount << 2];
+	auto* data = new unsigned char[pixelCount << 2];
 	type::UInt32 colorValue = color.U32ABGR();
 	for (size_t i = 0; i < pixelCount; ++i) {
 		std::memcpy(data + (i << 2), &colorValue, sizeof(colorValue));
 	}
 	m_texture = Texture2D::FromRGBA(data, width, height);
 	delete[] data;
-	ClipRect({IVec2_Zero, Math::IVec2(width, height)});
+	ClipRect({.m_coord = IVec2_Zero, .m_size = Math::IVec2(width, height)});
 	DrawOffset(IVec2_Zero);
 	ActualDrawOffset(IVec2_Zero);
 	Width(width);
@@ -93,7 +93,7 @@ Math::IRectangle MTexture::GetRelativeRect(int x, int y, int width, int height) 
 	int rW = Math_Max(0, Math_Min(atX + width, ClipRect().Right()) - rX);
 	int rH = Math_Max(0, Math_Min(atY + height, ClipRect().Top()) - rY);
 
-	return {Math::IVec2(rX, rY), Math::IVec2(rW, rH)};
+	return {.m_coord = Math::IVec2(rX, rY), .m_size = Math::IVec2(rW, rH)};
 }
 
 Math::IRectangle MTexture::GetRelativeRect(const Math::IRectangle& rect) const
@@ -103,12 +103,12 @@ Math::IRectangle MTexture::GetRelativeRect(const Math::IRectangle& rect) const
 
 MTexture MTexture::GetSubtexture(int x, int y, int width, int height) const
 {
-	return MTexture(*this, x, y, width, height);
+	return {*this, x, y, width, height};
 }
 
 MTexture MTexture::GetSubtexture(const Math::IRectangle& rect) const
 {
-	return MTexture(*this, rect);
+	return {*this, rect};
 }
 
 void MTexture::Draw(const Math::Vec3& renderPosition, const Math::Vec3& origin /* = Vec3_Zero*/,

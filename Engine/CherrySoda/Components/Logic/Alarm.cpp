@@ -4,6 +4,8 @@
 #include <CherrySoda/Entity.h>
 #include <CherrySoda/Util/Log.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 STL::Stack<Alarm*> Alarm::ms_cached;
@@ -17,14 +19,14 @@ Alarm* Alarm::Create(AlarmMode mode, STL::Action<> onComplete, float duration /*
 	else {
 		alarm = STL::Pop(ms_cached);
 	}
-	alarm->Init(mode, onComplete, duration, start);
+	alarm->Init(mode, std::move(onComplete), duration, start);
 	return alarm;
 }
 
 Alarm* Alarm::Set(Entity* entity, float duration, STL::Action<> onComplete,
 				  AlarmMode alarmMode /* = Alarm::AlarmMode::Oneshot*/)
 {
-	Alarm* alarm = Alarm::Create(alarmMode, onComplete, duration, true);
+	Alarm* alarm = Alarm::Create(alarmMode, std::move(onComplete), duration, true);
 	entity->Add(alarm);
 	return alarm;
 }
@@ -35,7 +37,7 @@ void Alarm::Init(AlarmMode mode, STL::Action<> onComplete, float duration /* = 1
 
 	m_mode = mode;
 	m_duration = duration;
-	m_onComplete = onComplete;
+	m_onComplete = std::move(onComplete);
 
 	Active(false);
 	m_timeLeft = 0.f;

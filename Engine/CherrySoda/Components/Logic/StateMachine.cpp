@@ -6,6 +6,8 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 void StateMachine::Added(Entity* entity)
@@ -40,8 +42,7 @@ void StateMachine::ForceState(int state)
 
 void StateMachine::EnterState(int state)
 {
-	CHERRYSODA_ASSERT(state >= 0 && state < static_cast<int>(STL::Count(m_updates)),
-					  "StateMachine state out of range\n");
+	CHERRYSODA_ASSERT(state >= 0 && std::cmp_less(state, STL::Count(m_updates)), "StateMachine state out of range\n");
 
 	if (m_log) {
 		CHERRYSODA_DEBUG(CHERRYSODA_FORMAT("Enter State %d (leaving %d)\n", state, m_state));
@@ -80,10 +81,10 @@ void StateMachine::EnterState(int state)
 void StateMachine::SetCallbacks(int state, STL::Func<int> onUpdate, STL::Func<STL::Func<bool>> coroutine /* = nullptr*/,
 								STL::Action<> begin /* = nullptr*/, STL::Action<> end /* = nullptr*/)
 {
-	m_updates[state] = onUpdate;
-	m_begins[state] = begin;
-	m_ends[state] = end;
-	m_coroutines[state] = coroutine;
+	m_updates[state] = std::move(onUpdate);
+	m_begins[state] = std::move(begin);
+	m_ends[state] = std::move(end);
+	m_coroutines[state] = std::move(coroutine);
 }
 
 void StateMachine::Update()
@@ -115,7 +116,7 @@ void StateMachine::Update()
 
 void StateMachine::LogAllStates()
 {
-	for (int i = 0; i < static_cast<int>(STL::Count(m_updates)); i++) {
+	for (int i = 0; std::cmp_less(i, STL::Count(m_updates)); i++) {
 		LogState(i);
 	}
 }

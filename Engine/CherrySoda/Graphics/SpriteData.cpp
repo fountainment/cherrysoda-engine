@@ -32,7 +32,7 @@ void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /*
 {
 	auto jsonObj = jsonValue->GetObject();
 
-	auto source = new SpriteDataSource;
+	auto* source = new SpriteDataSource;
 	source->m_json = jsonValue;
 	source->m_path = jsonObj["path"].GetString();
 	source->m_overridePath = overridePath;
@@ -57,7 +57,7 @@ void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /*
 				}
 
 				const char* id = anim["id"].GetString();
-				String path = "";
+				String path;
 				if (anim.HasMember("path")) {
 					path = anim["path"].GetString();
 				}
@@ -65,11 +65,11 @@ void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /*
 					path = id;
 				}
 				float delay = anim.HasMember("delay") ? anim["delay"].GetFloat() : masterDelay;
-				if (overridePath.length() != 0) {
-					path = overridePath + path;
+				if (!overridePath.empty()) {
+					path.insert(0, overridePath);
 				}
 				else {
-					path = normalPath + path;
+					path.insert(0, normalPath);
 				}
 				// TODO: add frames
 				m_sprite->Add(id, path, delay, into);
@@ -80,7 +80,7 @@ void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /*
 		if (jsonObj.HasMember("Loop")) {
 			for (const auto& loop : jsonObj["Loop"].GetArray()) {
 				const char* id = loop["id"].GetString();
-				String path = "";
+				String path;
 				if (loop.HasMember("path")) {
 					path = loop["path"].GetString();
 				}
@@ -88,11 +88,11 @@ void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /*
 					path = id;
 				}
 				float delay = loop.HasMember("delay") ? loop["delay"].GetFloat() : masterDelay;
-				if (overridePath.length() != 0) {
-					path = overridePath + path;
+				if (!overridePath.empty()) {
+					path.insert(0, overridePath);
 				}
 				else {
-					path = normalPath + path;
+					path.insert(0, normalPath);
 				}
 				// TODO: add frames
 				m_sprite->AddLoop(id, path, delay);
@@ -105,20 +105,20 @@ void SpriteData::Add(const json::Value* jsonValue, const String& overridePath /*
 			m_sprite->Justify(Math::Vec2(0.5f));
 		}
 		else if (jsonObj.HasMember("Justify")) {
-			auto& justifyObj = jsonObj["Justify"];
+			const auto& justifyObj = jsonObj["Justify"];
 			Math::Vec2 justify(justifyObj["x"].GetFloat(), justifyObj["y"].GetFloat());
 			m_sprite->JustifyOrigin(justify);
 			m_sprite->Justify(justify);
 		}
 		else if (jsonObj.HasMember("Origin")) {
-			auto& originObj = jsonObj["Origin"];
+			const auto& originObj = jsonObj["Origin"];
 			Math::Vec2 origin(originObj["x"].GetFloat(), originObj["y"].GetFloat());
 			m_sprite->Origin(origin);
 		}
 
 		// Position
 		if (jsonObj.HasMember("Position")) {
-			auto& posObj = jsonObj["Position"];
+			const auto& posObj = jsonObj["Position"];
 			Math::Vec2 pos(posObj["x"].GetFloat(), posObj["y"].GetFloat());
 			m_sprite->Position(pos);
 		}

@@ -5,6 +5,8 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/STL.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onChange /* = nullptr*/,
@@ -17,7 +19,7 @@ Wiggler* Wiggler::Create(float duration, float frequency, STL::Action<float> onC
 	else {
 		wiggler = STL::Pop(ms_cache);
 	}
-	wiggler->Init(duration, frequency, onChange, start, removeSelfOnFinish);
+	wiggler->Init(duration, frequency, std::move(onChange), start, removeSelfOnFinish);
 	return wiggler;
 }
 
@@ -36,7 +38,7 @@ void Wiggler::Init(float duration, float frequency, STL::Action<float> onChange,
 
 	m_increment = 1.f / duration;
 	m_sineAdd = Math::Pi2 * frequency;
-	m_onChange = onChange;
+	m_onChange = std::move(onChange);
 	m_removeSelfOnFinish = removeSelfOnFinish;
 
 	if (start) {
@@ -101,7 +103,7 @@ void Wiggler::Update()
 		}
 	}
 
-	m_value = static_cast<float>(Math_Cos(m_sineCounter)) * m_counter;
+	m_value = Math_Cos(m_sineCounter) * m_counter;
 
 	if (m_onChange != nullptr) {
 		m_onChange(m_value);

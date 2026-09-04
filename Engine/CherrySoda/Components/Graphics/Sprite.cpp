@@ -9,6 +9,8 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 void Sprite::Update()
@@ -29,7 +31,7 @@ void Sprite::Update()
 
 			// End of Animation
 			if (m_currentAnimationFrame < 0 ||
-				m_currentAnimationFrame >= static_cast<int>(STL::Count(m_currentAnimation->m_frames))) {
+				std::cmp_greater_equal(m_currentAnimationFrame, STL::Count(m_currentAnimation->m_frames))) {
 				auto was = m_currentAnimationID;
 				if (m_onLastFrame) {
 					m_onLastFrame(m_currentAnimationID);
@@ -182,11 +184,11 @@ void Sprite::DrawSubrect(const Math::Vec2& offset, const Math::IRectangle& recta
 void Sprite::LogAnimations() const
 {
 	String str;
-	for (auto& kv : m_animations) {
+	for (const auto& kv : m_animations) {
 		str += CHERRYSODA_FORMAT("%s: %d frames, %.3fs each\n", kv.first.GetStr().c_str(),
 								 static_cast<int>(STL::Count(kv.second.m_frames)), kv.second.m_delay);
 	}
-	CHERRYSODA_LOG(str.c_str());
+	CHERRYSODA_LOG(str);
 }
 
 Sprite* Sprite::CloneInto(Sprite* clone)

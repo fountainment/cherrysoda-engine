@@ -7,7 +7,7 @@ namespace cherrysoda {
 int CoroutineHolder::StartCoroutine(STL::Func<bool> routine)
 {
 	int id = m_nextId++;
-	STL::Add(m_coroutines, CoroutineData{id, std::move(routine)});
+	STL::Add(m_coroutines, CoroutineData{.m_id = id, .m_routine = std::move(routine)});
 	return id;
 }
 

@@ -184,9 +184,9 @@ public:
 private:
 	friend class Graphics;
 
-	Math::Mat4 m_viewMatrix;
-	Math::Mat4 m_projMatrix;
-	Math::Mat4 m_inverseMatrix;
+	Math::Mat4 m_viewMatrix{};
+	Math::Mat4 m_projMatrix{};
+	Math::Mat4 m_inverseMatrix{};
 	bool m_changed = true;
 	bool m_orthoProjection = false;
 

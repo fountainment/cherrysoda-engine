@@ -25,7 +25,7 @@ SpriteBank::SpriteBank(Atlas* atlas, const String& jsonPath)
 			CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(m_spriteData, elementName),
 									 "Duplicate sprite name in SpriteData: '%s'!", elementName);
 
-			auto data = m_spriteData[elementName] = new SpriteData(m_atlas);
+			auto* data = m_spriteData[elementName] = new SpriteData(m_atlas);
 			if (element.HasMember("copy")) {
 				data->Add(elements[StringID(element["copy"].GetString())], element["path"].GetString());
 			}
@@ -64,10 +64,9 @@ Sprite* SpriteBank::Create(const StringID& id)
 	if (STL::ContainsKey(m_spriteData, id)) {
 		return m_spriteData[id]->Create();
 	}
-	else {
-		CHERRYSODA_ASSERT_FORMAT(false, "Missing animation name in SpriteData: '%s'!\n", id.GetStr().c_str());
-		return nullptr;
-	}
+
+	CHERRYSODA_ASSERT_FORMAT(false, "Missing animation name in SpriteData: '%s'!\n", id.GetStr().c_str());
+	return nullptr;
 }
 
 Sprite* SpriteBank::CreateOn(Sprite* sprite, const StringID& id)
@@ -75,10 +74,9 @@ Sprite* SpriteBank::CreateOn(Sprite* sprite, const StringID& id)
 	if (STL::ContainsKey(m_spriteData, id)) {
 		return m_spriteData[id]->CreateOn(sprite);
 	}
-	else {
-		CHERRYSODA_ASSERT_FORMAT(false, "Missing animation name in SpriteData: '%s'!\n", id.GetStr().c_str());
-		return nullptr;
-	}
+
+	CHERRYSODA_ASSERT_FORMAT(false, "Missing animation name in SpriteData: '%s'!\n", id.GetStr().c_str());
+	return nullptr;
 }
 
 } // namespace cherrysoda

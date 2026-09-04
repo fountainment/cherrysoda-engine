@@ -8,6 +8,7 @@
 #include <SDL3/SDL.h>
 #include <cmixer.h>
 
+#include <algorithm>
 #include <cstring>
 
 namespace cherrysoda {
@@ -30,7 +31,7 @@ static cm_Source* GetSource(int id)
 	return source;
 }
 
-Audio::EventInstance Audio::EventDescription::CreateInstance()
+Audio::EventInstance Audio::EventDescription::CreateInstance() const
 {
 	cm_Source* source = nullptr;
 	if (data != nullptr) {
@@ -69,9 +70,7 @@ static void SDLCALL audio_callback(void* userdata, SDL_AudioStream* stream, int 
 	(void)total_amount;
 	while (additional_amount > 0) {
 		int bytes = additional_amount;
-		if (bytes > (int)sizeof(audio_buffer)) {
-			bytes = (int)sizeof(audio_buffer);
-		}
+		bytes = std::min(bytes, (int)sizeof(audio_buffer));
 		cm_process(audio_buffer, bytes / 2);
 		SDL_PutAudioStreamData(stream, audio_buffer, bytes);
 		additional_amount -= bytes;
@@ -91,7 +90,7 @@ void Audio::Initialize()
 	fmt.channels = 2;
 	fmt.freq = 44100;
 
-	s_sdlAudioStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &fmt, audio_callback, NULL);
+	s_sdlAudioStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &fmt, audio_callback, nullptr);
 	CHERRYSODA_ASSERT_FORMAT(s_sdlAudioStream, "Error: failed to open audio device '%s'\n", SDL_GetError());
 
 	/* Init library */
@@ -170,14 +169,14 @@ void Audio::MasterVolume(double volume)
 
 void Audio::LoadFile(const StringID& path, const String& filePath)
 {
-	s_descriptions[path] = Audio::EventDescription{filePath};
+	s_descriptions[path] = Audio::EventDescription{.filename = filePath};
 }
 
 void Audio::LoadFileFromMemory(const StringID& path, void* data, int size)
 {
 	// cmixer keeps a pointer into the buffer without copying it,
 	// so Audio has to own a copy to keep it valid for every instance
-	auto owned = new type::UInt8[size];
+	auto* owned = new type::UInt8[size];
 	std::memcpy(owned, data, size);
 	auto& description = s_descriptions[path];
 	delete[] description.data;

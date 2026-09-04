@@ -182,7 +182,7 @@ public:
 		return CloneInto(sprite);
 	}
 
-	Sprite* CloneInto(Sprite* sprite);
+	Sprite* CloneInto(Sprite* clone);
 
 private:
 	CHERRYSODA_FRIEND_CLASS_POOL;

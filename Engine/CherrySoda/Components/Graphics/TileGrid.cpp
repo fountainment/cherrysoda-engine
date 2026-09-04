@@ -8,14 +8,16 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/VirtualMap.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
 void TileGrid::Populate(const TileSet* tileset, const STL::Vector<STL::Vector<int>>& tiles, int offsetX /* = 0*/,
 						int offsetY /* = 0*/)
 {
 	if (STL::IsEmpty(tiles)) return;
-	for (int x = 0; x < static_cast<int>(STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
-		for (int y = 0; y < static_cast<int>(STL::Count(tiles[0])) && y + offsetY < TilesY(); ++y)
+	for (int x = 0; std::cmp_less(x, STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
+		for (int y = 0; std::cmp_less(y, STL::Count(tiles[0])) && y + offsetY < TilesY(); ++y)
 			m_tiles->Set(x + offsetX, y + offsetY, tileset->Get(tiles[x][y]));
 }
 
@@ -23,8 +25,8 @@ void TileGrid::Overlay(const TileSet* tileset, const STL::Vector<STL::Vector<int
 					   int offsetY /* = 0*/)
 {
 	if (STL::IsEmpty(tiles)) return;
-	for (int x = 0; x < static_cast<int>(STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
-		for (int y = 0; y < static_cast<int>(STL::Count(tiles[0])) && y + offsetY < TilesY(); ++y)
+	for (int x = 0; std::cmp_less(x, STL::Count(tiles)) && x + offsetX < TilesX(); ++x)
+		for (int y = 0; std::cmp_less(y, STL::Count(tiles[0])) && y + offsetY < TilesY(); ++y)
 			if (tiles[x][y] >= 0) m_tiles->Set(x + offsetX, y + offsetY, tileset->Get(tiles[x][y]));
 }
 
@@ -41,7 +43,7 @@ void TileGrid::Extend(int left, int right, int up, int down)
 		return;
 	}
 
-	auto newTiles = new VirtualMap<const MTexture*>(newWidth, newHeight);
+	auto* newTiles = new VirtualMap<const MTexture*>(newWidth, newHeight);
 
 	// Center
 	for (int x = 0; x < TilesX(); ++x) {
@@ -110,7 +112,7 @@ Math::Rectangle TileGrid::GetClippedRenderTiles() const
 {
 	auto pos = GetEntity()->Position2D() + Position();
 
-	int left, top, right, bottom;
+	int left = 0, top = 0, right = 0, bottom = 0;
 	if (m_clipCamera == nullptr) {
 		left = -m_visualExtend;
 		bottom = -m_visualExtend;
@@ -118,7 +120,7 @@ Math::Rectangle TileGrid::GetClippedRenderTiles() const
 		top = TilesY() + m_visualExtend;
 	}
 	else {
-		auto camera = m_clipCamera;
+		auto* camera = m_clipCamera;
 		left = (int)Math_Max(0.f, Math_Floor((camera->Left() - pos.x) / TileWidth()) - m_visualExtend);
 		bottom = (int)Math_Max(0.f, Math_Floor((camera->Bottom() - pos.y) / TileHeight()) - m_visualExtend);
 		right = (int)Math_Min((float)TilesX(), Math_Ceiling((camera->Right() - pos.x) / TileWidth()) + m_visualExtend);
@@ -131,7 +133,7 @@ Math::Rectangle TileGrid::GetClippedRenderTiles() const
 	right = Math_Min(right, TilesX());
 	top = Math_Min(top, TilesY());
 
-	return Math::Rectangle{Math::Vec2(left, bottom), Math::Vec2(right - left, top - bottom)};
+	return Math::Rectangle{.m_coord = Math::Vec2(left, bottom), .m_size = Math::Vec2(right - left, top - bottom)};
 }
 
 void TileGrid::Render()
@@ -139,7 +141,7 @@ void TileGrid::Render()
 	RenderAt(GetEntity()->Position2D() + Position());
 }
 
-void TileGrid::RenderAt(const Math::Vec2& position)
+void TileGrid::RenderAt(const Math::Vec2& /*position*/)
 {
 	if (m_alpha <= 0.f) return;
 

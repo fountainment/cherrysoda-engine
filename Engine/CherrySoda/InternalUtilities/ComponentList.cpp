@@ -17,7 +17,7 @@ void ComponentList::LockMode(LockModes lockMode)
 	m_lockMode = lockMode;
 
 	if (STL::IsNotEmpty(m_toAdd)) {
-		for (auto component : m_toAdd) {
+		for (auto* component : m_toAdd) {
 			if (!STL::Contains(m_current, component)) {
 				STL::Add(m_current, component);
 				STL::Add(m_components, component);
@@ -30,7 +30,7 @@ void ComponentList::LockMode(LockModes lockMode)
 	}
 
 	if (STL::IsNotEmpty(m_toRemove)) {
-		for (auto component : m_toRemove) {
+		for (auto* component : m_toRemove) {
 			if (STL::Contains(m_current, component)) {
 				STL::Remove(m_current, component);
 				STL::Remove(m_components, component);
@@ -92,14 +92,14 @@ void ComponentList::Remove(Component* component)
 
 void ComponentList::Add(const ComponentList::IterableComponents& components)
 {
-	for (auto component : components) {
+	for (auto* component : components) {
 		Add(component);
 	}
 }
 
 void ComponentList::Remove(const ComponentList::IterableComponents& components)
 {
-	for (auto component : components) {
+	for (auto* component : components) {
 		Remove(component);
 	}
 }
@@ -107,7 +107,7 @@ void ComponentList::Remove(const ComponentList::IterableComponents& components)
 void ComponentList::Update()
 {
 	LockMode(ComponentList::LockModes::Locked);
-	for (auto component : m_components) {
+	for (auto* component : m_components) {
 		if (component->Active()) {
 			component->Update();
 		}
@@ -118,7 +118,7 @@ void ComponentList::Update()
 void ComponentList::Render()
 {
 	LockMode(ComponentList::LockModes::Error);
-	for (auto component : m_components) {
+	for (auto* component : m_components) {
 		if (component->Visible()) {
 			component->Render();
 		}
@@ -129,7 +129,7 @@ void ComponentList::Render()
 void ComponentList::DebugRender(Camera* camera)
 {
 	LockMode(ComponentList::LockModes::Error);
-	for (auto component : m_components) {
+	for (auto* component : m_components) {
 		component->DebugRender(camera);
 	}
 	LockMode(ComponentList::LockModes::Open);
@@ -138,7 +138,7 @@ void ComponentList::DebugRender(Camera* camera)
 void ComponentList::HandleGraphicsReset()
 {
 	LockMode(LockModes::Error);
-	for (auto component : m_components) {
+	for (auto* component : m_components) {
 		component->HandleGraphicsReset();
 	}
 	LockMode(LockModes::Open);
@@ -147,7 +147,7 @@ void ComponentList::HandleGraphicsReset()
 void ComponentList::HandleGraphicsCreate()
 {
 	LockMode(LockModes::Error);
-	for (auto component : m_components) {
+	for (auto* component : m_components) {
 		component->HandleGraphicsCreate();
 	}
 	LockMode(LockModes::Open);

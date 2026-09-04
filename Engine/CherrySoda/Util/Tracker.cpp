@@ -68,13 +68,13 @@ const STL::List<Component*>* Tracker::GetComponentsOfType(type::Int32 typeID) co
 
 int Tracker::CountEntitiesOfType(type::Int32 typeID) const
 {
-	auto list = GetEntitiesOfType(typeID);
+	const auto* list = GetEntitiesOfType(typeID);
 	return list != nullptr ? static_cast<int>(STL::Count(*list)) : 0;
 }
 
 int Tracker::CountComponentsOfType(type::Int32 typeID) const
 {
-	auto list = GetComponentsOfType(typeID);
+	const auto* list = GetComponentsOfType(typeID);
 	return list != nullptr ? static_cast<int>(STL::Count(*list)) : 0;
 }
 

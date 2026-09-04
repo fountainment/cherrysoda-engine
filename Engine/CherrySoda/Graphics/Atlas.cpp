@@ -21,10 +21,10 @@ namespace {
 class AtlasBinaryReader
 {
 public:
-	AtlasBinaryReader(const String& filename) : m_stream(filename, std::ios::binary) {}
+	explicit AtlasBinaryReader(const String& filename) : m_stream(filename, std::ios::binary) {}
 
-	inline bool IsOpen() const { return m_stream.is_open(); }
-	inline bool IsAtEnd() { return m_stream.peek() == std::char_traits<char>::eof(); }
+	bool IsOpen() const { return m_stream.is_open(); }
+	bool IsAtEnd() { return m_stream.peek() == std::char_traits<char>::eof(); }
 
 	type::Int16 ReadInt16()
 	{
@@ -47,7 +47,7 @@ public:
 	String ReadNullTerminatedString()
 	{
 		String str;
-		char c;
+		char c = 0;
 		while (m_stream.read(&c, 1) && c != 0) {
 			str += c;
 		}
@@ -59,7 +59,7 @@ public:
 	{
 		type::UInt32 length = 0;
 		type::UInt32 shift = 0;
-		char b;
+		char b = 0;
 		do {
 			m_stream.read(&b, 1);
 			length |= static_cast<type::UInt32>(static_cast<unsigned char>(b) & 0x7f) << shift;
@@ -68,7 +68,7 @@ public:
 
 		String str(length, '\0');
 		if (length > 0) {
-			m_stream.read(&str[0], length);
+			m_stream.read(str.data(), length);
 		}
 		return str;
 	}
@@ -83,8 +83,10 @@ MTexture MakeWholeTexture(const Texture2D& texture, const char* name, const Math
 						  int height)
 {
 	MTexture whole(texture);
-	return MTexture(whole, name, Math::IRectangle{Math::IVec2(0, 0), Math::IVec2(texture.Width(), texture.Height())},
-					drawOffset, width, height);
+	return MTexture(
+		whole, name,
+		Math::IRectangle{.m_coord = Math::IVec2(0, 0), .m_size = Math::IVec2(texture.Width(), texture.Height())},
+		drawOffset, width, height);
 }
 
 } // namespace
@@ -98,8 +100,9 @@ Atlas::~Atlas()
 
 const MTexture& Atlas::GetOrDefault(const StringID& id, const MTexture& defaultTexture) const
 {
+	// Returning the caller's default by reference is the point of this API
 	if (id.IsEmpty() || !Has(id)) {
-		return defaultTexture;
+		return defaultTexture; // NOLINT(bugprone-return-const-ref-from-parameter)
 	}
 	return m_textures.at(id);
 }
@@ -121,15 +124,14 @@ const STL::Vector<MTexture>& Atlas::GetAtlasSubtextures(const String& key) const
 	return m_orderedTexturesCache.at(key);
 }
 
-const MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index) const
+MTexture Atlas::GetAtlasSubtextureAt(const String& key, int index) const
 {
 	STL::Vector<MTexture> list;
 	if (STL::TryGetValue(m_orderedTexturesCache, key, list)) {
 		return list[index];
 	}
-	else {
-		return GetAtlasSubtextureFromAtlasAt(key, index);
-	}
+
+	return GetAtlasSubtextureFromAtlasAt(key, index);
 }
 
 const MTexture& Atlas::GetAtlasSubtextureFromCacheAt(const StringID& key, int index) const
@@ -137,7 +139,7 @@ const MTexture& Atlas::GetAtlasSubtextureFromCacheAt(const StringID& key, int in
 	return m_orderedTexturesCache.at(key)[index];
 }
 
-const MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index) const
+MTexture Atlas::GetAtlasSubtextureFromAtlasAt(const String& key, int index) const
 {
 	if (index == 0 && STL::ContainsKey(m_textures, key)) {
 		return m_textures.at(key);
@@ -174,8 +176,8 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 		for (xml::xml_node sub = at.child("SubTexture"); sub; sub = sub.next_sibling("SubTexture")) {
 			const char* name = sub.attribute("name").as_string("");
 			auto clipRect = Math::IRectangle{
-				Math::IVec2(sub.attribute("x").as_int(0), sub.attribute("y").as_int(0)),
-				Math::IVec2(sub.attribute("width").as_int(0), sub.attribute("height").as_int(0)),
+				.m_coord = Math::IVec2(sub.attribute("x").as_int(0), sub.attribute("y").as_int(0)),
+				.m_size = Math::IVec2(sub.attribute("width").as_int(0), sub.attribute("height").as_int(0)),
 			};
 			if (sub.attribute("frameX")) {
 				atlas->m_textures[name] =
@@ -206,8 +208,8 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 			for (const auto& sub : img.GetArray()) {
 				const char* name = sub["n"].GetString();
 				auto clipRect = Math::IRectangle{
-					Math::IVec2(sub["x"].GetInt(), sub["y"].GetInt()),
-					Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
+					.m_coord = Math::IVec2(sub["x"].GetInt(), sub["y"].GetInt()),
+					.m_size = Math::IVec2(sub["w"].GetInt(), sub["h"].GetInt()),
 				};
 				if (sub.HasMember("fx")) {
 					atlas->m_textures[name] =
@@ -236,8 +238,8 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 			for (xml::xml_node sub = tex.first_child(); sub; sub = sub.next_sibling()) {
 				const char* name = sub.attribute("n").as_string("");
 				auto clipRect = Math::IRectangle{
-					Math::IVec2(sub.attribute("x").as_int(0), sub.attribute("y").as_int(0)),
-					Math::IVec2(sub.attribute("w").as_int(0), sub.attribute("h").as_int(0)),
+					.m_coord = Math::IVec2(sub.attribute("x").as_int(0), sub.attribute("y").as_int(0)),
+					.m_size = Math::IVec2(sub.attribute("w").as_int(0), sub.attribute("h").as_int(0)),
 				};
 				if (sub.attribute("fx")) {
 					atlas->m_textures[name] =
@@ -268,8 +270,8 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 			for (int j = 0; j < subtextures; ++j) {
 				String name = reader.ReadNullTerminatedString();
 				auto clipRect = Math::IRectangle{
-					Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
-					Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
+					.m_coord = Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
+					.m_size = Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
 				};
 				Math::Vec2 drawOffset(-reader.ReadInt16(), -reader.ReadInt16());
 				int width = reader.ReadInt16();
@@ -344,10 +346,10 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 			int subtextures = reader.ReadInt16();
 			for (int j = 0; j < subtextures; ++j) {
 				String name = reader.ReadPrefixedString();
-				std::replace(name.begin(), name.end(), '\\', '/');
+				std::ranges::replace(name, '\\', '/');
 				auto clipRect = Math::IRectangle{
-					Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
-					Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
+					.m_coord = Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
+					.m_size = Math::IVec2(reader.ReadInt16(), reader.ReadInt16()),
 				};
 				Math::Vec2 drawOffset(-reader.ReadInt16(), -reader.ReadInt16());
 				int width = reader.ReadInt16();
@@ -374,7 +376,7 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 			int subtextures = reader.ReadInt16();
 			for (int j = 0; j < subtextures; ++j) {
 				String name = reader.ReadPrefixedString();
-				std::replace(name.begin(), name.end(), '\\', '/');
+				std::ranges::replace(name, '\\', '/');
 				reader.ReadInt16(); // x
 				reader.ReadInt16(); // y
 				reader.ReadInt16(); // w
@@ -398,16 +400,19 @@ void Atlas::ReadAtlasData(Atlas* atlas, const String& path, AtlasDataFormat form
 
 Atlas* Atlas::FromMultiAtlas(const String& rootPath, const STL::Vector<String>& dataPath, AtlasDataFormat format)
 {
-	Atlas* atlas = new Atlas;
+	auto* atlas = new Atlas;
 	for (const auto& data : dataPath) {
-		ReadAtlasData(atlas, rootPath + "/" + data, format);
+		String dataPathFull = rootPath;
+		dataPathFull += '/';
+		dataPathFull += data;
+		ReadAtlasData(atlas, dataPathFull, format);
 	}
 	return atlas;
 }
 
 Atlas* Atlas::FromMultiAtlas(const String& rootPath, const String& filename, AtlasDataFormat format)
 {
-	Atlas* atlas = new Atlas;
+	auto* atlas = new Atlas;
 
 	int index = 0;
 	while (true) {
@@ -424,7 +429,7 @@ Atlas* Atlas::FromMultiAtlas(const String& rootPath, const String& filename, Atl
 
 Atlas* Atlas::FromDirectory(const String& path)
 {
-	Atlas* atlas = new Atlas;
+	auto* atlas = new Atlas;
 
 	std::error_code ec;
 	auto iterator = std::filesystem::recursive_directory_iterator(path, ec);

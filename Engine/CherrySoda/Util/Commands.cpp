@@ -7,17 +7,21 @@
 #include <CherrySoda/Util/STL.h>
 #include <CherrySoda/Util/String.h>
 
+#include <utility>
+
 namespace cherrysoda {
 
+namespace {
 struct CommandTrieNode
 {
 	STL::Map<char, CommandTrieNode*> next;
 	bool exists = false;
 };
+} // namespace
 
 static CommandTrieNode* GetCommandTrieRoot()
 {
-	static CommandTrieNode* commandTrieRoot = new CommandTrieNode;
+	static auto* commandTrieRoot = new CommandTrieNode;
 	return commandTrieRoot;
 }
 
@@ -33,7 +37,7 @@ static void CommandTrieInsert(const String& command)
 	node->exists = true;
 }
 
-static void CommandTrieTraverse(CommandTrieNode* node, String current, STL::Vector<String>& result)
+static void CommandTrieTraverse(CommandTrieNode* node, const String& current, STL::Vector<String>& result)
 {
 	if (node->exists) {
 		STL::Add(result, current);
@@ -105,7 +109,7 @@ void Commands::Register(const String& command, STL::Action<const STL::Vector<Str
 	String lowerCommand = StringUtil::ToLower(command);
 	CHERRYSODA_ASSERT_FORMAT(!STL::ContainsKey(INTERNAL_GetCommands(), lowerCommand), "Command alreay exists: %s\n",
 							 lowerCommand.c_str());
-	INTERNAL_GetCommands()[lowerCommand] = {action, lowerCommand, help};
+	INTERNAL_GetCommands()[lowerCommand] = {.action = std::move(action), .name = lowerCommand, .help = help};
 	CommandTrieInsert(lowerCommand);
 }
 
@@ -121,7 +125,7 @@ void Commands::ExecuteCommand()
 
 void Commands::ExecuteCommand(const String& command)
 {
-	ms_returnValue = {false, 0.f, 0, ""};
+	ms_returnValue = {.hasReturnValue = false, .floatValue = 0.f, .intValue = 0, .stringValue = ""};
 	auto coms = StringUtil::Split(StringUtil::Trim(command), ';');
 	for (auto& com : coms) {
 		auto data = StringUtil::Split(StringUtil::Trim(com));
@@ -193,21 +197,19 @@ void Commands::ClearCommand()
 
 String Commands::GetCompletionSuffix(const String& prefix)
 {
-	if (prefix == "") return "";
+	if (prefix.empty()) return "";
 	auto suffixes = CommandTrieFindPrefix(prefix);
 	int suffixCount = STL::Count(suffixes);
 	if (suffixCount == 0) {
 		return "";
 	}
-	else if (suffixCount == 1) {
+	if (suffixCount == 1) {
 		return suffixes[0] + " ";
 	}
-	else {
-		for (auto& suffix : suffixes) {
-			Log(prefix + suffix);
-		}
-		return "";
+	for (auto& suffix : suffixes) {
+		Log(prefix + suffix);
 	}
+	return "";
 }
 
 void Commands::CompleteCommand()
@@ -241,7 +243,7 @@ String Commands::GetForwardHistory()
 	if (ms_commandHistoryIndex == -1) {
 		return ms_currentText;
 	}
-	else if (ms_commandHistoryIndex < static_cast<int>(STL::Count(ms_commandHistory)) - 1) {
+	if (ms_commandHistoryIndex < static_cast<int>(STL::Count(ms_commandHistory)) - 1) {
 		ms_commandHistoryIndex++;
 	}
 	else {
@@ -268,7 +270,7 @@ void Commands::ShowHelp(const String& command)
 {
 	Commands::CommandInfo info;
 	if (STL::TryGetValue(INTERNAL_GetCommands(), command, info)) {
-		if (info.help != "") {
+		if (!info.help.empty()) {
 			Log(info.help, Color::Gray);
 		}
 	}
@@ -279,7 +281,8 @@ void Commands::ShowHelp(const String& command)
 
 void Commands::AddParamSlider(const String& param, float minValue, float maxValue, float defaultValue)
 {
-	STL::Add(ms_sliderInfo, Commands::SliderInfo{param, minValue, maxValue, defaultValue});
+	STL::Add(ms_sliderInfo,
+			 Commands::SliderInfo{.param = param, .minValue = minValue, .maxValue = maxValue, .value = defaultValue});
 }
 
 STL::HashMap<StringID, Commands::CommandInfo>& Commands::INTERNAL_GetCommands()
@@ -314,10 +317,10 @@ void CommandBatches::ExecuteBatch(const String& batch)
 	CHERRYSODA_ASSERT_FORMAT(STL::ContainsKey(ms_commandBatches, batch), "Batch \"%s\" doesn't exist\n", batch.c_str());
 	auto commands = StringUtil::Split(ms_commandBatches[batch], '\n');
 	if (InBatchExecution()) {
-		STL::Push(*ms_currentExecutionStack, CommandBatches::CommandBatchInfo{commands});
+		STL::Push(*ms_currentExecutionStack, CommandBatches::CommandBatchInfo{.commands = commands});
 	}
 	else {
-		STL::Add(ms_pendingCommands, STL::Stack<CommandBatches::CommandBatchInfo>({{commands}}));
+		STL::Add(ms_pendingCommands, STL::Stack<CommandBatches::CommandBatchInfo>({{.commands = commands}}));
 	}
 }
 
@@ -340,7 +343,7 @@ void CommandBatches::Update()
 		if (batch.delay > 0.f) {
 			batch.delay -= batch.isRawDelay ? Engine::Instance()->RawDeltaTime() : Engine::Instance()->DeltaTime();
 		}
-		else if (batch.pointer >= static_cast<int>(STL::Count(batch.commands))) {
+		else if (std::cmp_greater_equal(batch.pointer, STL::Count(batch.commands))) {
 			STL::Pop(*it);
 			if (STL::IsEmpty(*it)) {
 				it = ms_pendingCommands.erase(it);

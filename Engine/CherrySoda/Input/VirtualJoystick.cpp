@@ -7,20 +7,20 @@ namespace cherrysoda {
 
 VirtualJoystick::~VirtualJoystick()
 {
-	for (auto node : m_nodes) {
+	for (auto* node : m_nodes) {
 		delete node;
 	}
 }
 
 void VirtualJoystick::Update()
 {
-	for (auto node : m_nodes) {
+	for (auto* node : m_nodes) {
 		node->Update();
 	}
 
 	m_previousValue = m_value;
 	m_value = Vec2_Zero;
-	for (auto node : m_nodes) {
+	for (auto* node : m_nodes) {
 		Math::Vec2 value = node->Value();
 		if (value != Vec2_Zero) {
 			if (m_normalized) {

@@ -73,7 +73,7 @@ public:
 	inline BitTagValueType Tag() const { return m_tag; }
 	void Tag(BitTagValueType tag);
 
-	const STL::List<Entity*> CollideAll(const BitTag& tag) const;
+	STL::List<Entity*> CollideAll(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag) const;
 	bool CollideCheck(const BitTag& tag, const Math::Vec2& at);
 	bool CollideCheck(const Entity* other) const;

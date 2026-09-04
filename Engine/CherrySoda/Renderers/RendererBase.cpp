@@ -7,7 +7,7 @@
 
 namespace cherrysoda {
 
-void RendererBase::RenderPrepare(Scene* scene)
+void RendererBase::RenderPrepare(Scene* /*scene*/)
 {
 	CHERRYSODA_ASSERT(!(RenderPass() == 0 && GetRenderTarget() != nullptr),
 					  "Renderpass 0 is preserved to use screen render target.\n");

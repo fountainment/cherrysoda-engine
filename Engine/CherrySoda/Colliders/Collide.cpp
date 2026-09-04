@@ -6,6 +6,7 @@
 #include <CherrySoda/Util/Math.h>
 #include <CherrySoda/Util/Profile.h>
 #include <CherrySoda/Util/STL.h>
+#include <algorithm>
 
 namespace cherrysoda {
 
@@ -46,12 +47,7 @@ bool Collide::Check(Entity* a, const CollidableComponent* b, const Math::Vec2& a
 bool Collide::Check(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();
-	for (auto e : b) {
-		if (Check(a, e)) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(b, [&](const Entity* e) { return Check(a, e); });
 }
 
 bool Collide::Check(Entity* a, const STL::List<Entity*>& b, const Math::Vec2& at)
@@ -101,7 +97,7 @@ int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();
 	int count = 0;
-	for (auto e : b) {
+	for (auto* e : b) {
 		if (Check(a, e)) {
 			++count;
 		}
@@ -112,7 +108,7 @@ int Collide::Count(const Entity* a, const STL::List<Entity*>& b)
 Entity* Collide::First(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();
-	for (auto e : b) {
+	for (auto* e : b) {
 		if (Check(a, e)) {
 			return e;
 		}
@@ -120,11 +116,11 @@ Entity* Collide::First(const Entity* a, const STL::List<Entity*>& b)
 	return nullptr;
 }
 
-const STL::List<Entity*> Collide::All(const Entity* a, const STL::List<Entity*>& b)
+STL::List<Entity*> Collide::All(const Entity* a, const STL::List<Entity*>& b)
 {
 	CHERRYSODA_PROFILE_FUNCTION();
 	STL::List<Entity*> ret;
-	for (auto e : b) {
+	for (auto* e : b) {
 		if (Check(a, e)) {
 			STL::Add(ret, e);
 		}
@@ -136,19 +132,17 @@ bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::
 {
 	Math::Vec2 b = a2 - a1;
 	Math::Vec2 d = b2 - b1;
-	float bDotDPerp = b.x * d.y - b.y * d.x;
+	float bDotDPerp = (b.x * d.y) - (b.y * d.x);
 
 	// if b dot d == 0, it means the lines are parallel so have infinite intersection points
 	if (bDotDPerp == 0.f) return false;
 
 	Math::Vec2 c = b1 - a1;
-	float t = (c.x * d.y - c.y * d.x) / bDotDPerp;
+	float t = ((c.x * d.y) - (c.y * d.x)) / bDotDPerp;
 	if (t < 0.f || t > 1.f) return false;
 
-	float u = (c.x * b.y - c.y * b.x) / bDotDPerp;
-	if (u < 0.f || u > 1.f) return false;
-
-	return true;
+	float u = ((c.x * b.y) - (c.y * b.x)) / bDotDPerp;
+	return u >= 0.f && u <= 1.f;
 }
 
 bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::Vec2& b1, const Math::Vec2& b2,
@@ -156,16 +150,16 @@ bool Collide::LineCheck(const Math::Vec2& a1, const Math::Vec2& a2, const Math::
 {
 	Math::Vec2 b = a2 - a1;
 	Math::Vec2 d = b2 - b1;
-	float bDotDPerp = b.x * d.y - b.y * d.x;
+	float bDotDPerp = (b.x * d.y) - (b.y * d.x);
 
 	// if b dot d == 0, it means the lines are parallel so have infinite intersection points
 	if (bDotDPerp == 0.f) return false;
 
 	Math::Vec2 c = b1 - a1;
-	float t = (c.x * d.y - c.y * d.x) / bDotDPerp;
+	float t = ((c.x * d.y) - (c.y * d.x)) / bDotDPerp;
 	if (t < 0.f || t > 1.f) return false;
 
-	float u = (c.x * b.y - c.y * b.x) / bDotDPerp;
+	float u = ((c.x * b.y) - (c.y * b.x)) / bDotDPerp;
 	if (u < 0.f || u > 1.f) return false;
 
 	intersection = a1 + t * b;
@@ -215,40 +209,41 @@ bool Collide::RectToLine(float rX, float rY, float rW, float rH, const Math::Vec
 	PointSectors fromSector = GetSector(rX, rY, rW, rH, lineFrom);
 	PointSectors toSector = GetSector(rX, rY, rW, rH, lineTo);
 
-	if (fromSector == PointSectors::Center || toSector == PointSectors::Center)
+	if (fromSector == PointSectors::Center || toSector == PointSectors::Center) {
 		return true;
-	else if (static_cast<int>(fromSector & toSector) != 0)
+	}
+	if (static_cast<int>(fromSector & toSector) != 0) {
 		return false;
-	else {
-		PointSectors both = fromSector | toSector;
+	}
 
-		// Do line checks against the edges
-		Math::Vec2 edgeFrom;
-		Math::Vec2 edgeTo;
+	PointSectors both = fromSector | toSector;
 
-		if (static_cast<int>(both & PointSectors::Bottom) != 0) {
-			edgeFrom = Math::Vec2(rX, rY);
-			edgeTo = Math::Vec2(rX + rW, rY);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
-		}
+	// Do line checks against the edges
+	Math::Vec2 edgeFrom;
+	Math::Vec2 edgeTo;
 
-		if (static_cast<int>(both & PointSectors::Top) != 0) {
-			edgeFrom = Math::Vec2(rX, rY + rH);
-			edgeTo = Math::Vec2(rX + rW, rY + rH);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
-		}
+	if (static_cast<int>(both & PointSectors::Bottom) != 0) {
+		edgeFrom = Math::Vec2(rX, rY);
+		edgeTo = Math::Vec2(rX + rW, rY);
+		if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
+	}
 
-		if (static_cast<int>(both & PointSectors::Left) != 0) {
-			edgeFrom = Math::Vec2(rX, rY);
-			edgeTo = Math::Vec2(rX, rY + rH);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
-		}
+	if (static_cast<int>(both & PointSectors::Top) != 0) {
+		edgeFrom = Math::Vec2(rX, rY + rH);
+		edgeTo = Math::Vec2(rX + rW, rY + rH);
+		if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
+	}
 
-		if (static_cast<int>(both & PointSectors::Right) != 0) {
-			edgeFrom = Math::Vec2(rX + rW, rY);
-			edgeTo = Math::Vec2(rX + rW, rY + rH);
-			if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
-		}
+	if (static_cast<int>(both & PointSectors::Left) != 0) {
+		edgeFrom = Math::Vec2(rX, rY);
+		edgeTo = Math::Vec2(rX, rY + rH);
+		if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
+	}
+
+	if (static_cast<int>(both & PointSectors::Right) != 0) {
+		edgeFrom = Math::Vec2(rX + rW, rY);
+		edgeTo = Math::Vec2(rX + rW, rY + rH);
+		if (LineCheck(edgeFrom, edgeTo, lineFrom, lineTo)) return true;
 	}
 
 	return false;

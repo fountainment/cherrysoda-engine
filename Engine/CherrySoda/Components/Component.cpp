@@ -43,7 +43,7 @@ void Component::EntityRemoved(Scene* scene)
 	scene->GetTracker()->ComponentRemoved(this);
 }
 
-void Component::SceneEnd(Scene* scene)
+void Component::SceneEnd(Scene* /*scene*/)
 {
 }
 
@@ -59,7 +59,7 @@ void Component::Render()
 {
 }
 
-void Component::DebugRender(Camera* camera)
+void Component::DebugRender(Camera* /*camera*/)
 {
 }
 
@@ -82,7 +82,7 @@ void Component::AutoDeleteWhenRemoved(PoolInterface* pool)
 {
 	m_onRemoved = [pool](Component* component, Entity* entity) {
 		pool->INTERNAL_Hide(component);
-		entity->GetScene()->AddActionOnEndOfFrame([pool, component]() { pool->INTERNAL_Destroy(component); });
+		entity->GetScene()->AddActionOnEndOfFrame([pool, component] { pool->INTERNAL_Destroy(component); });
 	};
 }
 
@@ -93,7 +93,7 @@ Scene* Component::GetScene() const
 
 void Component::DeleteComponent(Component* component, Entity* entity)
 {
-	entity->GetScene()->AddActionOnEndOfFrame([component]() { delete component; });
+	entity->GetScene()->AddActionOnEndOfFrame([component] { delete component; });
 }
 
 } // namespace cherrysoda
