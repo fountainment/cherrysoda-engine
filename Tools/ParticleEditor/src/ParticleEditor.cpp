@@ -184,10 +184,14 @@ void ParticleEditor::Update()
 
 	ImGui::Begin("Particle Editor", nullptr, windowFlags);
 	{
-		ImGui::SetWindowPos(ImVec2(GetWindowWidth() - 375.f, menuHeight));
-		ImGui::SetWindowSize(ImVec2(375.f, GetWindowHeight() - menuHeight));
+		// Explicit pixel literals must follow the DPI scale, like ScaleAllSizes
+		// does for style-internal sizes (unscaled they look half-size next to the
+		// DPI-scaled fonts on Windows at 200% OS scaling)
+		const float uiScale = GUI::DpiScale();
+		ImGui::SetWindowPos(ImVec2(GetWindowWidth() - 375.f * uiScale, menuHeight));
+		ImGui::SetWindowSize(ImVec2(375.f * uiScale, GetWindowHeight() - menuHeight));
 
-		ImGui::BeginChild("Emitter", ImVec2(0.f, 115.f), true);
+		ImGui::BeginChild("Emitter", ImVec2(0.f, 115.f * uiScale), true);
 		ImGui::Text(LANGS("发射器参数:", "Emitter Parameters:"));
 		ImGui::Indent();
 		{
@@ -205,13 +209,13 @@ void ParticleEditor::Update()
 			}
 		}
 		int activeAmount = s_particleSystem->ActiveAmount();
-		ImGui::PushItemWidth(160.f);
+		ImGui::PushItemWidth(160.f * uiScale);
 		ImGui::LabelText("##ActiveAmount", LANGS("当前总数:%4d", "Amount:%4d"), activeAmount);
 		ImGui::SameLine();
 		ImGui::PopItemWidth();
 		static int s_maxActiveAmount = activeAmount;
 		s_maxActiveAmount = Math_Max(s_maxActiveAmount, activeAmount);
-		ImGui::PushItemWidth(70.f);
+		ImGui::PushItemWidth(70.f * uiScale);
 		ImGui::LabelText("##MaxActiveAmount", LANGS("最大:%4d", "Max:%4d"), s_maxActiveAmount);
 		ImGui::SameLine();
 		ImGui::PopItemWidth();

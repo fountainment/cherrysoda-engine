@@ -390,6 +390,13 @@ float GUI::FontDensity()
 	return Engine::Instance()->GetWindowDisplayScale();
 }
 
+float GUI::DpiScale()
+{
+	// Same factor FontScaleDpi/ScaleAllSizes were applied with — reuse it as the
+	// single scale for app-supplied UI pixel literals
+	return ImGui::GetStyle().FontScaleDpi;
+}
+
 void GUI::SetFontBuilder(FontBuilder builder)
 {
 	ms_fontBuilder = builder;
@@ -580,8 +587,8 @@ void GUI::UpdateConsole()
 		}
 
 		// Scale hard-coded pixel sizes with the UI so the console keeps its
-		// proportions at any DPI (content scale: 1 on macOS, OS scale on Windows)
-		const float scale = Engine::Instance()->GetContentScale();
+		// proportions at any DPI (1 on macOS, OS scale on Windows)
+		const float scale = DpiScale();
 
 		ImGui::SetNextWindowSizeConstraints(ImVec2(300.f * scale, 180.f * scale), ImVec2(FLT_MAX, FLT_MAX));
 		ImGui::Begin("Console");

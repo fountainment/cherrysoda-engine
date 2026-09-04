@@ -28,6 +28,15 @@ public:
 	// crisp as the engine defaults on high-DPI displays.
 	static float FontDensity();
 
+	// The DPI scale for UI layout: pixel literals passed explicitly to ImGui
+	// layout APIs (window sizes, fixed column widths, image sizes, ...) must be
+	// multiplied by this factor, e.g. ImGui::SetNextWindowSize(ImVec2(300.f *
+	// DpiScale(), 200.f * DpiScale())). ScaleAllSizes only covers style-internal
+	// padding/spacing, not app-supplied sizes — unscaled literals look half the
+	// intended size next to the DPI-scaled font on Windows at 200% OS scaling.
+	// Equals style.FontScaleDpi: 1.0 on macOS, contentScale on Windows.
+	static float DpiScale();
+
 	// Register a custom font atlas builder: it must clear and repopulate
 	// io.Fonts (baking at FontDensity()). The engine re-invokes it whenever the
 	// display scale changes, then re-uploads the atlas texture. Pass nullptr to
