@@ -331,12 +331,19 @@ void GUI::Initialize()
 	io.SetClipboardTextFn = SetClipboardText_CherrySodaImplForImGui;
 	io.ClipboardUserData = nullptr;
 
-	// Font texture
-	BuildFontTexture();
-
-	// Style
+	// Style (before building the font atlas so FontScaleDpi affects rasterization)
 	auto& style = ImGui::GetStyle();
 	ImGuiStyleCherrySoda(&style);
+	// High-DPI: scale style metrics and fonts with the display content scale.
+	// Never touch io.DisplaySize/MousePos here — they share the window pixel
+	// space with mouse coords and must stay consistent.
+	if (float contentScale = Engine::Instance()->GetContentScale(); contentScale > 1.0f) {
+		style.FontScaleDpi = contentScale;
+		style.ScaleAllSizes(contentScale);
+	}
+
+	// Font texture
+	BuildFontTexture();
 
 	// Shader
 	ms_guiEffect = Graphics::GetEmbeddedEffect("sprite");

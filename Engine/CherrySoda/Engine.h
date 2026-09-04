@@ -35,6 +35,7 @@ public:
 	inline int GetWindowWidth() const { return m_windowWidth; }
 	inline int GetWindowHeight() const { return m_windowHeight; }
 	inline Math::IVec2 GetWindowSize() const { return {GetWindowWidth(), GetWindowHeight()}; }
+	inline float GetContentScale() const { return m_contentScale; }
 	inline String GetTitle() { return m_title; }
 	void SetTitle(const String& title);
 	inline Color GetClearColor() { return m_clearColor; }
@@ -124,6 +125,7 @@ private:
 	int m_height;
 	int m_windowWidth;
 	int m_windowHeight;
+	float m_contentScale = 1.0f;
 	String m_title;
 	Color m_clearColor = Color::Black;
 	Window* m_window = nullptr;
