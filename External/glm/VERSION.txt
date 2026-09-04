@@ -1,8 +1,13 @@
 GLM — OpenGL Mathematics.
 
 Upstream:    https://github.com/g-truc/glm
-Version:     1.0.3 (GLM_VERSION in CMakeLists.txt)
+Version:     1.0.3
 License:     MIT ("Happy Bunny" modified MIT, COPYING.txt)
 Vendored:    2026-09-03, updated 0.9.9.8 -> 1.0.3 (commit 1cf2c798)
 Consumed by: engine-wide math types (Math::Vec2/Vec3/Mat4 are glm typedefs)
-Notes:       the vendored bx headers require C++20 — GLM 1.0.x matches that
+Notes:       the vendored bx headers require C++20 — GLM 1.0.x matches that.
+             CMakeLists.txt is engine-authored (upstream's pins
+             cmake_minimum_required(3.5), which trips CMake 4.1+ deprecation
+             warnings); the glm INTERFACE target mirrors upstream's
+             (include dir + GLM_ENABLE_EXPERIMENTAL). glm/glm/CMakeLists.txt
+             is upstream's and no longer referenced.
