@@ -59,16 +59,17 @@ public:
 	{
 		CHERRYSODA_ASSERT(!(v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()),
 						  "Block Index Out of Range!\n");
-		return v.z * Size() * Size() + v.y * Size() + v.x;
+		return (v.z * Size() * Size()) + (v.y * Size()) + v.x;
 	}
 
 	inline cherrysoda::Math::AABB GetAABB() const
 	{
-		return {Position(), Position() + cherrysoda::Math::Vec3(static_cast<float>(Size()))};
+		return {.m_min = Position(), .m_max = Position() + cherrysoda::Math::Vec3(static_cast<float>(Size()))};
 	}
 	inline cherrysoda::Math::AABB GetBlockAABB(const cherrysoda::Math::IVec3& v) const
 	{
-		return {Position() + cherrysoda::Math::Vec3(v), Position() + cherrysoda::Math::Vec3(v) + Vec3_One};
+		return {.m_min = Position() + cherrysoda::Math::Vec3(v),
+				.m_max = Position() + cherrysoda::Math::Vec3(v) + Vec3_One};
 	}
 
 	void Update() override;
@@ -88,7 +89,7 @@ private:
 	static inline int GetBlockIndex(const cherrysoda::Math::IVec3& v)
 	{
 		if (v.x < 0 || v.x >= Size() || v.y < 0 || v.y >= Size() || v.z < 0 || v.z >= Size()) return -1;
-		return v.z * Size() * Size() + v.y * Size() + v.x;
+		return (v.z * Size() * Size()) + (v.y * Size()) + v.x;
 	}
 };
 

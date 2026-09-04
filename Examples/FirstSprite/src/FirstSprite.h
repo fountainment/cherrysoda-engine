@@ -9,6 +9,7 @@ public:
 
 	FirstSprite();
 
+protected:
 	void Initialize() override;
 };
 

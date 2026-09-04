@@ -19,7 +19,7 @@ TEST(CoroutineCombinatorsTest, WaitFrames)
 TEST(CoroutineCombinatorsTest, WaitUntil)
 {
 	bool condition = false;
-	auto routine = Coroutines::WaitUntil([&condition]() { return condition; });
+	auto routine = Coroutines::WaitUntil([&condition] { return condition; });
 	EXPECT_FALSE(routine());
 	EXPECT_FALSE(routine());
 	condition = true;
@@ -30,13 +30,13 @@ TEST(CoroutineCombinatorsTest, SequenceRunsStepsInOrderAndSkipsGaps)
 {
 	STL::Vector<String> events;
 	auto routine = Coroutines::Sequence(STL::Vector<STL::Func<bool>>{
-		[&events]() {
+		[&events] {
 			STL::Add(events, String("a"));
 			return true;
 		},
 		nullptr,
 		Coroutines::WaitFrames(2),
-		[&events]() {
+		[&events] {
 			STL::Add(events, String("b"));
 			return true;
 		},
@@ -58,11 +58,11 @@ TEST(CoroutineCombinatorsTest, ParallelFinishesWhenAllStepsHave)
 	int aFrames = 0;
 	int bFrames = 0;
 	auto routine = Coroutines::Parallel(STL::Vector<STL::Func<bool>>{
-		[&aFrames]() {
+		[&aFrames] {
 			++aFrames;
 			return aFrames >= 2;
 		},
-		[&bFrames]() {
+		[&bFrames] {
 			++bFrames;
 			return bFrames >= 4;
 		},
@@ -82,7 +82,7 @@ TEST(CoroutineCombinatorsTest, RepeatRunsBodyCountTimes)
 {
 	int started = 0;
 	auto routine = Coroutines::Repeat(
-		[&started]() {
+		[&started] {
 			++started;
 			return Coroutines::WaitFrames(1);
 		},
@@ -101,7 +101,7 @@ TEST(CoroutineCombinatorsTest, RepeatRunsBodyCountTimes)
 TEST(CoroutineCombinatorsTest, EachFrameNeverFinishes)
 {
 	int fired = 0;
-	auto routine = Coroutines::EachFrame([&fired]() { ++fired; });
+	auto routine = Coroutines::EachFrame([&fired] { ++fired; });
 	EXPECT_FALSE(routine());
 	EXPECT_FALSE(routine());
 	EXPECT_FALSE(routine());
@@ -114,7 +114,7 @@ TEST(CoroutineTest, ComponentRunsUntilFinished)
 
 	int ranCount = 0;
 	Coroutine* coroutine = Coroutine::Create(
-		[&ranCount]() {
+		[&ranCount] {
 			++ranCount;
 			return ranCount >= 3;
 		},
@@ -140,7 +140,7 @@ TEST(CoroutineTest, ComponentRemovesItselfOnComplete)
 	scene.Add(&entity);
 	scene.Entities()->UpdateLists();
 
-	Coroutine* coroutine = Coroutine::Create([]() { return true; });
+	Coroutine* coroutine = Coroutine::Create([] { return true; });
 	entity.Add(coroutine);
 
 	EXPECT_EQ(coroutine, entity.Get<Coroutine>());
@@ -157,7 +157,7 @@ TEST(CoroutineTest, ReplaceRestartsAndCancelEnds)
 	int firstCount = 0;
 	int secondCount = 0;
 	Coroutine* coroutine = Coroutine::Create(
-		[&firstCount]() {
+		[&firstCount] {
 			++firstCount;
 			return false;
 		},
@@ -167,7 +167,7 @@ TEST(CoroutineTest, ReplaceRestartsAndCancelEnds)
 	coroutine->Update();
 	EXPECT_EQ(1, firstCount);
 
-	coroutine->Replace([&secondCount]() {
+	coroutine->Replace([&secondCount] {
 		++secondCount;
 		return false;
 	});
@@ -191,11 +191,11 @@ TEST(CoroutineHolderTest, RunsMultipleRoutinesAndEndsById)
 
 	int aCount = 0;
 	int bCount = 0;
-	int idA = holder.StartCoroutine([&aCount]() {
+	int idA = holder.StartCoroutine([&aCount] {
 		++aCount;
 		return aCount >= 2;
 	});
-	holder.StartCoroutine([&bCount]() {
+	holder.StartCoroutine([&bCount] {
 		++bCount;
 		return bCount >= 5;
 	});
@@ -224,10 +224,10 @@ TEST(StateMachineCoroutineTest, StateCoroutineRunsAndRestartsOnEntry)
 	int stepped = 0;
 	// Register the coroutine factory before the machine enters its first state
 	stateMachine.SetCallbacks(
-		0, []() { return 0; },
-		[&started, &stepped]() {
+		0, [] { return 0; },
+		[&started, &stepped] {
 			++started;
-			return [&stepped]() {
+			return [&stepped] {
 				++stepped;
 				return stepped >= 2;
 			};

@@ -55,7 +55,7 @@ public:
 		STL::Push(m_available, loc);
 	}
 
-	void Traverse(STL::Action<T*> action)
+	void Traverse(const STL::Action<T*>& action)
 	{
 		for (SizeType loc : m_allocated) {
 			action((T*)m_buffer + loc);

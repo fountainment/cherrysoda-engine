@@ -43,7 +43,7 @@ TEST(CheatListenerTest, FiresOnceOnCodeAndTrimsBuffer)
 	const char ids[4] = {'U', 'D', 'L', 'R'};
 	bool pressed[4] = {false, false, false, false};
 	for (int i = 0; i < 4; ++i) {
-		listener.AddInput(ids[i], [&pressed, i]() { return pressed[i]; });
+		listener.AddInput(ids[i], [&pressed, i] { return pressed[i]; });
 	}
 	auto type = [&](int i) {
 		pressed[i] = true;
@@ -52,7 +52,7 @@ TEST(CheatListenerTest, FiresOnceOnCodeAndTrimsBuffer)
 	};
 
 	int fired = 0;
-	listener.AddCheat("UUDD", [&fired]() { ++fired; });
+	listener.AddCheat("UUDD", [&fired] { ++fired; });
 
 	// A wrong sequence does nothing; the buffer holds the last four inputs
 	type(2); // L
@@ -82,8 +82,8 @@ TEST(CheatListenerTest, FiresOnceOnCodeAndTrimsBuffer)
 TEST(CommandsTest, FunctionKeyActionsRegisterAndFire)
 {
 	int fired = 0;
-	Commands::SetFunctionKeyAction(0, [&fired]() { ++fired; });
-	Commands::SetFunctionKeyAction(11, [&fired]() { fired += 10; });
+	Commands::SetFunctionKeyAction(0, [&fired] { ++fired; });
+	Commands::SetFunctionKeyAction(11, [&fired] { fired += 10; });
 
 	Commands::ExecuteFunctionKeyAction(0);
 	EXPECT_EQ(1, fired);
@@ -101,12 +101,13 @@ TEST(CommandsTest, FunctionKeyActionsRegisterAndFire)
 TEST(ErrorLogTest, WritesHeaderAndPreservesOldErrors)
 {
 	String filename = "test_error_log_tmp.txt";
-	std::remove(filename.c_str());
+	// The file may not exist on a first run, so a nonzero result is fine here
+	(void)std::remove(filename.c_str());
 
-	String previous = ErrorLog::Filename();
+	const String& previous = ErrorLog::Filename();
 	ErrorLog::Filename(filename);
 
-	auto readAll = [&filename]() {
+	auto readAll = [&filename] {
 		std::ifstream file(filename);
 		std::stringstream buffer;
 		buffer << file.rdbuf();
@@ -126,7 +127,7 @@ TEST(ErrorLogTest, WritesHeaderAndPreservesOldErrors)
 	EXPECT_NE(String::npos, second.find("first error"));
 	EXPECT_LT(second.find("second error"), second.find("first error"));
 
-	std::remove(filename.c_str());
+	(void)std::remove(filename.c_str());
 	ErrorLog::Filename(previous);
 }
 

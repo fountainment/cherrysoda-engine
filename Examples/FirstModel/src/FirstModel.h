@@ -12,6 +12,7 @@ public:
 
 	FirstModel();
 
+protected:
 	void Update() override;
 	void Initialize() override;
 	void LoadContent() override;

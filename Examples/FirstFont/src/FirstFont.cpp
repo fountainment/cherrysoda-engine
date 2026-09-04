@@ -6,7 +6,7 @@ using firstfont::FirstFont;
 
 using namespace cherrysoda;
 
-FirstFont::FirstFont() : base()
+FirstFont::FirstFont()
 {
 	SetTitle("FirstFont");
 	SetClearColor(Color::Black);
@@ -24,14 +24,14 @@ void FirstFont::Initialize()
 	base::Initialize();
 
 	// Initialize and set scene here
-	auto scene = new Scene();
+	auto* scene = new Scene();
 
 	Engine::SetClearColor(Color::Gray);
 
-	auto entity = new Entity();
-	auto renderer = new EverythingRenderer();
+	auto* entity = new Entity();
+	auto* renderer = new EverythingRenderer();
 
-	auto camera = renderer->GetCamera();
+	auto* camera = renderer->GetCamera();
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 200.f));
 	camera->CenterOrigin();
@@ -42,13 +42,13 @@ void FirstFont::Initialize()
 	scene->Add(entity);
 	scene->Add(renderer);
 
-	auto font = new PixelFont("test");
-	auto atlas = Atlas::FromAtlas("assets/atlases/atlas.json");
+	auto* font = new PixelFont("test");
+	auto* atlas = Atlas::FromAtlas("assets/atlases/atlas.json");
 
 	// Use Tools/bmfont_to_json.py to convert bmfont's fnt file to json file
 	font->AddFontSize("assets/fonts/font.json", atlas);
 
-	auto pixelText = new PixelText(font, "你好, 世界!\nHello, World!", Color::White);
+	auto* pixelText = new PixelText(font, "你好, 世界!\nHello, World!", Color::White);
 	pixelText->Position(Math::Vec2(-100.f, 30.f));
 	entity->Add(pixelText);
 

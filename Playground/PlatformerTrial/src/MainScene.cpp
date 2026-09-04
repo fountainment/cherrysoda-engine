@@ -2,6 +2,8 @@
 
 #include <CherrySoda/CherrySoda.h>
 
+#include <algorithm>
+
 using namespace cherrysoda;
 using main::MainScene;
 
@@ -13,6 +15,8 @@ static Pool<Hitbox, 1024> s_hitboxPool;
 constexpr type::UInt16 kBackgroundPass = 1;
 constexpr type::UInt16 kMainPass = 2;
 constexpr type::UInt16 kScreenTexturePass = 3;
+
+namespace {
 
 class alignas(64) Simple2DPhysicsComponent : public Component
 {
@@ -50,7 +54,7 @@ public:
 		int moveX = (int)Math_Round(m_remainder.x);
 		int moveY = (int)Math_Round(m_remainder.y);
 
-		auto entity = GetEntity();
+		auto* entity = GetEntity();
 
 		Math::Vec2 oldPosition = entity->Position2D();
 		Math::Vec2 actualMove(moveX, moveY);
@@ -64,7 +68,7 @@ public:
 
 				bool collideWithStatics = false;
 
-				for (auto staticEntity : (*GetScene())[StaticTag]) {
+				for (auto* staticEntity : (*GetScene())[StaticTag]) {
 					if (entity->CollideCheck(staticEntity)) {
 						if (moveX > 0) {
 							entity->Right(staticEntity->Left());
@@ -80,9 +84,9 @@ public:
 				}
 
 				if (!collideWithStatics) {
-					for (auto dynamicEntity : (*GetScene())[DynamicTag]) {
+					for (auto* dynamicEntity : (*GetScene())[DynamicTag]) {
 						if (entity->CollideCheck(dynamicEntity)) {
-							auto dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
+							auto* dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
 							Math::Vec2 oldDynamicPendingMove = dynamic->m_pendingMove;
 							float pushMoveX = moveX > 0 ? entity->Right() - dynamicEntity->Left()
 														: entity->Left() - dynamicEntity->Right();
@@ -104,7 +108,7 @@ public:
 
 				bool collideWithStatics = false;
 
-				for (auto staticEntity : (*GetScene())[StaticTag]) {
+				for (auto* staticEntity : (*GetScene())[StaticTag]) {
 					if (entity->CollideCheck(staticEntity)) {
 						if (moveY > 0) {
 							entity->Top(staticEntity->Bottom());
@@ -120,9 +124,9 @@ public:
 				}
 
 				if (!collideWithStatics) {
-					for (auto dynamicEntity : (*GetScene())[DynamicTag]) {
+					for (auto* dynamicEntity : (*GetScene())[DynamicTag]) {
 						if (entity->CollideCheck(dynamicEntity)) {
-							auto dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
+							auto* dynamic = dynamicEntity->Get<Simple2DPhysicsComponent>();
 							Math::Vec2 oldDynamicPendingMove = dynamic->m_pendingMove;
 							float pushMoveY = moveY > 0 ? entity->Top() - dynamicEntity->Bottom()
 														: entity->Bottom() - dynamicEntity->Top();
@@ -166,10 +170,14 @@ private:
 	float m_pushability = 0.5f;
 };
 
+} // namespace
+
 const BitTag Simple2DPhysicsComponent::StaticTag("SPC_static");
 const BitTag Simple2DPhysicsComponent::DynamicTag("SPC_dynamic");
 
 static Pool<Simple2DPhysicsComponent, 100> s_physCompPool;
+
+namespace {
 
 class HollowRectGraphicsComponent : public GraphicsComponent
 {
@@ -194,8 +202,8 @@ public:
 
 	void Update() override
 	{
-		auto entity = GetEntity();
-		auto physComp = entity->Get<Simple2DPhysicsComponent>();
+		auto* entity = GetEntity();
+		auto* physComp = entity->Get<Simple2DPhysicsComponent>();
 		float deltaTime = Engine::Instance()->DeltaTime();
 		bool jumpButtonPressed = MInput::GamePads(0)->Pressed(Buttons::A) || MInput::Keyboard()->Pressed(Keys::Space);
 		bool jumpButtonCheck = MInput::GamePads(0)->Check(Buttons::A) || MInput::Keyboard()->Check(Keys::Space);
@@ -214,9 +222,7 @@ public:
 			m_speedY -= (1000.f + extraDropSpeed) * deltaTime;
 		}
 		if (physComp->IsAnythingAbove()) {
-			if (m_speedY > 0.f) {
-				m_speedY = 0.f;
-			}
+			m_speedY = std::min(m_speedY, 0.f);
 		}
 		float speedX = MInput::GamePads(0)->GetLeftStick(0.2f).x * 100.f;
 		if (!MInput::GamePads(0)->Attached() || speedX == 0.f) {
@@ -249,6 +255,8 @@ public:
 private:
 	Texture2D m_texture;
 };
+
+} // namespace
 
 MainScene::~MainScene()
 {
@@ -307,13 +315,13 @@ void MainScene::Begin()
 	Add(m_mainRenderer);
 	Add(m_screenTexRenderer);
 
-	auto backgroundEntity = new Entity();
+	auto* backgroundEntity = new Entity();
 	m_backgroundTexture = Texture2D::ForColorBuffer(320.f, 180.f);
 	backgroundEntity->Add(new ScreenSpaceQuadGraphicsComponent(m_backgroundTexture));
 	backgroundEntity->Tag(s_backgroundTag);
 	Add(backgroundEntity);
 
-	auto rectEntity = new Entity();
+	auto* rectEntity = new Entity();
 	rectEntity->Position2D(Math::Vec2(0.f, 1.f));
 	rectEntity->Add(new HollowRectGraphicsComponent(8, 12));
 	rectEntity->Add(new PlayerControl);
@@ -321,29 +329,29 @@ void MainScene::Begin()
 	rectEntity->SetCollider(s_hitboxPool.Create(8, 12));
 	Add(rectEntity);
 
-	auto ground = new Entity();
+	auto* ground = new Entity();
 	ground->Position2D(Math::Vec2(0.f, 0.f));
 	ground->Add(new HollowRectGraphicsComponent(320, 1));
 	ground->SetCollider(s_hitboxPool.Create(320, 1));
 	ground->Tag(Simple2DPhysicsComponent::StaticTag);
 	Add(ground);
 
-	auto wall = new Entity();
+	auto* wall = new Entity();
 	wall->Position2D(Math::Vec2(50.f, 35.f));
 	wall->Add(new HollowRectGraphicsComponent(10, 10));
 	wall->SetCollider(s_hitboxPool.Create(10, 10));
 	wall->Tag(Simple2DPhysicsComponent::StaticTag);
 	Add(wall);
 
-	auto brick = new Entity();
+	auto* brick = new Entity();
 	brick->Position2D(Math::Vec2(150.f, 1.f));
 	brick->Add(new HollowRectGraphicsComponent(10, 10));
 	brick->Add(s_physCompPool.Create());
 	brick->SetCollider(s_hitboxPool.Create(10, 10));
 	Add(brick);
 
-	auto screenTex = new Entity();
-	auto screenSpaceQuad = new ScreenSpaceQuadGraphicsComponent(m_mainScreenTarget->GetTexture2D());
+	auto* screenTex = new Entity();
+	auto* screenSpaceQuad = new ScreenSpaceQuadGraphicsComponent(m_mainScreenTarget->GetTexture2D());
 	screenTex->Tag(s_screenTextureTag);
 	screenTex->Add(screenSpaceQuad);
 	Add(screenTex);

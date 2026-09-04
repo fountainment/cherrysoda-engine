@@ -6,9 +6,9 @@
 namespace {
 
 // Registered once per test binary; only a handful of tags may exist in a process.
-static const BitTag s_solidTag("csd_scene_test_solid");
-static const BitTag s_playerTag("csd_scene_test_player");
-static const BitTag s_npcTag("csd_scene_test_npc");
+const BitTag s_solidTag("csd_scene_test_solid");
+const BitTag s_playerTag("csd_scene_test_player");
+const BitTag s_npcTag("csd_scene_test_npc");
 
 // A component that records which lifecycle callbacks have fired on it.
 class SceneTestComponent : public Component
@@ -46,10 +46,10 @@ public:
 	int updateCount = 0;
 };
 
-static int CountEntities(Scene& scene)
+int CountEntities(Scene& scene)
 {
 	int count = 0;
-	for (auto entity : *scene.Entities()) {
+	for (auto* entity : *scene.Entities()) {
 		(void)entity;
 		++count;
 	}
@@ -182,7 +182,7 @@ TEST(SceneTestDepth, EntitiesSortedByActualDepth)
 	// Higher depth renders first; equal depths keep insertion order via the
 	// micro-depth offset handed out by Scene::INTERNAL_SetActualDepth.
 	STL::Vector<Entity*> order;
-	for (auto entity : *scene.Entities()) {
+	for (auto* entity : *scene.Entities()) {
 		STL::Add(order, entity);
 	}
 	ASSERT_EQ(5u, STL::Count(order)); // four entities plus the scene's helper entity
@@ -198,7 +198,7 @@ TEST(SceneTestEndOfFrame, ActionsDrainedByAfterUpdate)
 	Scene scene;
 
 	int firedCount = 0;
-	scene.AddActionOnEndOfFrame([&firedCount]() { ++firedCount; });
+	scene.AddActionOnEndOfFrame([&firedCount] { ++firedCount; });
 
 	// Actions wait until the end of the frame
 	EXPECT_EQ(0, firedCount);

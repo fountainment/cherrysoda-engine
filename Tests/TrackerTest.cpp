@@ -26,9 +26,9 @@ public:
 };
 CHERRYSODA_TRACK_COMPONENT(TrackedHazard);
 
-static Math::Rectangle MakeRect(float x, float y, float w, float h)
+Math::Rectangle MakeRect(float x, float y, float w, float h)
 {
-	return Math::Rectangle{Math::Vec2(x, y), Math::Vec2(w, h)};
+	return Math::Rectangle{.m_coord = Math::Vec2(x, y), .m_size = Math::Vec2(w, h)};
 }
 
 TEST(TrackerTest, TracksEntitiesThroughSceneLifecycle)
@@ -41,7 +41,7 @@ TEST(TrackerTest, TracksEntitiesThroughSceneLifecycle)
 	EXPECT_EQ(nullptr, scene.GetTracker()->GetEntitiesOfType(TrackedSolid::EntityTypeID()));
 
 	scene.Entities()->UpdateLists();
-	auto list = scene.GetTracker()->GetEntitiesOfType(TrackedSolid::EntityTypeID());
+	const auto* list = scene.GetTracker()->GetEntitiesOfType(TrackedSolid::EntityTypeID());
 	ASSERT_NE(nullptr, list);
 	EXPECT_EQ(1u, STL::Count(*list));
 	EXPECT_EQ(&solid, STL::Front(*list));
@@ -49,7 +49,7 @@ TEST(TrackerTest, TracksEntitiesThroughSceneLifecycle)
 	// Leaving the scene empties the tracked list (the entry itself stays)
 	scene.Remove(&solid);
 	scene.Entities()->UpdateLists();
-	auto emptied = scene.GetTracker()->GetEntitiesOfType(TrackedSolid::EntityTypeID());
+	const auto* emptied = scene.GetTracker()->GetEntitiesOfType(TrackedSolid::EntityTypeID());
 	ASSERT_NE(nullptr, emptied);
 	EXPECT_EQ(0u, STL::Count(*emptied));
 }
@@ -66,7 +66,7 @@ TEST(TrackerTest, TracksComponents)
 	scene.Add(&entity);
 	scene.Entities()->UpdateLists();
 
-	auto list = scene.GetTracker()->GetComponentsOfType(TrackedHazard::ComponentTypeID());
+	const auto* list = scene.GetTracker()->GetComponentsOfType(TrackedHazard::ComponentTypeID());
 	ASSERT_NE(nullptr, list);
 	EXPECT_EQ(1u, STL::Count(*list));
 	EXPECT_EQ(&hazard, STL::Front(*list));
@@ -74,7 +74,7 @@ TEST(TrackerTest, TracksComponents)
 	// Removing the whole entity empties the tracked component list
 	scene.Remove(&entity);
 	scene.Entities()->UpdateLists();
-	auto emptied = scene.GetTracker()->GetComponentsOfType(TrackedHazard::ComponentTypeID());
+	const auto* emptied = scene.GetTracker()->GetComponentsOfType(TrackedHazard::ComponentTypeID());
 	ASSERT_NE(nullptr, emptied);
 	EXPECT_EQ(0u, STL::Count(*emptied));
 }

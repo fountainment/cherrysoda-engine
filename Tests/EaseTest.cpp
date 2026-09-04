@@ -95,7 +95,7 @@ TEST(EaseTestFollow, HalvesAndContinuity)
 
 	// First half of a Follow runs the first easer double-speed, halved
 	EXPECT_FLOAT_EQ(Ease::QuadIn(0.5f) * 0.5f, Ease::QuadInOut(0.25f));
-	EXPECT_FLOAT_EQ(Ease::QuadOut(0.5f) * 0.5f + 0.5f, Ease::QuadInOut(0.75f));
+	EXPECT_FLOAT_EQ((Ease::QuadOut(0.5f) * 0.5f) + 0.5f, Ease::QuadInOut(0.75f));
 }
 
 TEST(EaseTestUpDown, TriangleWave)

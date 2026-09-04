@@ -9,6 +9,7 @@ public:
 
 	EaseFunction();
 
+protected:
 	void Update() override;
 	void Initialize() override;
 	void LoadContent() override;

@@ -171,7 +171,7 @@ TEST(UtilTestChooser, FromStringParsing)
 	bool sawY = false;
 	for (int i = 0; i < 100; ++i) {
 		Calc::PushRandom(5000 + i);
-		String chosen = plain.Choose();
+		const String& chosen = plain.Choose();
 		Calc::PopRandom();
 		sawX = sawX || chosen == "x";
 		sawY = sawY || chosen == "y";
@@ -278,8 +278,8 @@ TEST(UtilTestSTL, StackAndQueueHelpers)
 }
 
 // Registered once per test binary; only a handful of tags may exist in a process.
-static const BitTag s_utilTestTagA("csd_util_test_tag_a");
-static const BitTag s_utilTestTagB("csd_util_test_tag_b");
+const BitTag s_utilTestTagA("csd_util_test_tag_a");
+const BitTag s_utilTestTagB("csd_util_test_tag_b");
 
 TEST(UtilTestBitTag, IdsAndLookup)
 {

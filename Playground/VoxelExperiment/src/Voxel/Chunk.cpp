@@ -73,8 +73,8 @@ void Chunk::SetChanged()
 void Chunk::NotifyChanged()
 {
 	if (m_world) {
-		for (int i = 0; i < 6; ++i) {
-			Chunk* chunk = m_world->GetChunk(m_chunkIndex + s_offset[i]);
+		for (auto i : s_offset) {
+			Chunk* chunk = m_world->GetChunk(m_chunkIndex + i);
 			if (chunk) {
 				chunk->m_changed = true;
 			}

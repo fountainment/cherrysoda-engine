@@ -1,6 +1,7 @@
 #include "MainScene.h"
 
 #include <CherrySoda/CherrySoda.h>
+#include <cmath>
 
 #include "Entities/Player.h"
 #include "Graphics/Skybox.h"
@@ -9,6 +10,8 @@
 #include "Voxel/World.h"
 
 using namespace cherrysoda;
+
+namespace {
 
 class SkyboxRenderer : public SingleTagRenderer
 {
@@ -25,6 +28,8 @@ public:
 
 	VoxelRenderer(const BitTag& tag) : base(tag) { SetEffect(GameApp::ms_voxelShader); }
 };
+
+} // namespace
 
 void MainScene::Begin()
 {
@@ -107,7 +112,7 @@ void MainScene::BeforeRender()
 void MainScene::Update()
 {
 	Camera* camera = m_voxelRenderer->GetCamera();
-	float t;
+	float t = NAN;
 	Math::Vec3 pos = camera->Position();
 	Math::Vec3 direction = camera->Direction();
 	if (MInput::GamePads(0)->Check(Buttons::LeftShoulder, Buttons::RightShoulder) ||
@@ -116,7 +121,7 @@ void MainScene::Update()
 			for (;;) {
 				pos = pos + direction * (t + 0.1f);
 				auto index = m_voxelWorld->GetIndexOfBlockAt(pos);
-				auto block = m_voxelWorld->GetBlock(index);
+				auto* block = m_voxelWorld->GetBlock(index);
 				if (MInput::GamePads(0)->Check(Buttons::LeftShoulder)) {
 					if (m_voxelWorld->SetBlockType(index, Block::Type::None)) {
 						MInput::GamePads(0)->Rumble(0.1f, 0.01f);
@@ -183,10 +188,10 @@ void MainScene::Update()
 	Graphics::SetUniformLight(0, Math::Vec3(0.f, 68.f, 0.f), Math::Vec3(color[0], color[1], color[2]) * 5.f, false);
 	Graphics::SetUniformLight(1, Math::Vec3(Math_Cos(s_t) * 30.0f, 68.f, Math_Sin(s_t) * 30.0f), Vec3_XUp * 5.f, false);
 	Graphics::SetUniformLight(
-		2, Math::Vec3(Math_Cos(s_t + Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t + Math::Pi2 / 3.f) * 30.0f),
+		2, Math::Vec3(Math_Cos(s_t + (Math::Pi2 / 3.f)) * 30.0f, 68.f, Math_Sin(s_t + (Math::Pi2 / 3.f)) * 30.0f),
 		Vec3_YUp * 5.f, false);
 	Graphics::SetUniformLight(
-		3, Math::Vec3(Math_Cos(s_t - Math::Pi2 / 3.f) * 30.0f, 68.f, Math_Sin(s_t - Math::Pi2 / 3.f) * 30.0f),
+		3, Math::Vec3(Math_Cos(s_t - (Math::Pi2 / 3.f)) * 30.0f, 68.f, Math_Sin(s_t - (Math::Pi2 / 3.f)) * 30.0f),
 		Vec3_ZUp * 5.f, false);
 	Graphics::SubmitUniformLight();
 

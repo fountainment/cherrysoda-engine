@@ -25,7 +25,7 @@ void PlatformerTrial::Initialize()
 	base::Initialize();
 
 	// Initialize and set scene here
-	auto scene = new main::MainScene();
+	auto* scene = new main::MainScene();
 	SetScene(scene);
 }
 

@@ -9,6 +9,7 @@ public:
 
 	FirstTriangle();
 
+protected:
 	void Initialize() override;
 };
 

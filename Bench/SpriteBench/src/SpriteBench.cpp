@@ -6,6 +6,8 @@ using spritebench::SpriteBench;
 
 using namespace cherrysoda;
 
+namespace {
+
 class SpriteRotate : public Component
 {
 public:
@@ -18,6 +20,8 @@ public:
 private:
 	float m_speed;
 };
+
+} // namespace
 
 SpriteBench::SpriteBench() : base(500, 500, "SpriteBench")
 {
@@ -38,10 +42,10 @@ void SpriteBench::Initialize()
 	base::Initialize();
 
 	// Initialize and set scene here
-	auto scene = new Scene();
-	auto renderer = new EverythingRenderer();
+	auto* scene = new Scene();
+	auto* renderer = new EverythingRenderer();
 
-	auto camera = renderer->GetCamera();
+	auto* camera = renderer->GetCamera();
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 100.f));
 	camera->CenterOrigin();
@@ -50,10 +54,10 @@ void SpriteBench::Initialize()
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 	scene->Add(renderer);
 
-	auto atlas = Atlas::FromAtlas("assets/atlases/cherrysoda.json");
+	auto* atlas = Atlas::FromAtlas("assets/atlases/cherrysoda.json");
 	for (int i = 0; i < 50000; ++i) {
-		auto entity = new Entity;
-		auto sprite = new Sprite(atlas);
+		auto* entity = new Entity;
+		auto* sprite = new Sprite(atlas);
 		sprite->Justify(Math::Vec2(0.5f));
 		sprite->AddLoop("test", "cherrysoda");
 		sprite->Play("test", false, true);

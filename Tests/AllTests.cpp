@@ -1,10 +1,11 @@
-#include "CalcTest.cpp"
-#include "CollideTest.cpp"
-#include "ColliderTest.cpp"
-#include "ColorTest.cpp"
-#include "EaseTest.cpp"
-#include "MathTest.cpp"
-#include "SceneTest.cpp"
-#include "StateMachineTest.cpp"
-#include "StringTest.cpp"
-#include "UtilTest.cpp"
+// Unity build: pull every test TU into one binary.
+#include "CalcTest.cpp"         // NOLINT(bugprone-suspicious-include)
+#include "CollideTest.cpp"      // NOLINT(bugprone-suspicious-include)
+#include "ColliderTest.cpp"     // NOLINT(bugprone-suspicious-include)
+#include "ColorTest.cpp"        // NOLINT(bugprone-suspicious-include)
+#include "EaseTest.cpp"         // NOLINT(bugprone-suspicious-include)
+#include "MathTest.cpp"         // NOLINT(bugprone-suspicious-include)
+#include "SceneTest.cpp"        // NOLINT(bugprone-suspicious-include)
+#include "StateMachineTest.cpp" // NOLINT(bugprone-suspicious-include)
+#include "StringTest.cpp"       // NOLINT(bugprone-suspicious-include)
+#include "UtilTest.cpp"         // NOLINT(bugprone-suspicious-include)

@@ -72,7 +72,7 @@ public:
 	static float ToFloat(const String& s) { return std::stof(s); }
 	static int ToInt(const String& s) { return std::stoi(s); }
 
-	template<typename T> static String ToString(T t) { return std::to_string(t); }
+	template<typename T> static String ToString(const T& t) { return std::to_string(t); }
 
 	template<typename T> static bool SafeTo(const String& s, T& t)
 	{

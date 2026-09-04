@@ -12,11 +12,10 @@ using voxelexperiment::VoxelExperiment;
 
 using cherrysoda::Color;
 using cherrysoda::Effect;
-using cherrysoda::Graphics;
 using cherrysoda::MInput;
 using cherrysoda::TextureCube;
 
-VoxelExperiment::VoxelExperiment() : base()
+VoxelExperiment::VoxelExperiment()
 {
 	SetTitle("VoxelExperiment");
 	SetClearColor(Color::Black);
@@ -35,7 +34,7 @@ void VoxelExperiment::Initialize()
 {
 	base::Initialize();
 
-	auto scene = new MainScene();
+	auto* scene = new MainScene();
 	SetScene(scene);
 }
 

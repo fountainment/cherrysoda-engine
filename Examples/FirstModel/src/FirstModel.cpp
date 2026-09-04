@@ -8,6 +8,8 @@ using namespace cherrysoda;
 
 CHERRYSODA_CONSOLE_VARIABLE(rotation_speed, float, 0.35f, "");
 
+namespace {
+
 class ModelMesh : public MeshGraphicsComponent<Graphics::PosNormalTexCoord0Vertex>
 {
 public:
@@ -23,9 +25,11 @@ public:
 	}
 };
 
-STL::Vector<STL::Action<>> s_updaters;
+} // namespace
 
-FirstModel::FirstModel() : base()
+static STL::Vector<STL::Action<>> s_updaters;
+
+FirstModel::FirstModel()
 {
 	SetTitle("FirstModel");
 	SetClearColor(Color::Black);
@@ -43,10 +47,10 @@ void FirstModel::Initialize()
 	base::Initialize();
 
 	// Initialize and set scene here
-	auto scene = new Scene();
-	auto renderer = new EverythingRenderer();
+	auto* scene = new Scene();
+	auto* renderer = new EverythingRenderer();
 
-	auto camera = renderer->GetCamera();
+	auto* camera = renderer->GetCamera();
 	camera->SetUpVector(Vec3_ZUp);
 	camera->Position(Math::Vec3(0.0f, 2.0f, 0.0f));
 	camera->Direction(Math::Vec3(0.0f, -1.0f, 0.0f));
@@ -57,9 +61,9 @@ void FirstModel::Initialize()
 
 	m_model = Model::FromGltf("assets/models/cake/scene.gltf");
 
-	auto entity = new Entity();
-	for (auto& mesh : m_model.Meshes()) {
-		auto meshComp = new ModelMesh();
+	auto* entity = new Entity();
+	for (const auto& mesh : m_model.Meshes()) {
+		auto* meshComp = new ModelMesh();
 		meshComp->InitWithMeshInfo(mesh);
 		meshComp->Scale(Math::Vec3(10.f));
 		meshComp->Origin(Math::Vec3(0.0f, -0.04f, 0.0f));

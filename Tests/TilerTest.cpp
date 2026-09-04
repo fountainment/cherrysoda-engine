@@ -90,7 +90,7 @@ TEST(TilerTest, NeighborStateWithFalseEdges)
 	bool sawAllFalse = false;
 	Tiler::Tile(
 		bits,
-		[&]() {
+		[&] {
 			++queried;
 			sawLeft = Tiler::Left();
 			sawRight = Tiler::Right();
@@ -110,7 +110,7 @@ TEST(TilerTest, NeighborStateWithFalseEdges)
 	bits.Set(1, 2, true);
 	Tiler::Tile(
 		bits,
-		[&]() {
+		[&] {
 			sawLeft = Tiler::Left();
 			sawRight = Tiler::Right();
 			sawUp = Tiler::Up();
@@ -218,8 +218,9 @@ TEST(TileGridTest, OverlaySkipsNegativeAndExtendMovesTiles)
 	// The atlas-flavored constructor takes the size explicitly, so a sheet
 	// can be built from pure rectangle math without a GPU texture
 	MTexture root;
-	MTexture sheet(root, StringID("tiler_test_sheet"), Math::IRectangle{Math::IVec2(0, 0), Math::IVec2(0, 0)},
-				   Math::Vec2(0.f), 16, 16);
+	MTexture sheet(root, StringID("tiler_test_sheet"),
+				   Math::IRectangle{.m_coord = Math::IVec2(0, 0), .m_size = Math::IVec2(0, 0)}, Math::Vec2(0.f), 16,
+				   16);
 	TileSet tileset(sheet, 8, 8); // a 2x2 sheet of 8x8 tiles
 
 	TileGrid grid(8, 8, 2, 2);

@@ -6,7 +6,7 @@ using example::FirstSprite;
 
 using namespace cherrysoda;
 
-FirstSprite::FirstSprite() : base()
+FirstSprite::FirstSprite()
 {
 	SetTitle("FirstSprite");
 	SetClearColor(Color::Black);
@@ -16,22 +16,22 @@ void FirstSprite::Initialize()
 {
 	base::Initialize();
 
-	auto scene = new Scene();
-	auto entity = new Entity();
+	auto* scene = new Scene();
+	auto* entity = new Entity();
 
 	Graphics::SetPointTextureSampling();
 
-	auto sprite = new Sprite("assets/atlases/cherry_soda.json");
+	auto* sprite = new Sprite("assets/atlases/cherry_soda.json");
 	sprite->AddLoop("showcase", "cherrysoda");
 	sprite->Play("showcase");
 	sprite->CenterOrigin();
 	sprite->Justify(Math::Vec2(0.5f));
-	auto renderer = new EverythingRenderer();
+	auto* renderer = new EverythingRenderer();
 
 	entity->Add(sprite);
 	scene->Add(entity);
 
-	auto camera = renderer->GetCamera();
+	auto* camera = renderer->GetCamera();
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 200.f));
 	camera->Scale2D(Math::IVec2(2.0f));

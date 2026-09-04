@@ -14,10 +14,12 @@ public:
 
 	VoxelExperiment();
 
+protected:
 	void Update() override;
 	void Initialize() override;
 	void LoadContent() override;
 
+public:
 	static cherrysoda::TextureCube ms_texCube;
 	static cherrysoda::TextureCube ms_texCubeIrr;
 

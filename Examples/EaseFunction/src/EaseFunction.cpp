@@ -2,6 +2,8 @@
 
 #include <CherrySoda/CherrySoda.h>
 
+#include <utility>
+
 using easefunction::EaseFunction;
 
 using namespace cherrysoda;
@@ -9,7 +11,7 @@ using namespace cherrysoda;
 static STL::Vector<STL::Func<Math::Vec3, float>> s_posFunctions;
 static MeshGraphicsComponent<Graphics::PosColorVertex>* s_points;
 
-EaseFunction::EaseFunction() : base()
+EaseFunction::EaseFunction()
 {
 	SetTitle("EaseFunction");
 	SetClearColor(Color::Black);
@@ -32,7 +34,7 @@ void EaseFunction::Update()
 		float x = time / duration;
 		Math::Vec3 size(1.f, 1.f, 0.f);
 		size *= 0.08f;
-		for (auto posFunc : s_posFunctions) {
+		for (const auto& posFunc : s_posFunctions) {
 			auto origin = posFunc(x) - size * 0.5f;
 			s_points->GetMesh()->AddQuad(Graphics::PosColorVertex::MakeVertex(origin + size),
 										 Graphics::PosColorVertex::MakeVertex(origin + Math::Vec3(0.f, size.y, 0.f)),
@@ -47,11 +49,11 @@ void EaseFunction::Initialize()
 {
 	base::Initialize();
 
-	auto scene = new Scene();
-	auto entity = new Entity();
-	auto lines = new MeshGraphicsComponent<Graphics::PosColorVertex>(true);
+	auto* scene = new Scene();
+	auto* entity = new Entity();
+	auto* lines = new MeshGraphicsComponent<Graphics::PosColorVertex>(true);
 	s_points = new MeshGraphicsComponent<Graphics::PosColorVertex>(true);
-	auto renderer = new EverythingRenderer();
+	auto* renderer = new EverythingRenderer();
 	renderer->GetCamera()->Position(Math::Vec3(7.5f, -2.f, 15.f));
 
 	lines->GetMesh()->SetPrimitiveType(Graphics::PrimitiveType::Lines);
@@ -61,8 +63,10 @@ void EaseFunction::Initialize()
 		Ease::CubeIn,    Ease::CubeOut,    Ease::CubeInOut,    Ease::QuintIn,  Ease::QuintOut,  Ease::QuintInOut,
 		Ease::ExpoIn,    Ease::ExpoOut,    Ease::ExpoInOut,    Ease::BackIn,   Ease::BackOut,   Ease::BackInOut,
 		Ease::ElasticIn, Ease::ElasticOut, Ease::ElasticInOut, Ease::BounceIn, Ease::BounceOut, Ease::BounceInOut};
-	for (int k = 0; k < (int)easers.size(); ++k) {
-		Math::Vec3 origin((k / 3) * 2.f, -(k % 3) * 2.f, 0.f);
+	for (int k = 0; std::cmp_less(k, easers.size()); ++k) {
+		int row = k / 3;
+		int col = k % 3;
+		Math::Vec3 origin(row * 2.f, -col * 2.f, 0.f);
 		auto posFunc = [origin, easers, k](float x) { return origin + Math::Vec3(x, easers[k](x), 0.f); };
 		STL::Add(s_posFunctions, posFunc);
 		lines->GetMesh()->AddPointNoIndex(Graphics::PosColorVertex::MakeVertex(posFunc(0.f)));

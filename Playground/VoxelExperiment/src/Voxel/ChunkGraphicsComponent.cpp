@@ -12,11 +12,8 @@
 
 namespace crsd = cherrysoda;
 using crsd::Color;
-using crsd::Engine;
-using crsd::Entity;
 using crsd::Graphics;
 using crsd::Math;
-using crsd::MeshInterface;
 using crsd::STL;
 
 void ChunkGraphicsComponent::EntityAwake()
@@ -35,7 +32,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 	constexpr int chunkSize = Chunk::Size();
 
 	GetMesh()->Clear();
-	Chunk* chunk = (Chunk*)GetEntity();
+	auto* chunk = (Chunk*)GetEntity();
 	if (chunk == nullptr) return;
 	STL::Vector<STL::Action<>> pendingActions;
 
@@ -46,17 +43,17 @@ void ChunkGraphicsComponent::RebuildMesh()
 		for (int i = 0; i < chunkSize; ++i) {
 			for (int j = 0; j < chunkSize; ++j) {
 				for (int k = 0; k < chunkSize; ++k) {
-					if (overallQuadAmount * 4 + 8 > UINT16_MAX) {
+					if ((overallQuadAmount * 4) + 8 > UINT16_MAX) {
 						break;
 					}
-					int index = chunk->GetBlockIndexFast(Math::IVec3(i, j, k));
+					int index = Chunk::GetBlockIndexFast(Math::IVec3(i, j, k));
 					Block::Type blockType = chunk->GetBlocks()[index].m_type;
 					if (blockType != Block::Type::None) {
 						Color color = blockTypeColorMap[(int)blockType];
 						auto planeMask = chunk->GetBlockSurroundingFast(index);
 						if (planeMask > 0) {
 							overallQuadAmount += Math_BitCount(planeMask);
-							STL::Add(pendingActions, [planeMask, i, j, k, color, this]() {
+							STL::Add(pendingActions, [planeMask, i, j, k, color, this] {
 								AddCube(Math::Vec3(i, j, k), 1.f, color, planeMask);
 							});
 						}
@@ -69,7 +66,7 @@ void ChunkGraphicsComponent::RebuildMesh()
 		CHERRYSODA_PROFILE("UpdateChunkMesh");
 
 		GetMesh()->ReserverAdditional(overallQuadAmount * 4, overallQuadAmount * 6);
-		for (auto action : pendingActions) {
+		for (const auto& action : pendingActions) {
 			action();
 		}
 	}

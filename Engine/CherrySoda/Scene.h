@@ -135,12 +135,8 @@ public:
 		if (list == nullptr) {
 			return false;
 		}
-		for (auto entity : *list) {
-			if (entity->Collidable() && entity->CollidePoint(point)) {
-				return true;
-			}
-		}
-		return false;
+		return std::ranges::any_of(*list,
+								   [&](auto* entity) { return entity->Collidable() && entity->CollidePoint(point); });
 	}
 
 	template<class T> bool CollideCheck(const Math::Vec2& from, const Math::Vec2& to) const
@@ -149,12 +145,8 @@ public:
 		if (list == nullptr) {
 			return false;
 		}
-		for (auto entity : *list) {
-			if (entity->Collidable() && entity->CollideLine(from, to)) {
-				return true;
-			}
-		}
-		return false;
+		return std::ranges::any_of(*list,
+								   [&](auto* entity) { return entity->Collidable() && entity->CollideLine(from, to); });
 	}
 
 	template<class T> bool CollideCheck(const Math::Rectangle& rect) const
@@ -163,12 +155,8 @@ public:
 		if (list == nullptr) {
 			return false;
 		}
-		for (auto entity : *list) {
-			if (entity->Collidable() && Collide::CheckRect(entity, rect)) {
-				return true;
-			}
-		}
-		return false;
+		return std::ranges::any_of(
+			*list, [&](auto* entity) { return entity->Collidable() && Collide::CheckRect(entity, rect); });
 	}
 
 	template<class T> T* CollideFirst(const Math::Vec2& point) const
@@ -258,12 +246,9 @@ public:
 		if (list == nullptr) {
 			return false;
 		}
-		for (auto component : *list) {
-			if (ComponentCanCollide(component) && static_cast<T*>(component)->GetCollider()->Collide(point)) {
-				return true;
-			}
-		}
-		return false;
+		return std::ranges::any_of(*list, [&](auto* component) {
+			return ComponentCanCollide(component) && static_cast<T*>(component)->GetCollider()->Collide(point);
+		});
 	}
 
 	template<class T> bool CollideCheckByComponent(const Math::Vec2& from, const Math::Vec2& to) const
@@ -410,12 +395,7 @@ template<class T> inline bool Entity::CollideCheck() const
 	if (list == nullptr) {
 		return false;
 	}
-	for (auto entity : *list) {
-		if (CollideCheck(entity)) {
-			return true;
-		}
-	}
-	return false;
+	return std::ranges::any_of(*list, [&](auto* entity) { return CollideCheck(entity); });
 }
 
 template<class T> inline bool Entity::CollideCheck(const Math::Vec2& at)

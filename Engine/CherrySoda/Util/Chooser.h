@@ -16,7 +16,7 @@ private:
 	class Choice
 	{
 	public:
-		T m_value;
+		T m_value{};
 		float m_weight = 0.f;
 
 		Choice() = default;

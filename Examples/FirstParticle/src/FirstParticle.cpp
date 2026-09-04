@@ -6,7 +6,7 @@ using firstparticle::FirstParticle;
 
 using namespace cherrysoda;
 
-FirstParticle::FirstParticle() : base()
+FirstParticle::FirstParticle()
 {
 	SetTitle("FirstParticle");
 	SetClearColor(Color::Black);
@@ -24,11 +24,11 @@ void FirstParticle::Initialize()
 	base::Initialize();
 
 	// Initialize and set scene here
-	auto scene = new Scene();
+	auto* scene = new Scene();
 
-	auto renderer = new EverythingRenderer();
+	auto* renderer = new EverythingRenderer();
 
-	auto camera = renderer->GetCamera();
+	auto* camera = renderer->GetCamera();
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 200.f));
 	camera->CenterOrigin();
@@ -36,7 +36,7 @@ void FirstParticle::Initialize()
 	renderer->KeepCameraCenterOrigin(true);
 	renderer->SetEffect(Graphics::GetEmbeddedEffect("sprite"));
 
-	auto entity = new Entity();
+	auto* entity = new Entity();
 	entity->PositionY(-50.f);
 
 	scene->Add(renderer);
@@ -44,8 +44,8 @@ void FirstParticle::Initialize()
 
 	{
 		// Generated from ParticleEditor
-		auto particleSystem = new ParticleSystem(-1, 1000);
-		auto particleType = new ParticleType();
+		auto* particleSystem = new ParticleSystem(-1, 1000);
+		auto* particleType = new ParticleType();
 		particleType->m_color = Color(0.000f, 0.765f, 1.000f, 1.000f);
 		particleType->m_color2 = Color(0.189f, 0.543f, 0.990f, 1.000f);
 		particleType->m_colorMode = ParticleType::ColorModes::Choose;
@@ -63,7 +63,7 @@ void FirstParticle::Initialize()
 		particleType->m_spinFlippedChance = true;
 		particleType->m_rotationMode = ParticleType::RotationModes::Random;
 		particleType->m_scaleOut = true;
-		auto particleEmitter =
+		auto* particleEmitter =
 			new ParticleEmitter(particleSystem, particleType, Vec2_Zero, Math::Vec2(0.000f, 0.000f), 20, 0.017f);
 		// Generated from ParticleEditor
 

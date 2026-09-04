@@ -15,11 +15,13 @@ public:
 
 	TileBasedPlatformerTrial();
 
+protected:
 	void Update() override;
 	void Initialize() override;
 	void LoadContent() override;
 	void UnloadContent() override;
 
+public:
 	static cherrysoda::Atlas* GetAtlas() { return ms_atlas; }
 
 private:

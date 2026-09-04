@@ -30,7 +30,7 @@ void TileBasedPlatformerTrial::Initialize()
 
 	Graphics::SetPointTextureSampling();
 
-	auto scene = new MainScene();
+	auto* scene = new MainScene();
 
 	SetScene(scene);
 }

@@ -6,6 +6,8 @@ using example::FirstTriangle;
 
 using namespace cherrysoda;
 
+namespace {
+
 class Triangle : public MeshGraphicsComponent<Graphics::PosColorVertex>
 {
 public:
@@ -26,7 +28,9 @@ public:
 	void Update() override { RotateOnZ(Engine::Instance()->DeltaTime()); }
 };
 
-FirstTriangle::FirstTriangle() : base()
+} // namespace
+
+FirstTriangle::FirstTriangle()
 {
 	SetTitle("FirstTriangle");
 	SetClearColor(Color::Black);
@@ -36,11 +40,11 @@ void FirstTriangle::Initialize()
 {
 	base::Initialize();
 
-	auto scene = new Scene();
-	auto entity = new Entity();
+	auto* scene = new Scene();
+	auto* entity = new Entity();
 
-	auto triangle = new Triangle();
-	auto renderer = new EverythingRenderer();
+	auto* triangle = new Triangle();
+	auto* renderer = new EverythingRenderer();
 
 	entity->Add(triangle);
 	scene->Add(entity);

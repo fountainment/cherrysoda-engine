@@ -57,7 +57,7 @@ TEST(VirtualInputTest, RegistersAndDeregisters)
 
 TEST(VirtualButtonTest, QueriesNodes)
 {
-	FakeButtonNode* node = new FakeButtonNode();
+	auto* node = new FakeButtonNode();
 	VirtualButton button({node});
 
 	EXPECT_FALSE(button.Check());
@@ -87,7 +87,7 @@ TEST(VirtualButtonTest, QueriesNodes)
 
 TEST(VirtualButtonTest, ConsumePressEndsPressedForTheFrame)
 {
-	FakeButtonNode* node = new FakeButtonNode();
+	auto* node = new FakeButtonNode();
 	VirtualButton button({node});
 
 	node->m_pressed = true;
@@ -107,8 +107,8 @@ TEST(VirtualButtonTest, ConsumePressEndsPressedForTheFrame)
 
 TEST(VirtualAxisTest, TakesFirstNonZeroNode)
 {
-	FakeAxisNode* idle = new FakeAxisNode(0.f);
-	FakeAxisNode* active = new FakeAxisNode(-0.5f);
+	auto* idle = new FakeAxisNode(0.f);
+	auto* active = new FakeAxisNode(-0.5f);
 	VirtualAxis axis({idle, active});
 
 	axis.Update();
@@ -122,7 +122,7 @@ TEST(VirtualAxisTest, TakesFirstNonZeroNode)
 
 TEST(VirtualIntegerAxisTest, SnapsNodeValueToSign)
 {
-	FakeAxisNode* node = new FakeAxisNode(0.25f);
+	auto* node = new FakeAxisNode(0.25f);
 	VirtualIntegerAxis axis({node});
 
 	axis.Update();
@@ -136,8 +136,8 @@ TEST(VirtualIntegerAxisTest, SnapsNodeValueToSign)
 
 TEST(VirtualJoystickTest, FirstNonZeroNodeWins)
 {
-	FakeJoystickNode* idle = new FakeJoystickNode(Vec2_Zero);
-	FakeJoystickNode* dpad = new FakeJoystickNode(Math::Vec2(-1.f, 1.f));
+	auto* idle = new FakeJoystickNode(Vec2_Zero);
+	auto* dpad = new FakeJoystickNode(Math::Vec2(-1.f, 1.f));
 	VirtualJoystick joystick(false, {idle, dpad});
 
 	joystick.Update();
@@ -146,7 +146,7 @@ TEST(VirtualJoystickTest, FirstNonZeroNodeWins)
 
 TEST(VirtualJoystickTest, NormalizesAndSnaps)
 {
-	FakeJoystickNode* node = new FakeJoystickNode(Math::Vec2(3.f, 4.f));
+	auto* node = new FakeJoystickNode(Math::Vec2(3.f, 4.f));
 
 	VirtualJoystick normalized(true);
 	normalized.Nodes().push_back(node);

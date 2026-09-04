@@ -20,9 +20,9 @@ public:
 
 	void Begin() override;
 
-	~MainScene();
+	~MainScene() override;
 
-	void InitializeTileObject(int id, cherrysoda::Entity* entity, int tileWidth, int tileHeight);
+	static void InitializeTileObject(int id, cherrysoda::Entity* entity, int tileWidth, int tileHeight);
 
 	static float GetControlAxisX();
 	static float GetControlAxisY();

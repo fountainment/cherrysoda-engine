@@ -13,6 +13,8 @@ static ParticleType* s_particleType = nullptr;
 static ParticleEmitter* s_particleEmitter = nullptr;
 static Camera* s_camera = nullptr;
 
+namespace {
+
 class OriginGraphicsCompoent : public GraphicsComponent
 {
 public:
@@ -26,6 +28,8 @@ public:
 		Draw::Line(Math::Vec2(RenderPosition()), Math::Vec2(RenderPosition()) + Math::Vec2(10.f, 0.f));
 	}
 };
+
+} // namespace
 
 ParticleEditor::ParticleEditor() : base(1280, 800, "Particle Editor 0.1 - CherrySoda Engine")
 {
@@ -122,14 +126,14 @@ static String GetParticleCode()
 								 s_particleEmitter->PositionRange().x, s_particleEmitter->PositionRange().y,
 								 s_particleEmitter->Amount(), s_particleEmitter->Interval());
 	result += "\t// Generated from ParticleEditor\n";
-	result += "\n";
+	result += '\n';
 	result += "\t// scene->Add(particleSystem);\n";
 	result += "\t// entity->Add(particleEmitter);\n";
 	result += "}\n";
 	return result;
 }
 
-const String GetParticleJson()
+[[maybe_unused]] static String GetParticleJson()
 {
 	String result;
 	result = "Not Implemented Yet!\n";
@@ -322,10 +326,10 @@ void ParticleEditor::Initialize()
 											 io.Fonts->GetGlyphRangesChineseFull());
 	GUI::BuildFontTexture();
 
-	auto scene = new Scene();
-	auto renderer = new EverythingRenderer();
+	auto* scene = new Scene();
+	auto* renderer = new EverythingRenderer();
 
-	auto camera = renderer->GetCamera();
+	auto* camera = renderer->GetCamera();
 	camera->UseOrthoProjection(true);
 	camera->Position(Math::Vec3(0.f, 0.f, 100.f));
 	camera->CenterOrigin();
@@ -344,7 +348,7 @@ void ParticleEditor::Initialize()
 	s_particleType->m_lifeMin = 0.f;
 	s_particleType->m_lifeMax = 1.f;
 	s_particleType->m_directionRange = Math::Pi2;
-	auto entity = new Entity();
+	auto* entity = new Entity();
 	s_particleEmitter = new ParticleEmitter(s_particleSystem, s_particleType, Vec2_Zero, Vec2_Zero, 100, 1.0f);
 	entity->Add(new OriginGraphicsCompoent);
 	entity->Add(s_particleEmitter);

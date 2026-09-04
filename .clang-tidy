@@ -17,12 +17,19 @@
 #     -clang-apply-replacements-binary /opt/homebrew/opt/llvm/bin/clang-apply-replacements \
 #     -p out/build/unix-debug \
 #     -extra-arg="-isysroot$(xcrun --show-sdk-path)" \
-#     'Engine/CherrySoda/.*\.cpp'
+#     '/cherrysoda-engine/(Engine/CherrySoda|Examples|Playground|Bench|Tests|Tools/ParticleEditor|Tools/sfxr_port/src/(Program|sfxr_port))/.*\.cpp$'
+#
+#   The sweep covers every first-party TU: the engine, the sample apps
+#   (Examples, Playground, Bench, Tests) and the authored tool sources
+#   (Tools/ParticleEditor, Tools/sfxr_port wrappers). Vendored trees under
+#   Tools/ (crunch, sfxr_port/src/sfxr) are never swept, matching the
+#   clang-format exclusions.
 #
 # Editors (clangd) also analyze each header standalone, so sweep the headers
 # the same way to keep the in-editor view clean:
 #
-#   for h in $(find Engine/CherrySoda -name '*.h' | grep -v embedded_shaders); do
+#   for h in $(find Engine/CherrySoda Examples Playground Bench Tests Tools/ParticleEditor Tools/sfxr_port/src \
+#     -name '*.h' | grep -v embedded_shaders); do
 #     /opt/homebrew/opt/llvm/bin/clang-tidy -p out/build/unix-debug \
 #       -extra-arg="-isysroot$(xcrun --show-sdk-path)" "$h"
 #   done

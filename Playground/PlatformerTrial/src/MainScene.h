@@ -22,7 +22,7 @@ public:
 	void Begin() override;
 	void Update() override;
 
-	~MainScene();
+	~MainScene() override;
 
 	cherrysoda::RenderTarget2D* m_mainScreenTarget = nullptr;
 	cherrysoda::Texture2D m_backgroundTexture;
