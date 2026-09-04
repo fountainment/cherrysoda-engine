@@ -12,8 +12,8 @@ void Window::SetOpaqueNativeBackground(const Color& color)
 	if (m_mainWindow == nullptr) {
 		return;
 	}
-	NSWindow* nsWindow = (__bridge NSWindow*)SDL_GetPointerProperty(
-		SDL_GetWindowProperties(m_mainWindow), SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
+	NSWindow* nsWindow = (__bridge NSWindow*)SDL_GetPointerProperty(SDL_GetWindowProperties(m_mainWindow),
+																	SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr);
 	CALayer* layer = nsWindow.contentView.layer;
 	if (layer == nil || ![layer isKindOfClass:[CAMetalLayer class]]) {
 		return;

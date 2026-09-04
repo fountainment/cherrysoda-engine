@@ -57,3 +57,57 @@ KeepEmptyLines:
   AtStartOfBlock: false
 MaxEmptyLinesToKeep: 1
 InsertNewlineAtEOF: false
+
+---
+# Objective-C++ (e.g. WindowMacOS.mm). Language sections do not inherit from
+# each other, so this duplicates the Cpp style above — keep both in sync.
+Language: ObjC
+Standard: c++20
+
+UseTab: ForContinuationAndIndentation
+TabWidth: 4
+IndentWidth: 4
+ColumnLimit: 120
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+NamespaceIndentation: None
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+
+SpaceAfterTemplateKeyword: false
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: false
+  AfterExternBlock: true
+  AfterControlStatement: Never
+  BeforeElse: true
+  BeforeCatch: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: true
+
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+InsertBraces: false
+FixNamespaceComments: false
+AlignEscapedNewlines: Left
+KeepEmptyLines:
+  AtStartOfBlock: false
+MaxEmptyLinesToKeep: 1
+InsertNewlineAtEOF: false

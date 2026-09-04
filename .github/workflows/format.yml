@@ -25,8 +25,13 @@ jobs:
 
     - name: Check formatting
       run: |
-        files=$({ find Engine Examples Playground Bench Tests -name '*.h' -o -name '*.cpp'; find Tools -name '*.h' -o -name '*.cpp'; } \
-          | grep -vE 'embedded_shaders|Tools/bin/|Tools/crunch/|Tools/sfxr_port/src/sfxr/')
+        files=$({ find Engine Examples Playground Bench Tests \
+                   \( -name '*.h' -o -name '*.hpp' -o -name '*.inl' -o -name '*.cpp' \
+                      -o -name '*.cc' -o -name '*.cxx' -o -name '*.c' -o -name '*.mm' -o -name '*.m' \); \
+                  find Tools \
+                   \( -name '*.h' -o -name '*.hpp' -o -name '*.inl' -o -name '*.cpp' \
+                      -o -name '*.cc' -o -name '*.cxx' -o -name '*.c' -o -name '*.mm' -o -name '*.m' \); } \
+          | grep -vE 'embedded_shaders|Tools/bin/|Tools/crunch/|Tools/sfxr_port/src/sfxr/|VonwaonBitmapFont\.inl')
         # Empty list means the find scope broke — fail loudly instead of passing vacuously.
         [ -n "$files" ]
         echo "$files" | wc -l
