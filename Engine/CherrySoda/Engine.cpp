@@ -216,7 +216,8 @@ void Engine::OnClientSizeChanged(int width, int height)
 	if (width > 0 && height > 0 && !m_resizing) {
 		m_resizing = true;
 		SetWindowSize(width, height);
-		SetViewSize(width, height);
+		// keep the view in logical points: view = window / content scale
+		SetViewSize((int)(width / m_contentScale), (int)(height / m_contentScale));
 		Graphics::UpdateView();
 		m_resizing = false;
 	}
@@ -317,7 +318,9 @@ void Engine::RenderCore()
 
 	cherrysoda::Graphics::BeginRenderPass(0);
 	m_graphicsDevice->SetRenderTarget(nullptr);
-	m_graphicsDevice->SetViewport(0, 0, GetWidth(), GetHeight());
+	// the viewport covers the physical window; camera/view sizes stay in logical
+	// points so content is scaled up on high-DPI displays
+	m_graphicsDevice->SetViewport(0, 0, GetWindowWidth(), GetWindowHeight());
 	m_graphicsDevice->SetClearColor(m_clearColor);
 	m_graphicsDevice->Touch();
 

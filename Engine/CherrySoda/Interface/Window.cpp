@@ -470,9 +470,11 @@ void Window::CreateWindow()
 	int viewHeight = Engine::Instance()->GetHeight();
 #ifndef __EMSCRIPTEN__
 	// SDL3 takes physical pixels on Windows while the engine's sizes are meant
-	// as logical points, so multiply by the display content scale to keep the
-	// intended physical size under OS display scaling (macOS/Wayland report
-	// 1.0 and are unaffected). See SDL's README-highdpi.
+	// as logical points, so multiply the window size by the display content
+	// scale to keep its intended physical size under OS display scaling
+	// (macOS/Wayland report 1.0 and are unaffected). The view keeps its logical
+	// size; the render viewport scales content up to the window. See SDL's
+	// README-highdpi.
 	float contentScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 	const SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
 	if (mode != nullptr && contentScale > 1.0f &&
@@ -481,8 +483,6 @@ void Window::CreateWindow()
 	}
 	windowWidth = (int)SDL_ceilf(windowWidth * contentScale);
 	windowHeight = (int)SDL_ceilf(windowHeight * contentScale);
-	viewWidth = (int)SDL_ceilf(viewWidth * contentScale);
-	viewHeight = (int)SDL_ceilf(viewHeight * contentScale);
 	Engine::Instance()->m_contentScale = contentScale;
 #endif
 	m_mainWindow = SDL_CreateWindow(title.c_str(), windowWidth, windowHeight, windowFlag);

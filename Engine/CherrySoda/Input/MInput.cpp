@@ -129,12 +129,18 @@ void MInput::KeyboardState::InternalSetKey(Keys key)
 
 Math::IVec2 MInput::MouseData::Position() const
 {
-	return {m_currentState.m_x, Engine::Instance()->GetWindowHeight() - m_currentState.m_y};
+	// mouse coords are physical window pixels; convert to the logical view space
+	// games work in (same space as camera/GetWidth/GetHeight)
+	float contentScale = Engine::Instance()->GetContentScale();
+	return {(int)(m_currentState.m_x / contentScale),
+			Engine::Instance()->GetHeight() - (int)(m_currentState.m_y / contentScale)};
 }
 
 void MInput::MouseData::Position(const Math::IVec2& pos)
 {
-	SetMousePosition(Math::IVec2(pos.x, Engine::Instance()->GetWindowHeight() - pos.y));
+	float contentScale = Engine::Instance()->GetContentScale();
+	SetMousePosition(
+		Math::IVec2((int)(pos.x * contentScale), Engine::Instance()->GetWindowHeight() - (int)(pos.y * contentScale)));
 }
 
 void MInput::Initialize()
